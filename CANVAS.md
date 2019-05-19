@@ -7,7 +7,7 @@ project: Cryonics Institute Check-In App
 Cryonics stand-by patients might be alone sometimes and need a way to alert their support team.
 
 ### Solution
-An app for mobile devices could remind a patient to check-in at periodic intervals.  If the patient does not check-in, and alert would be sent to family, friends, and other members of the patient's stand-by team that the patient has not checked-in and might need assistance.
+An app for mobile devices could remind a patient to check-in at periodic intervals.  If the patient does not check-in, an alert would be sent to family, friends, and other members of the patient's stand-by team that the patient has not checked-in and might need assistance.
 
 ### Key Metrics
 Success would be measured by the following:
