@@ -48,4 +48,6 @@ New contributors would be gained through the following:
 ## Reference
 Mozilla. (n.d.). Open Project Communication [Web page]. Retrieved from http://mozillascience.github.io/working-open-workshop/writing_readme/
 
+---
+
 <sup>1</sup>Adapted from Mozilla's (n.d.) Open Canvas.
