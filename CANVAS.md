@@ -37,7 +37,7 @@ New users would be gained through the following:
 - Google Play and Apple App Store.
 
 ### Contributor Profiles
-Developers and programmers interested in contributing code should be able to work with React JS.  Designers should be able to work in scalable vector graphics (SVG) format.
+Developers and programmers interested in contributing code should be able to work with React Native.  Designers should be able to work in scalable vector graphics (SVG) format.
 
 ### Contributor Channels
 New contributors would be gained through the following:
