@@ -2,30 +2,9 @@
 ### *A Multiplatform Mobile App That Reminds Cryonics Patients to Check-In with Their Stand-By Team*
 
 ## Getting Started
-Welcome.  We are currently working on our project's road map.  Help us get our goals right from the start by reviewing and revising our [canvas](./CANVAS.md).
+Welcome.  We are currently working on our project's road map.  Help us get our goals right from the start by reviewing and revising our [canvas](./docs/CANVAS.md).
 
-The app will be built using React Native, a multiplatform mobile development library that allows Android and iOS apps to be developed using the same code base.  Developers and programmers interested in contributing code should be able to work with React Native.  Designers should be able to work in scalable vector graphics (SVG) format.
-
-If you're new to GitHub, you can get started as follows:
-
-1. Fork the project; it's that button on the upper right of this page; come on, go ahead, you know you want to.  :)
-2. Open your Terminal and copy your fork to your local computer as follows:
-```
-git clone https://github.com/USERNAME/check-in.git
-```
-Remember to replace "USERNAME" in the URL with your username.
-3. Add the main project as your upstream:
-```
-git remote add upstream https://github.com/cryonics-institute/check-in.git
-```
-4. Do some work;
-5. Push your work back up to your fork as follows:
-```
-git push
-```
-6. Create a pull request from your fork on GitHub by clicking that "New pull request" button towards the upper left and fill out the form.
-
-That's a pretty brief introduction!  For a much better introduction, please see [Allen (2015)](https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/).  For a good introduction to Git in general, I recommend [Chacon and Straub's (2019) *Pro Git*](https://www.git-scm.com/book/en/v2), which is free.  The first two chapters should be more than enough.
+If you are interested in helping out, please see our [contributing guidelines](./docs/CONTRIBUTING.md).
 
 ## About the Project
 The project intends to build a check-in app for individuals who are near the end of life, have made arrangements with a cryonics organization, and have a stand-by team in effect and waiting to transport them to their chosen facility.  The stand-by team could consist of family, friends, a professional organization such as [Suspended Animation](http://www.suspendedanimationlabs.com), or some combination thereof.  The app should function as follows:
