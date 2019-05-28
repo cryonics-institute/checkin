@@ -42,6 +42,14 @@ Add any other context about the problem as well.
 
 We also accept suggestions for enhancements using [GitHub issues](https://guides.github.com/features/issues/).  Please review our [current issues](https://github.com/cryonics-institute/check-in/issues).  If your enhancement hasn't already been suggested, please submit a [new issue](https://github.com/cryonics-institute/check-in/issues/new/choose).
 
+Let us know if your feature request is **related to a problem**.  Please describe using a clear and concise description of what the problem is.  Ex. I'm always frustrated when [....]
+
+**Describe the solution you would like** with a clear and concise description of what you want to happen.
+
+**Describe alternatives you have considered** with a clear and concise description of any alternative solutions or features you've considered.
+
+Add any other context or screenshots about the feature request here.
+
 ### Your First Code Contribution
 
 If you're new to GitHub, you can get started as follows:
