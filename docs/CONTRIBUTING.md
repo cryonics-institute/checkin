@@ -2,7 +2,7 @@
 
 Welcome and thank you for contributing to our project.
 
-The following is a set of guidelines for contributing to Check-In, which are hosted by the [Cryonics Institute](https://github.com/cryonics-institute/check-in) on GitHub.  These are mostly guidelines, not rules.  Use your best judgment, and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to Check-In, which are hosted by the [Cryonics Institute](../) on GitHub.  These are mostly guidelines, not rules.  Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 ## What should I know before I get started?
 
@@ -18,7 +18,7 @@ We welcome artistic contributions.  Suggested mockups, prototypes, and wireframe
 
 ### Reporting Bugs
 
-Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/).  Please review our [current issues](https://github.com/cryonics-institute/check-in/issues).  If your bug hasn't already been reported, please submit a [new issue](https://github.com/cryonics-institute/check-in/issues/new/choose).
+Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/).  Please review our [current issues](../issues).  If your bug hasn't already been reported, please submit a [new issue](../issues/new/choose).
 
 Be sure to **describe the bug** with a clear and concise description of what the bug is.
 
@@ -40,7 +40,7 @@ Add any other context about the problem as well.
 
 ### Suggesting Enhancements
 
-We also accept suggestions for enhancements using [GitHub issues](https://guides.github.com/features/issues/).  Please review our [current issues](https://github.com/cryonics-institute/check-in/issues).  If your enhancement hasn't already been suggested, please submit a [new issue](https://github.com/cryonics-institute/check-in/issues/new/choose).
+We also accept suggestions for enhancements using [GitHub issues](https://guides.github.com/features/issues/).  Please review our [current issues](../issues).  If your enhancement hasn't already been suggested, please submit a [new issue](../issues/new/choose).
 
 Let us know if your feature request is **related to a problem**.  Please describe using a clear and concise description of what the problem is.  Ex. I'm always frustrated when [....]
 
@@ -84,4 +84,4 @@ That's a pretty brief introduction!  For a much better introduction, please see 
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by a [Code of Conduct](./docs/CODE_OF_CONDUCT.md).  By participating, you are expected to uphold this code. Please report unacceptable behavior to [michaelgill1969@gmail.com](mailto:michaelgill1969@gmail.com).
+This project and everyone participating in it is governed by a [Code of Conduct](../docs/CODE_OF_CONDUCT.md).  By participating, you are expected to uphold this code. Please report unacceptable behavior to [michaelgill1969@gmail.com](mailto:michaelgill1969@gmail.com).
