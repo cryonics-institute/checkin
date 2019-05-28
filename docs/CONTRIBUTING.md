@@ -48,18 +48,18 @@ If you're new to GitHub, you can get started as follows:
 
 1. Fork the project; it's that button on the upper right of this page; come on, go ahead, you know you want to.  :)
 2. Open your Terminal and copy your fork to your local computer as follows:
-```
+    ```
 git clone https://github.com/USERNAME/check-in.git
 ```
    Remember to replace "USERNAME" in the URL with your username.
 
 3. Add the main project as your upstream:
-```
+   ```
 git remote add upstream https://github.com/cryonics-institute/check-in.git
 ```
 4. Do some work;
 5. Push your work back up to your fork as follows:
-```
+   ```
 git push
 ```
 6. Create a pull request from your fork on GitHub by clicking that "New pull request" button towards the upper left and fill out the form.
