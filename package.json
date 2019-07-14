@@ -1,0 +1,41 @@
+{
+  "name": "checkin",
+  "version": "0.1.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "private": true,
+  "dependencies": {
+    "expo": "^33.0.0",
+    "firebase": "^6.2.4",
+    "prop-types": "^15.7.2",
+    "react": "16.8.3",
+    "react-dom": "^16.8.6",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
+    "react-native-config": "^0.11.7",
+    "react-native-elements": "^1.1.0",
+    "react-native-web": "^0.11.4",
+    "react-scripts": "3.0.1",
+    "react-with-firebase-auth": "^1.0.3",
+    "typescript": "^3.5.3"
+  },
+  "devDependencies": {
+    "babel-preset-expo": "^5.1.1",
+    "eslint": "^6.0.1",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-standard": "^4.0.0"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "scripts": {
+    "android": "expo start --android",
+    "eject": "expo eject",
+    "ios": "expo start --ios",
+    "lint": "eslint",
+    "start": "expo start",
+    "web": "expo start --web"
+  }
+}
