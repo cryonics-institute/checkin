@@ -12,6 +12,8 @@ import { StyleSheet, Text, View } from 'react-native'
 //   googleProvider: new firebase.auth.GoogleAuthProvider()
 // }
 
+// GitHub Test
+
 class App extends Component {
   render () {
     return (
