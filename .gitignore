@@ -62,4 +62,4 @@ Temporary Items
 .apdisk
 
 # Firebase
-/src/firebase/config.js
+/firebase/config.js
