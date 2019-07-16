@@ -9,7 +9,7 @@ export const checkins = (
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.getCheckinsFulfilledAction:
+    case ActionTypes.GetCheckinsFulfilled:
       return {
         ...state,
         isLoading: false,
@@ -17,7 +17,7 @@ export const checkins = (
         checkins: action.payload
       }
 
-    case ActionTypes.getCheckinsRequestedAction:
+    case ActionTypes.GetCheckinsRequested:
       return {
         ...state,
         isLoading: true,
@@ -25,7 +25,7 @@ export const checkins = (
         checkins: []
       }
 
-    case ActionTypes.getCheckinsRejectedAction:
+    case ActionTypes.GetCheckinsRejected:
       return {
         ...state,
         isLoading: false,

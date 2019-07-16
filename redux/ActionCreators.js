@@ -1,5 +1,5 @@
 import * as ActionTypes from './ActionTypes'
-import { auth, fireauth } from '../firebase/firebase'
+import { auth } from '../firebase/firebase'
 
 // export const getCheckins = () => (dispatch) => {
 //   dispatch(getCheckinsRequestedAction())
@@ -46,8 +46,6 @@ export const loginUser = (creds) => (dispatch) => {
   // We dispatch requestLogin to kickoff the call to the API
   dispatch(loginRequestedAction(creds))
 
-  console.log(creds.username)
-  console.log(creds.password)
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       () => {
@@ -108,19 +106,4 @@ export const logoutFulfilledAction = () => {
   return {
     type: ActionTypes.LogoutFulfilled
   }
-}
-
-export const loginWithGoogle = () => (dispatch) => {
-  const provider = new fireauth.GoogleAuthProvider()
-
-  auth.signInWithPopup(provider)
-    .then(
-      (result) => {
-        var user = result.user
-        localStorage.setItem('user', JSON.stringify(user))
-        // Dispatch the success action
-        dispatch(loginFulfilledAction(user))
-      }
-    )
-    .catch((error) => { dispatch(loginRejectedAction(error.message)) })
 }

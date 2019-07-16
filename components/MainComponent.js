@@ -2,8 +2,7 @@ import React, { Component } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { loginUser, loginWithGoogle, logoutUser }
-  from '../redux/ActionCreators'
+import { loginUser, logoutUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
@@ -16,8 +15,7 @@ const mapDispatchToProps = (dispatch) => (
   {
     // onGetCheckins: () => dispatch(getCheckins()),
     loginUser: (creds) => dispatch(loginUser(creds)),
-    logoutUser: () => dispatch(logoutUser()),
-    loginWithGoogle: () => dispatch(loginWithGoogle())
+    logoutUser: () => dispatch(logoutUser())
   }
 )
 
