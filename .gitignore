@@ -1,3 +1,28 @@
+# React Exclusions
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# React Native Exclusions
 node_modules/**/*
 .expo/*
 npm-debug.*
@@ -35,3 +60,6 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+# Firebase
+/src/firebase/config.js
