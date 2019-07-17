@@ -4,7 +4,9 @@
     "es6": true
   },
   "extends": [
-    "standard"
+    "standard",
+    "eslint:recommended",
+    "plugin:react/recommended"
   ],
   "globals": {
     "Atomics": "readonly",
@@ -21,7 +23,6 @@
     "react"
   ],
   "rules": {
-    "react/jsx-uses-react": "error",
-     "react/jsx-uses-vars": "error"
+    "react/prop-types": [0]
   }
 }
