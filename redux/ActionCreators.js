@@ -24,35 +24,31 @@ import { auth } from '../firebase/firebase'
 //
 // export const getCheckinsRequestedAction = () => (
 //   {
-//     type: ActionTypes.GetCheckinsRequested
+//     type: ActionTypes.GET_CHECKINS_REQUESTED
 //   }
 // )
 //
 // export const getCheckinsRejectedAction = (errmess) => (
 //   {
-//     type: ActionTypes.GetCheckinsRejected,
+//     type: ActionTypes.GET_CHECKINS_REJECTED,
 //     payload: errmess
 //   }
 // )
 //
 // export const getCheckinsFulfilledAction = (checkins) => (
 //   {
-//     type: ActionTypes.GetCheckinsFulfilled,
+//     type: ActionTypes.GET_CHECKINS_FULFILLED,
 //     payload: checkins
 //   }
 // )
 
 export const loginUser = (creds) => (dispatch) => {
-  // We dispatch requestLogin to kickoff the call to the API
   dispatch(loginRequestedAction(creds))
 
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       () => {
-        var user = auth.currentUser
-        // localStorage.setItem('user', JSON.stringify(user))
-        // Dispatch the success action
-        dispatch(loginFulfilledAction(user))
+        dispatch(loginFulfilledAction())
       }
     )
     .catch(error => dispatch(loginRejectedAction(error.message)))
@@ -60,50 +56,50 @@ export const loginUser = (creds) => (dispatch) => {
 
 export const loginRequestedAction = () => {
   return {
-    type: ActionTypes.LoginRequested
+    type: ActionTypes.LOGIN_REQUESTED
   }
 }
 
 export const loginRejectedAction = (message) => {
   return {
-    type: ActionTypes.LoginRejected,
-    message
+    type: ActionTypes.LOGIN_REJECTED,
+    payload: message
   }
 }
 
 export const loginFulfilledAction = (user) => {
   return {
-    type: ActionTypes.LoginFulfilled,
-    user
+    type: ActionTypes.LOGIN_FULFILLED
   }
 }
 
-// Logs the user out
 export const logoutUser = () => (dispatch) => {
   dispatch(logoutRequestedAction())
 
   auth.signOut()
-    .then(() => {}) // Sign-out successful.
+    .then(
+      () => {
+        dispatch(logoutFulfilledAction())
+      }
+    )
     .catch((error) => { logoutRejectedAction(error.message) })
-  localStorage.removeItem('user')
-  dispatch(logoutFulfilledAction())
 }
 
 export const logoutRequestedAction = () => {
   return {
-    type: ActionTypes.LogoutRequested
+    type: ActionTypes.LOGOUT_REQUESTED
   }
 }
 
 export const logoutRejectedAction = (message) => {
   return {
-    type: ActionTypes.LogoutRejected,
-    message
+    type: ActionTypes.LOGOUT_REJECTED,
+    payload: message
   }
 }
 
 export const logoutFulfilledAction = () => {
   return {
-    type: ActionTypes.LogoutFulfilled
+    type: ActionTypes.LOGOUT_FULFILLED
   }
 }

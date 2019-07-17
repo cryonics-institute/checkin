@@ -27,8 +27,6 @@ class Main extends Component {
       username: '',
       password: ''
     }
-
-    this.handleLogin = this.handleLogin.bind(this)
   }
 
   componentDidMount () {
@@ -39,34 +37,44 @@ class Main extends Component {
     this.props.logoutUser()
   }
 
-  handleLogin (event) {
+  handleLogin () {
     this.props.loginUser(
       {
         username: this.state.username,
         password: this.state.password
       }
     )
-    event.preventDefault()
+  }
+
+  handleLogout () {
+    this.props.logoutUser()
   }
 
   render () {
     return (
-      <View style={styles.container}>
-        <Input
-          placeholder = "Username"
-          onChangeText = { (username) => this.setState({ username }) }
-          value = { this.state.username }
-        />
-        <Input
-          placeholder = "Password"
-          onChangeText = { (password) => this.setState({ password }) }
-          value = { this.state.password }
-        />
-        <Button
-          onPress = { this.handleLogin }
-          title = "Login"
-        />
-      </View>
+      !this.props.auth.isAuthenticated
+        ? <View style={styles.container}>
+          <Input
+            placeholder = "Username"
+            onChangeText = { (username) => this.setState({ username }) }
+            value = { this.state.username }
+          />
+          <Input
+            placeholder = "Password"
+            onChangeText = { (password) => this.setState({ password }) }
+            value = { this.state.password }
+          />
+          <Button
+            onPress = { () => this.handleLogin() }
+            title = "Login"
+          />
+        </View>
+        : <View style={styles.container}>
+          <Button
+            onPress = { () => this.handleLogout() }
+            title = "Logout"
+          />
+        </View>
     )
   }
 }
