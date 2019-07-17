@@ -1,5 +1,6 @@
 import * as ActionTypes from './ActionTypes'
 import { auth } from '../firebase/firebase'
+import NavigationService from '../services/NavigationService'
 
 // export const getCheckins = () => (dispatch) => {
 //   dispatch(getCheckinsRequestedAction())
@@ -48,7 +49,17 @@ export const loginUser = (creds) => (dispatch) => {
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       () => {
-        dispatch(loginFulfilledAction())
+        var user = auth.currentUser
+        dispatch(loginFulfilledAction(user))
+      },
+      error => {
+        var errmess = new Error(error.message)
+        throw errmess
+      }
+    )
+    .then(
+      () => {
+        NavigationService.navigate('App')
       }
     )
     .catch(error => dispatch(loginRejectedAction(error.message)))
@@ -69,7 +80,8 @@ export const loginRejectedAction = (message) => {
 
 export const loginFulfilledAction = (user) => {
   return {
-    type: ActionTypes.LOGIN_FULFILLED
+    type: ActionTypes.LOGIN_FULFILLED,
+    payload: user
   }
 }
 
@@ -80,6 +92,15 @@ export const logoutUser = () => (dispatch) => {
     .then(
       () => {
         dispatch(logoutFulfilledAction())
+      },
+      error => {
+        var errmess = new Error(error.message)
+        throw errmess
+      }
+    )
+    .then(
+      () => {
+        NavigationService.navigate('Auth')
       }
     )
     .catch((error) => { logoutRejectedAction(error.message) })

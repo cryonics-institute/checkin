@@ -1,9 +1,13 @@
-import React, { Component } from 'react'
-import { StyleSheet, View } from 'react-native'
-import { Button, Input } from 'react-native-elements'
+import React from 'react'
+import { createAppContainer, createStackNavigator, createSwitchNavigator }
+  from 'react-navigation'
 import { connect } from 'react-redux'
-import { loginUser, logoutUser } from '../redux/ActionCreators'
+import NavigationService from '../services/NavigationService'
+import AuthLoading from './AuthLoadingComponent'
+import Home from './HomeComponent'
+import SignIn from './SignInComponent'
 
+// Setup Redux
 const mapStateToProps = state => {
   return {
     // checkins: state.checkins,
@@ -11,83 +15,61 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => (
-  {
-    // onGetCheckins: () => dispatch(getCheckins()),
-    loginUser: (creds) => dispatch(loginUser(creds)),
-    logoutUser: () => dispatch(logoutUser())
-  }
-)
-
-class Main extends Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      username: '',
-      password: ''
-    }
-  }
-
-  componentDidMount () {
-    // this.props.onGetCheckins()
-  }
-
-  componentWillUnmount () {
-    this.props.logoutUser()
-  }
-
-  handleLogin () {
-    this.props.loginUser(
-      {
-        username: this.state.username,
-        password: this.state.password
-      }
-    )
-  }
-
-  handleLogout () {
-    this.props.logoutUser()
-  }
-
+// Setup Navigation Components
+class AuthLoadingScreen extends React.Component {
   render () {
     return (
-      !this.props.auth.isAuthenticated
-        ? <View style={styles.container}>
-          <Input
-            placeholder = "Username"
-            onChangeText = { (username) => this.setState({ username }) }
-            value = { this.state.username }
-          />
-          <Input
-            placeholder = "Password"
-            onChangeText = { (password) => this.setState({ password }) }
-            value = { this.state.password }
-          />
-          <Button
-            onPress = { () => this.handleLogin() }
-            title = "Login"
-          />
-        </View>
-        : <View style={styles.container}>
-          <Button
-            onPress = { () => this.handleLogout() }
-            title = "Logout"
-          />
-        </View>
+      <AuthLoading navigation={this.props.navigation}/>
     )
   }
 }
 
-const styles = StyleSheet.create(
-  {
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }
+class HomeScreen extends React.Component {
+  render () {
+    return (
+      <Home navigation={this.props.navigation}/>
+    )
   }
+}
+
+class SignInScreen extends React.Component {
+  render () {
+    return (
+      <SignIn navigation={this.props.navigation}/>
+    )
+  }
+}
+
+const AppStack = createStackNavigator({ Home: HomeScreen })
+
+const AuthStack = createStackNavigator({ SignIn: SignInScreen })
+
+const AppContainer = createAppContainer(
+  createSwitchNavigator(
+    {
+      AuthLoading: AuthLoadingScreen,
+      App: AppStack,
+      Auth: AuthStack
+    },
+    {
+      initialRouteName: 'AuthLoading'
+    }
+  )
 )
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main)
+// Setup Main Component
+class Main extends React.Component {
+  render () {
+    return (
+      <AppContainer
+        ref={
+          navigatorRef => {
+            NavigationService.setTopLevelNavigator(navigatorRef)
+          }
+        }
+      />
+    )
+  }
+}
+
+export default connect(mapStateToProps)(Main)

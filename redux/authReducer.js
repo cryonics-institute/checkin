@@ -7,6 +7,7 @@ export const Auth = (
   state = {
     isLoading: false,
     isAuthenticated: false,
+    user: null,
     errMess: null
   },
   action
@@ -16,8 +17,7 @@ export const Auth = (
       return {
         ...state,
         isLoading: true,
-        isAuthenticated: false,
-        errMess: null
+        isAuthenticated: false
       }
 
     case ActionTypes.LOGIN_REJECTED:
@@ -33,6 +33,7 @@ export const Auth = (
         ...state,
         isLoading: false,
         isAuthenticated: true,
+        user: action.user,
         errMess: null
       }
 
@@ -40,8 +41,7 @@ export const Auth = (
       return {
         ...state,
         isLoading: true,
-        isAuthenticated: true,
-        errMess: null
+        isAuthenticated: true
       }
 
     case ActionTypes.LOGOUT_REJECTED:
@@ -57,6 +57,7 @@ export const Auth = (
         ...state,
         isLoading: false,
         isAuthenticated: false,
+        user: null,
         errMess: null
       }
 
