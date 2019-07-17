@@ -48,7 +48,8 @@ export const loginUser = (creds) => (dispatch) => {
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       () => {
-        dispatch(loginFulfilledAction())
+        var user = auth.currentUser
+        dispatch(loginFulfilledAction(user))
       }
     )
     .catch(error => dispatch(loginRejectedAction(error.message)))
@@ -69,7 +70,8 @@ export const loginRejectedAction = (message) => {
 
 export const loginFulfilledAction = (user) => {
   return {
-    type: ActionTypes.LOGIN_FULFILLED
+    type: ActionTypes.LOGIN_FULFILLED,
+    payload: user
   }
 }
 
