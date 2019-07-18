@@ -21,6 +21,7 @@ class SignIn extends React.Component {
     super(props)
 
     this.state = {
+      isRegistered: true,
       username: '',
       password: ''
     }
@@ -35,24 +36,58 @@ class SignIn extends React.Component {
     )
   }
 
+  handleRegistration () {
+    console.log('TRIGGERED REGISTRATION HANDLER')
+    // TODO: Initiate registration action.
+  }
+
+  toggleRegistration () {
+    this.setState({ isRegistered: !this.state.isRegistered })
+  }
+
   render () {
     return (
-      <View style={styles.container}>
-        <Input
-          placeholder = "Username"
-          onChangeText = { (username) => this.setState({ username }) }
-          value = { this.state.username }
-        />
-        <Input
-          placeholder = "Password"
-          onChangeText = { (password) => this.setState({ password }) }
-          value = { this.state.password }
-        />
-        <Button
-          onPress = { () => this.handleLogin() }
-          title = "Login"
-        />
-      </View>
+      this.state.isRegistered
+        ? <View style={styles.container}>
+          <Input
+            placeholder = "Username"
+            onChangeText = { (username) => this.setState({ username }) }
+            value = { this.state.username }
+          />
+          <Input
+            placeholder = "Password"
+            onChangeText = { (password) => this.setState({ password }) }
+            value = { this.state.password }
+          />
+          <Button
+            onPress = { () => this.handleLogin() }
+            title = "Login"
+          />
+          <Button
+            onPress = { () => this.toggleRegistration() }
+            title = "Create Account"
+          />
+        </View>
+        : <View style={styles.container}>
+          <Input
+            placeholder = "Username"
+            onChangeText = { (username) => this.setState({ username }) }
+            value = { this.state.username }
+          />
+          <Input
+            placeholder = "Password"
+            onChangeText = { (password) => this.setState({ password }) }
+            value = { this.state.password }
+          />
+          <Button
+            onPress = { () => this.handleRegistration() }
+            title = "Create Account"
+          />
+          <Button
+            onPress = { () => this.toggleRegistration() }
+            title = "Login"
+          />
+        </View>
     )
   }
 }
