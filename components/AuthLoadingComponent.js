@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 
 const mapStateToProps = state => {
   return {
-    // checkins: state.checkins,
     auth: state.auth
   }
 }
