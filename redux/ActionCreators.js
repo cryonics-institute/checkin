@@ -124,3 +124,54 @@ export const logoutFulfilledAction = () => {
     type: ActionTypes.LOGOUT_FULFILLED
   }
 }
+
+export const registerUser = (creds) => (dispatch) => {
+  dispatch(registrationRequestedAction(creds))
+
+  return auth.createUserWithEmailAndPassword(creds.username, creds.password)
+    .then(
+      () => {
+        dispatch(registrationFulfilledAction())
+        return auth.signInWithEmailAndPassword(creds.username, creds.password)
+      },
+      error => {
+        var errmess = new Error(error.message)
+        throw errmess
+      }
+    )
+    .then(
+      () => {
+        var user = auth.currentUser
+        dispatch(loginFulfilledAction(user))
+      },
+      error => {
+        var errmess = new Error(error.message)
+        throw errmess
+      }
+    )
+    .then(
+      () => {
+        NavigationService.navigate('App')
+      }
+    )
+    .catch(error => dispatch(registrationRejectedAction(error.message)))
+}
+
+export const registrationRequestedAction = () => {
+  return {
+    type: ActionTypes.REGISTRATION_REQUESTED
+  }
+}
+
+export const registrationRejectedAction = (message) => {
+  return {
+    type: ActionTypes.REGISTRATION_REJECTED,
+    payload: message
+  }
+}
+
+export const registrationFulfilledAction = () => {
+  return {
+    type: ActionTypes.REGISTRATION_FULFILLED
+  }
+}

@@ -1,8 +1,8 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { loginUser } from '../redux/ActionCreators'
+import { loginUser, registerUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
@@ -12,7 +12,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    loginUser: (creds) => dispatch(loginUser(creds))
+    loginUser: (creds) => dispatch(loginUser(creds)),
+    registerUser: (creds) => dispatch(registerUser(creds))
   }
 )
 
@@ -20,9 +21,17 @@ class SignIn extends React.Component {
   constructor (props) {
     super(props)
 
+    this.usernameRef = React.createRef()
+    this.passwordRef = React.createRef()
+
     this.state = {
+      isRegistered: true,
       username: '',
-      password: ''
+      password: '',
+      isUsernameValid: true,
+      isPasswordValid: true,
+      usernameError: '',
+      passwordError: ''
     }
   }
 
@@ -35,24 +44,128 @@ class SignIn extends React.Component {
     )
   }
 
+  handleRegistration () {
+    this.props.registerUser(
+      {
+        username: this.state.username,
+        password: this.state.password
+      }
+    )
+  }
+
+  toggleButtonDisabled () {
+    if (this.state.isUsernameValid && this.state.isPasswordValid) {
+      return false
+    } else {
+      return true
+    }
+  }
+
+  toggleRegistration () {
+    this.setState({ isRegistered: !this.state.isRegistered })
+  }
+
+  validateEmail (value) {
+    if (!value) {
+      this.setState({ usernameError: 'Required' })
+      this.setState({ isUsernameValid: false })
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      this.setState({ usernameError: 'Invalid E-Mail Address' })
+      this.setState({ isUsernameValid: false })
+    } else {
+      this.setState({ isUsernameValid: true })
+    }
+
+    this.setState({ username: value })
+  }
+
+  validatePassword (value) {
+    if (!value) {
+      this.setState({ passwordError: 'Required' })
+      this.setState({ isPasswordValid: false })
+    } else if (!/^.*(?=.{8,}).*$/i.test(value)) {
+      this.setState(
+        { passwordError: 'Password must contain at least eight characters.' }
+      )
+      this.setState({ isPasswordValid: false })
+    } else if (!/^.*(?=.*[A-Z]).*$/i.test(value)) {
+      this.setState(
+        {
+          passwordError: 'Password must contain at least one uppercase letter.'
+        }
+      )
+      this.setState({ isPasswordValid: false })
+    } else if (!/^.*(?=.*\d).*$/i.test(value)) {
+      this.setState(
+        { passwordError: 'Password must contain at least one numeral.' }
+      )
+      this.setState({ isPasswordValid: false })
+    } else {
+      this.setState({ isPasswordValid: true })
+    }
+
+    this.setState({ password: value })
+  }
+
   render () {
     return (
-      <View style={styles.container}>
-        <Input
-          placeholder = "Username"
-          onChangeText = { (username) => this.setState({ username }) }
-          value = { this.state.username }
-        />
-        <Input
-          placeholder = "Password"
-          onChangeText = { (password) => this.setState({ password }) }
-          value = { this.state.password }
-        />
-        <Button
-          onPress = { () => this.handleLogin() }
-          title = "Login"
-        />
-      </View>
+      this.state.isRegistered
+        ? <View style = { styles.container }>
+          <Input
+            ref = { this.usernameRef }
+            placeholder = "E-Mail Address"
+            onChangeText = { (username) => this.validateEmail(username) }
+            value = { this.state.username }
+          />
+          <Text style = { styles.errorText }>
+            { this.state.isUsernameValid ? '' : this.state.usernameError }
+          </Text>
+          <Input
+            ref = { this.passwordRef }
+            placeholder = "Password"
+            onChangeText = { (password) => this.validatePassword(password) }
+            value = { this.state.password }
+          />
+          <Text style={ styles.errorText }>
+            { this.state.isPasswordValid ? '' : this.state.passwordError }
+          </Text>
+          <Button
+            title = "Login"
+            disabled = { this.toggleButtonDisabled() }
+            onPress = { () => this.handleLogin() }
+          />
+          <Button
+            title = "Create Account"
+            onPress = { () => this.toggleRegistration() }
+          />
+        </View>
+        : <View style = { styles.container }>
+          <Input
+            placeholder = "Username"
+            onChangeText = { (username) => this.setState({ username }) }
+            value = { this.state.username }
+          />
+          <Text style={ styles.errorText }>
+            { this.state.isUsernameValid ? '' : this.state.usernameError }
+          </Text>
+          <Input
+            placeholder = "Password"
+            onChangeText = { (password) => this.setState({ password }) }
+            value = { this.state.password }
+          />
+          <Text style={ styles.errorText }>
+            { this.state.isPasswordValid ? '' : this.state.passwordError }
+          </Text>
+          <Button
+            title = "Create Account"
+            disabled = { this.toggleButtonDisabled() }
+            onPress = { () => this.handleRegistration() }
+          />
+          <Button
+            title = "Login"
+            onPress = { () => this.toggleRegistration() }
+          />
+        </View>
     )
   }
 }
@@ -64,6 +177,9 @@ const styles = StyleSheet.create(
       backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center'
+    },
+    errorText: {
+      color: 'red'
     }
   }
 )

@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 
 const mapStateToProps = state => {
   return {
-    // checkins: state.checkins,
     auth: state.auth
   }
 }
@@ -19,7 +18,7 @@ class AuthLoading extends React.Component {
   // Render any loading content that you like here
   render () {
     return (
-      <View style={styles.container}>
+      <View style = { styles.container }>
         <ActivityIndicator />
         <StatusBar barStyle="default" />
       </View>

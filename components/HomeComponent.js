@@ -23,7 +23,7 @@ class Home extends React.Component {
 
   render () {
     return (
-      <View style={styles.container}>
+      <View style = { styles.container }>
         <Text>Home Screen</Text>
         <Button
           onPress = { () => this.handleLogout() }
