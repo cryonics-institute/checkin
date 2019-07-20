@@ -130,7 +130,7 @@ class SignIn extends React.Component {
             { this.state.isPasswordValid ? '' : this.state.passwordError }
           </Text>
           <Button
-            title = "Signin"
+            title = "Sign In"
             disabled = { this.toggleButtonDisabled() }
             onPress = { () => this.handleSignin() }
           />
@@ -162,7 +162,7 @@ class SignIn extends React.Component {
             onPress = { () => this.handleRegistration() }
           />
           <Button
-            title = "Signin"
+            title = "Sign In"
             onPress = { () => this.toggleRegistration() }
           />
         </View>
