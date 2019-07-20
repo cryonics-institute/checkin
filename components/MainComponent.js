@@ -10,7 +10,7 @@ import SignIn from './SignInComponent'
 // Setup Redux
 const mapStateToProps = state => {
   return {
-    // checkins: state.checkins,
+    // checkin: state.checkin,
     auth: state.auth
   }
 }

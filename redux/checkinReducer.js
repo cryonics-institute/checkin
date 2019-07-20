@@ -1,35 +1,35 @@
 import * as ActionTypes from './ActionTypes'
 
-export const Checkins = (
+export const Checkin = (
   state = {
     isLoading: true,
     errMess: null,
-    checkins: []
+    checkin: []
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.GET_CHECKINS_REQUESTED:
+    case ActionTypes.GET_CHECKIN_REQUESTED:
       return {
         ...state,
         isLoading: true,
         errMess: null,
-        checkins: []
+        checkin: []
       }
 
-    case ActionTypes.GET_CHECKINS_REJECTED:
+    case ActionTypes.GET_CHECKIN_REJECTED:
       return {
         ...state,
         isLoading: false,
         errMess: action.payload
       }
 
-    case ActionTypes.GET_CHECKINS_FULFILLED:
+    case ActionTypes.GET_CHECKIN_FULFILLED:
       return {
         ...state,
         isLoading: false,
         errMess: null,
-        checkins: action.payload
+        checkin: action.payload
       }
 
     default:
