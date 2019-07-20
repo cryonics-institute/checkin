@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { loginUser, registerUser } from '../redux/ActionCreators'
+import { signinUser, registerUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
@@ -12,7 +12,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    loginUser: (creds) => dispatch(loginUser(creds)),
+    signinUser: (creds) => dispatch(signinUser(creds)),
     registerUser: (creds) => dispatch(registerUser(creds))
   }
 )
@@ -35,8 +35,8 @@ class SignIn extends React.Component {
     }
   }
 
-  handleLogin () {
-    this.props.loginUser(
+  handleSignin () {
+    this.props.signinUser(
       {
         username: this.state.username,
         password: this.state.password
@@ -130,9 +130,9 @@ class SignIn extends React.Component {
             { this.state.isPasswordValid ? '' : this.state.passwordError }
           </Text>
           <Button
-            title = "Login"
+            title = "Signin"
             disabled = { this.toggleButtonDisabled() }
-            onPress = { () => this.handleLogin() }
+            onPress = { () => this.handleSignin() }
           />
           <Button
             title = "Create Account"
@@ -162,7 +162,7 @@ class SignIn extends React.Component {
             onPress = { () => this.handleRegistration() }
           />
           <Button
-            title = "Login"
+            title = "Signin"
             onPress = { () => this.toggleRegistration() }
           />
         </View>

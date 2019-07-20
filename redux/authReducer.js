@@ -13,14 +13,14 @@ export const Auth = (
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.LOGIN_REQUESTED:
+    case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
         isLoading: true,
         isAuthenticated: false
       }
 
-    case ActionTypes.LOGIN_REJECTED:
+    case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
         isLoading: false,
@@ -28,7 +28,7 @@ export const Auth = (
         errMess: action.message
       }
 
-    case ActionTypes.LOGIN_FULFILLED:
+    case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
         isLoading: false,
@@ -37,14 +37,14 @@ export const Auth = (
         errMess: null
       }
 
-    case ActionTypes.LOGOUT_REQUESTED:
+    case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
         isLoading: true,
         isAuthenticated: true
       }
 
-    case ActionTypes.LOGOUT_REJECTED:
+    case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
         isLoading: false,
@@ -52,7 +52,7 @@ export const Auth = (
         errMess: action.message
       }
 
-    case ActionTypes.LOGOUT_FULFILLED:
+    case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
         isLoading: false,
