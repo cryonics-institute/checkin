@@ -1,6 +1,53 @@
 import * as ActionTypes from './ActionTypes'
-import { auth } from '../firebase/firebase'
+import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
+
+export const addUser = () => (dispatch) => {
+  dispatch(addUserRequestedAction())
+
+  console.log(auth.currentUser.email)
+  return auth.currentUser.getIdToken()
+    .then(
+      (userId) => {
+        console.log(userId)
+        return db.collection('users').doc(userId).set(
+          {
+            hello: 'HELLOHELLO',
+            checkInTime: firestore.Timestamp.now()
+          }
+        )
+      },
+      error => {
+        var errmess = new Error(error.message)
+        throw errmess
+      }
+    )
+    .then(
+      () => {
+        dispatch(addUserFulfilledAction())
+      }
+    )
+    .catch(error => dispatch(addUserRejectedAction(error.message)))
+}
+
+export const addUserRequestedAction = () => (
+  {
+    type: ActionTypes.ADD_USER_REQUESTED
+  }
+)
+
+export const addUserRejectedAction = (errmess) => (
+  {
+    type: ActionTypes.ADD_USER_REJECTED,
+    payload: errmess
+  }
+)
+
+export const addUserFulfilledAction = () => (
+  {
+    type: ActionTypes.ADD_USER_FULFILLED
+  }
+)
 
 // export const getCheckins = () => (dispatch) => {
 //   dispatch(getCheckinsRequestedAction())
@@ -132,6 +179,7 @@ export const registerUser = (creds) => (dispatch) => {
     .then(
       () => {
         dispatch(registrationFulfilledAction())
+        dispatch(loginRequestedAction())
         return auth.signInWithEmailAndPassword(creds.username, creds.password)
       },
       error => {
