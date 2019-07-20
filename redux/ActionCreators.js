@@ -5,15 +5,12 @@ import NavigationService from '../services/NavigationService'
 export const addUser = () => (dispatch) => {
   dispatch(addUserRequestedAction())
 
-  console.log(auth.currentUser.email)
   return auth.currentUser.getIdToken()
     .then(
-      (userId) => {
-        console.log(userId)
-        return db.collection('users').doc(userId).set(
+      (userToken) => {
+        return db.collection('users').doc(userToken).set(
           {
-            hello: 'HELLOHELLO',
-            checkInTime: firestore.Timestamp.now()
+            signinTime: firestore.Timestamp.now()
           }
         )
       },
@@ -49,55 +46,94 @@ export const addUserFulfilledAction = () => (
   }
 )
 
-// export const getCheckins = () => (dispatch) => {
-//   dispatch(getCheckinsRequestedAction())
-//
-//   return firestore.collection('checkins').get()
-//     .then(
-//       snapshot => {
-//         let checkins = []
-//         snapshot.forEach(
-//           doc => {
-//             const data = doc.data()
-//             const _id = doc.id
-//             checkins.push({ _id, ...data })
-//           }
-//         )
-//         return checkins
-//       }
-//     )
-//     .then(checkins => dispatch(getCheckinsFulfilledAction(checkins)))
-//     .catch(error => dispatch(getCheckinsRejectedAction(error.message)))
-// }
-//
-// export const getCheckinsRequestedAction = () => (
-//   {
-//     type: ActionTypes.GET_CHECKINS_REQUESTED
-//   }
-// )
-//
-// export const getCheckinsRejectedAction = (errmess) => (
-//   {
-//     type: ActionTypes.GET_CHECKINS_REJECTED,
-//     payload: errmess
-//   }
-// )
-//
-// export const getCheckinsFulfilledAction = (checkins) => (
-//   {
-//     type: ActionTypes.GET_CHECKINS_FULFILLED,
-//     payload: checkins
-//   }
-// )
+export const checkin = () => (dispatch) => {
+  dispatch(checkinRequestedAction())
 
-export const loginUser = (creds) => (dispatch) => {
-  dispatch(loginRequestedAction(creds))
+  return auth.currentUser.getIdToken()
+    .then(
+      (userToken) => {
+        return db.collection('users').doc(userToken).update(
+          {
+            checkinTime: firestore.Timestamp.now()
+          }
+        )
+      },
+      error => {
+        var errmess = new Error(error.message)
+        throw errmess
+      }
+    )
+    .then(
+      () => {
+        dispatch(checkinFulfilledAction())
+      }
+    )
+    .catch(error => dispatch(checkinRejectedAction(error.message)))
+}
+
+export const checkinRequestedAction = () => (
+  {
+    type: ActionTypes.CHECKIN_REQUESTED
+  }
+)
+
+export const checkinRejectedAction = (errmess) => (
+  {
+    type: ActionTypes.CHECKIN_REJECTED,
+    payload: errmess
+  }
+)
+
+export const checkinFulfilledAction = () => (
+  {
+    type: ActionTypes.CHECKIN_FULFILLED
+  }
+)
+
+export const removeUser = (userToken) => (dispatch) => {
+  dispatch(removeUserRequestedAction())
+
+  return db.collection('users').doc(userToken).delete()
+    .then(
+      () => {
+        dispatch(removeUserFulfilledAction())
+      }
+    )
+    .catch(error => dispatch(removeUserRejectedAction(error.message)))
+}
+
+export const removeUserRequestedAction = () => (
+  {
+    type: ActionTypes.REMOVE_USER_REQUESTED
+  }
+)
+
+export const removeUserRejectedAction = (errmess) => (
+  {
+    type: ActionTypes.REMOVE_USER_REJECTED,
+    payload: errmess
+  }
+)
+
+export const removeUserFulfilledAction = () => (
+  {
+    type: ActionTypes.REMOVE_USER_FULFILLED
+  }
+)
+
+export const signinUser = (creds) => (dispatch) => {
+  dispatch(signinRequestedAction(creds))
 
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       () => {
         var user = auth.currentUser
-        dispatch(loginFulfilledAction(user))
+        dispatch(signinFulfilledAction(user))
+      }
+    )
+    .then(
+      () => {
+        dispatch(addUser())
       },
       error => {
         var errmess = new Error(error.message)
@@ -109,36 +145,36 @@ export const loginUser = (creds) => (dispatch) => {
         NavigationService.navigate('App')
       }
     )
-    .catch(error => dispatch(loginRejectedAction(error.message)))
+    .catch(error => dispatch(signinRejectedAction(error.message)))
 }
 
-export const loginRequestedAction = () => {
+export const signinRequestedAction = () => {
   return {
-    type: ActionTypes.LOGIN_REQUESTED
+    type: ActionTypes.SIGNIN_REQUESTED
   }
 }
 
-export const loginRejectedAction = (message) => {
+export const signinRejectedAction = (message) => {
   return {
-    type: ActionTypes.LOGIN_REJECTED,
+    type: ActionTypes.SIGNIN_REJECTED,
     payload: message
   }
 }
 
-export const loginFulfilledAction = (user) => {
+export const signinFulfilledAction = (user) => {
   return {
-    type: ActionTypes.LOGIN_FULFILLED,
+    type: ActionTypes.SIGNIN_FULFILLED,
     payload: user
   }
 }
 
-export const logoutUser = () => (dispatch) => {
-  dispatch(logoutRequestedAction())
+export const signoutUser = () => (dispatch) => {
+  dispatch(signoutRequestedAction())
 
-  auth.signOut()
+  return auth.currentUser.getIdToken()
     .then(
-      () => {
-        dispatch(logoutFulfilledAction())
+      (userToken) => {
+        dispatch(removeUser(userToken))
       },
       error => {
         var errmess = new Error(error.message)
@@ -147,28 +183,42 @@ export const logoutUser = () => (dispatch) => {
     )
     .then(
       () => {
+        auth.signOut()
+      },
+      error => {
+        var errmess = new Error(error.message)
+        throw errmess
+      }
+    )
+    .then(
+      () => {
+        dispatch(signoutFulfilledAction())
+      }
+    )
+    .then(
+      () => {
         NavigationService.navigate('Auth')
       }
     )
-    .catch((error) => { logoutRejectedAction(error.message) })
+    .catch((error) => { signoutRejectedAction(error.message) })
 }
 
-export const logoutRequestedAction = () => {
+export const signoutRequestedAction = () => {
   return {
-    type: ActionTypes.LOGOUT_REQUESTED
+    type: ActionTypes.SIGNOUT_REQUESTED
   }
 }
 
-export const logoutRejectedAction = (message) => {
+export const signoutRejectedAction = (message) => {
   return {
-    type: ActionTypes.LOGOUT_REJECTED,
+    type: ActionTypes.SIGNOUT_REJECTED,
     payload: message
   }
 }
 
-export const logoutFulfilledAction = () => {
+export const signoutFulfilledAction = () => {
   return {
-    type: ActionTypes.LOGOUT_FULFILLED
+    type: ActionTypes.SIGNOUT_FULFILLED
   }
 }
 
@@ -179,27 +229,15 @@ export const registerUser = (creds) => (dispatch) => {
     .then(
       () => {
         dispatch(registrationFulfilledAction())
-        dispatch(loginRequestedAction())
-        return auth.signInWithEmailAndPassword(creds.username, creds.password)
-      },
-      error => {
-        var errmess = new Error(error.message)
-        throw errmess
       }
     )
     .then(
       () => {
-        var user = auth.currentUser
-        dispatch(loginFulfilledAction(user))
+        dispatch(signinUser(creds))
       },
       error => {
         var errmess = new Error(error.message)
         throw errmess
-      }
-    )
-    .then(
-      () => {
-        NavigationService.navigate('App')
       }
     )
     .catch(error => dispatch(registrationRejectedAction(error.message)))
