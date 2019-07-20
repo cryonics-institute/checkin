@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { addUser, logoutUser } from '../redux/ActionCreators'
+import { checkin, signoutUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
@@ -12,8 +12,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    logoutUser: () => dispatch(logoutUser()),
-    addUser: () => dispatch(addUser())
+    signoutUser: () => dispatch(signoutUser()),
+    addUser: () => dispatch(checkin())
   }
 )
 
@@ -22,8 +22,8 @@ class Home extends React.Component {
     this.props.addUser()
   }
 
-  handleLogout () {
-    this.props.logoutUser()
+  handleSignout () {
+    this.props.signoutUser()
   }
 
   render () {
@@ -35,8 +35,8 @@ class Home extends React.Component {
           title = "Check-In"
         />
         <Button
-          onPress = { () => this.handleLogout() }
-          title = "Logout"
+          onPress = { () => this.handleSignout() }
+          title = "Sign Out"
         />
       </View>
     )
