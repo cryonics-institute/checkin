@@ -7,7 +7,6 @@ export const Auth = (
   state = {
     isLoading: false,
     isAuthenticated: false,
-    user: null,
     errMess: null
   },
   action
@@ -33,7 +32,6 @@ export const Auth = (
         ...state,
         isLoading: false,
         isAuthenticated: true,
-        user: action.user,
         errMess: null
       }
 
@@ -57,7 +55,6 @@ export const Auth = (
         ...state,
         isLoading: false,
         isAuthenticated: false,
-        user: null,
         errMess: null
       }
 
