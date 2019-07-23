@@ -6,13 +6,14 @@ import { checkin, signoutUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    auth: state.auth,
+    timer: state.timer
   }
 }
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signoutUser: () => dispatch(signoutUser()),
+    signoutUser: (oldTimer) => dispatch(signoutUser(oldTimer)),
     addUser: () => dispatch(checkin())
   }
 )
@@ -23,7 +24,7 @@ class Home extends React.Component {
   }
 
   handleSignout () {
-    this.props.signoutUser()
+    this.props.signoutUser(this.props.timer)
   }
 
   render () {
