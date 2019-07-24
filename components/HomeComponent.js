@@ -13,14 +13,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signoutUser: (oldTimer) => dispatch(signoutUser(oldTimer)),
-    addUser: () => dispatch(checkin())
+    checkin: () => dispatch(checkin()),
+    signoutUser: () => dispatch(signoutUser())
   }
 )
 
 class Home extends React.Component {
   handleCheckin () {
-    this.props.addUser()
+    this.props.checkin(this.props.timer)
   }
 
   handleSignout () {

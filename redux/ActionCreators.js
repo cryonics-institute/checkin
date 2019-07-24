@@ -1,3 +1,4 @@
+import { Alert } from 'react-native'
 import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
@@ -21,23 +22,8 @@ export const addUser = () => (dispatch) => {
     )
     .then(
       () => {
-        dispatch(setTimerRequestedAction())
-
-        return setTimeout(
-          () => { console.log('000000000000000000000') },
-          10000
-        )
-      },
-      error => {
-        var errmess = new Error(error.message)
-        dispatch(setTimerRejectedAction(errmess))
-        throw errmess
-      }
-    )
-    .then(
-      (newTimer) => {
-        dispatch(setTimerFulfilledAction(newTimer))
         dispatch(addUserFulfilledAction())
+        dispatch(setTimer())
       }
     )
     .catch(error => dispatch(addUserRejectedAction(error.message)))
@@ -81,20 +67,8 @@ export const checkin = () => (dispatch) => {
     )
     .then(
       () => {
-        dispatch(setTimerRequestedAction())
-
-        return setTimeout(() => { console.log('TIMEOUT SET') }, 5000)
-      },
-      error => {
-        var errmess = new Error(error.message)
-        dispatch(setTimerRejectedAction(errmess))
-        throw errmess
-      }
-    )
-    .then(
-      (newTimer) => {
-        dispatch(setTimerFulfilledAction(newTimer))
         dispatch(checkinFulfilledAction())
+        // dispatch(setTimer())
       }
     )
     .catch(error => dispatch(checkinRejectedAction(error.message)))
@@ -116,12 +90,6 @@ export const checkinRejectedAction = (errmess) => (
 export const checkinFulfilledAction = () => (
   {
     type: ActionTypes.CHECKIN_FULFILLED
-  }
-)
-
-export const clearTimerFulfilledAction = () => (
-  {
-    type: ActionTypes.CLEAR_TIMER_FULFILLED
   }
 )
 
@@ -161,24 +129,64 @@ export const registrationFulfilledAction = () => (
   }
 )
 
-export const removeUserRequestedAction = () => (
-  {
-    type: ActionTypes.REMOVE_USER_REQUESTED
-  }
-)
+export const setTimer = () => (dispatch) => {
+  // TODO: You need to cancel subsequent calls.
+  // https://stackoverflow.com/questions/22707475/how-to-make-a-promise-from-settimeout
 
-export const removeUserRejectedAction = (errmess) => (
-  {
-    type: ActionTypes.REMOVE_USER_REJECTED,
-    payload: errmess
+  const checkinAlert = () => {
+    Alert.alert(
+      'Check In?',
+      'Your standby team will be alerted if not.',
+      [
+        { text: 'OK', onPress: () => console.log('OK Pressed') },
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel'
+        }
+      ],
+      { cancelable: false }
+    )
   }
-)
 
-export const removeUserFulfilledAction = () => (
-  {
-    type: ActionTypes.REMOVE_USER_FULFILLED
+  const later = (delay) => {
+    let timer = 0
+    let reject = null
+    const promise = new Promise(
+      (resolve, reject) => {
+        timer = setTimeout(
+          () => {
+            resolve(checkinAlert())
+          },
+          delay
+        )
+      }
+    )
+    return {
+      get promise () { return promise },
+      cancel () {
+        if (timer) {
+          clearTimeout(timer)
+          timer = 0
+          reject()
+          reject = null
+        }
+      }
+    }
   }
-)
+
+  dispatch(setTimerRequestedAction())
+
+  later(10000).promise
+    .then(
+      () => { dispatch(setTimerFulfilledAction()) },
+      error => {
+        var errmess = new Error(error.message)
+        throw errmess
+      }
+    )
+    .catch(error => dispatch(setTimerRejectedAction(error.message)))
+}
 
 export const setTimerRequestedAction = () => (
   {
@@ -193,10 +201,9 @@ export const setTimerRejectedAction = (message) => (
   }
 )
 
-export const setTimerFulfilledAction = (timer) => (
+export const setTimerFulfilledAction = () => (
   {
-    type: ActionTypes.SET_TIMER_FULFILLED,
-    payload: timer
+    type: ActionTypes.SET_TIMER_FULFILLED
   }
 )
 
@@ -234,34 +241,28 @@ export const signinRejectedAction = (message) => (
 
 export const signinFulfilledAction = (user) => (
   {
-    type: ActionTypes.SIGNIN_FULFILLED,
-    payload: user
+    type: ActionTypes.SIGNIN_FULFILLED
   }
 )
 
-export const signoutUser = (oldTimer) => (dispatch) => {
+export const signoutUser = () => (dispatch) => {
   dispatch(signoutRequestedAction())
 
   return auth.currentUser.getIdToken()
     .then(
       userToken => {
-        dispatch(removeUserRequestedAction())
         return db.collection('users').doc(userToken).delete()
       },
       error => {
         var errmess = new Error(error.message)
-        dispatch(removeUserRejectedAction(errmess))
         throw errmess
       }
     )
     .then(
       () => {
         auth.signOut()
-        clearTimeout(oldTimer.id)
-        NavigationService.navigate('Auth')
-        dispatch(clearTimerFulfilledAction())
-        dispatch(removeUserFulfilledAction())
         dispatch(signoutFulfilledAction())
+        NavigationService.navigate('Auth')
       },
       error => {
         var errmess = new Error(error.message)
