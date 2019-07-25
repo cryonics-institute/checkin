@@ -68,7 +68,7 @@ export const checkin = () => (dispatch) => {
     .then(
       () => {
         dispatch(checkinFulfilledAction())
-        // dispatch(setTimer())
+        dispatch(setTimer())
       }
     )
     .catch(error => dispatch(checkinRejectedAction(error.message)))
@@ -130,15 +130,21 @@ export const registrationFulfilledAction = () => (
 )
 
 export const setTimer = () => (dispatch) => {
-  // TODO: You need to cancel subsequent calls.
-  // https://stackoverflow.com/questions/22707475/how-to-make-a-promise-from-settimeout
-
+  // TODO: What is needed is an interval parameter that will be set to 0 when
+  // the user signs out.
   const checkinAlert = () => {
+    // if interval is not 0
     Alert.alert(
       'Check In?',
       'Your standby team will be alerted if not.',
       [
-        { text: 'OK', onPress: () => console.log('OK Pressed') },
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed')
+            dispatch(checkin())
+          }
+        },
         {
           text: 'Cancel',
           onPress: () => console.log('Cancel Pressed'),
@@ -147,37 +153,27 @@ export const setTimer = () => (dispatch) => {
       ],
       { cancelable: false }
     )
+    // else do nothing
   }
 
   const later = (delay) => {
-    let timer = 0
-    let reject = null
-    const promise = new Promise(
-      (resolve, reject) => {
-        timer = setTimeout(
-          () => {
-            resolve(checkinAlert())
-          },
-          delay
+    return new Promise(
+      (resolve) => {
+        resolve(
+          setTimeout(
+            () => {
+              checkinAlert()
+            },
+            delay
+          )
         )
       }
     )
-    return {
-      get promise () { return promise },
-      cancel () {
-        if (timer) {
-          clearTimeout(timer)
-          timer = 0
-          reject()
-          reject = null
-        }
-      }
-    }
   }
 
   dispatch(setTimerRequestedAction())
 
-  later(10000).promise
+  return later(10000)
     .then(
       () => { dispatch(setTimerFulfilledAction()) },
       error => {
@@ -201,7 +197,7 @@ export const setTimerRejectedAction = (message) => (
   }
 )
 
-export const setTimerFulfilledAction = () => (
+export const setTimerFulfilledAction = (timer) => (
   {
     type: ActionTypes.SET_TIMER_FULFILLED
   }
@@ -245,7 +241,7 @@ export const signinFulfilledAction = (user) => (
   }
 )
 
-export const signoutUser = () => (dispatch) => {
+export const signoutUser = (timer) => (dispatch) => {
   dispatch(signoutRequestedAction())
 
   return auth.currentUser.getIdToken()
@@ -260,6 +256,7 @@ export const signoutUser = () => (dispatch) => {
     )
     .then(
       () => {
+        clearTimeout(timer)
         auth.signOut()
         dispatch(signoutFulfilledAction())
         NavigationService.navigate('Auth')
