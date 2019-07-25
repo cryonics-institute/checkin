@@ -16,8 +16,8 @@ export const addUser = () => (dispatch) => {
         )
       },
       error => {
-        var errmess = new Error(error.message)
-        throw errmess
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
@@ -35,10 +35,10 @@ export const addUserRequestedAction = () => (
   }
 )
 
-export const addUserRejectedAction = (errmess) => (
+export const addUserRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.ADD_USER_REJECTED,
-    payload: errmess
+    payload: errorMessage
   }
 )
 
@@ -61,8 +61,8 @@ export const checkin = () => (dispatch) => {
         )
       },
       error => {
-        var errmess = new Error(error.message)
-        throw errmess
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
@@ -80,10 +80,10 @@ export const checkinRequestedAction = () => (
   }
 )
 
-export const checkinRejectedAction = (errmess) => (
+export const checkinRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.CHECKIN_REJECTED,
-    payload: errmess
+    payload: errorMessage
   }
 )
 
@@ -103,8 +103,8 @@ export const registerUser = (creds) => (dispatch) => {
         dispatch(signinUser(creds))
       },
       error => {
-        var errmess = new Error(error.message)
-        throw errmess
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .catch(error => dispatch(registrationRejectedAction(error.message)))
@@ -129,31 +129,32 @@ export const registrationFulfilledAction = () => (
   }
 )
 
-export const setTimer = () => (dispatch) => {
-  // TODO: What is needed is an interval parameter that will be set to 0 when
-  // the user signs out.
+export const setTimer = () => (dispatch, getState) => {
   const checkinAlert = () => {
-    // if interval is not 0
-    Alert.alert(
-      'Check In?',
-      'Your standby team will be alerted if not.',
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            console.log('OK Pressed')
-            dispatch(checkin())
+    if (getState().timer.interval !== 0) {
+      Alert.alert(
+        'Check In?',
+        'Your standby team will be alerted if not.',
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              console.log('OK Pressed')
+              dispatch(checkin())
+            }
+          },
+          {
+            text: 'Cancel',
+            onPress: () => {
+              console.log('Cancel Pressed')
+              dispatch(setTimerFulfilledAction(0))
+            },
+            style: 'cancel'
           }
-        },
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel'
-        }
-      ],
-      { cancelable: false }
-    )
-    // else do nothing
+        ],
+        { cancelable: false }
+      )
+    }
   }
 
   const later = (delay) => {
@@ -173,12 +174,14 @@ export const setTimer = () => (dispatch) => {
 
   dispatch(setTimerRequestedAction())
 
-  return later(10000)
+  // const interval = getState().timer.interval
+  const interval = 10000
+  return later(interval)
     .then(
-      () => { dispatch(setTimerFulfilledAction()) },
+      () => { dispatch(setTimerFulfilledAction(interval)) },
       error => {
-        var errmess = new Error(error.message)
-        throw errmess
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .catch(error => dispatch(setTimerRejectedAction(error.message)))
@@ -197,9 +200,10 @@ export const setTimerRejectedAction = (message) => (
   }
 )
 
-export const setTimerFulfilledAction = (timer) => (
+export const setTimerFulfilledAction = (interval) => (
   {
-    type: ActionTypes.SET_TIMER_FULFILLED
+    type: ActionTypes.SET_TIMER_FULFILLED,
+    payload: interval
   }
 )
 
@@ -215,8 +219,8 @@ export const signinUser = (creds) => (dispatch) => {
         dispatch(addUser())
       },
       error => {
-        var errmess = new Error(error.message)
-        throw errmess
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .catch(error => dispatch(signinRejectedAction(error.message)))
@@ -241,8 +245,9 @@ export const signinFulfilledAction = (user) => (
   }
 )
 
-export const signoutUser = (timer) => (dispatch) => {
+export const signoutUser = () => (dispatch) => {
   dispatch(signoutRequestedAction())
+  dispatch(setTimerRequestedAction())
 
   return auth.currentUser.getIdToken()
     .then(
@@ -250,23 +255,36 @@ export const signoutUser = (timer) => (dispatch) => {
         return db.collection('users').doc(userToken).delete()
       },
       error => {
-        var errmess = new Error(error.message)
-        throw errmess
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
       () => {
-        clearTimeout(timer)
+        dispatch(setTimerFulfilledAction(0))
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
         auth.signOut()
         dispatch(signoutFulfilledAction())
         NavigationService.navigate('Auth')
       },
       error => {
-        var errmess = new Error(error.message)
-        throw errmess
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
-    .catch((error) => { signoutRejectedAction(error.message) })
+    .catch(
+      (error) => {
+        signoutRejectedAction(error.message)
+        setTimerRejectedAction(error.message)
+      }
+    )
 }
 
 export const signoutRequestedAction = () => (

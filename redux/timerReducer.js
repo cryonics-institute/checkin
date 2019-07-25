@@ -3,7 +3,8 @@ import * as ActionTypes from './ActionTypes'
 export const Timer = (
   state = {
     isLoading: true,
-    errMess: null
+    errMess: null,
+    interval: 0
   },
   action
 ) => {
@@ -26,7 +27,8 @@ export const Timer = (
       return {
         ...state,
         isLoading: false,
-        errMess: null
+        errMess: null,
+        interval: action.payload
       }
 
     default:
