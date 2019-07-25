@@ -4,7 +4,7 @@ export const Timer = (
   state = {
     isLoading: true,
     errMess: null,
-    id: null
+    interval: 0
   },
   action
 ) => {
@@ -28,29 +28,7 @@ export const Timer = (
         ...state,
         isLoading: false,
         errMess: null,
-        id: action.payload
-      }
-
-    case ActionTypes.CLEAR_TIMER_REQUESTED:
-      return {
-        ...state,
-        isLoading: true,
-        errMess: null
-      }
-
-    case ActionTypes.CLEAR_TIMER_REJECTED:
-      return {
-        ...state,
-        isLoading: false,
-        errMess: action.payload
-      }
-
-    case ActionTypes.CLEAR_TIMER_FULFILLED:
-      return {
-        ...state,
-        isLoading: false,
-        errMess: null,
-        id: null
+        interval: action.payload
       }
 
     default:

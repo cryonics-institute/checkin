@@ -1,40 +1,29 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { checkin, signoutUser } from '../redux/ActionCreators'
+import { signoutUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth,
-    timer: state.timer
+    auth: state.auth
   }
 }
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signoutUser: (oldTimer) => dispatch(signoutUser(oldTimer)),
-    addUser: () => dispatch(checkin())
+    signoutUser: () => dispatch(signoutUser())
   }
 )
 
 class Home extends React.Component {
-  handleCheckin () {
-    this.props.addUser()
-  }
-
   handleSignout () {
-    this.props.signoutUser(this.props.timer)
+    this.props.signoutUser()
   }
 
   render () {
     return (
       <View style = { styles.container }>
-        <Text>Home Screen</Text>
-        <Button
-          onPress = { () => this.handleCheckin() }
-          title = "Check-In"
-        />
         <Button
           onPress = { () => this.handleSignout() }
           title = "Sign Out"
