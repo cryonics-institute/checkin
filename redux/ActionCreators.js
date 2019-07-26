@@ -1,5 +1,4 @@
 import { Alert } from 'react-native'
-import BackgroundTask from 'react-native-background-task'
 import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
@@ -262,8 +261,6 @@ export const signoutUser = () => (dispatch) => {
     )
     .then(
       () => {
-        BackgroundTask.finish()
-        BackgroundTask.cancel()
         dispatch(setTimerFulfilledAction(0))
       },
       error => {

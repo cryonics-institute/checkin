@@ -26,8 +26,8 @@
     "ios": {
       "bundleIdentifier": "org.cryonics.checkin",
       "supportsTablet": true,
-      "publishBundlePath": "ios/cryonics-check-in/Supporting/shell-app.bundle",
-      "publishManifestPath": "ios/cryonics-check-in/Supporting/shell-app-manifest.json"
+      "publishBundlePath": "ios/checkin/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/checkin/Supporting/shell-app-manifest.json"
     },
     "android": {
       "package": "org.cryonics.checkin",
