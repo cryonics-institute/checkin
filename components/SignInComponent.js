@@ -5,9 +5,7 @@ import { connect } from 'react-redux'
 import { signinUser, registerUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
-  return {
-    auth: state.auth
-  }
+  return { }
 }
 
 const mapDispatchToProps = (dispatch) => (
