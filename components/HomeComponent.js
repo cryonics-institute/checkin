@@ -1,31 +1,51 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
-import { Button } from 'react-native-elements'
+import { StyleSheet, Text, View } from 'react-native'
+import { Button, Slider } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signoutUser } from '../redux/ActionCreators'
+import { setTimerInterval, signoutUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    timer: state.timer
   }
 }
 
 const mapDispatchToProps = (dispatch) => (
   {
+    setTimerInterval: (interval) => dispatch(setTimerInterval(interval)),
     signoutUser: () => dispatch(signoutUser())
   }
 )
 
 class Home extends React.Component {
-  handleSignout () {
-    this.props.signoutUser()
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      interval: this.props.timer.interval
+    }
+  }
+
+  handleIntervalChange (value) {
+    this.setState({ interval: value })
+    this.props.setTimerInterval(this.state.interval)
   }
 
   render () {
     return (
       <View style = { styles.container }>
+        <Text style = { styles.title }>Check-In Interval</Text>
+        <Slider
+          maximumValue = { 10000 }
+          minimumValue = { 0 }
+          onValueChange = { value => this.handleIntervalChange(value) }
+          step = { 1000 }
+          style = { styles.slider }
+          value = { this.props.timer.interval }
+        />
+        <Text>{ this.state.interval }</Text>
         <Button
-          onPress = { () => this.handleSignout() }
+          onPress = { () => this.props.signoutUser() }
           title = "Sign Out"
         />
       </View>
@@ -36,10 +56,18 @@ class Home extends React.Component {
 const styles = StyleSheet.create(
   {
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
       alignItems: 'center',
-      justifyContent: 'center'
+      backgroundColor: '#fff',
+      flex: 1,
+      justifyContent: 'center',
+      padding: 20
+    },
+    slider: {
+      width: 100
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold'
     }
   }
 )

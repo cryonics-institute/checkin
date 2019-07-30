@@ -129,6 +129,17 @@ export const registrationFulfilledAction = () => (
   }
 )
 
+export const setTimerInterval = (interval) => (dispatch) => {
+  dispatch(setTimerIntervalAction(interval))
+}
+
+export const setTimerIntervalAction = (interval) => (
+  {
+    type: ActionTypes.SET_TIMER_INTERVAL,
+    payload: interval
+  }
+)
+
 export const setTimer = () => (dispatch, getState) => {
   const checkinAlert = () => {
     if (getState().timer.interval !== 0) {
@@ -162,9 +173,7 @@ export const setTimer = () => (dispatch, getState) => {
       (resolve) => {
         resolve(
           setTimeout(
-            () => {
-              checkinAlert()
-            },
+            () => { checkinAlert() },
             delay
           )
         )
@@ -174,11 +183,14 @@ export const setTimer = () => (dispatch, getState) => {
 
   dispatch(setTimerRequestedAction())
 
-  // const interval = getState().timer.interval
-  const interval = 10000
-  return later(interval)
+  if (getState().timer.interval === 0) {
+    dispatch(setTimerIntervalAction(10000))
+  }
+
+  // TODO: This needs work.  For example, it should change after every slider change.
+  return later(getState().timer.interval)
     .then(
-      () => { dispatch(setTimerFulfilledAction(interval)) },
+      () => { dispatch(setTimerFulfilledAction()) },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -200,10 +212,9 @@ export const setTimerRejectedAction = (message) => (
   }
 )
 
-export const setTimerFulfilledAction = (interval) => (
+export const setTimerFulfilledAction = () => (
   {
-    type: ActionTypes.SET_TIMER_FULFILLED,
-    payload: interval
+    type: ActionTypes.SET_TIMER_FULFILLED
   }
 )
 

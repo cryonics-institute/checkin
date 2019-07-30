@@ -27,7 +27,12 @@ export const Timer = (
       return {
         ...state,
         isLoading: false,
-        errMess: null,
+        errMess: null
+      }
+
+    case ActionTypes.SET_TIMER_INTERVAL:
+      return {
+        ...state,
         interval: action.payload
       }
 
