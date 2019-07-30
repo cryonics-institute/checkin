@@ -135,6 +135,7 @@ class SignIn extends React.Component {
           <Button
             title = "Create Account"
             onPress = { () => this.toggleRegistration() }
+            type="clear"
           />
         </View>
         : <View style = { styles.container }>
@@ -162,6 +163,7 @@ class SignIn extends React.Component {
           <Button
             title = "Sign In"
             onPress = { () => this.toggleRegistration() }
+            type="clear"
           />
         </View>
     )
