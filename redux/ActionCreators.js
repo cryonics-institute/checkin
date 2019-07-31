@@ -23,7 +23,7 @@ export const addUser = () => (dispatch) => {
     .then(
       () => {
         dispatch(addUserFulfilledAction())
-        dispatch(setTimer())
+        dispatch(setTimer(5000))
       }
     )
     .catch(error => dispatch(addUserRejectedAction(error.message)))
@@ -48,7 +48,7 @@ export const addUserFulfilledAction = () => (
   }
 )
 
-export const checkin = () => (dispatch) => {
+export const checkin = () => (dispatch, getState) => {
   dispatch(checkinRequestedAction())
 
   return auth.currentUser.getIdToken()
@@ -68,7 +68,7 @@ export const checkin = () => (dispatch) => {
     .then(
       () => {
         dispatch(checkinFulfilledAction())
-        dispatch(setTimer())
+        dispatch(setTimer(getState().timer.interval))
       }
     )
     .catch(error => dispatch(checkinRejectedAction(error.message)))
@@ -129,9 +129,51 @@ export const registrationFulfilledAction = () => (
   }
 )
 
-export const setTimer = () => (dispatch, getState) => {
+export const removeTimer = (timer) => (dispatch, getState) => {
+  clearTimeout(timer)
+
+  const timers = getState().timer.timers
+  const index = timers.indexOf(timer)
+  if (index > -1) {
+    timers.splice(index, 1)
+  }
+
+  dispatch(removeTimerAction(timers))
+}
+
+export const removeTimerAction = (newTimers) => (
+  {
+    type: ActionTypes.REMOVE_TIMER,
+    payload: newTimers
+  }
+)
+
+export const removeTimers = () => (dispatch, getState) => {
+  getState().timer.timers.forEach(timer => clearTimeout(timer))
+  dispatch(removeTimersAction())
+}
+
+export const removeTimersAction = () => (
+  {
+    type: ActionTypes.REMOVE_TIMERS
+  }
+)
+
+export const setTimerInterval = (interval) => (dispatch, getState) => {
+  dispatch(setTimerIntervalAction(interval))
+}
+
+export const setTimerIntervalAction = (interval) => (
+  {
+    type: ActionTypes.SET_TIMER_INTERVAL,
+    payload: interval
+  }
+)
+
+export const setTimer = (interval) => (dispatch, getState) => {
   const checkinAlert = () => {
-    if (getState().timer.interval !== 0) {
+    const timers = getState().timer.timers
+    if (typeof timers !== 'undefined' && timers.length > 0) {
       Alert.alert(
         'Check In?',
         'Your standby team will be alerted if not.',
@@ -140,6 +182,7 @@ export const setTimer = () => (dispatch, getState) => {
             text: 'OK',
             onPress: () => {
               console.log('OK Pressed')
+              dispatch(removeTimers())
               dispatch(checkin())
             }
           },
@@ -147,7 +190,7 @@ export const setTimer = () => (dispatch, getState) => {
             text: 'Cancel',
             onPress: () => {
               console.log('Cancel Pressed')
-              dispatch(setTimerFulfilledAction(0))
+              dispatch(removeTimers())
             },
             style: 'cancel'
           }
@@ -157,28 +200,19 @@ export const setTimer = () => (dispatch, getState) => {
     }
   }
 
-  const later = (delay) => {
-    return new Promise(
-      (resolve) => {
-        resolve(
-          setTimeout(
-            () => {
-              checkinAlert()
-            },
-            delay
-          )
-        )
-      }
-    )
-  }
-
   dispatch(setTimerRequestedAction())
+  dispatch(setTimerInterval(interval))
 
-  // const interval = getState().timer.interval
-  const interval = 10000
-  return later(interval)
+  return Promise.resolve(
+    setTimeout(
+      () => { checkinAlert() },
+      getState().timer.interval
+    )
+  )
     .then(
-      () => { dispatch(setTimerFulfilledAction(interval)) },
+      (timer) => {
+        dispatch(setTimerFulfilledAction(timer))
+      },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -200,10 +234,10 @@ export const setTimerRejectedAction = (message) => (
   }
 )
 
-export const setTimerFulfilledAction = (interval) => (
+export const setTimerFulfilledAction = (timer) => (
   {
     type: ActionTypes.SET_TIMER_FULFILLED,
-    payload: interval
+    payload: timer
   }
 )
 
@@ -247,7 +281,6 @@ export const signinFulfilledAction = (user) => (
 
 export const signoutUser = () => (dispatch) => {
   dispatch(signoutRequestedAction())
-  dispatch(setTimerRequestedAction())
 
   return auth.currentUser.getIdToken()
     .then(
@@ -261,7 +294,7 @@ export const signoutUser = () => (dispatch) => {
     )
     .then(
       () => {
-        dispatch(setTimerFulfilledAction(0))
+        dispatch(removeTimers())
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -282,7 +315,6 @@ export const signoutUser = () => (dispatch) => {
     .catch(
       (error) => {
         signoutRejectedAction(error.message)
-        setTimerRejectedAction(error.message)
       }
     )
 }

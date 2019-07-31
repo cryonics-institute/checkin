@@ -9,9 +9,7 @@ import SignIn from './SignInComponent'
 
 // Setup Redux
 const mapStateToProps = state => {
-  return {
-    auth: state.auth
-  }
+  return { }
 }
 
 // Setup Navigation Components

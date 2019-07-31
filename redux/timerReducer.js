@@ -2,9 +2,9 @@ import * as ActionTypes from './ActionTypes'
 
 export const Timer = (
   state = {
-    isLoading: true,
     errMess: null,
-    interval: 0
+    interval: 0,
+    timers: []
   },
   action
 ) => {
@@ -12,23 +12,38 @@ export const Timer = (
     case ActionTypes.SET_TIMER_REQUESTED:
       return {
         ...state,
-        isLoading: true,
         errMess: null
       }
 
     case ActionTypes.SET_TIMER_REJECTED:
       return {
         ...state,
-        isLoading: false,
         errMess: action.payload
       }
 
     case ActionTypes.SET_TIMER_FULFILLED:
       return {
         ...state,
-        isLoading: false,
         errMess: null,
+        timers: state.timers.concat(action.payload)
+      }
+
+    case ActionTypes.SET_TIMER_INTERVAL:
+      return {
+        ...state,
         interval: action.payload
+      }
+
+    case ActionTypes.REMOVE_TIMER:
+      return {
+        ...state,
+        timers: action.payload
+      }
+
+    case ActionTypes.REMOVE_TIMERS:
+      return {
+        ...state,
+        timers: []
       }
 
     default:

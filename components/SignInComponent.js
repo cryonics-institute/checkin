@@ -5,9 +5,7 @@ import { connect } from 'react-redux'
 import { signinUser, registerUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
-  return {
-    auth: state.auth
-  }
+  return { }
 }
 
 const mapDispatchToProps = (dispatch) => (
@@ -137,6 +135,7 @@ class SignIn extends React.Component {
           <Button
             title = "Create Account"
             onPress = { () => this.toggleRegistration() }
+            type="clear"
           />
         </View>
         : <View style = { styles.container }>
@@ -164,6 +163,7 @@ class SignIn extends React.Component {
           <Button
             title = "Sign In"
             onPress = { () => this.toggleRegistration() }
+            type="clear"
           />
         </View>
     )
