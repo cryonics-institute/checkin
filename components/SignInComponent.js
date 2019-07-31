@@ -5,7 +5,9 @@ import { connect } from 'react-redux'
 import { signinUser, registerUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
-  return { }
+  return {
+    // Nothing in state is relevant here.
+  }
 }
 
 const mapDispatchToProps = (dispatch) => (
