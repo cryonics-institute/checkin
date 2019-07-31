@@ -25,6 +25,8 @@ class Home extends React.Component {
     this.state = {
       interval: this.props.timer.interval
     }
+
+    this.handleIntervalChange = this.handleIntervalChange.bind(this)
   }
 
   handleIntervalChange (value) {

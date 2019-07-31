@@ -159,6 +159,17 @@ export const removeTimersAction = () => (
   }
 )
 
+export const selectStatus = (isPatient) => (dispatch) => {
+  dispatch(selectStatusAction(isPatient))
+}
+
+export const selectStatusAction = (isPatient) => (
+  {
+    type: ActionTypes.SELECT_STATUS,
+    payload: isPatient
+  }
+)
+
 export const setTimerInterval = (interval) => (dispatch, getState) => {
   dispatch(setTimerIntervalAction(interval))
 }

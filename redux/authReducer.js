@@ -7,11 +7,18 @@ export const Auth = (
   state = {
     isLoading: false,
     isAuthenticated: false,
+    isPatient: null,
     errMess: null
   },
   action
 ) => {
   switch (action.type) {
+    case ActionTypes.SELECT_STATUS:
+      return {
+        ...state,
+        isPatient: action.payload
+      }
+
     case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
@@ -24,7 +31,7 @@ export const Auth = (
         ...state,
         isLoading: false,
         isAuthenticated: false,
-        errMess: action.message
+        errMess: action.payload
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
@@ -47,7 +54,7 @@ export const Auth = (
         ...state,
         isLoading: false,
         isAuthenticated: true,
-        errMess: action.message
+        errMess: action.payload
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
