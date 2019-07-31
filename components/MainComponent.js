@@ -6,6 +6,7 @@ import NavigationService from '../services/NavigationService'
 import AuthLoading from './AuthLoadingComponent'
 import Home from './HomeComponent'
 import SignIn from './SignInComponent'
+import Welcome from './WelcomeComponent'
 
 // Setup Redux
 const mapStateToProps = state => {
@@ -18,7 +19,7 @@ const mapStateToProps = state => {
 class AuthLoadingScreen extends React.Component {
   render () {
     return (
-      <AuthLoading navigation={this.props.navigation}/>
+      <AuthLoading navigation = {this.props.navigation}/>
     )
   }
 }
@@ -26,7 +27,7 @@ class AuthLoadingScreen extends React.Component {
 class HomeScreen extends React.Component {
   render () {
     return (
-      <Home navigation={this.props.navigation}/>
+      <Home navigation = {this.props.navigation}/>
     )
   }
 }
@@ -34,7 +35,15 @@ class HomeScreen extends React.Component {
 class SignInScreen extends React.Component {
   render () {
     return (
-      <SignIn navigation={this.props.navigation}/>
+      <SignIn navigation = {this.props.navigation}/>
+    )
+  }
+}
+
+class WelcomeScreen extends React.Component {
+  render () {
+    return (
+      <Welcome navigation = {this.props.navigation}/>
     )
   }
 }
@@ -43,15 +52,18 @@ const AppStack = createStackNavigator({ Home: HomeScreen })
 
 const AuthStack = createStackNavigator({ SignIn: SignInScreen })
 
+const WelcomeStack = createStackNavigator({ Welcome: WelcomeScreen })
+
 const AppContainer = createAppContainer(
   createSwitchNavigator(
     {
       AuthLoading: AuthLoadingScreen,
       App: AppStack,
-      Auth: AuthStack
+      Auth: AuthStack,
+      Welcome: WelcomeStack
     },
     {
-      initialRouteName: 'AuthLoading'
+      initialRouteName: 'Welcome'
     }
   )
 )
@@ -61,7 +73,7 @@ class Main extends React.Component {
   render () {
     return (
       <AppContainer
-        ref={
+        ref = {
           navigatorRef => {
             NavigationService.setTopLevelNavigator(navigatorRef)
           }
