@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button, Slider } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { setTimerInterval, signoutUser } from '../redux/ActionCreators'
+import { removeTimers, setTimer, signoutUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
@@ -12,7 +12,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    setTimerInterval: (interval) => dispatch(setTimerInterval(interval)),
+    removeTimers: () => dispatch(removeTimers()),
+    setTimer: interval => dispatch(setTimer(interval)),
     signoutUser: () => dispatch(signoutUser())
   }
 )
@@ -27,8 +28,8 @@ class Home extends React.Component {
   }
 
   handleIntervalChange (value) {
-    this.setState({ interval: value })
-    this.props.setTimerInterval(this.state.interval)
+    this.props.removeTimers()
+    this.props.setTimer(this.state.interval)
   }
 
   render () {
@@ -37,8 +38,9 @@ class Home extends React.Component {
         <Text style = { styles.title }>Check-In Interval</Text>
         <Slider
           maximumValue = { 10000 }
-          minimumValue = { 0 }
-          onValueChange = { value => this.handleIntervalChange(value) }
+          minimumValue = { 1000 }
+          onSlidingComplete = { value => this.handleIntervalChange(value) }
+          onValueChange = { value => this.setState({ interval: value }) }
           step = { 1000 }
           style = { styles.slider }
           value = { this.props.timer.interval }
