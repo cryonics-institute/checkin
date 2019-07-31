@@ -33,6 +33,13 @@ class SignIn extends React.Component {
       usernameError: '',
       passwordError: ''
     }
+
+    this.handleSignin = this.handleSignin.bind(this)
+    this.handleRegistration = this.handleRegistration.bind(this)
+    this.toggleButtonDisabled = this.toggleButtonDisabled.bind(this)
+    this.toggleRegistration = this.toggleRegistration.bind(this)
+    this.validateEmail = this.validateEmail.bind(this)
+    this.validatePassword = this.validatePassword.bind(this)
   }
 
   handleSignin () {
@@ -175,10 +182,11 @@ class SignIn extends React.Component {
 const styles = StyleSheet.create(
   {
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
       alignItems: 'center',
-      justifyContent: 'center'
+      backgroundColor: '#fff',
+      flex: 1,
+      justifyContent: 'center',
+      padding: 20
     },
     errorText: {
       color: 'red'
