@@ -6,7 +6,7 @@ import { signinUser, registerUser } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
-    // Nothing in state is relevant here.
+    auth: state.auth
   }
 }
 
@@ -150,7 +150,7 @@ class SignIn extends React.Component {
         : <View style = { styles.container }>
           <Input
             placeholder = "Username"
-            onChangeText = { (username) => this.setState({ username }) }
+            onChangeText = { (username) => this.validateEmail(username) }
             value = { this.state.username }
           />
           <Text style={ styles.errorText }>
@@ -158,7 +158,7 @@ class SignIn extends React.Component {
           </Text>
           <Input
             placeholder = "Password"
-            onChangeText = { (password) => this.setState({ password }) }
+            onChangeText = { (password) => this.validatePassword(password) }
             value = { this.state.password }
           />
           <Text style={ styles.errorText }>
