@@ -3,68 +3,51 @@ import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
 
-export const addUser = () => (dispatch) => {
-  dispatch(addUserRequestedAction())
+export const addDocument = () => (dispatch, getState) => {
+  dispatch(addDocumentRequestedAction())
 
-  return auth.currentUser.getIdToken()
-    .then(
-      userToken => {
-        return db.collection('users').doc(userToken).set(
-          {
-            signinTime: firestore.Timestamp.now()
-          }
-        )
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
+  return db.collection('users').doc(getState().auth.user.uid).set(
+    {
+      signinTime: firestore.Timestamp.now()
+    }
+  )
     .then(
       () => {
-        dispatch(addUserFulfilledAction())
+        NavigationService.navigate('App')
+        dispatch(addDocumentFulfilledAction())
         dispatch(setTimer(5000))
       }
     )
-    .catch(error => dispatch(addUserRejectedAction(error.message)))
+    .catch(error => dispatch(addDocumentRejectedAction(error.message)))
 }
 
-export const addUserRequestedAction = () => (
+export const addDocumentRequestedAction = () => (
   {
-    type: ActionTypes.ADD_USER_REQUESTED
+    type: ActionTypes.ADD_DOCUMENT_REQUESTED
   }
 )
 
-export const addUserRejectedAction = (errorMessage) => (
+export const addDocumentRejectedAction = (errorMessage) => (
   {
-    type: ActionTypes.ADD_USER_REJECTED,
+    type: ActionTypes.ADD_DOCUMENT_REJECTED,
     payload: errorMessage
   }
 )
 
-export const addUserFulfilledAction = () => (
+export const addDocumentFulfilledAction = () => (
   {
-    type: ActionTypes.ADD_USER_FULFILLED
+    type: ActionTypes.ADD_DOCUMENT_FULFILLED
   }
 )
 
 export const checkin = () => (dispatch, getState) => {
   dispatch(checkinRequestedAction())
 
-  return auth.currentUser.getIdToken()
-    .then(
-      userToken => {
-        return db.collection('users').doc(userToken).update(
-          {
-            checkinTime: firestore.Timestamp.now()
-          }
-        )
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
+  return db.collection('users').doc(getState().auth.user.uid).update(
+    {
+      checkinTime: firestore.Timestamp.now()
+    }
+  )
     .then(
       () => {
         dispatch(checkinFulfilledAction())
@@ -98,9 +81,13 @@ export const registerUser = (creds) => (dispatch) => {
 
   return auth.createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
+      (userCredential) => {
+        dispatch(registrationFulfilledAction(userCredential.user))
+        dispatch(addDocument())
+      },
       () => {
         dispatch(registrationFulfilledAction())
-        dispatch(signinUser(creds))
+        dispatch(addDocument())
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -123,9 +110,10 @@ export const registrationRejectedAction = (message) => (
   }
 )
 
-export const registrationFulfilledAction = () => (
+export const registrationFulfilledAction = (user) => (
   {
-    type: ActionTypes.REGISTRATION_FULFILLED
+    type: ActionTypes.REGISTRATION_FULFILLED,
+    payload: user
   }
 )
 
@@ -257,11 +245,9 @@ export const signinUser = (creds) => (dispatch) => {
 
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
     .then(
-      () => {
-        NavigationService.navigate('App')
-        var user = auth.currentUser
-        dispatch(signinFulfilledAction(user))
-        dispatch(addUser())
+      (userCredential) => {
+        dispatch(signinFulfilledAction(userCredential.user))
+        dispatch(addDocument())
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -286,23 +272,15 @@ export const signinRejectedAction = (message) => (
 
 export const signinFulfilledAction = (user) => (
   {
-    type: ActionTypes.SIGNIN_FULFILLED
+    type: ActionTypes.SIGNIN_FULFILLED,
+    payload: user
   }
 )
 
-export const signoutUser = () => (dispatch) => {
+export const signoutUser = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
-  return auth.currentUser.getIdToken()
-    .then(
-      userToken => {
-        return db.collection('users').doc(userToken).delete()
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
+  return db.collection('users').doc(getState().auth.user.uid).delete()
     .then(
       () => {
         dispatch(removeTimers())
