@@ -13,9 +13,9 @@ export const addDocument = () => (dispatch, getState) => {
   )
     .then(
       () => {
-        NavigationService.navigate('App')
         dispatch(addDocumentFulfilledAction())
         dispatch(setTimer(5000))
+        NavigationService.navigate('App')
       }
     )
     .catch(error => dispatch(addDocumentRejectedAction(error.message)))
@@ -85,9 +85,22 @@ export const registerPatient = (creds) => (dispatch) => {
         dispatch(registrationFulfilledAction(userCredential.user))
         dispatch(addDocument())
       },
-      () => {
-        dispatch(registrationFulfilledAction())
-        dispatch(addDocument())
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(registrationRejectedAction(error.message)))
+}
+
+export const registerStandby = (creds) => (dispatch) => {
+  dispatch(registrationRequestedAction())
+
+  return auth.createUserWithEmailAndPassword(creds.username, creds.password)
+    .then(
+      (userCredential) => {
+        dispatch(registrationFulfilledAction(userCredential.user))
+        NavigationService.navigate('App')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -257,6 +270,23 @@ export const signinPatient = (creds) => (dispatch) => {
     .catch(error => dispatch(signinRejectedAction(error.message)))
 }
 
+export const signinStandby = (creds) => (dispatch) => {
+  dispatch(signinRequestedAction(creds))
+
+  return auth.signInWithEmailAndPassword(creds.username, creds.password)
+    .then(
+      (userCredential) => {
+        dispatch(signinFulfilledAction(userCredential.user))
+        NavigationService.navigate('App')
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(signinRejectedAction(error.message)))
+}
+
 export const signinRequestedAction = () => (
   {
     type: ActionTypes.SIGNIN_REQUESTED
@@ -283,7 +313,7 @@ export const signoutPatient = () => (dispatch, getState) => {
   return db.collection('users').doc(getState().auth.user.uid).delete()
     .then(
       () => {
-        dispatch(removeTimers())
+        auth.signOut()
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -292,7 +322,28 @@ export const signoutPatient = () => (dispatch, getState) => {
     )
     .then(
       () => {
-        auth.signOut()
+        dispatch(removeTimers())
+        dispatch(signoutFulfilledAction())
+        NavigationService.navigate('Auth')
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(
+      (error) => {
+        signoutRejectedAction(error.message)
+      }
+    )
+}
+
+export const signoutStandby = () => (dispatch, getState) => {
+  dispatch(signoutRequestedAction())
+
+  return auth.signOut()
+    .then(
+      () => {
         dispatch(signoutFulfilledAction())
         NavigationService.navigate('Auth')
       },
