@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signinUser, registerUser } from '../redux/ActionCreators'
+import { signinPatient, registerPatient } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
@@ -12,8 +12,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signinUser: (creds) => dispatch(signinUser(creds)),
-    registerUser: (creds) => dispatch(registerUser(creds))
+    signinPatient: (creds) => dispatch(signinPatient(creds)),
+    registerPatient: (creds) => dispatch(registerPatient(creds))
   }
 )
 
@@ -43,7 +43,7 @@ class PatientSignIn extends React.Component {
   }
 
   handleSignin () {
-    this.props.signinUser(
+    this.props.signinPatient(
       {
         username: this.state.username,
         password: this.state.password
@@ -52,7 +52,7 @@ class PatientSignIn extends React.Component {
   }
 
   handleRegistration () {
-    this.props.registerUser(
+    this.props.registerPatient(
       {
         username: this.state.username,
         password: this.state.password
@@ -149,7 +149,7 @@ class PatientSignIn extends React.Component {
         </View>
         : <View style = { styles.container }>
           <Input
-            placeholder = "Username"
+            placeholder = "E-Mail"
             onChangeText = { (username) => this.validateEmail(username) }
             value = { this.state.username }
           />

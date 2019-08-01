@@ -76,7 +76,7 @@ export const checkinFulfilledAction = () => (
   }
 )
 
-export const registerUser = (creds) => (dispatch) => {
+export const registerPatient = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
   return auth.createUserWithEmailAndPassword(creds.username, creds.password)
@@ -240,7 +240,7 @@ export const setTimerFulfilledAction = (timer) => (
   }
 )
 
-export const signinUser = (creds) => (dispatch) => {
+export const signinPatient = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
@@ -277,7 +277,7 @@ export const signinFulfilledAction = (user) => (
   }
 )
 
-export const signoutUser = () => (dispatch, getState) => {
+export const signoutPatient = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
   return db.collection('users').doc(getState().auth.user.uid).delete()
