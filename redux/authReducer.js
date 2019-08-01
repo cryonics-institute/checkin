@@ -5,10 +5,11 @@ import * as ActionTypes from './ActionTypes'
 // the token is expired.
 export const Auth = (
   state = {
-    isLoading: false,
+    errMess: null,
     isAuthenticated: false,
+    isLoading: false,
     isPatient: null,
-    errMess: null
+    user: null
   },
   action
 ) => {
@@ -19,50 +20,76 @@ export const Auth = (
         isPatient: action.payload
       }
 
+    case ActionTypes.REGISTRATION_REQUESTED:
+      return {
+        ...state,
+        isAuthenticated: false,
+        isLoading: true
+      }
+
+    case ActionTypes.REGISTRATION_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload,
+        isAuthenticated: false,
+        isLoading: false
+      }
+
+    case ActionTypes.REGISTRATION_FULFILLED:
+      return {
+        ...state,
+        errMess: null,
+        isAuthenticated: true,
+        isLoading: false,
+        user: action.payload
+      }
+
     case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
-        isLoading: true,
-        isAuthenticated: false
+        isAuthenticated: false,
+        isLoading: true
       }
 
     case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
-        isLoading: false,
+        errMess: action.payload,
         isAuthenticated: false,
-        errMess: action.payload
+        isLoading: false
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
-        isLoading: false,
+        errMess: null,
         isAuthenticated: true,
-        errMess: null
+        isLoading: false,
+        user: action.payload
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        isLoading: true,
-        isAuthenticated: true
+        isAuthenticated: true,
+        isLoading: true
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        isLoading: false,
+        errMess: action.payload,
         isAuthenticated: true,
-        errMess: action.payload
+        isLoading: false
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
-        isLoading: false,
+        errMess: null,
         isAuthenticated: false,
-        errMess: null
+        isLoading: false,
+        user: null
       }
 
     default:

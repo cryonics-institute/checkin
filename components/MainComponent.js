@@ -5,6 +5,8 @@ import { connect } from 'react-redux'
 import NavigationService from '../services/NavigationService'
 import AuthLoading from './AuthLoadingComponent'
 import Home from './HomeComponent'
+import PatientSignIn from './PatientSignInComponent'
+import PatientHome from './PatientHomeComponent'
 import SignIn from './SignInComponent'
 import Welcome from './WelcomeComponent'
 
@@ -32,6 +34,22 @@ class HomeScreen extends React.Component {
   }
 }
 
+class PatientHomeScreen extends React.Component {
+  render () {
+    return (
+      <PatientHome navigation = {this.props.navigation}/>
+    )
+  }
+}
+
+class PatientSignInScreen extends React.Component {
+  render () {
+    return (
+      <PatientSignIn navigation = {this.props.navigation}/>
+    )
+  }
+}
+
 class SignInScreen extends React.Component {
   render () {
     return (
@@ -52,6 +70,12 @@ const AppStack = createStackNavigator({ Home: HomeScreen })
 
 const AuthStack = createStackNavigator({ SignIn: SignInScreen })
 
+const PatientHomeStack =
+  createStackNavigator({ PatientHome: PatientHomeScreen })
+
+const PatientSignInStack =
+  createStackNavigator({ PatientSignIn: PatientSignInScreen })
+
 const WelcomeStack = createStackNavigator({ Welcome: WelcomeScreen })
 
 const AppContainer = createAppContainer(
@@ -60,6 +84,8 @@ const AppContainer = createAppContainer(
       AuthLoading: AuthLoadingScreen,
       App: AppStack,
       Auth: AuthStack,
+      PatientHome: PatientHomeStack,
+      PatientSignIn: PatientSignInStack,
       Welcome: WelcomeStack
     },
     {

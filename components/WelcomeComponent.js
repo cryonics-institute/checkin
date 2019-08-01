@@ -35,13 +35,11 @@ class Welcome extends React.Component {
   handlePatient () {
     this.props.selectStatus(true)
     this.props.navigation.navigate('AuthLoading')
-    console.log(this.props.auth.isPatient)
   }
 
   handleStandby () {
     this.props.selectStatus(false)
     this.props.navigation.navigate('AuthLoading')
-    console.log(this.props.auth.isPatient)
   }
 
   render () {
