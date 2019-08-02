@@ -12,8 +12,6 @@ export const getDocument = () => (dispatch) => {
         if (doc.exists) {
           const signinTime = doc.data().signinTime.toDate()
           const checkinTime = doc.data().checkinTime.toDate()
-          console.log('SIGNIN TIME:', signinTime)
-          console.log('CHECKIN TIME:', checkinTime)
 
           return [signinTime, checkinTime]
         } else {
@@ -25,8 +23,6 @@ export const getDocument = () => (dispatch) => {
     .then(
       (data) => {
         dispatch(getDocumentFulfilledAction(data))
-
-        return data
       }
     )
     .catch(error => dispatch(getDocumentRejectedAction(error.message)))
