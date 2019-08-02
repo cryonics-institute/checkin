@@ -7,6 +7,8 @@ import AuthLoading from './AuthLoadingComponent'
 import Home from './HomeComponent'
 import PatientSignIn from './PatientSignInComponent'
 import PatientHome from './PatientHomeComponent'
+import StandbySignIn from './StandbySignInComponent'
+import StandbyHome from './StandbyHomeComponent'
 import SignIn from './SignInComponent'
 import Welcome from './WelcomeComponent'
 
@@ -58,6 +60,22 @@ class SignInScreen extends React.Component {
   }
 }
 
+class StandbyHomeScreen extends React.Component {
+  render () {
+    return (
+      <StandbyHome navigation = {this.props.navigation}/>
+    )
+  }
+}
+
+class StandbySignInScreen extends React.Component {
+  render () {
+    return (
+      <StandbySignIn navigation = {this.props.navigation}/>
+    )
+  }
+}
+
 class WelcomeScreen extends React.Component {
   render () {
     return (
@@ -76,6 +94,12 @@ const PatientHomeStack =
 const PatientSignInStack =
   createStackNavigator({ PatientSignIn: PatientSignInScreen })
 
+const StandbyHomeStack =
+  createStackNavigator({ StandbyHome: StandbyHomeScreen })
+
+const StandbySignInStack =
+  createStackNavigator({ StandbySignIn: StandbySignInScreen })
+
 const WelcomeStack = createStackNavigator({ Welcome: WelcomeScreen })
 
 const AppContainer = createAppContainer(
@@ -86,6 +110,8 @@ const AppContainer = createAppContainer(
       Auth: AuthStack,
       PatientHome: PatientHomeStack,
       PatientSignIn: PatientSignInStack,
+      StandbyHome: StandbyHomeStack,
+      StandbySignIn: StandbySignInStack,
       Welcome: WelcomeStack
     },
     {

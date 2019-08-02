@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button, Slider } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { removeTimers, setTimer, signoutUser } from '../redux/ActionCreators'
+import { removeTimers, setTimer, signoutPatient } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
@@ -14,7 +14,7 @@ const mapDispatchToProps = (dispatch) => (
   {
     removeTimers: () => dispatch(removeTimers()),
     setTimer: interval => dispatch(setTimer(interval)),
-    signoutUser: () => dispatch(signoutUser())
+    signoutPatient: () => dispatch(signoutPatient())
   }
 )
 
@@ -49,7 +49,7 @@ class PatientHome extends React.Component {
         />
         <Text>{ this.state.interval }</Text>
         <Button
-          onPress = { () => this.props.signoutUser() }
+          onPress = { () => this.props.signoutPatient() }
           title = "Sign Out"
         />
       </View>

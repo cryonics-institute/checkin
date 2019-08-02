@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signinPatient, registerPatient } from '../redux/ActionCreators'
+import { signinStandby, registerStandby } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
@@ -12,12 +12,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signinPatient: (creds) => dispatch(signinPatient(creds)),
-    registerPatient: (creds) => dispatch(registerPatient(creds))
+    signinStandby: (creds) => dispatch(signinStandby(creds)),
+    registerStandby: (creds) => dispatch(registerStandby(creds))
   }
 )
 
-class PatientSignIn extends React.Component {
+class StandbySignIn extends React.Component {
   constructor (props) {
     super(props)
 
@@ -43,7 +43,7 @@ class PatientSignIn extends React.Component {
   }
 
   handleSignin () {
-    this.props.signinPatient(
+    this.props.signinStandby(
       {
         username: this.state.username,
         password: this.state.password
@@ -52,7 +52,7 @@ class PatientSignIn extends React.Component {
   }
 
   handleRegistration () {
-    this.props.registerPatient(
+    this.props.registerStandby(
       {
         username: this.state.username,
         password: this.state.password
@@ -194,4 +194,4 @@ const styles = StyleSheet.create(
   }
 )
 
-export default connect(mapStateToProps, mapDispatchToProps)(PatientSignIn)
+export default connect(mapStateToProps, mapDispatchToProps)(StandbySignIn)

@@ -3,19 +3,68 @@ import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
 
+export const getDocument = () => (dispatch) => {
+  dispatch(getDocumentRequestedAction())
+
+  return db.collection('users').doc('a@a.aa').get()
+    .then(
+      doc => {
+        if (doc.exists) {
+          const signinTime = doc.data().signinTime.toDate()
+          const checkinTime = doc.data().checkinTime.toDate()
+          console.log('SIGNIN TIME:', signinTime)
+          console.log('CHECKIN TIME:', checkinTime)
+
+          return [signinTime, checkinTime]
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+        }
+      }
+    )
+    .then(
+      (data) => {
+        dispatch(getDocumentFulfilledAction(data))
+
+        return data
+      }
+    )
+    .catch(error => dispatch(getDocumentRejectedAction(error.message)))
+}
+
+export const getDocumentRequestedAction = () => (
+  {
+    type: ActionTypes.GET_DOCUMENT_REQUESTED
+  }
+)
+
+export const getDocumentRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.GET_DOCUMENT_REJECTED,
+    payload: errorMessage
+  }
+)
+
+export const getDocumentFulfilledAction = (data) => (
+  {
+    type: ActionTypes.GET_DOCUMENT_FULFILLED,
+    payload: data
+  }
+)
+
 export const addDocument = () => (dispatch, getState) => {
   dispatch(addDocumentRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.uid).set(
+  return db.collection('users').doc(getState().auth.user.email).set(
     {
       signinTime: firestore.Timestamp.now()
     }
   )
     .then(
       () => {
-        NavigationService.navigate('App')
         dispatch(addDocumentFulfilledAction())
         dispatch(setTimer(5000))
+        NavigationService.navigate('App')
       }
     )
     .catch(error => dispatch(addDocumentRejectedAction(error.message)))
@@ -43,7 +92,7 @@ export const addDocumentFulfilledAction = () => (
 export const checkin = () => (dispatch, getState) => {
   dispatch(checkinRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.uid).update(
+  return db.collection('users').doc(getState().auth.user.email).update(
     {
       checkinTime: firestore.Timestamp.now()
     }
@@ -76,7 +125,7 @@ export const checkinFulfilledAction = () => (
   }
 )
 
-export const registerUser = (creds) => (dispatch) => {
+export const registerPatient = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
   return auth.createUserWithEmailAndPassword(creds.username, creds.password)
@@ -85,9 +134,22 @@ export const registerUser = (creds) => (dispatch) => {
         dispatch(registrationFulfilledAction(userCredential.user))
         dispatch(addDocument())
       },
-      () => {
-        dispatch(registrationFulfilledAction())
-        dispatch(addDocument())
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(registrationRejectedAction(error.message)))
+}
+
+export const registerStandby = (creds) => (dispatch) => {
+  dispatch(registrationRequestedAction())
+
+  return auth.createUserWithEmailAndPassword(creds.username, creds.password)
+    .then(
+      (userCredential) => {
+        dispatch(registrationFulfilledAction(userCredential.user))
+        NavigationService.navigate('App')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -240,7 +302,7 @@ export const setTimerFulfilledAction = (timer) => (
   }
 )
 
-export const signinUser = (creds) => (dispatch) => {
+export const signinPatient = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
@@ -248,6 +310,23 @@ export const signinUser = (creds) => (dispatch) => {
       (userCredential) => {
         dispatch(signinFulfilledAction(userCredential.user))
         dispatch(addDocument())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(signinRejectedAction(error.message)))
+}
+
+export const signinStandby = (creds) => (dispatch) => {
+  dispatch(signinRequestedAction(creds))
+
+  return auth.signInWithEmailAndPassword(creds.username, creds.password)
+    .then(
+      (userCredential) => {
+        dispatch(signinFulfilledAction(userCredential.user))
+        NavigationService.navigate('App')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -277,13 +356,13 @@ export const signinFulfilledAction = (user) => (
   }
 )
 
-export const signoutUser = () => (dispatch, getState) => {
+export const signoutPatient = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.uid).delete()
+  return db.collection('users').doc(getState().auth.user.email).delete()
     .then(
       () => {
-        dispatch(removeTimers())
+        auth.signOut()
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -292,7 +371,28 @@ export const signoutUser = () => (dispatch, getState) => {
     )
     .then(
       () => {
-        auth.signOut()
+        dispatch(removeTimers())
+        dispatch(signoutFulfilledAction())
+        NavigationService.navigate('Auth')
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(
+      (error) => {
+        signoutRejectedAction(error.message)
+      }
+    )
+}
+
+export const signoutStandby = () => (dispatch, getState) => {
+  dispatch(signoutRequestedAction())
+
+  return auth.signOut()
+    .then(
+      () => {
         dispatch(signoutFulfilledAction())
         NavigationService.navigate('Auth')
       },

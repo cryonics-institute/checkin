@@ -6,6 +6,7 @@
   "dependencies": {
     "expokit": "33.0.4",
     "firebase": "^6.2.4",
+    "moment": "^2.24.0",
     "react": "16.8.6",
     "react-dom": "^16.8.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-33.0.0.tar.gz",
