@@ -3,10 +3,59 @@ import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
 
+export const getDocument = () => (dispatch) => {
+  dispatch(getDocumentRequestedAction())
+
+  return db.collection('users').doc('a@a.aa').get()
+    .then(
+      doc => {
+        if (doc.exists) {
+          const signinTime = doc.data().signinTime.toDate()
+          const checkinTime = doc.data().checkinTime.toDate()
+          console.log('SIGNIN TIME:', signinTime)
+          console.log('CHECKIN TIME:', checkinTime)
+
+          return [signinTime, checkinTime]
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+        }
+      }
+    )
+    .then(
+      (data) => {
+        dispatch(getDocumentFulfilledAction(data))
+
+        return data
+      }
+    )
+    .catch(error => dispatch(getDocumentRejectedAction(error.message)))
+}
+
+export const getDocumentRequestedAction = () => (
+  {
+    type: ActionTypes.GET_DOCUMENT_REQUESTED
+  }
+)
+
+export const getDocumentRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.GET_DOCUMENT_REJECTED,
+    payload: errorMessage
+  }
+)
+
+export const getDocumentFulfilledAction = (data) => (
+  {
+    type: ActionTypes.GET_DOCUMENT_FULFILLED,
+    payload: data
+  }
+)
+
 export const addDocument = () => (dispatch, getState) => {
   dispatch(addDocumentRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.uid).set(
+  return db.collection('users').doc(getState().auth.user.email).set(
     {
       signinTime: firestore.Timestamp.now()
     }
@@ -43,7 +92,7 @@ export const addDocumentFulfilledAction = () => (
 export const checkin = () => (dispatch, getState) => {
   dispatch(checkinRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.uid).update(
+  return db.collection('users').doc(getState().auth.user.email).update(
     {
       checkinTime: firestore.Timestamp.now()
     }
@@ -310,7 +359,7 @@ export const signinFulfilledAction = (user) => (
 export const signoutPatient = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.uid).delete()
+  return db.collection('users').doc(getState().auth.user.email).delete()
     .then(
       () => {
         auth.signOut()
