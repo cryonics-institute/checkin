@@ -49,14 +49,14 @@ class Welcome extends React.Component {
           Welcome!
         </Text>
         <Button
-          title = "Patient"
           onPress = { () => this.handlePatient() }
           style = { styles.button }
+          title = "Patient"
         />
         <Button
-          title = "Standby"
           onPress = { () => this.handleStandby() }
           style = { styles.button }
+          title = "Standby"
         />
       </View>
     )
