@@ -12,21 +12,23 @@ export const getDocument = () => (dispatch) => {
         if (doc.exists) {
           const signinTime = doc.data().signinTime.toDate()
           const checkinTime = doc.data().checkinTime.toDate()
-          console.log('SIGNIN TIME:', signinTime)
-          console.log('CHECKIN TIME:', checkinTime)
 
-          return [signinTime, checkinTime]
+          return [true, signinTime, checkinTime]
         } else {
           // doc.data() will be undefined in this case
           console.log('No such document!')
+
+          return [false, null, null]
         }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
       (data) => {
         dispatch(getDocumentFulfilledAction(data))
-
-        return data
       }
     )
     .catch(error => dispatch(getDocumentRejectedAction(error.message)))
@@ -324,7 +326,17 @@ export const signinStandby = (creds) => (dispatch) => {
 
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
     .then(
-      (userCredential) => {
+      userCredential => {
+        dispatch(getDocument())
+        return userCredential
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))
         NavigationService.navigate('App')
       },

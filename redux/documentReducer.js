@@ -2,9 +2,10 @@ import * as ActionTypes from './ActionTypes'
 
 export const Document = (
   state = {
-    signinTime: null,
     checkinTime: null,
-    errMess: null
+    errMess: null,
+    isPatientSignedIn: null,
+    signinTime: null
   },
   action
 ) => {
@@ -18,15 +19,17 @@ export const Document = (
     case ActionTypes.GET_DOCUMENT_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errMess: action.payload,
+        isPatientSignedIn: null
       }
 
     case ActionTypes.GET_DOCUMENT_FULFILLED:
       return {
         ...state,
-        signinTime: action.payload[0],
-        checkinTime: action.payload[1],
-        errMess: null
+        checkinTime: action.payload[2],
+        errMess: null,
+        isPatientSignedIn: action.payload[0],
+        signinTime: action.payload[1]
       }
 
     default:

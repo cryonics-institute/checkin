@@ -1,5 +1,6 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, StatusBar, StyleSheet, Text, View }
+  from 'react-native'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
 import moment from 'moment'
@@ -7,8 +8,9 @@ import { getDocument, signoutStandby } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
-    signinTime: state.signinTime,
-    checkinTime: state.checkinTime
+    checkinTime: state.document.checkinTime,
+    isPatientSignedIn: state.document.isPatientSignedIn,
+    signinTime: state.document.signinTime
   }
 }
 
@@ -19,47 +21,62 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
+// TODO: What happens if the network is down?
 class StandbyHome extends React.Component {
-  componentDidMount () {
-    this.props.getDocument()
-      .then(
-        () => {
-          const signinTime =
-            moment(this.props.signinTime)
-              .format('dddd, MMMM Do YYYY, h:mm:ss a')
-          const checkinTime =
-            moment(this.props.checkinTime)
-              .format('dddd, MMMM Do YYYY, h:mm:ss a')
-          console.log('SIGNIN TIME: ' + signinTime)
-          console.log('CHECKIN TIME: ' + checkinTime)
-        }
-      )
-  }
-
   render () {
-    return (
-      <View style = { styles.container }>
-        <Text style = { styles.title }>Sign-In Time</Text>
-        <Text style = { styles.text }>
-          {
-            moment(this.props.signinTime)
-              .format('dddd, MMMM Do YYYY, h:mm:ss a')
-          }
-        </Text>
-        <Text style = { styles.title }>Check-In Time</Text>
-        <Text style = { styles.text }>
-          {
-            moment(this.props.checkinTime)
-              .format('dddd, MMMM Do YYYY, h:mm:ss a')
-          }
-        </Text>
-        <Button
-          onPress = { () => this.props.signoutStandby() }
-          style = { styles.button }
-          title = "Sign Out"
-        />
-      </View>
-    )
+    if (this.props.isPatientSignedIn == null) {
+      return (
+        <View style = { styles.container }>
+          <Text style = { styles.title }>
+            Retrieving Patient Data
+          </Text>
+          <ActivityIndicator />
+          <StatusBar barStyle="default" />
+          <Button
+            onPress = { () => this.props.signoutStandby() }
+            style = { styles.button }
+            title = "Sign Out"
+          />
+        </View>
+      )
+    } else if (this.props.isPatientSignedIn) {
+      return (
+        <View style = { styles.container }>
+          <Text style = { styles.title }>Sign-In Time</Text>
+          <Text style = { styles.text }>
+            {
+              moment(this.props.signinTime)
+                .format('dddd, MMMM Do YYYY, h:mm:ss a')
+            }
+          </Text>
+          <Text style = { styles.title }>Check-In Time</Text>
+          <Text style = { styles.text }>
+            {
+              moment(this.props.checkinTime)
+                .format('dddd, MMMM Do YYYY, h:mm:ss a')
+            }
+          </Text>
+          <Button
+            onPress = { () => this.props.signoutStandby() }
+            style = { styles.button }
+            title = "Sign Out"
+          />
+        </View>
+      )
+    } else {
+      return (
+        <View style = { styles.container }>
+          <Text style = { styles.title }>
+            The patient is not signed in.
+          </Text>
+          <Button
+            onPress = { () => this.props.signoutStandby() }
+            style = { styles.button }
+            title = "Sign Out"
+          />
+        </View>
+      )
+    }
   }
 }
 
