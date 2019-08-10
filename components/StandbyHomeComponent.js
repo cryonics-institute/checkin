@@ -8,9 +8,9 @@ import { getDocument, signoutStandby } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
-    checkinTime: state.document.checkinTime,
-    isPatientSignedIn: state.document.isPatientSignedIn,
-    signinTime: state.document.signinTime
+    checkinTime: state.patient.checkinTime,
+    isPatientSignedIn: state.patient.isPatientSignedIn,
+    signinTime: state.patient.signinTime
   }
 }
 

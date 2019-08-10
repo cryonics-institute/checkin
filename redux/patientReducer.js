@@ -1,10 +1,11 @@
 import * as ActionTypes from './ActionTypes'
 
-export const Document = (
+export const Patient = (
   state = {
     checkinTime: null,
     errMess: null,
     isPatientSignedIn: null,
+    patientEmail: null,
     signinTime: null
   },
   action
@@ -13,7 +14,8 @@ export const Document = (
     case ActionTypes.GET_DOCUMENT_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: null,
+        patientEmail: action.payload
       }
 
     case ActionTypes.GET_DOCUMENT_REJECTED:
