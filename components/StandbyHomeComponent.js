@@ -21,60 +21,86 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
+const RenderNullPatientStatusView = (props) => {
+  return (
+    <View style = { styles.container }>
+      <Text style = { styles.title }>
+        Retrieving Patient Data
+      </Text>
+      <ActivityIndicator />
+      <StatusBar barStyle="default" />
+      <Button
+        onPress = { () => props.signoutStandby() }
+        style = { styles.button }
+        title = "Sign Out"
+      />
+    </View>
+  )
+}
+
+const RenderSignedInPatientView = (props) => {
+  return (
+    <View style = { styles.container }>
+      <Text style = { styles.title }>Sign-In Time</Text>
+      <Text style = { styles.text }>
+        {
+          moment(props.signinTime)
+            .format('dddd, MMMM Do YYYY, h:mm:ss a')
+        }
+      </Text>
+      <Text style = { styles.title }>Check-In Time</Text>
+      <Text style = { styles.text }>
+        {
+          moment(props.checkinTime)
+            .format('dddd, MMMM Do YYYY, h:mm:ss a')
+        }
+      </Text>
+      <Button
+        onPress = { () => props.signoutStandby() }
+        style = { styles.button }
+        title = "Sign Out"
+      />
+    </View>
+  )
+}
+
+const RenderSignedOutPatientView = (props) => {
+  return (
+    <View style = { styles.container }>
+      <Text style = { styles.title }>
+        The patient is not signed in.
+      </Text>
+      <Button
+        onPress = { () => props.signoutStandby() }
+        style = { styles.button }
+        title = "Sign Out"
+      />
+    </View>
+  )
+}
+
 // TODO: What happens if the network is down?
 class StandbyHome extends React.Component {
   render () {
     if (this.props.isPatientSignedIn == null) {
       return (
-        <View style = { styles.container }>
-          <Text style = { styles.title }>
-            Retrieving Patient Data
-          </Text>
-          <ActivityIndicator />
-          <StatusBar barStyle="default" />
-          <Button
-            onPress = { () => this.props.signoutStandby() }
-            style = { styles.button }
-            title = "Sign Out"
-          />
-        </View>
+        <RenderNullPatientStatusView
+          signoutStandby = { () => this.props.signoutStandby() }
+        />
       )
     } else if (this.props.isPatientSignedIn) {
       return (
-        <View style = { styles.container }>
-          <Text style = { styles.title }>Sign-In Time</Text>
-          <Text style = { styles.text }>
-            {
-              moment(this.props.signinTime)
-                .format('dddd, MMMM Do YYYY, h:mm:ss a')
-            }
-          </Text>
-          <Text style = { styles.title }>Check-In Time</Text>
-          <Text style = { styles.text }>
-            {
-              moment(this.props.checkinTime)
-                .format('dddd, MMMM Do YYYY, h:mm:ss a')
-            }
-          </Text>
-          <Button
-            onPress = { () => this.props.signoutStandby() }
-            style = { styles.button }
-            title = "Sign Out"
-          />
-        </View>
+        <RenderSignedInPatientView
+          signinTime = { this.props.signinTime }
+          checkinTime = { this.props.checkinTime }
+          signoutStandby = { () => this.props.signoutStandby() }
+        />
       )
     } else {
       return (
-        <View style = { styles.container }>
-          <Text style = { styles.title }>
-            The patient is not signed in.
-          </Text>
-          <Button
-            onPress = { () => this.props.signoutStandby() }
-            style = { styles.button }
-            title = "Sign Out"
-          />
-        </View>
+        <RenderSignedOutPatientView
+          signoutStandby = { () => this.props.signoutStandby() }
+        />
       )
     }
   }
