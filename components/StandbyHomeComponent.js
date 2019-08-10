@@ -9,7 +9,7 @@ import { getDocument, signoutStandby } from '../redux/ActionCreators'
 const mapStateToProps = state => {
   return {
     checkinTime: state.patient.checkinTime,
-    isPatientSignedIn: state.patient.isPatientSignedIn,
+    patientSignedIn: state.patient.isSignedIn,
     signinTime: state.patient.signinTime
   }
 }
@@ -83,13 +83,13 @@ const RenderSignedOutPatientView = (props) => {
 // TODO: Add condition that will present view that asks for patient's e-mail.
 class StandbyHome extends React.Component {
   render () {
-    if (this.props.isPatientSignedIn == null) {
+    if (this.props.patientSignedIn == null) {
       return (
         <RenderNullPatientStatusView
           signoutStandby = { () => this.props.signoutStandby() }
         />
       )
-    } else if (this.props.isPatientSignedIn) {
+    } else if (this.props.patientSignedIn) {
       return (
         <RenderSignedInPatientView
           signinTime = { this.props.signinTime }
