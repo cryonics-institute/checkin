@@ -1,14 +1,15 @@
 import React from 'react'
 import { ActivityIndicator, StatusBar, StyleSheet, Text, View }
   from 'react-native'
-import { Button } from 'react-native-elements'
+import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import moment from 'moment'
-import { getDocument, signoutStandby } from '../redux/ActionCreators'
+import { addPatient, signoutStandby } from '../redux/ActionCreators'
 
 const mapStateToProps = state => {
   return {
     checkinTime: state.patient.checkinTime,
+    patientEmail: state.patient.email,
     patientSignedIn: state.patient.isSignedIn,
     signinTime: state.patient.signinTime
   }
@@ -16,7 +17,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    getDocument: () => dispatch(getDocument()),
+    addPatient: (email) => dispatch(addPatient(email)),
     signoutStandby: () => dispatch(signoutStandby())
   }
 )
@@ -82,27 +83,90 @@ const RenderSignedOutPatientView = (props) => {
 // TODO: What happens if the network is down?
 // TODO: Add condition that will present view that asks for patient's e-mail.
 class StandbyHome extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.emailRef = React.createRef()
+
+    this.state = {
+      email: '',
+      isEmailValid: false,
+      emailError: ''
+    }
+
+    this.handleSignin = this.handleSignin.bind(this)
+    this.validateEmail = this.validateEmail.bind(this)
+  }
+
+  handleSignin () {
+    this.props.addPatient(this.state.email.toLowerCase())
+  }
+
+  validateEmail (value) {
+    if (!value) {
+      this.setState({ emailError: 'Required' })
+      this.setState({ isEmailValid: false })
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+      this.setState({ emailError: 'Invalid E-Mail Address' })
+      this.setState({ isEmailValid: false })
+    } else {
+      this.setState({ isEmailValid: true })
+    }
+
+    this.setState({ email: value })
+  }
+
   render () {
-    if (this.props.patientSignedIn == null) {
+    if (this.props.patientEmail == null) {
       return (
-        <RenderNullPatientStatusView
-          signoutStandby = { () => this.props.signoutStandby() }
-        />
-      )
-    } else if (this.props.patientSignedIn) {
-      return (
-        <RenderSignedInPatientView
-          signinTime = { this.props.signinTime }
-          checkinTime = { this.props.checkinTime }
-          signoutStandby = { () => this.props.signoutStandby() }
-        />
+        <View style = { styles.container }>
+          <Text style = { styles.title }>
+            Please enter the patient&#39;s e-mail address.
+          </Text>
+          <Input
+            ref = { this.emailRef }
+            placeholder = "Patient's E-Mail Address"
+            onChangeText = { (email) => this.validateEmail(email) }
+            value = { this.state.email }
+          />
+          <Text style = { styles.errorText }>
+            { this.state.isEmailValid ? '' : this.state.emailError }
+          </Text>
+          <Button
+            disabled = { !this.state.isEmailValid }
+            onPress = { () => this.handleSignin() }
+            style = { styles.button }
+            title = "Submit"
+          />
+          <Button
+            onPress = { () => this.props.signoutStandby() }
+            style = { styles.button }
+            title = "Sign Out"
+          />
+        </View>
       )
     } else {
-      return (
-        <RenderSignedOutPatientView
-          signoutStandby = { () => this.props.signoutStandby() }
-        />
-      )
+      if (this.props.patientSignedIn == null) {
+        return (
+          <RenderNullPatientStatusView
+            signoutStandby = { () => this.props.signoutStandby() }
+          />
+        )
+      } else if (this.props.patientSignedIn) {
+        return (
+          <RenderSignedInPatientView
+            checkinTime = { this.props.checkinTime }
+            signinTime = { this.props.signinTime }
+            signoutStandby = { () => this.props.signoutStandby() }
+          />
+        )
+      } else {
+        return (
+          <RenderSignedOutPatientView
+            signoutStandby = { () => this.props.signoutStandby() }
+          />
+        )
+      }
     }
   }
 }
@@ -118,6 +182,9 @@ const styles = StyleSheet.create(
       flex: 1,
       justifyContent: 'center',
       padding: 20
+    },
+    errorText: {
+      color: 'red'
     },
     text: {
       margin: 5
