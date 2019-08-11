@@ -3,10 +3,92 @@ import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
 
-export const getDocument = () => (dispatch) => {
+export const addDocument = () => (dispatch, getState) => {
+  dispatch(addDocumentRequestedAction())
+
+  return db.collection('users').doc(getState().auth.user.email).set(
+    {
+      signinTime: firestore.Timestamp.now()
+    }
+  )
+    .then(
+      () => {
+        dispatch(addDocumentFulfilledAction())
+        dispatch(setTimer(5000))
+        NavigationService.navigate('App')
+      }
+    )
+    .catch(error => dispatch(addDocumentRejectedAction(error.message)))
+}
+
+export const addDocumentRequestedAction = () => (
+  {
+    type: ActionTypes.ADD_DOCUMENT_REQUESTED
+  }
+)
+
+export const addDocumentRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.ADD_DOCUMENT_REJECTED,
+    payload: errorMessage
+  }
+)
+
+export const addDocumentFulfilledAction = () => (
+  {
+    type: ActionTypes.ADD_DOCUMENT_FULFILLED
+  }
+)
+
+export const addPatient = (email) => (dispatch) => {
+  return Promise.resolve(
+    dispatch(addPatientRequestedAction(email))
+  )
+    .then(
+      () => {
+        dispatch(getDocument(email))
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
+        dispatch(addPatientFulfilledAction())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(addPatientRejectedAction(error.message)))
+}
+
+export const addPatientRequestedAction = (email) => (
+  {
+    type: ActionTypes.ADD_PATIENT_REQUESTED,
+    payload: email
+  }
+)
+
+export const addPatientRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.ADD_PATIENT_REJECTED,
+    payload: errorMessage
+  }
+)
+
+export const addPatientFulfilledAction = () => (
+  {
+    type: ActionTypes.ADD_PATIENT_FULFILLED
+  }
+)
+
+export const getDocument = (email) => (dispatch) => {
   dispatch(getDocumentRequestedAction())
 
-  return db.collection('users').doc('a@a.aa').get()
+  return db.collection('users').doc(email).get()
     .then(
       doc => {
         if (doc.exists) {
@@ -51,43 +133,6 @@ export const getDocumentFulfilledAction = (data) => (
   {
     type: ActionTypes.GET_DOCUMENT_FULFILLED,
     payload: data
-  }
-)
-
-export const addDocument = () => (dispatch, getState) => {
-  dispatch(addDocumentRequestedAction())
-
-  return db.collection('users').doc(getState().auth.user.email).set(
-    {
-      signinTime: firestore.Timestamp.now()
-    }
-  )
-    .then(
-      () => {
-        dispatch(addDocumentFulfilledAction())
-        dispatch(setTimer(5000))
-        NavigationService.navigate('App')
-      }
-    )
-    .catch(error => dispatch(addDocumentRejectedAction(error.message)))
-}
-
-export const addDocumentRequestedAction = () => (
-  {
-    type: ActionTypes.ADD_DOCUMENT_REQUESTED
-  }
-)
-
-export const addDocumentRejectedAction = (errorMessage) => (
-  {
-    type: ActionTypes.ADD_DOCUMENT_REJECTED,
-    payload: errorMessage
-  }
-)
-
-export const addDocumentFulfilledAction = () => (
-  {
-    type: ActionTypes.ADD_DOCUMENT_FULFILLED
   }
 )
 
@@ -325,16 +370,6 @@ export const signinStandby = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
-    .then(
-      userCredential => {
-        dispatch(getDocument())
-        return userCredential
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
     .then(
       userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))

@@ -2,7 +2,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import { Auth } from './authReducer'
-import { Document } from './documentReducer'
+import { Patient } from './patientReducer'
 import { Timer } from './timerReducer'
 
 export const ConfigureStore = () => {
@@ -10,7 +10,7 @@ export const ConfigureStore = () => {
     combineReducers(
       {
         auth: Auth,
-        document: Document,
+        patient: Patient,
         timer: Timer
       }
     ),
