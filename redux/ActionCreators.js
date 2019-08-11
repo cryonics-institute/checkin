@@ -372,16 +372,6 @@ export const signinStandby = (creds) => (dispatch) => {
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
-        dispatch(addPatient('a@a.aa'))
-        return userCredential
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))
         NavigationService.navigate('App')
       },
