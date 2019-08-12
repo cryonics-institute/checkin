@@ -1,10 +1,10 @@
 import React from 'react'
-import { ActivityIndicator, StatusBar, StyleSheet, Text, View }
-  from 'react-native'
+import { ActivityIndicator, StatusBar, Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import { addPatient, signoutStandby } from '../redux/ActionCreators'
+import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
@@ -169,31 +169,5 @@ class StandbyHome extends React.Component {
     }
   }
 }
-
-const styles = StyleSheet.create(
-  {
-    button: {
-      margin: 5
-    },
-    container: {
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      flex: 1,
-      justifyContent: 'center',
-      padding: 20
-    },
-    errorText: {
-      color: 'red'
-    },
-    text: {
-      margin: 5
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      margin: 5
-    }
-  }
-)
 
 export default connect(mapStateToProps, mapDispatchToProps)(StandbyHome)

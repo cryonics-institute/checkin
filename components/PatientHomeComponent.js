@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Button, Slider } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { removeTimers, setTimer, signoutPatient } from '../redux/ActionCreators'
+import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
@@ -56,24 +57,5 @@ class PatientHome extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create(
-  {
-    container: {
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      flex: 1,
-      justifyContent: 'center',
-      padding: 20
-    },
-    slider: {
-      width: 100
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: 'bold'
-    }
-  }
-)
 
 export default connect(mapStateToProps, mapDispatchToProps)(PatientHome)

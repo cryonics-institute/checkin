@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { signinPatient, registerPatient } from '../redux/ActionCreators'
+import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
@@ -178,20 +179,5 @@ class PatientSignIn extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create(
-  {
-    container: {
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      flex: 1,
-      justifyContent: 'center',
-      padding: 20
-    },
-    errorText: {
-      color: 'red'
-    }
-  }
-)
 
 export default connect(mapStateToProps, mapDispatchToProps)(PatientSignIn)

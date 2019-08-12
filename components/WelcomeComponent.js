@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { selectStatus } from '../redux/ActionCreators'
+import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
@@ -62,25 +63,5 @@ class Welcome extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create(
-  {
-    button: {
-      margin: 5
-    },
-    container: {
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      flex: 1,
-      justifyContent: 'center',
-      padding: 20
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      margin: 5
-    }
-  }
-)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Welcome)

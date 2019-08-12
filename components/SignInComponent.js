@@ -1,6 +1,7 @@
 import React from 'react'
-import { ActivityIndicator, StatusBar, StyleSheet, View } from 'react-native'
+import { ActivityIndicator, StatusBar, View } from 'react-native'
 import { connect } from 'react-redux'
+import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
@@ -25,17 +26,5 @@ class SignIn extends React.Component {
     )
   }
 }
-
-const styles = StyleSheet.create(
-  {
-    container: {
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      flex: 1,
-      justifyContent: 'center',
-      padding: 20
-    }
-  }
-)
 
 export default connect(mapStateToProps)(SignIn)
