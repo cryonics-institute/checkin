@@ -81,7 +81,6 @@ const RenderSignedOutPatientView = (props) => {
 }
 
 // TODO: What happens if the network is down?
-// TODO: Add condition that will present view that asks for patient's e-mail.
 class StandbyHome extends React.Component {
   constructor (props) {
     super(props)
