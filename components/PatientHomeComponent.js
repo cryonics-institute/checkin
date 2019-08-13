@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Button, Slider } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { removeTimers, setTimer, signoutPatient } from '../redux/ActionCreators'
+import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
@@ -39,8 +40,8 @@ class PatientHome extends React.Component {
       <View style = { styles.container }>
         <Text style = { styles.title }>Check-In Interval</Text>
         <Slider
-          maximumValue = { 10000 }
-          minimumValue = { 1000 }
+          maximumValue = { this.props.timer.maximumInterval }
+          minimumValue = { this.props.timer.minimumInterval }
           onSlidingComplete = { value => this.handleIntervalChange(value) }
           onValueChange = { value => this.setState({ interval: value }) }
           step = { 1000 }
@@ -50,30 +51,12 @@ class PatientHome extends React.Component {
         <Text>{ this.state.interval }</Text>
         <Button
           onPress = { () => this.props.signoutPatient() }
+          style = { styles.button }
           title = "Sign Out"
         />
       </View>
     )
   }
 }
-
-const styles = StyleSheet.create(
-  {
-    container: {
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      flex: 1,
-      justifyContent: 'center',
-      padding: 20
-    },
-    slider: {
-      width: 100
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: 'bold'
-    }
-  }
-)
 
 export default connect(mapStateToProps, mapDispatchToProps)(PatientHome)

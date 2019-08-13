@@ -1,8 +1,9 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { signinStandby, registerStandby } from '../redux/ActionCreators'
+import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
@@ -140,10 +141,12 @@ class StandbySignIn extends React.Component {
             title = "Sign In"
             disabled = { this.toggleButtonDisabled() }
             onPress = { () => this.handleSignin() }
+            style = { styles.button }
           />
           <Button
             title = "Create Account"
             onPress = { () => this.toggleRegistration() }
+            style = { styles.button }
             type="clear"
           />
         </View>
@@ -168,30 +171,17 @@ class StandbySignIn extends React.Component {
             title = "Create Account"
             disabled = { this.toggleButtonDisabled() }
             onPress = { () => this.handleRegistration() }
+            style = { styles.button }
           />
           <Button
             title = "Sign In"
             onPress = { () => this.toggleRegistration() }
+            style = { styles.button }
             type="clear"
           />
         </View>
     )
   }
 }
-
-const styles = StyleSheet.create(
-  {
-    container: {
-      alignItems: 'center',
-      backgroundColor: '#fff',
-      flex: 1,
-      justifyContent: 'center',
-      padding: 20
-    },
-    errorText: {
-      color: 'red'
-    }
-  }
-)
 
 export default connect(mapStateToProps, mapDispatchToProps)(StandbySignIn)
