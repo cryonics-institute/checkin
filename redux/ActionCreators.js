@@ -1,4 +1,5 @@
 import { Alert } from 'react-native'
+// import moment from 'moment'
 import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
@@ -85,57 +86,6 @@ export const addPatientFulfilledAction = () => (
   }
 )
 
-export const getDocument = (email) => (dispatch) => {
-  dispatch(getDocumentRequestedAction())
-
-  return db.collection('users').doc(email).get()
-    .then(
-      doc => {
-        if (doc.exists) {
-          const signinTime = doc.data().signinTime.toDate()
-          const checkinTime = doc.data().checkinTime.toDate()
-
-          return [true, signinTime, checkinTime]
-        } else {
-          // doc.data() will be undefined in this case
-          console.log('No such document!')
-
-          return [false, null, null]
-        }
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      (data) => {
-        dispatch(getDocumentFulfilledAction(data))
-      }
-    )
-    .catch(error => dispatch(getDocumentRejectedAction(error.message)))
-}
-
-export const getDocumentRequestedAction = () => (
-  {
-    type: ActionTypes.GET_DOCUMENT_REQUESTED
-  }
-)
-
-export const getDocumentRejectedAction = (errorMessage) => (
-  {
-    type: ActionTypes.GET_DOCUMENT_REJECTED,
-    payload: errorMessage
-  }
-)
-
-export const getDocumentFulfilledAction = (data) => (
-  {
-    type: ActionTypes.GET_DOCUMENT_FULFILLED,
-    payload: data
-  }
-)
-
 export const checkin = () => (dispatch, getState) => {
   dispatch(checkinRequestedAction())
 
@@ -170,6 +120,59 @@ export const checkinRejectedAction = (errorMessage) => (
 export const checkinFulfilledAction = () => (
   {
     type: ActionTypes.CHECKIN_FULFILLED
+  }
+)
+
+export const getDocument = (email) => (dispatch) => {
+  dispatch(getDocumentRequestedAction())
+
+  return db.collection('users').doc(email).get()
+    .then(
+      doc => {
+        if (doc.exists) {
+          const signinTime = doc.data().signinTime.toDate()
+          const checkinTime = doc.data().checkinTime.toDate()
+          const checkinInterval = doc.data().checkinInterval
+
+          return [true, signinTime, checkinTime, checkinInterval]
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+
+          return [false, null, null, null]
+        }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      (data) => {
+        dispatch(getDocumentFulfilledAction(data))
+        dispatch(setListener())
+      }
+    )
+    .catch(error => dispatch(getDocumentRejectedAction(error.message)))
+}
+
+export const getDocumentRequestedAction = () => (
+  {
+    type: ActionTypes.GET_DOCUMENT_REQUESTED
+  }
+)
+
+export const getDocumentRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.GET_DOCUMENT_REJECTED,
+    payload: errorMessage
+  }
+)
+
+export const getDocumentFulfilledAction = (data) => (
+  {
+    type: ActionTypes.GET_DOCUMENT_FULFILLED,
+    payload: data
   }
 )
 
@@ -227,6 +230,38 @@ export const registrationFulfilledAction = (user) => (
   }
 )
 
+// TODO: Add removal actions for one listener and all listeners.
+
+export const removeListener = (listener) => (dispatch, getState) => {
+  clearTimeout(listener)
+
+  const listeners = getState().patient.listeners
+  const index = listeners.indexOf(listener)
+  if (index > -1) {
+    listeners.splice(index, 1)
+  }
+
+  dispatch(removeTimerAction(listeners))
+}
+
+export const removeListenerAction = (newListeners) => (
+  {
+    type: ActionTypes.REMOVE_LISTENER,
+    payload: newListeners
+  }
+)
+
+export const removeListeners = () => (dispatch, getState) => {
+  getState().patient.listeners.forEach(listener => clearTimeout(listener))
+  dispatch(removeListenersAction())
+}
+
+export const removeListenersAction = () => (
+  {
+    type: ActionTypes.REMOVE_LISTENERS
+  }
+)
+
 export const removeTimer = (timer) => (dispatch, getState) => {
   clearTimeout(timer)
 
@@ -279,6 +314,90 @@ export const setTimerIntervalAction = (interval) => (
   }
 )
 
+export const setListener = () => (dispatch, getState) => {
+  // TODO: Fix this function.
+  // const alertInterval = () => {
+  //   const interval = getState().patient.checkinInterval
+  //   const lastCheckin = moment(getState().patient.checkinTime)
+  //   const now = moment(firestore.Timestamp.now())
+  //   const elapsedTime = now.diff(lastCheckin)
+  //   console.log('Elapsed Time: ' + moment.duration(elapsedTime, 'hours').humanize())
+  //   if (elapsedTime < interval) {
+  //     return elapsedTime
+  //   } else {
+  //     return interval
+  //   }
+  // }
+
+  const noCheckinAlert = () => {
+    const listeners = getState().patient.listeners
+    if (typeof listeners !== 'undefined' && listeners.length > 0) {
+      Alert.alert(
+        'Cryonics-Patient Alert',
+        `Your patient has not checked in.\nMake contact immediately!`,
+        [
+          {
+            text: 'OK',
+            onPress: () => {
+              console.log('OK Pressed')
+              dispatch(removeListeners())
+              dispatch(setListener())
+            }
+          },
+          {
+            text: 'Cancel',
+            onPress: () => {
+              console.log('Cancel Pressed')
+              dispatch(removeListeners())
+            },
+            style: 'cancel'
+          }
+        ],
+        { cancelable: false }
+      )
+    }
+  }
+
+  dispatch(setListenerRequestedAction())
+
+  return Promise.resolve(
+    setTimeout(
+      () => { noCheckinAlert() },
+      5000 // alertInterval
+    )
+  )
+    .then(
+      listener => {
+        dispatch(setListenerFulfilledAction(listener))
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(setListenerRejectedAction(error.message)))
+}
+
+export const setListenerRequestedAction = () => (
+  {
+    type: ActionTypes.SET_LISTENER_REQUESTED
+  }
+)
+
+export const setListenerRejectedAction = (message) => (
+  {
+    type: ActionTypes.SET_LISTENER_REJECTED,
+    payload: message
+  }
+)
+
+export const setListenerFulfilledAction = (timer) => (
+  {
+    type: ActionTypes.SET_LISTENER_FULFILLED,
+    payload: timer
+  }
+)
+
 export const setTimer = (interval) => (dispatch, getState) => {
   const checkinAlert = () => {
     const timers = getState().timer.timers
@@ -319,7 +438,7 @@ export const setTimer = (interval) => (dispatch, getState) => {
     )
   )
     .then(
-      (timer) => {
+      timer => {
         dispatch(setTimerFulfilledAction(timer))
       },
       error => {
@@ -355,7 +474,7 @@ export const signinPatient = (creds) => (dispatch) => {
 
   return auth.signInWithEmailAndPassword(creds.username, creds.password)
     .then(
-      (userCredential) => {
+      userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))
         dispatch(addDocument())
       },
@@ -441,6 +560,7 @@ export const signoutStandby = () => (dispatch, getState) => {
   return auth.signOut()
     .then(
       () => {
+        dispatch(removeListeners())
         dispatch(signoutFulfilledAction())
         NavigationService.navigate('Auth')
       },
