@@ -1,5 +1,5 @@
 import { Alert } from 'react-native'
-// import moment from 'moment'
+import moment from 'moment'
 import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
@@ -47,7 +47,7 @@ export const addPatient = (email) => (dispatch) => {
   )
     .then(
       () => {
-        dispatch(getDocument(email))
+        dispatch(setListener(email))
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -150,7 +150,6 @@ export const getDocument = (email) => (dispatch) => {
     .then(
       (data) => {
         dispatch(getDocumentFulfilledAction(data))
-        dispatch(setListener())
       }
     )
     .catch(error => dispatch(getDocumentRejectedAction(error.message)))
@@ -314,61 +313,85 @@ export const setTimerIntervalAction = (interval) => (
   }
 )
 
-export const setListener = () => (dispatch, getState) => {
-  // TODO: Fix this function.
-  // const alertInterval = () => {
-  //   const interval = getState().patient.checkinInterval
-  //   const lastCheckin = moment(getState().patient.checkinTime)
-  //   const now = moment(firestore.Timestamp.now())
-  //   const elapsedTime = now.diff(lastCheckin)
-  //   console.log('Elapsed Time: ' + moment.duration(elapsedTime, 'hours').humanize())
-  //   if (elapsedTime < interval) {
-  //     return elapsedTime
-  //   } else {
-  //     return interval
-  //   }
-  // }
+export const setListener = (email) => (dispatch, getState) => {
+  const setInterval = () => {
+    const interval = getState().patient.checkinInterval
+    const lastCheckin = moment(getState().patient.checkinTime)
+    const elapsedTime = moment().diff(lastCheckin)
+    if (elapsedTime < interval) {
+      console.log(
+        'Elapsed Time: ' +
+        moment.duration(elapsedTime, 'milliseconds').humanize()
+      )
+      return elapsedTime
+    } else if (elapsedTime > interval) {
+      console.log(
+        'Elapsed Time: ' +
+        moment.duration(elapsedTime, 'milliseconds').humanize()
+      )
+      return 0
+    } else {
+      console.log(
+        'Interval: ' +
+        moment.duration(interval, 'milliseconds').humanize()
+      )
+      return interval
+    }
+  }
 
   const noCheckinAlert = () => {
-    const listeners = getState().patient.listeners
-    if (typeof listeners !== 'undefined' && listeners.length > 0) {
-      Alert.alert(
-        'Cryonics-Patient Alert',
-        `Your patient has not checked in.\nMake contact immediately!`,
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              console.log('OK Pressed')
-              dispatch(removeListeners())
-              dispatch(setListener())
-            }
-          },
-          {
-            text: 'Cancel',
-            onPress: () => {
-              console.log('Cancel Pressed')
-              dispatch(removeListeners())
-            },
-            style: 'cancel'
+    Alert.alert(
+      'Cryonics-Patient Alert',
+      `Your patient has not checked in.\nMake contact immediately!`,
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed')
+            dispatch(setListener(getState().patient.email))
           }
-        ],
-        { cancelable: false }
-      )
-    }
+        },
+        {
+          text: 'Dismiss',
+          onPress: () => {
+            console.log('Dismiss Pressed')
+          },
+          style: 'cancel'
+        }
+      ],
+      { cancelable: false }
+    )
   }
 
   dispatch(setListenerRequestedAction())
 
-  return Promise.resolve(
-    setTimeout(
-      () => { noCheckinAlert() },
-      5000 // alertInterval
+  return dispatch(getDocument(email))
+    .then(
+      () => {
+        dispatch(removeListeners())
+
+        const interval = setInterval()
+        if (interval > 0) {
+          const listener = Promise.resolve(
+            setTimeout(
+              () => { dispatch(setListener(getState().patient.email)) },
+              interval
+            )
+          )
+          return listener
+        } else {
+          return noCheckinAlert()
+        }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
     )
-  )
     .then(
       listener => {
         dispatch(setListenerFulfilledAction(listener))
+        // dispatch(setListener(getState().patient.email))
       },
       error => {
         var errorMessage = new Error(error.message)
