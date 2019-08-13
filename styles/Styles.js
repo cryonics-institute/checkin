@@ -13,16 +13,20 @@ export const styles = StyleSheet.create(
       padding: 20
     },
     errorText: {
-      color: 'red'
+      color: 'red',
+      fontSize: 12,
+      margin: 5
     },
     slider: {
-      width: 100
+      margin: 5,
+      width: '75%'
     },
     text: {
+      fontSize: 17,
       margin: 5
     },
     title: {
-      fontSize: 20,
+      fontSize: 22,
       fontWeight: 'bold',
       margin: 5
     }

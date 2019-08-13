@@ -141,10 +141,12 @@ class StandbySignIn extends React.Component {
             title = "Sign In"
             disabled = { this.toggleButtonDisabled() }
             onPress = { () => this.handleSignin() }
+            style = { styles.button }
           />
           <Button
             title = "Create Account"
             onPress = { () => this.toggleRegistration() }
+            style = { styles.button }
             type="clear"
           />
         </View>
@@ -169,10 +171,12 @@ class StandbySignIn extends React.Component {
             title = "Create Account"
             disabled = { this.toggleButtonDisabled() }
             onPress = { () => this.handleRegistration() }
+            style = { styles.button }
           />
           <Button
             title = "Sign In"
             onPress = { () => this.toggleRegistration() }
+            style = { styles.button }
             type="clear"
           />
         </View>

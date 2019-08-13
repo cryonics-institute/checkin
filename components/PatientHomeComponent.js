@@ -40,8 +40,8 @@ class PatientHome extends React.Component {
       <View style = { styles.container }>
         <Text style = { styles.title }>Check-In Interval</Text>
         <Slider
-          maximumValue = { 10000 }
-          minimumValue = { 1000 }
+          maximumValue = { this.props.timer.maximumInterval }
+          minimumValue = { this.props.timer.minimumInterval }
           onSlidingComplete = { value => this.handleIntervalChange(value) }
           onValueChange = { value => this.setState({ interval: value }) }
           step = { 1000 }
@@ -51,6 +51,7 @@ class PatientHome extends React.Component {
         <Text>{ this.state.interval }</Text>
         <Button
           onPress = { () => this.props.signoutPatient() }
+          style = { styles.button }
           title = "Sign Out"
         />
       </View>

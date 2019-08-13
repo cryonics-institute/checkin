@@ -3,7 +3,9 @@ import * as ActionTypes from './ActionTypes'
 export const Timer = (
   state = {
     errMess: null,
-    interval: 0,
+    interval: 5000,
+    maximumInterval: 10000,
+    minimumInterval: 1000,
     timers: []
   },
   action

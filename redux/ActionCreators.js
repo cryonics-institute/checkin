@@ -14,7 +14,7 @@ export const addDocument = () => (dispatch, getState) => {
     .then(
       () => {
         dispatch(addDocumentFulfilledAction())
-        dispatch(setTimer(5000))
+        dispatch(setTimer(getState().timer.interval))
         NavigationService.navigate('App')
       }
     )
@@ -141,7 +141,8 @@ export const checkin = () => (dispatch, getState) => {
 
   return db.collection('users').doc(getState().auth.user.email).update(
     {
-      checkinTime: firestore.Timestamp.now()
+      checkinTime: firestore.Timestamp.now(),
+      checkinInterval: getState().timer.interval
     }
   )
     .then(
