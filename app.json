@@ -1,0 +1,39 @@
+{
+  "expo": {
+    "name": "checkin",
+    "slug": "checkin",
+    "privacy": "public",
+    "sdkVersion": "33.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "bundleIdentifier": "org.cryonics.checkin",
+      "supportsTablet": true,
+      "publishBundlePath": "ios/checkin/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/checkin/Supporting/shell-app-manifest.json"
+    },
+    "android": {
+      "package": "org.cryonics.checkin",
+      "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
+      "publishManifestPath": "android/app/src/main/assets/shell-app-manifest.json"
+    },
+    "scheme": "exp073cd0aac7b54b94b9b9dbfcbdddf422"
+  }
+}
