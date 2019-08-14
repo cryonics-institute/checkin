@@ -302,17 +302,6 @@ export const selectStatusAction = (isPatient) => (
   }
 )
 
-export const setTimerInterval = (interval) => (dispatch, getState) => {
-  dispatch(setTimerIntervalAction(interval))
-}
-
-export const setTimerIntervalAction = (interval) => (
-  {
-    type: ActionTypes.SET_TIMER_INTERVAL,
-    payload: interval
-  }
-)
-
 export const setListener = (email) => (dispatch, getState) => {
   const setInterval = () => {
     const interval = getState().patient.checkinInterval
@@ -370,17 +359,19 @@ export const setListener = (email) => (dispatch, getState) => {
       () => {
         dispatch(removeListeners())
 
-        const interval = setInterval()
-        if (interval > 0) {
-          const listener = Promise.resolve(
-            setTimeout(
-              () => { dispatch(setListener(getState().patient.email)) },
-              interval
+        if (getState().patient.isSignedIn) {
+          const interval = setInterval()
+          if (interval > 0) {
+            const listener = Promise.resolve(
+              setTimeout(
+                () => { dispatch(setListener(getState().patient.email)) },
+                interval
+              )
             )
-          )
-          return listener
-        } else {
-          return noCheckinAlert()
+            return listener
+          } else {
+            return noCheckinAlert()
+          }
         }
       },
       error => {
@@ -489,6 +480,17 @@ export const setTimerFulfilledAction = (timer) => (
   {
     type: ActionTypes.SET_TIMER_FULFILLED,
     payload: timer
+  }
+)
+
+export const setTimerInterval = (interval) => (dispatch, getState) => {
+  dispatch(setTimerIntervalAction(interval))
+}
+
+export const setTimerIntervalAction = (interval) => (
+  {
+    type: ActionTypes.SET_TIMER_INTERVAL,
+    payload: interval
   }
 )
 
