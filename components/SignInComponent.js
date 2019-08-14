@@ -1,5 +1,6 @@
 import React from 'react'
 import { ActivityIndicator, StatusBar, View } from 'react-native'
+import { Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { styles } from '../styles/Styles'
 
@@ -20,6 +21,7 @@ class SignIn extends React.Component {
   render () {
     return (
       <View style = { styles.container }>
+        <Text h3 style = { styles.title }>Sign-In</Text>
         <ActivityIndicator />
         <StatusBar barStyle="default" />
       </View>
