@@ -69,13 +69,11 @@ const RenderSignedInPatientView = (props) => {
 const RenderSignedOutPatientView = (props) => {
   return (
     <View style = { styles.container }>
-      <Text h4 style = { styles.centeredTitleTextTop }>
+      <Text h4 style = { styles.paragraph }>
         The patient with e-mail
-      </Text>
-      <Text h4 style = { styles.centeredTitleTextMiddle }>
+        {'\n'}
         { props.patientEmail }
-      </Text>
-      <Text h4 style = { styles.centeredTitleTextBottom }>
+        {'\n'}
         is not signed in.
       </Text>
       <Button

@@ -5,17 +5,6 @@ export const styles = StyleSheet.create(
     button: {
       margin: 5
     },
-    centeredTitleTextBottom: {
-      fontWeight: 'bold',
-      marginBottom: 5
-    },
-    centeredTitleTextMiddle: {
-      fontWeight: 'bold'
-    },
-    centeredTitleTextTop: {
-      fontWeight: 'bold',
-      marginTop: 5
-    },
     container: {
       alignItems: 'center',
       backgroundColor: '#fff',
@@ -27,6 +16,10 @@ export const styles = StyleSheet.create(
       color: 'red',
       fontSize: 12,
       margin: 5
+    },
+    paragraph: {
+      margin: 5,
+      textAlign: 'center'
     },
     slider: {
       margin: 5,
