@@ -1,6 +1,6 @@
 import React from 'react'
-import { Text, View } from 'react-native'
-import { Button } from 'react-native-elements'
+import { View } from 'react-native'
+import { Button, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { selectStatus } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
@@ -46,7 +46,7 @@ class Welcome extends React.Component {
   render () {
     return (
       <View style = { styles.container }>
-        <Text style = { styles.title }>
+        <Text h3 style = { styles.title }>
           Welcome!
         </Text>
         <Button

@@ -1,6 +1,6 @@
 import React from 'react'
-import { Text, View } from 'react-native'
-import { Button, Slider } from 'react-native-elements'
+import { View } from 'react-native'
+import { Button, Slider, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { removeTimers, setTimer, signoutPatient } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
@@ -38,7 +38,7 @@ class PatientHome extends React.Component {
   render () {
     return (
       <View style = { styles.container }>
-        <Text style = { styles.title }>Check-In Interval</Text>
+        <Text h4 style = { styles.title }>Check-In Interval</Text>
         <Slider
           maximumValue = { this.props.timer.maximumInterval }
           minimumValue = { this.props.timer.minimumInterval }
@@ -48,7 +48,7 @@ class PatientHome extends React.Component {
           style = { styles.slider }
           value = { this.props.timer.interval }
         />
-        <Text>{ this.state.interval }</Text>
+        <Text style = { styles.text }>{ this.state.interval }</Text>
         <Button
           onPress = { () => this.props.signoutPatient() }
           style = { styles.button }
