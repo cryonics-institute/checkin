@@ -5,6 +5,20 @@ export const styles = StyleSheet.create(
     button: {
       margin: 5
     },
+    centeredTitleTextBottom: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      marginBottom: 5
+    },
+    centeredTitleTextMiddle: {
+      fontSize: 22,
+      fontWeight: 'bold'
+    },
+    centeredTitleTextTop: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      marginTop: 5
+    },
     container: {
       alignItems: 'center',
       backgroundColor: '#fff',

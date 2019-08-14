@@ -1,3 +1,4 @@
+// TODO: Add navigation.
 import React from 'react'
 import { ActivityIndicator, StatusBar, Text, View } from 'react-native'
 import { Button, Input } from 'react-native-elements'
@@ -68,8 +69,14 @@ const RenderSignedInPatientView = (props) => {
 const RenderSignedOutPatientView = (props) => {
   return (
     <View style = { styles.container }>
-      <Text style = { styles.title }>
-        The patient is not signed in.
+      <Text style = { styles.centeredTitleTextTop }>
+        The patient with e-mail
+      </Text>
+      <Text style = { styles.centeredTitleTextMiddle }>
+        { props.patientEmail }
+      </Text>
+      <Text style = { styles.centeredTitleTextBottom }>
+        is not signed in.
       </Text>
       <Button
         onPress = { () => props.signoutStandby() }
@@ -162,6 +169,7 @@ class StandbyHome extends React.Component {
       } else {
         return (
           <RenderSignedOutPatientView
+            patientEmail = { this.props.patientEmail }
             signoutStandby = { () => this.props.signoutStandby() }
           />
         )
