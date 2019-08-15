@@ -48,7 +48,9 @@ class PatientHome extends React.Component {
           style = { styles.slider }
           value = { this.props.timer.interval }
         />
-        <Text style = { styles.text }>{ this.state.interval }</Text>
+        <Text style = { styles.text }>
+          { this.state.interval / 1000 } Seconds
+        </Text>
         <Button
           onPress = { () => this.props.signoutPatient() }
           style = { styles.button }
