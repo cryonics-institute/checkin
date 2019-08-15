@@ -4,10 +4,11 @@ import { createAppContainer, createStackNavigator, createSwitchNavigator }
 import { connect } from 'react-redux'
 import NavigationService from '../services/NavigationService'
 import AuthLoading from './AuthLoadingComponent'
-import PatientSignIn from './PatientSignInComponent'
 import PatientHome from './PatientHomeComponent'
-import StandbySignIn from './StandbySignInComponent'
+import PatientSignIn from './PatientSignInComponent'
 import StandbyHome from './StandbyHomeComponent'
+import StandbyPatientSelection from './StandbyPatientSelectionComponent'
+import StandbySignIn from './StandbySignInComponent'
 import Welcome from './WelcomeComponent'
 
 // Setup Redux
@@ -50,6 +51,14 @@ class StandbyHomeScreen extends React.Component {
   }
 }
 
+class StandbyPatientSelectionScreen extends React.Component {
+  render () {
+    return (
+      <StandbyPatientSelection navigation = {this.props.navigation}/>
+    )
+  }
+}
+
 class StandbySignInScreen extends React.Component {
   render () {
     return (
@@ -77,12 +86,22 @@ const AuthStack = createStackNavigator(
   }
 )
 
+const StandbyAppStack = createStackNavigator(
+  {
+    StandbyHome: StandbyHomeScreen,
+    StandbyPatientSelection: StandbyPatientSelectionScreen
+  },
+  {
+    initialRouteName: 'StandbyPatientSelection'
+  }
+)
+
 const AppContainer = createAppContainer(
   createSwitchNavigator(
     {
       AuthLoading: AuthLoadingScreen,
       PatientApp: PatientHomeScreen,
-      StandbyApp: StandbyHomeScreen,
+      StandbyApp: StandbyAppStack,
       Auth: AuthStack
     },
     {

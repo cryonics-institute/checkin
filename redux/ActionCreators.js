@@ -59,6 +59,7 @@ export const addPatient = (email) => (dispatch) => {
     .then(
       () => {
         dispatch(addPatientFulfilledAction())
+        NavigationService.navigate('StandbyHome')
       },
       error => {
         var errorMessage = new Error(error.message)
