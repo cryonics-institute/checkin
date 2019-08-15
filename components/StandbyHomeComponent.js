@@ -1,4 +1,3 @@
-// TODO: Add navigation.
 import React from 'react'
 import { ActivityIndicator, StatusBar, View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'

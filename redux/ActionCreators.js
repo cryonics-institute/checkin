@@ -16,7 +16,7 @@ export const addDocument = () => (dispatch, getState) => {
       () => {
         dispatch(addDocumentFulfilledAction())
         dispatch(setTimer(getState().timer.interval))
-        NavigationService.navigate('App')
+        NavigationService.navigate('PatientApp')
       }
     )
     .catch(error => dispatch(addDocumentRejectedAction(error.message)))
@@ -199,7 +199,7 @@ export const registerStandby = (creds) => (dispatch) => {
     .then(
       (userCredential) => {
         dispatch(registrationFulfilledAction(userCredential.user))
-        NavigationService.navigate('App')
+        NavigationService.navigate('StandbyApp')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -518,7 +518,7 @@ export const signinStandby = (creds) => (dispatch) => {
     .then(
       userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))
-        NavigationService.navigate('App')
+        NavigationService.navigate('StandbyApp')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -565,7 +565,7 @@ export const signoutPatient = () => (dispatch, getState) => {
       () => {
         dispatch(removeTimers())
         dispatch(signoutFulfilledAction())
-        NavigationService.navigate('Auth')
+        NavigationService.navigate('PatientAuth')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -587,7 +587,7 @@ export const signoutStandby = () => (dispatch, getState) => {
       () => {
         dispatch(removeListeners())
         dispatch(signoutFulfilledAction())
-        NavigationService.navigate('Auth')
+        NavigationService.navigate('StandbyAuth')
       },
       error => {
         var errorMessage = new Error(error.message)

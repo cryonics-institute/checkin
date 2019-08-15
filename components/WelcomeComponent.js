@@ -25,22 +25,22 @@ class Welcome extends React.Component {
     this.handleStandby = this.handleStandby.bind(this)
   }
 
-  componentDidMount () {
-    if (this.props.auth.isAuthenticated) {
-      this.props.navigation.navigate('App')
-    } else if (this.props.auth.isPatient != null) {
-      this.props.navigation.navigate('Auth')
-    }
-  }
+  // componentDidMount () {
+  //   if (this.props.auth.isAuthenticated) {
+  //     this.props.navigation.navigate('App')
+  //   } else if (this.props.auth.isPatient != null) {
+  //     this.props.navigation.navigate('Auth')
+  //   }
+  // }
 
   handlePatient () {
     this.props.selectStatus(true)
-    this.props.navigation.navigate('AuthLoading')
+    this.props.navigation.navigate('PatientAuth')
   }
 
   handleStandby () {
     this.props.selectStatus(false)
-    this.props.navigation.navigate('AuthLoading')
+    this.props.navigation.navigate('StandbyAuth')
   }
 
   render () {
