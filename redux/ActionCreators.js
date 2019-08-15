@@ -9,7 +9,9 @@ export const addDocument = () => (dispatch, getState) => {
 
   return db.collection('users').doc(getState().auth.user.email).set(
     {
-      signinTime: firestore.Timestamp.now()
+      signinTime: firestore.Timestamp.now(),
+      checkinTime: firestore.Timestamp.now(),
+      checkinInterval: getState().timer.interval
     }
   )
     .then(
