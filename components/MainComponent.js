@@ -4,12 +4,10 @@ import { createAppContainer, createStackNavigator, createSwitchNavigator }
 import { connect } from 'react-redux'
 import NavigationService from '../services/NavigationService'
 import AuthLoading from './AuthLoadingComponent'
-import Home from './HomeComponent'
 import PatientSignIn from './PatientSignInComponent'
 import PatientHome from './PatientHomeComponent'
 import StandbySignIn from './StandbySignInComponent'
 import StandbyHome from './StandbyHomeComponent'
-import SignIn from './SignInComponent'
 import Welcome from './WelcomeComponent'
 
 // Setup Redux
@@ -28,14 +26,6 @@ class AuthLoadingScreen extends React.Component {
   }
 }
 
-class HomeScreen extends React.Component {
-  render () {
-    return (
-      <Home navigation = {this.props.navigation}/>
-    )
-  }
-}
-
 class PatientHomeScreen extends React.Component {
   render () {
     return (
@@ -48,14 +38,6 @@ class PatientSignInScreen extends React.Component {
   render () {
     return (
       <PatientSignIn navigation = {this.props.navigation}/>
-    )
-  }
-}
-
-class SignInScreen extends React.Component {
-  render () {
-    return (
-      <SignIn navigation = {this.props.navigation}/>
     )
   }
 }
@@ -84,38 +66,27 @@ class WelcomeScreen extends React.Component {
   }
 }
 
-const AppStack = createStackNavigator({ Home: HomeScreen })
-
-const AuthStack = createStackNavigator({ SignIn: SignInScreen })
-
-const PatientHomeStack =
-  createStackNavigator({ PatientHome: PatientHomeScreen })
-
-const PatientSignInStack =
-  createStackNavigator({ PatientSignIn: PatientSignInScreen })
-
-const StandbyHomeStack =
-  createStackNavigator({ StandbyHome: StandbyHomeScreen })
-
-const StandbySignInStack =
-  createStackNavigator({ StandbySignIn: StandbySignInScreen })
-
-const WelcomeStack = createStackNavigator({ Welcome: WelcomeScreen })
+const AuthStack = createStackNavigator(
+  {
+    PatientAuth: PatientSignInScreen,
+    StandbyAuth: StandbySignInScreen,
+    Welcome: WelcomeScreen
+  },
+  {
+    initialRouteName: 'Welcome'
+  }
+)
 
 const AppContainer = createAppContainer(
   createSwitchNavigator(
     {
       AuthLoading: AuthLoadingScreen,
-      App: AppStack,
-      Auth: AuthStack,
-      PatientHome: PatientHomeStack,
-      PatientSignIn: PatientSignInStack,
-      StandbyHome: StandbyHomeStack,
-      StandbySignIn: StandbySignInStack,
-      Welcome: WelcomeStack
+      PatientApp: PatientHomeScreen,
+      StandbyApp: StandbyHomeScreen,
+      Auth: AuthStack
     },
     {
-      initialRouteName: 'Welcome'
+      initialRouteName: 'AuthLoading'
     }
   )
 )

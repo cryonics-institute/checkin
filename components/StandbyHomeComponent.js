@@ -1,6 +1,6 @@
 import React from 'react'
-import { ActivityIndicator, StatusBar, Text, View } from 'react-native'
-import { Button, Input } from 'react-native-elements'
+import { ActivityIndicator, StatusBar, View } from 'react-native'
+import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import moment from 'moment'
 import { addPatient, signoutStandby } from '../redux/ActionCreators'
@@ -25,7 +25,7 @@ const mapDispatchToProps = (dispatch) => (
 const RenderNullPatientStatusView = (props) => {
   return (
     <View style = { styles.container }>
-      <Text style = { styles.title }>
+      <Text h4 style = { styles.title }>
         Retrieving Patient Data
       </Text>
       <ActivityIndicator />
@@ -42,14 +42,14 @@ const RenderNullPatientStatusView = (props) => {
 const RenderSignedInPatientView = (props) => {
   return (
     <View style = { styles.container }>
-      <Text style = { styles.title }>Sign-In Time</Text>
+      <Text h4 style = { styles.title }>Sign-In Time</Text>
       <Text style = { styles.text }>
         {
           moment(props.signinTime)
             .format('dddd, MMMM Do YYYY, h:mm:ss a')
         }
       </Text>
-      <Text style = { styles.title }>Check-In Time</Text>
+      <Text h4 style = { styles.title }>Check-In Time</Text>
       <Text style = { styles.text }>
         {
           moment(props.checkinTime)
@@ -68,8 +68,12 @@ const RenderSignedInPatientView = (props) => {
 const RenderSignedOutPatientView = (props) => {
   return (
     <View style = { styles.container }>
-      <Text style = { styles.title }>
-        The patient is not signed in.
+      <Text h4 style = { styles.paragraph }>
+        The patient with e-mail
+        {'\n'}
+        { props.patientEmail }
+        {'\n'}
+        is not signed in.
       </Text>
       <Button
         onPress = { () => props.signoutStandby() }
@@ -119,9 +123,6 @@ class StandbyHome extends React.Component {
     if (this.props.patientEmail == null) {
       return (
         <View style = { styles.container }>
-          <Text style = { styles.title }>
-            Please enter the patient&#39;s e-mail address.
-          </Text>
           <Input
             ref = { this.emailRef }
             placeholder = "Patient's E-Mail Address"
@@ -162,6 +163,7 @@ class StandbyHome extends React.Component {
       } else {
         return (
           <RenderSignedOutPatientView
+            patientEmail = { this.props.patientEmail }
             signoutStandby = { () => this.props.signoutStandby() }
           />
         )

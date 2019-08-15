@@ -1,6 +1,6 @@
 import React from 'react'
-import { Text, View } from 'react-native'
-import { Button } from 'react-native-elements'
+import { View } from 'react-native'
+import { Button, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { selectStatus } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
@@ -25,28 +25,28 @@ class Welcome extends React.Component {
     this.handleStandby = this.handleStandby.bind(this)
   }
 
-  componentDidMount () {
-    if (this.props.auth.isAuthenticated) {
-      this.props.navigation.navigate('App')
-    } else if (this.props.auth.isPatient != null) {
-      this.props.navigation.navigate('Auth')
-    }
-  }
+  // componentDidMount () {
+  //   if (this.props.auth.isAuthenticated) {
+  //     this.props.navigation.navigate('App')
+  //   } else if (this.props.auth.isPatient != null) {
+  //     this.props.navigation.navigate('Auth')
+  //   }
+  // }
 
   handlePatient () {
     this.props.selectStatus(true)
-    this.props.navigation.navigate('AuthLoading')
+    this.props.navigation.navigate('PatientAuth')
   }
 
   handleStandby () {
     this.props.selectStatus(false)
-    this.props.navigation.navigate('AuthLoading')
+    this.props.navigation.navigate('StandbyAuth')
   }
 
   render () {
     return (
       <View style = { styles.container }>
-        <Text style = { styles.title }>
+        <Text h3 style = { styles.title }>
           Welcome!
         </Text>
         <Button

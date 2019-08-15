@@ -16,7 +16,7 @@ export const addDocument = () => (dispatch, getState) => {
       () => {
         dispatch(addDocumentFulfilledAction())
         dispatch(setTimer(getState().timer.interval))
-        NavigationService.navigate('App')
+        NavigationService.navigate('PatientApp')
       }
     )
     .catch(error => dispatch(addDocumentRejectedAction(error.message)))
@@ -199,7 +199,7 @@ export const registerStandby = (creds) => (dispatch) => {
     .then(
       (userCredential) => {
         dispatch(registrationFulfilledAction(userCredential.user))
-        NavigationService.navigate('App')
+        NavigationService.navigate('StandbyApp')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -302,17 +302,6 @@ export const selectStatusAction = (isPatient) => (
   }
 )
 
-export const setTimerInterval = (interval) => (dispatch, getState) => {
-  dispatch(setTimerIntervalAction(interval))
-}
-
-export const setTimerIntervalAction = (interval) => (
-  {
-    type: ActionTypes.SET_TIMER_INTERVAL,
-    payload: interval
-  }
-)
-
 export const setListener = (email) => (dispatch, getState) => {
   const setInterval = () => {
     const interval = getState().patient.checkinInterval
@@ -370,17 +359,19 @@ export const setListener = (email) => (dispatch, getState) => {
       () => {
         dispatch(removeListeners())
 
-        const interval = setInterval()
-        if (interval > 0) {
-          const listener = Promise.resolve(
-            setTimeout(
-              () => { dispatch(setListener(getState().patient.email)) },
-              interval
+        if (getState().patient.isSignedIn) {
+          const interval = setInterval()
+          if (interval > 0) {
+            const listener = Promise.resolve(
+              setTimeout(
+                () => { dispatch(setListener(getState().patient.email)) },
+                interval
+              )
             )
-          )
-          return listener
-        } else {
-          return noCheckinAlert()
+            return listener
+          } else {
+            return noCheckinAlert()
+          }
         }
       },
       error => {
@@ -492,6 +483,17 @@ export const setTimerFulfilledAction = (timer) => (
   }
 )
 
+export const setTimerInterval = (interval) => (dispatch, getState) => {
+  dispatch(setTimerIntervalAction(interval))
+}
+
+export const setTimerIntervalAction = (interval) => (
+  {
+    type: ActionTypes.SET_TIMER_INTERVAL,
+    payload: interval
+  }
+)
+
 export const signinPatient = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
@@ -516,7 +518,7 @@ export const signinStandby = (creds) => (dispatch) => {
     .then(
       userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))
-        NavigationService.navigate('App')
+        NavigationService.navigate('StandbyApp')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -563,7 +565,7 @@ export const signoutPatient = () => (dispatch, getState) => {
       () => {
         dispatch(removeTimers())
         dispatch(signoutFulfilledAction())
-        NavigationService.navigate('Auth')
+        NavigationService.navigate('PatientAuth')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -585,7 +587,7 @@ export const signoutStandby = () => (dispatch, getState) => {
       () => {
         dispatch(removeListeners())
         dispatch(signoutFulfilledAction())
-        NavigationService.navigate('Auth')
+        NavigationService.navigate('StandbyAuth')
       },
       error => {
         var errorMessage = new Error(error.message)

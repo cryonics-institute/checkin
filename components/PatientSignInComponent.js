@@ -1,6 +1,6 @@
 import React from 'react'
-import { Text, View } from 'react-native'
-import { Button, Input } from 'react-native-elements'
+import { View } from 'react-native'
+import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { signinPatient, registerPatient } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'

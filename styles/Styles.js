@@ -17,17 +17,18 @@ export const styles = StyleSheet.create(
       fontSize: 12,
       margin: 5
     },
+    paragraph: {
+      margin: 5,
+      textAlign: 'center'
+    },
     slider: {
       margin: 5,
       width: '75%'
     },
     text: {
-      fontSize: 17,
       margin: 5
     },
     title: {
-      fontSize: 22,
-      fontWeight: 'bold',
       margin: 5
     }
   }
