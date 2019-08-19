@@ -1,7 +1,8 @@
 import React from 'react'
-import { Impress, Step } from 'react-impressjs';
-// styles of react-impressjs
-import 'react-impressjs/styles/react-impressjs.css';
+import { Impress, Step } from 'react-impressjs'
+import 'react-impressjs/styles/react-impressjs.css'
+import '../App.css'
+import alfredFeelsPoorly from '../images/alfred_feels_poorly.svg'
 
 class Main extends React.Component {
   render () {
@@ -9,7 +10,9 @@ class Main extends React.Component {
       <Impress
         progress = { true }
         fallbackMessage = {
-          <p>Sorry, your <b>device or browser</b> couldn't support well.</p>
+          <p>
+            Sorry, your <b>device or browser</b> does not support impress.js.
+          </p>
         }
       >
         <Step id = { 'overview' }/>
@@ -24,9 +27,15 @@ class Main extends React.Component {
           }
         />
         <Step duration = { 1500 }>
-          <h1>Any Element write in Step!</h1>
-          <hr />
-          <p>Made by your <b>Creativity</b> !!</p>
+          <img
+            src = { alfredFeelsPoorly }
+            alt = 'Alfred feels poorly.'
+            className = 'Image-Center'
+            height = '50%'
+            width = '50%'
+          />
+          <hr/>
+          <h3 className = 'Text-Center'>Feelin' kinda poorly?</h3>
         </Step>
       </Impress>
     )
