@@ -1,7 +1,7 @@
 import React from 'react'
 import Main from './components/MainComponent'
 
-function App() {
+function App () {
   return (
     <Main/>
   )
