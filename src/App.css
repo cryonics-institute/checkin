@@ -23,14 +23,14 @@
   pointer-events: none;
 }
 
-.Image-Center {
+.centerImage {
   display: block;
   height: auto;
   margin-left: auto;
   margin-right: auto;
 }
 
-.Text-Center {
+.centerText {
   text-align: center;
 }
 
