@@ -61,7 +61,7 @@ class StandbyPatientSelection extends React.Component {
           onChangeText = { (email) => this.validateEmail(email) }
           value = { this.state.email }
         />
-        <Text style = { styles.errorText }>
+        <Text style = { styles.textError }>
           { this.state.isEmailValid ? '' : this.state.emailError }
         </Text>
         <Button

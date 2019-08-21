@@ -125,7 +125,7 @@ class StandbySignIn extends React.Component {
             onChangeText = { (username) => this.validateEmail(username) }
             value = { this.state.username }
           />
-          <Text style = { styles.errorText }>
+          <Text style = { styles.textError }>
             { this.state.isUsernameValid ? '' : this.state.usernameError }
           </Text>
           <Input
@@ -134,7 +134,7 @@ class StandbySignIn extends React.Component {
             onChangeText = { (password) => this.validatePassword(password) }
             value = { this.state.password }
           />
-          <Text style={ styles.errorText }>
+          <Text style={ styles.textError }>
             { this.state.isPasswordValid ? '' : this.state.passwordError }
           </Text>
           <Button
@@ -156,7 +156,7 @@ class StandbySignIn extends React.Component {
             onChangeText = { (username) => this.validateEmail(username) }
             value = { this.state.username }
           />
-          <Text style={ styles.errorText }>
+          <Text style={ styles.textError }>
             { this.state.isUsernameValid ? '' : this.state.usernameError }
           </Text>
           <Input
@@ -164,7 +164,7 @@ class StandbySignIn extends React.Component {
             onChangeText = { (password) => this.validatePassword(password) }
             value = { this.state.password }
           />
-          <Text style={ styles.errorText }>
+          <Text style={ styles.textError }>
             { this.state.isPasswordValid ? '' : this.state.passwordError }
           </Text>
           <Button

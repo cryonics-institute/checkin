@@ -12,7 +12,7 @@ export const styles = StyleSheet.create(
       justifyContent: 'center',
       padding: 20
     },
-    errorText: {
+    textError: {
       color: 'red',
       fontSize: 12,
       margin: 5
