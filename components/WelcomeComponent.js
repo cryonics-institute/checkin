@@ -2,7 +2,7 @@ import React from 'react'
 import { ActivityIndicator, View } from 'react-native'
 import { Button, Image } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { LOGO } from '../assets'
+import { BLUE_LOGO } from '../assets'
 import { selectStatus } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
@@ -47,24 +47,25 @@ class Welcome extends React.Component {
   render () {
     return (
       <View style = { styles.container }>
-        <Image
-          PlaceholderContent = { <ActivityIndicator/> }
-          resizeMode = 'contain'
-          source = { LOGO }
-          style = {
-            { width: 300, height: 102 }
-          }
-        />
-        <Button
-          onPress = { () => this.handlePatient() }
-          style = { styles.button }
-          title = "Patient"
-        />
-        <Button
-          onPress = { () => this.handleStandby() }
-          style = { styles.button }
-          title = "Standby"
-        />
+        <View>
+          <Image
+            PlaceholderContent = { <ActivityIndicator/> }
+            resizeMode = 'contain'
+            source = { BLUE_LOGO }
+          />
+        </View>
+        <View>
+          <Button
+            onPress = { () => this.handlePatient() }
+            style = { styles.button }
+            title = "I need to check-in for myself."
+          />
+          <Button
+            onPress = { () => this.handleStandby() }
+            style = { styles.button }
+            title = "I need to check-in on somebody."
+          />
+        </View>
       </View>
     )
   }
