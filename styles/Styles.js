@@ -9,13 +9,7 @@ export const styles = StyleSheet.create(
       alignItems: 'center',
       backgroundColor: '#fff',
       flex: 1,
-      justifyContent: 'center',
-      padding: 20
-    },
-    textError: {
-      color: 'red',
-      fontSize: 12,
-      margin: 5
+      justifyContent: 'space-evenly'
     },
     paragraph: {
       margin: 5,
@@ -26,6 +20,11 @@ export const styles = StyleSheet.create(
       width: '75%'
     },
     text: {
+      margin: 5
+    },
+    textError: {
+      color: 'red',
+      fontSize: 12,
       margin: 5
     },
     title: {
