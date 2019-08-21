@@ -1,5 +1,6 @@
 import React from 'react'
 import alfredFeelsPoorly from '../images/alfred_feels_poorly.svg'
+import phoneInHand from '../images/phone_in_hand.svg'
 
 const presentation = [
   {
@@ -30,7 +31,15 @@ const presentation = [
     },
     content: [
       <div key = 'slide2'>
-        <h4 className = 'centerText'>Grim Reaper gotcha down?</h4>
+        <h4 className = 'centerText'>Try our new app...</h4>
+        <img
+          src = { phoneInHand }
+          alt = 'Phone in Hand'
+          className = 'centerImage'
+          height = '100%'
+          width = '100%'
+        />
+        <h3 className = 'centerText'>Cryonics Check-In</h3>
       </div>
     ]
   },
