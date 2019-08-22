@@ -3,6 +3,7 @@ import { createAppContainer, createStackNavigator, createSwitchNavigator }
   from 'react-navigation'
 import { connect } from 'react-redux'
 import NavigationService from '../services/NavigationService'
+import { styles } from '../styles/Styles'
 import AuthLoading from './AuthLoadingComponent'
 import PatientHome from './PatientHomeComponent'
 import PatientSignIn from './PatientSignInComponent'
@@ -77,9 +78,33 @@ class WelcomeScreen extends React.Component {
 
 const AuthStack = createStackNavigator(
   {
-    PatientAuth: PatientSignInScreen,
-    StandbyAuth: StandbySignInScreen,
-    Welcome: WelcomeScreen
+    PatientAuth: {
+      screen: PatientSignInScreen,
+      navigationOptions: () => (
+        {
+          headerStyle: styles.header,
+          headerTintColor: 'white'
+        }
+      )
+    },
+    StandbyAuth: {
+      screen: StandbySignInScreen,
+      navigationOptions: () => (
+        {
+          headerStyle: styles.header,
+          headerTintColor: 'white'
+        }
+      )
+    },
+    Welcome: {
+      screen: WelcomeScreen,
+      navigationOptions: () => (
+        {
+          headerStyle: styles.header,
+          headerTintColor: 'white'
+        }
+      )
+    }
   },
   {
     initialRouteName: 'Welcome'
@@ -88,8 +113,24 @@ const AuthStack = createStackNavigator(
 
 const StandbyAppStack = createStackNavigator(
   {
-    StandbyHome: StandbyHomeScreen,
-    StandbyPatientSelection: StandbyPatientSelectionScreen
+    StandbyHome: {
+      screen: StandbyHomeScreen,
+      navigationOptions: () => (
+        {
+          headerStyle: styles.header,
+          headerTintColor: 'white'
+        }
+      )
+    },
+    StandbyPatientSelection: {
+      screen: StandbyPatientSelectionScreen,
+      navigationOptions: () => (
+        {
+          headerStyle: styles.header,
+          headerTintColor: 'white'
+        }
+      )
+    }
   },
   {
     initialRouteName: 'StandbyPatientSelection'
@@ -99,8 +140,24 @@ const StandbyAppStack = createStackNavigator(
 const AppContainer = createAppContainer(
   createSwitchNavigator(
     {
-      AuthLoading: AuthLoadingScreen,
-      PatientApp: PatientHomeScreen,
+      AuthLoading: {
+        screen: AuthLoadingScreen,
+        navigationOptions: () => (
+          {
+            headerStyle: styles.header,
+            headerTintColor: 'white'
+          }
+        )
+      },
+      PatientApp: {
+        screen: PatientHomeScreen,
+        navigationOptions: () => (
+          {
+            headerStyle: styles.header,
+            headerTintColor: 'white'
+          }
+        )
+      },
       StandbyApp: StandbyAppStack,
       Auth: AuthStack
     },
