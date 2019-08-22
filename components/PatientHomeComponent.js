@@ -37,7 +37,7 @@ class PatientHome extends React.Component {
 
   render () {
     return (
-      <View style = { styles.container }>
+      <View style = { styles.containerCentered }>
         <Text h4 style = { styles.title }>Check-In Interval</Text>
         <Slider
           maximumValue = { this.props.timer.maximumInterval }

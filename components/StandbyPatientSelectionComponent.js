@@ -54,7 +54,7 @@ class StandbyPatientSelection extends React.Component {
 
   render () {
     return (
-      <View style = { styles.container }>
+      <View style = { styles.containerCentered }>
         <Input
           ref = { this.emailRef }
           placeholder = "Patient's E-Mail Address"

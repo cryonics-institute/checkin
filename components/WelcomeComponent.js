@@ -46,7 +46,7 @@ class Welcome extends React.Component {
 
   render () {
     return (
-      <View style = { styles.container }>
+      <View style = { styles.containerSpaced }>
         <View>
           <Image
             PlaceholderContent = { <ActivityIndicator/> }
@@ -58,12 +58,12 @@ class Welcome extends React.Component {
           <Button
             onPress = { () => this.handlePatient() }
             style = { styles.button }
-            title = "I need to check-in for myself."
+            title = "Check In Myself"
           />
           <Button
             onPress = { () => this.handleStandby() }
             style = { styles.button }
-            title = "I need to check-in on somebody."
+            title = "Check On Somebody"
           />
         </View>
       </View>

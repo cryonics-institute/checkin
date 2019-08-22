@@ -118,7 +118,7 @@ class StandbySignIn extends React.Component {
   render () {
     return (
       this.state.isRegistered
-        ? <View style = { styles.container }>
+        ? <View style = { styles.containerCentered }>
           <Input
             ref = { this.usernameRef }
             placeholder = "E-Mail Address"
@@ -150,7 +150,7 @@ class StandbySignIn extends React.Component {
             type="clear"
           />
         </View>
-        : <View style = { styles.container }>
+        : <View style = { styles.containerCentered }>
           <Input
             placeholder = "E-Mail"
             onChangeText = { (username) => this.validateEmail(username) }

@@ -5,7 +5,14 @@ export const styles = StyleSheet.create(
     button: {
       margin: 5
     },
-    container: {
+    containerCentered: {
+      alignItems: 'center',
+      backgroundColor: '#fff',
+      flex: 1,
+      justifyContent: 'center',
+      margin: 5
+    },
+    containerSpaced: {
       alignItems: 'center',
       backgroundColor: '#fff',
       flex: 1,

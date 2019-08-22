@@ -23,7 +23,7 @@ const mapDispatchToProps = (dispatch) => (
 
 const RenderNullPatientStatusView = (props) => {
   return (
-    <View style = { styles.container }>
+    <View style = { styles.containerCentered }>
       <Text h4 style = { styles.title }>
         Retrieving Patient Data
       </Text>
@@ -40,7 +40,7 @@ const RenderNullPatientStatusView = (props) => {
 
 const RenderSignedInPatientView = (props) => {
   return (
-    <View style = { styles.container }>
+    <View style = { styles.containerCentered }>
       <Text h4 style = { styles.title }>Sign-In Time</Text>
       <Text style = { styles.text }>
         {
@@ -66,7 +66,7 @@ const RenderSignedInPatientView = (props) => {
 
 const RenderSignedOutPatientView = (props) => {
   return (
-    <View style = { styles.container }>
+    <View style = { styles.containerCentered }>
       <Text h4 style = { styles.paragraph }>
         The patient with e-mail
         {'\n'}
