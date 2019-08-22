@@ -52,9 +52,9 @@ class PatientHome extends React.Component {
           { this.state.interval / 1000 } Seconds
         </Text>
         <Button
+          buttonStyle = { styles.button }
           onPress = { () => this.props.signoutPatient() }
-          style = { styles.button }
-          title = "Sign Out"
+          title = 'Sign Out'
         />
       </View>
     )
