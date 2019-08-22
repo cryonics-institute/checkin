@@ -56,14 +56,14 @@ class Welcome extends React.Component {
         </View>
         <View>
           <Button
+            buttonStyle = { styles.button }
             onPress = { () => this.handlePatient() }
-            style = { styles.button }
-            title = "Check In Myself"
+            title = 'Check In Myself'
           />
           <Button
+            buttonStyle = { styles.button }
             onPress = { () => this.handleStandby() }
-            style = { styles.button }
-            title = "Check On Somebody"
+            title = 'Check On Somebody'
           />
         </View>
       </View>
