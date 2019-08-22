@@ -28,11 +28,11 @@ const RenderNullPatientStatusView = (props) => {
         Retrieving Patient Data
       </Text>
       <ActivityIndicator />
-      <StatusBar barStyle="default" />
+      <StatusBar barStyle='default' />
       <Button
         onPress = { () => props.signoutStandby() }
         style = { styles.button }
-        title = "Sign Out"
+        title = 'Sign Out'
       />
     </View>
   )
@@ -58,7 +58,7 @@ const RenderSignedInPatientView = (props) => {
       <Button
         onPress = { () => props.signoutStandby() }
         style = { styles.button }
-        title = "Sign Out"
+        title = 'Sign Out'
       />
     </View>
   )
@@ -77,7 +77,7 @@ const RenderSignedOutPatientView = (props) => {
       <Button
         onPress = { () => props.signoutStandby() }
         style = { styles.button }
-        title = "Sign Out"
+        title = 'Sign Out'
       />
     </View>
   )

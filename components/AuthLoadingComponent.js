@@ -21,7 +21,7 @@ class AuthLoading extends React.Component {
     return (
       <View style = { styles.containerCentered }>
         <ActivityIndicator />
-        <StatusBar barStyle="default" />
+        <StatusBar barStyle='default' />
       </View>
     )
   }

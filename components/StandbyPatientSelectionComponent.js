@@ -57,7 +57,7 @@ class StandbyPatientSelection extends React.Component {
       <View style = { styles.containerCentered }>
         <Input
           ref = { this.emailRef }
-          placeholder = "Patient's E-Mail Address"
+          placeholder = 'Patient's E-Mail Address'
           onChangeText = { (email) => this.validateEmail(email) }
           value = { this.state.email }
         />
@@ -68,12 +68,12 @@ class StandbyPatientSelection extends React.Component {
           disabled = { !this.state.isEmailValid }
           onPress = { () => this.handleSignin() }
           style = { styles.button }
-          title = "Submit"
+          title = 'Submit'
         />
         <Button
           onPress = { () => this.props.signoutStandby() }
           style = { styles.button }
-          title = "Sign Out"
+          title = 'Sign Out'
         />
       </View>
     )

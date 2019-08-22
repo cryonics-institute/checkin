@@ -121,7 +121,7 @@ class StandbySignIn extends React.Component {
         ? <View style = { styles.containerCentered }>
           <Input
             ref = { this.usernameRef }
-            placeholder = "E-Mail Address"
+            placeholder = 'E-Mail Address'
             onChangeText = { (username) => this.validateEmail(username) }
             value = { this.state.username }
           />
@@ -130,7 +130,7 @@ class StandbySignIn extends React.Component {
           </Text>
           <Input
             ref = { this.passwordRef }
-            placeholder = "Password"
+            placeholder = 'Password'
             onChangeText = { (password) => this.validatePassword(password) }
             value = { this.state.password }
           />
@@ -138,21 +138,21 @@ class StandbySignIn extends React.Component {
             { this.state.isPasswordValid ? '' : this.state.passwordError }
           </Text>
           <Button
-            title = "Sign In"
+            title = 'Sign In'
             disabled = { this.toggleButtonDisabled() }
             onPress = { () => this.handleSignin() }
             style = { styles.button }
           />
           <Button
-            title = "Create Account"
+            title = 'Create Account'
             onPress = { () => this.toggleRegistration() }
             style = { styles.button }
-            type="clear"
+            type='clear'
           />
         </View>
         : <View style = { styles.containerCentered }>
           <Input
-            placeholder = "E-Mail"
+            placeholder = 'E-Mail'
             onChangeText = { (username) => this.validateEmail(username) }
             value = { this.state.username }
           />
@@ -160,7 +160,7 @@ class StandbySignIn extends React.Component {
             { this.state.isUsernameValid ? '' : this.state.usernameError }
           </Text>
           <Input
-            placeholder = "Password"
+            placeholder = 'Password'
             onChangeText = { (password) => this.validatePassword(password) }
             value = { this.state.password }
           />
@@ -168,16 +168,16 @@ class StandbySignIn extends React.Component {
             { this.state.isPasswordValid ? '' : this.state.passwordError }
           </Text>
           <Button
-            title = "Create Account"
+            title = 'Create Account'
             disabled = { this.toggleButtonDisabled() }
             onPress = { () => this.handleRegistration() }
             style = { styles.button }
           />
           <Button
-            title = "Sign In"
+            title = 'Sign In'
             onPress = { () => this.toggleRegistration() }
             style = { styles.button }
-            type="clear"
+            type='clear'
           />
         </View>
     )
