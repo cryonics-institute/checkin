@@ -138,21 +138,21 @@ class PatientSignIn extends React.Component {
             { this.state.isPasswordValid ? '' : this.state.passwordError }
           </Text>
           <Button
-            title = 'Sign In'
+            buttonStyle = { styles.button }
             disabled = { this.toggleButtonDisabled() }
             onPress = { () => this.handleSignin() }
-            style = { styles.button }
+            title = 'Sign In'
           />
           <Button
-            title = 'Create Account'
             onPress = { () => this.toggleRegistration() }
-            type='clear'
-            style = { styles.button }
+            title = 'Create Account'
+            titleStyle = { styles.buttonTitleClear }
+            type = 'clear'
           />
         </View>
         : <View style = { styles.containerCentered }>
           <Input
-            placeholder = 'E-Mail'
+            placeholder = 'E-Mail Address'
             onChangeText = { (username) => this.validateEmail(username) }
             value = { this.state.username }
           />
@@ -168,16 +168,16 @@ class PatientSignIn extends React.Component {
             { this.state.isPasswordValid ? '' : this.state.passwordError }
           </Text>
           <Button
-            title = 'Create Account'
+            buttonStyle = { styles.button }
             disabled = { this.toggleButtonDisabled() }
             onPress = { () => this.handleRegistration() }
-            style = { styles.button }
+            title = 'Create Account'
           />
           <Button
-            title = 'Sign In'
             onPress = { () => this.toggleRegistration() }
-            style = { styles.button }
-            type='clear'
+            title = 'Sign In'
+            titleStyle = { styles.buttonTitleClear }
+            type = 'clear'
           />
         </View>
     )
