@@ -64,17 +64,19 @@ class StandbyPatientSelection extends React.Component {
         <Text style = { styles.textError }>
           { this.state.isEmailValid ? '' : this.state.emailError }
         </Text>
-        <Button
-          buttonStyle = { styles.button }
-          disabled = { !this.state.isEmailValid }
-          onPress = { () => this.handleSignin() }
-          title = 'Submit'
-        />
-        <Button
-          buttonStyle = { styles.button }
-          onPress = { () => this.props.signoutStandby() }
-          title = 'Sign Out'
-        />
+        <View>
+          <Button
+            buttonStyle = { styles.button }
+            disabled = { !this.state.isEmailValid }
+            onPress = { () => this.handleSignin() }
+            title = 'Submit'
+          />
+          <Button
+            buttonStyle = { styles.button }
+            onPress = { () => this.props.signoutStandby() }
+            title = 'Sign Out'
+          />
+        </View>
       </View>
     )
   }
