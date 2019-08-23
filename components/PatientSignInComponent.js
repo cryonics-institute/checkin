@@ -1,3 +1,4 @@
+// TODO: Handle rejected sign-ins!
 import React from 'react'
 import { View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
@@ -18,6 +19,82 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
+const RenderSignInPatientView = (props) => {
+  return (
+    <View style = { styles.containerCentered }>
+      <Input
+        ref = { props.usernameRef }
+        placeholder = 'E-Mail Address'
+        onChangeText = { username => props.validateEmail(username) }
+        value = { props.username }
+      />
+      <Text style = { styles.textError }>
+        { props.isUsernameValid ? '' : props.usernameError }
+      </Text>
+      <Input
+        ref = { props.passwordRef }
+        placeholder = 'Password'
+        onChangeText = { password => props.validatePassword(password) }
+        value = { props.password }
+      />
+      <Text style={ styles.textError }>
+        { props.isPasswordValid ? '' : props.passwordError }
+      </Text>
+      <View>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { props.toggleButtonDisabled() }
+          onPress = { () => props.handleSignin() }
+          title = 'Sign In'
+        />
+        <Button
+          onPress = { () => props.toggleRegistration() }
+          title = 'Create Account'
+          titleStyle = { styles.buttonTitleClear }
+          type = 'clear'
+        />
+      </View>
+    </View>
+  )
+}
+
+const RenderRegisterPatientView = (props) => {
+  return (
+    <View style = { styles.containerCentered }>
+      <Input
+        placeholder = 'E-Mail Address'
+        onChangeText = { (username) => props.validateEmail(username) }
+        value = { props.username }
+      />
+      <Text style={ styles.textError }>
+        { props.isUsernameValid ? '' : props.usernameError }
+      </Text>
+      <Input
+        placeholder = 'Password'
+        onChangeText = { (password) => props.validatePassword(password) }
+        value = { props.password }
+      />
+      <Text style={ styles.textError }>
+        { props.isPasswordValid ? '' : props.passwordError }
+      </Text>
+      <View>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { props.toggleButtonDisabled() }
+          onPress = { () => props.handleRegistration() }
+          title = 'Create Account'
+        />
+        <Button
+          onPress = { () => props.toggleRegistration() }
+          title = 'Sign In'
+          titleStyle = { styles.buttonTitleClear }
+          type = 'clear'
+        />
+      </View>
+    </View>
+  )
+}
+
 class PatientSignIn extends React.Component {
   constructor (props) {
     super(props)
@@ -29,8 +106,8 @@ class PatientSignIn extends React.Component {
       isRegistered: true,
       username: '',
       password: '',
-      isUsernameValid: true,
-      isPasswordValid: true,
+      isUsernameValid: false,
+      isPasswordValid: false,
       usernameError: '',
       passwordError: ''
     }
@@ -118,68 +195,36 @@ class PatientSignIn extends React.Component {
   render () {
     return (
       this.state.isRegistered
-        ? <View style = { styles.containerCentered }>
-          <Input
-            ref = { this.usernameRef }
-            placeholder = 'E-Mail Address'
-            onChangeText = { (username) => this.validateEmail(username) }
-            value = { this.state.username }
-          />
-          <Text style = { styles.textError }>
-            { this.state.isUsernameValid ? '' : this.state.usernameError }
-          </Text>
-          <Input
-            ref = { this.passwordRef }
-            placeholder = 'Password'
-            onChangeText = { (password) => this.validatePassword(password) }
-            value = { this.state.password }
-          />
-          <Text style={ styles.textError }>
-            { this.state.isPasswordValid ? '' : this.state.passwordError }
-          </Text>
-          <Button
-            buttonStyle = { styles.button }
-            disabled = { this.toggleButtonDisabled() }
-            onPress = { () => this.handleSignin() }
-            title = 'Sign In'
-          />
-          <Button
-            onPress = { () => this.toggleRegistration() }
-            title = 'Create Account'
-            titleStyle = { styles.buttonTitleClear }
-            type = 'clear'
-          />
-        </View>
-        : <View style = { styles.containerCentered }>
-          <Input
-            placeholder = 'E-Mail Address'
-            onChangeText = { (username) => this.validateEmail(username) }
-            value = { this.state.username }
-          />
-          <Text style={ styles.textError }>
-            { this.state.isUsernameValid ? '' : this.state.usernameError }
-          </Text>
-          <Input
-            placeholder = 'Password'
-            onChangeText = { (password) => this.validatePassword(password) }
-            value = { this.state.password }
-          />
-          <Text style={ styles.textError }>
-            { this.state.isPasswordValid ? '' : this.state.passwordError }
-          </Text>
-          <Button
-            buttonStyle = { styles.button }
-            disabled = { this.toggleButtonDisabled() }
-            onPress = { () => this.handleRegistration() }
-            title = 'Create Account'
-          />
-          <Button
-            onPress = { () => this.toggleRegistration() }
-            title = 'Sign In'
-            titleStyle = { styles.buttonTitleClear }
-            type = 'clear'
-          />
-        </View>
+        ? <RenderSignInPatientView
+          usernameRef = { this.usernameRef }
+          passwordRef = { this.passwordRef }
+          username = { this.state.username }
+          password = { this.state.password }
+          isUsernameValid = { this.state.isUsernameValid }
+          usernameError = { this.state.usernameError }
+          isPasswordValid = { this.state.isPasswordValid }
+          passwordError = { this.state.passwordError }
+          handleSignin = { () => this.handleSignin() }
+          toggleButtonDisabled = { () => this.toggleButtonDisabled() }
+          toggleRegistration = { () => this.toggleRegistration() }
+          validateEmail = { username => this.validateEmail(username) }
+          validatePassword = { password => this.validatePassword(password) }
+        />
+        : <RenderRegisterPatientView
+          usernameRef = { this.usernameRef }
+          passwordRef = { this.passwordRef }
+          username = { this.state.username }
+          password = { this.state.password }
+          isUsernameValid = { this.state.isUsernameValid }
+          usernameError = { this.state.usernameError }
+          isPasswordValid = { this.state.isPasswordValid }
+          passwordError = { this.state.passwordError }
+          handleSignin = { () => this.handleRegistration() }
+          toggleButtonDisabled = { () => this.toggleButtonDisabled() }
+          toggleRegistration = { () => this.toggleRegistration() }
+          validateEmail = { username => this.validateEmail(username) }
+          validatePassword = { password => this.validatePassword(password) }
+        />
     )
   }
 }
