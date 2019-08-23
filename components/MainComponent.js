@@ -3,7 +3,7 @@ import { createAppContainer, createStackNavigator, createSwitchNavigator }
   from 'react-navigation'
 import { connect } from 'react-redux'
 import NavigationService from '../services/NavigationService'
-import { styles } from '../styles/Styles'
+import { colors, styles } from '../styles/Styles'
 import AuthLoading from './AuthLoadingComponent'
 import PatientHome from './PatientHomeComponent'
 import PatientSignIn from './PatientSignInComponent'
@@ -83,7 +83,7 @@ const AuthStack = createStackNavigator(
       navigationOptions: () => (
         {
           headerStyle: styles.header,
-          headerTintColor: 'white'
+          headerTintColor: colors.light
         }
       )
     },
@@ -92,7 +92,7 @@ const AuthStack = createStackNavigator(
       navigationOptions: () => (
         {
           headerStyle: styles.header,
-          headerTintColor: 'white'
+          headerTintColor: colors.light
         }
       )
     },
@@ -101,7 +101,7 @@ const AuthStack = createStackNavigator(
       navigationOptions: () => (
         {
           headerStyle: styles.header,
-          headerTintColor: 'white'
+          headerTintColor: colors.light
         }
       )
     }
@@ -118,7 +118,7 @@ const StandbyAppStack = createStackNavigator(
       navigationOptions: () => (
         {
           headerStyle: styles.header,
-          headerTintColor: 'white'
+          headerTintColor: colors.light
         }
       )
     },
@@ -127,7 +127,7 @@ const StandbyAppStack = createStackNavigator(
       navigationOptions: () => (
         {
           headerStyle: styles.header,
-          headerTintColor: 'white'
+          headerTintColor: colors.light
         }
       )
     }
@@ -145,7 +145,7 @@ const AppContainer = createAppContainer(
         navigationOptions: () => (
           {
             headerStyle: styles.header,
-            headerTintColor: 'white'
+            headerTintColor: colors.light
           }
         )
       },
@@ -154,7 +154,7 @@ const AppContainer = createAppContainer(
         navigationOptions: () => (
           {
             headerStyle: styles.header,
-            headerTintColor: 'white'
+            headerTintColor: colors.light
           }
         )
       },

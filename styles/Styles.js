@@ -1,32 +1,36 @@
 import { StyleSheet } from 'react-native'
 
-const lightColor = 'lightsteelblue'
-const darkColor = 'steelblue'
+export const colors = {
+  dark: 'steelblue',
+  light: 'aliceblue',
+  medium: 'lightsteelblue',
+  error: 'firebrick'
+}
 
 export const styles = StyleSheet.create(
   {
     button: {
-      backgroundColor: 'steelblue',
+      backgroundColor: colors.dark,
       margin: 5
     },
     buttonTitleClear: {
-      color: darkColor
+      color: colors.dark
     },
     containerCentered: {
       alignItems: 'center',
-      backgroundColor: lightColor,
+      backgroundColor: colors.light,
       flex: 1,
       justifyContent: 'center'
     },
     containerSpaced: {
       alignItems: 'center',
-      backgroundColor: lightColor,
+      backgroundColor: colors.light,
       flex: 1,
       justifyContent: 'space-evenly'
     },
     header: {
-      backgroundColor: darkColor,
-      color: 'white'
+      backgroundColor: colors.dark,
+      color: colors.light
     },
     paragraph: {
       margin: 5,
@@ -40,7 +44,7 @@ export const styles = StyleSheet.create(
       margin: 5
     },
     textError: {
-      color: 'firebrick',
+      color: colors.error,
       fontSize: 12,
       margin: 5
     },
