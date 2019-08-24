@@ -24,7 +24,7 @@ const presentation = [
   {
     id: 'slide2',
     data: {
-      x: 850,
+      x: 0,
       y: 3000,
       rotateZ: 90,
       scale: 3
@@ -46,7 +46,7 @@ const presentation = [
   {
     id: 'slide3',
     data: {
-      x: 3000,
+      x: 4000,
       y: 3000,
       rotateZ: 180,
       scale: 5
@@ -54,9 +54,9 @@ const presentation = [
     content: [
       <div key = 'slide3'>
         <p className = 'centerText'>
-          Miss your<br/>
-          standby<br/>
-          <b>sorely</b>?
+          With Check-In,<br/>
+          you can let a <b>buddy</b> know<br/>
+          if you&#39;re <b>sick</b> or <b>injured</b>...
         </p>
       </div>
     ]
@@ -64,7 +64,7 @@ const presentation = [
   {
     id: 'slide4',
     data: {
-      x: 3000,
+      x: 4000,
       y: 3000,
       z: -3000,
       rotateZ: 300,
@@ -73,7 +73,7 @@ const presentation = [
     content: [
       <div key = 'slide4'>
         <p className = 'centerText'>
-          but he has gone to <b>town?</b>
+          <b className='rotating'>unconscious</b>
         </p>
       </div>
     ]
@@ -81,14 +81,18 @@ const presentation = [
   {
     id: 'slide5',
     data: {
-      x: 3500,
-      y: -850,
-      rotateZ: 270,
-      scale: 6
+      x: 4000,
+      y: 3000,
+      z: -6000,
+      rotateZ: 300,
+      scale: 1
     },
     content: [
       <div key = 'slide5'>
-        <p className = 'centerText'><b className="positioning">Never</b> fear, just <b className="rotating">check-in</b>,  <b className="scaling">dear</b>!</p>
+        <p className = 'centerText'>
+          and <b className='rotating'>unable</b><br/>
+          to call for <b>help!</b>
+        </p>
       </div>
     ]
   },
@@ -101,7 +105,7 @@ const presentation = [
     },
     content: [
       <div key = 'slide6'>
-        <p className = 'centerText'>Then, when you&#39;re feeling tired,</p>
+        <p className = 'centerText'><b className='positioning'>Never</b> fear, just <b className='rotating'>check-in</b>,  <b className='scaling'>dear</b>!</p>
       </div>
     ]
   },
@@ -144,7 +148,7 @@ const presentation = [
     },
     content: [
       <div key = 'slide9'>
-        <p className = 'centerText'><span className="have">&quot;Pish!</span> <span className="you">&#39;Tis</span> <span className="noticed">but a</span> <span className="its">dream!&quot;</span></p>
+        <p className = 'centerText'><span className='have'>&quot;Pish!</span> <span className='you'>&#39;Tis</span> <span className='noticed'>but a</span> <span className='its'>dream!&quot;</span></p>
         <p className = 'centerText'>I hear you say?</p>
         <p className = 'centerText'>&quot;Who&#39;d make up such a thing?&quot;</p>
       </div>
@@ -163,30 +167,11 @@ const presentation = [
     content: [
       <div key = 'slide10'>
         <p className = 'centerText'>Volunteers!</p>
-        <p className = 'centerText'>... on <b className="rotating">GitHub</b>,  <b className="scaling">(yay!)</b>!</p>
+        <p className = 'centerText'>... on <b className='rotating'>GitHub</b>,  <b className='scaling'>(yay!)</b>!</p>
         <p className = 'centerText'>Yea! Open-Source doth ring!</p>
       </div>
     ]
   }
 ]
+
 export default presentation
-
-// in the corner of this room
-// a poster you will find
-// it can tell you where to go
-// to learn how to be kind
-
-// please give to us your e-mail
-// so we can send a letter
-// inviting you to try our App
-// so we can make it better
-
-// If you can code in Javascript
-// in Redux and React
-// We need you on our GitHub team
-// so this app can be a fact
-
-// standing strong as volunteers
-// Death to Hell shall go
-// his scythe shoved up his arse, my dear
-// so he'll reap what he sows
