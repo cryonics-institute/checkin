@@ -7,9 +7,11 @@ import { colors, styles } from '../styles/Styles'
 import AuthLoading from './AuthLoadingComponent'
 import PatientHome from './PatientHomeComponent'
 import PatientSignIn from './PatientSignInComponent'
+import PatientSignOut from './PatientSignOutComponent'
 import StandbyHome from './StandbyHomeComponent'
 import StandbyPatientSelection from './StandbyPatientSelectionComponent'
 import StandbySignIn from './StandbySignInComponent'
+import StandbySignOut from './StandbySignOutComponent'
 import Welcome from './WelcomeComponent'
 
 // Setup Redux
@@ -111,12 +113,28 @@ const AuthStack = createStackNavigator(
   }
 )
 
+const PatientAppStack = createStackNavigator(
+  {
+    PatientHome: {
+      screen: PatientHomeScreen,
+      navigationOptions: () => (
+        {
+          headerRight: <PatientSignOut/>,
+          headerStyle: styles.header,
+          headerTintColor: colors.light
+        }
+      )
+    }
+  }
+)
+
 const StandbyAppStack = createStackNavigator(
   {
     StandbyHome: {
       screen: StandbyHomeScreen,
       navigationOptions: () => (
         {
+          headerRight: <StandbySignOut/>,
           headerStyle: styles.header,
           headerTintColor: colors.light
         }
@@ -126,6 +144,7 @@ const StandbyAppStack = createStackNavigator(
       screen: StandbyPatientSelectionScreen,
       navigationOptions: () => (
         {
+          headerRight: <StandbySignOut/>,
           headerStyle: styles.header,
           headerTintColor: colors.light
         }
@@ -149,15 +168,7 @@ const AppContainer = createAppContainer(
           }
         )
       },
-      PatientApp: {
-        screen: PatientHomeScreen,
-        navigationOptions: () => (
-          {
-            headerStyle: styles.header,
-            headerTintColor: colors.light
-          }
-        )
-      },
+      PatientApp: PatientAppStack,
       StandbyApp: StandbyAppStack,
       Auth: AuthStack
     },

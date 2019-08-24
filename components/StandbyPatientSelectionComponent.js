@@ -2,7 +2,7 @@ import React from 'react'
 import { View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { addPatient, signoutStandby } from '../redux/ActionCreators'
+import { addPatient } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -13,8 +13,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    addPatient: (email) => dispatch(addPatient(email)),
-    signoutStandby: () => dispatch(signoutStandby())
+    addPatient: (email) => dispatch(addPatient(email))
   }
 )
 
@@ -70,11 +69,6 @@ class StandbyPatientSelection extends React.Component {
             disabled = { !this.state.isEmailValid }
             onPress = { () => this.handleSignin() }
             title = 'Submit'
-          />
-          <Button
-            buttonStyle = { styles.button }
-            onPress = { () => this.props.signoutStandby() }
-            title = 'Sign Out'
           />
         </View>
       </View>

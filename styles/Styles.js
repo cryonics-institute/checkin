@@ -13,8 +13,11 @@ export const styles = StyleSheet.create(
       backgroundColor: colors.dark,
       margin: 5
     },
-    buttonTitleClear: {
+    buttonTitleColorDark: {
       color: colors.dark
+    },
+    buttonTitleColorLight: {
+      color: colors.light
     },
     containerCentered: {
       alignItems: 'center',

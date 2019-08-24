@@ -50,7 +50,7 @@ const RenderSignInPatientView = (props) => {
         <Button
           onPress = { () => props.toggleRegistration() }
           title = 'Create Account'
-          titleStyle = { styles.buttonTitleClear }
+          titleStyle = { styles.buttonTitleColorDark }
           type = 'clear'
         />
       </View>
@@ -87,7 +87,7 @@ const RenderRegisterPatientView = (props) => {
         <Button
           onPress = { () => props.toggleRegistration() }
           title = 'Sign In'
-          titleStyle = { styles.buttonTitleClear }
+          titleStyle = { styles.buttonTitleColorDark }
           type = 'clear'
         />
       </View>
