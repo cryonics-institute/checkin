@@ -334,7 +334,7 @@ export const setListener = (email) => (dispatch, getState) => {
   const noCheckinAlert = () => {
     Alert.alert(
       'Cryonics-Patient Alert',
-      `Your patient has not checked in.\nMake contact immediately!`,
+      `Your buddy has not checked in.\nMake contact immediately!`,
       [
         {
           text: 'OK',
@@ -421,7 +421,7 @@ export const setTimer = (interval) => (dispatch, getState) => {
     if (typeof timers !== 'undefined' && timers.length > 0) {
       Alert.alert(
         'Check In?',
-        'Your standby team will be alerted if not.',
+        'Your buddy will be alerted if not.',
         [
           {
             text: 'OK',
