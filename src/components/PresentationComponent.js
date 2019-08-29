@@ -1,10 +1,12 @@
 import React from 'react'
+import 'react-impressjs/styles/react-impressjs.css'
 import alfredFeelsPoorly from '../images/alfred_feels_poorly.svg'
 import phoneInHand from '../images/phone_in_hand.svg'
 
 const presentation = [
   {
     id: 'slide1',
+    className: 'step',
     data: {
       scale: 4
     },
@@ -23,6 +25,7 @@ const presentation = [
   },
   {
     id: 'slide2',
+    className: 'step',
     data: {
       x: 0,
       y: 5000,
@@ -35,7 +38,7 @@ const presentation = [
         <img
           src = { phoneInHand }
           alt = 'Phone in Hand'
-          className = 'centerImage'
+          className = 'centerImage moveAround'
           height = '100%'
           width = '100%'
         />
@@ -45,6 +48,7 @@ const presentation = [
   },
   {
     id: 'slide3',
+    className: 'step',
     data: {
       x: 5000,
       y: 5000,
@@ -63,6 +67,7 @@ const presentation = [
   },
   {
     id: 'slide4',
+    className: 'step',
     data: {
       x: 5000,
       y: 5000,
@@ -80,6 +85,7 @@ const presentation = [
   },
   {
     id: 'slide5',
+    className: 'step',
     data: {
       x: 5000,
       y: 5000,
@@ -97,6 +103,7 @@ const presentation = [
   },
   {
     id: 'slide6',
+    className: 'step',
     data: {
       x: 10000,
       y: 10000,
@@ -107,7 +114,7 @@ const presentation = [
         <img
           src = { phoneInHand }
           alt = 'Phone in Hand'
-          className = 'centerImage'
+          className = 'centerImage moveAround'
           height = '100%'
           width = '100%'
         />
@@ -117,6 +124,7 @@ const presentation = [
   },
   {
     id: 'slide7',
+    className: 'step',
     data: {
       x: 10000,
       y: 15000,
@@ -128,7 +136,7 @@ const presentation = [
         <img
           src = { phoneInHand }
           alt = 'Phone in Hand'
-          className = 'centerImage'
+          className = 'centerImage moveAround'
           height = '100%'
           width = '100%'
         />
@@ -141,6 +149,7 @@ const presentation = [
   },
   {
     id: 'slide8',
+    className: 'step',
     data: {
       x: 10000,
       y: 20000,
@@ -153,7 +162,7 @@ const presentation = [
         <img
           src = { phoneInHand }
           alt = 'Phone in Hand'
-          className = 'centerImage'
+          className = 'centerImage moveAround'
           height = '100%'
           width = '100%'
         />
@@ -166,6 +175,7 @@ const presentation = [
   },
   {
     id: 'slide9',
+    className: 'step',
     data: {
       x: 10000,
       y: 25000,
@@ -182,6 +192,7 @@ const presentation = [
   },
   {
     id: 'slide10',
+    className: 'step',
     data: {
       x: 10000,
       y: 30000,
@@ -195,11 +206,12 @@ const presentation = [
   },
   {
     id: 'slide11',
+    className: 'step',
     data: {
       x: 15000,
       y: 30000,
       z: 4000,
-      rotateX: 180,
+      rotateX: 0,
       scale: 3
     },
     content: [
@@ -214,11 +226,12 @@ const presentation = [
   },
   {
     id: 'slide12',
+    className: 'step',
     data: {
       x: 15000,
       y: 30000,
-      z: 2000,
-      rotateX: 90,
+      z: 4000,
+      rotateY: 90,
       scale: 3
     },
     content: [
@@ -232,11 +245,12 @@ const presentation = [
   },
   {
     id: 'slide13',
+    className: 'step',
     data: {
       x: 15000,
       y: 30000,
-      z: 0,
-      rotateX: 0,
+      z: 4000,
+      rotateX: 90,
       scale: 3
     },
     content: [

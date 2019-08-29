@@ -34,11 +34,35 @@
   text-align: center;
 }
 
+.moveAround {
+  animation: svg-jitter 1s infinite;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes svg-jitter {
+  0% {
+    transform: translate3d(0.1px, 0px, 0px);
+  }
+  25% {
+    transform: translate3d(0px, 0.25px, 0px);
+    transform: rotate(0.1deg);
+  }
+  50% {
+    transform: translate3d(-0.1px, 0px, 0px);
+  }
+  75% {
+    transform: translate3d(0px, -0.25px, 0px);
+    transform: rotate(-0.1deg);
+  }
+  100% {
+    transform: translate3d(0.1px, 0px, 0px);
   }
 }
