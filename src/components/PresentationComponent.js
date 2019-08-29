@@ -1,7 +1,10 @@
 import React from 'react'
 import 'react-impressjs/styles/react-impressjs.css'
 import alfredFeelsPoorly from '../images/alfred_feels_poorly.svg'
-import phoneInHand from '../images/phone_in_hand.svg'
+import patientAlert from '../images/patient_alert.png'
+import patientHome from '../images/patient_home.png'
+import splash from '../images/splash.png'
+import standbyAlert from '../images/standby_alert.png'
 
 const presentation = [
   {
@@ -36,11 +39,11 @@ const presentation = [
       <div key = 'slide2'>
         <h4 className = 'centerText'>Try our new app</h4>
         <img
-          src = { phoneInHand }
-          alt = 'Phone in Hand'
+          src = { splash }
+          alt = 'Splash Screen'
           className = 'centerImage moveAround'
-          height = '100%'
-          width = '100%'
+          height = '40%'
+          width = '40%'
         />
         <h3 className = 'centerText'>Cryonics Check-In</h3>
       </div>
@@ -112,11 +115,11 @@ const presentation = [
     content: [
       <div key = 'slide6'>
         <img
-          src = { phoneInHand }
-          alt = 'Phone in Hand'
+          src = { patientAlert }
+          alt = 'Patient-Alert Screen'
           className = 'centerImage moveAround'
-          height = '100%'
-          width = '100%'
+          height = '40%'
+          width = '40%'
         />
         <p className = 'centerText'>Just set an interval ...</p>
       </div>
@@ -134,11 +137,11 @@ const presentation = [
     content: [
       <div key = 'slide7'>
         <img
-          src = { phoneInHand }
-          alt = 'Phone in Hand'
+          src = { patientAlert }
+          alt = 'Patient-Alert Screen'
           className = 'centerImage moveAround'
-          height = '100%'
-          width = '100%'
+          height = '40%'
+          width = '40%'
         />
         <p className = 'centerText'>
           ... and your phone will alert you<br/>
@@ -160,11 +163,11 @@ const presentation = [
       <div key = 'slide8'>
         <p className = 'centerText'>If you miss your check-in,</p>
         <img
-          src = { phoneInHand }
-          alt = 'Phone in Hand'
+          src = { standbyAlert }
+          alt = 'Standby-Alert Screen'
           className = 'centerImage moveAround'
-          height = '100%'
-          width = '100%'
+          height = '40%'
+          width = '40%'
         />
         <p className = 'centerText'>
           your buddy will get an alert on her phone<br/>
