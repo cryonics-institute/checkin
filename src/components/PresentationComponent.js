@@ -115,7 +115,7 @@ const presentation = [
     content: [
       <div key = 'slide6'>
         <img
-          src = { patientAlert }
+          src = { patientHome }
           alt = 'Patient-Alert Screen'
           className = 'centerImage moveAround'
           height = '40%'
