@@ -1,6 +1,7 @@
 {
   "name": "checkin",
   "version": "0.1.0",
+  "homepage": "http://cryonics-institute.github.io/checkin",
   "private": true,
   "dependencies": {
     "react": "^16.9.0",
@@ -12,7 +13,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -38,6 +41,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-standard": "^4.0.1",
+    "gh-pages": "^2.1.1",
     "typescript": "^3.5.3"
   }
 }
