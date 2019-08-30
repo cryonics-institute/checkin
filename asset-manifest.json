@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/checkin/static/css/main.0d663393.chunk.css",
+    "main.js": "/checkin/static/js/main.5e9a9f91.chunk.js",
+    "main.js.map": "/checkin/static/js/main.5e9a9f91.chunk.js.map",
+    "runtime~main.js": "/checkin/static/js/runtime~main.cec9c333.js",
+    "runtime~main.js.map": "/checkin/static/js/runtime~main.cec9c333.js.map",
+    "static/css/2.f6c8dd44.chunk.css": "/checkin/static/css/2.f6c8dd44.chunk.css",
+    "static/js/2.11b2a6ba.chunk.js": "/checkin/static/js/2.11b2a6ba.chunk.js",
+    "static/js/2.11b2a6ba.chunk.js.map": "/checkin/static/js/2.11b2a6ba.chunk.js.map",
+    "index.html": "/checkin/index.html",
+    "precache-manifest.cf25517e1136190d961436539c1b772f.js": "/checkin/precache-manifest.cf25517e1136190d961436539c1b772f.js",
+    "service-worker.js": "/checkin/service-worker.js",
+    "static/css/2.f6c8dd44.chunk.css.map": "/checkin/static/css/2.f6c8dd44.chunk.css.map",
+    "static/css/main.0d663393.chunk.css.map": "/checkin/static/css/main.0d663393.chunk.css.map",
+    "static/media/alfred_feels_poorly.svg": "/checkin/static/media/alfred_feels_poorly.480fb83d.svg",
+    "static/media/patient_alert.png": "/checkin/static/media/patient_alert.4dc1f776.png",
+    "static/media/patient_home.png": "/checkin/static/media/patient_home.eca7d787.png",
+    "static/media/splash.png": "/checkin/static/media/splash.2a15d075.png",
+    "static/media/standby_alert.png": "/checkin/static/media/standby_alert.8b4f1652.png"
+  }
+}
