@@ -1,4 +1,3 @@
-export const LOGO = require('./logo.png')
 export const BLUE_LOGO = require('./logo_blue.png')
 export const GREEN_LOGO = require('./logo_green.png')
 export const ORANGE_LOGO = require('./logo_orange.png')
