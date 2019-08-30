@@ -1,7 +1,8 @@
 import React from 'react'
-import { View } from 'react-native'
-import { Button, Text } from 'react-native-elements'
+import { ActivityIndicator, View } from 'react-native'
+import { Button, Image } from 'react-native-elements'
 import { connect } from 'react-redux'
+import { BLUE_LOGO } from '../assets'
 import { selectStatus } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
@@ -45,20 +46,26 @@ class Welcome extends React.Component {
 
   render () {
     return (
-      <View style = { styles.container }>
-        <Text h3 style = { styles.title }>
-          Welcome!
-        </Text>
-        <Button
-          onPress = { () => this.handlePatient() }
-          style = { styles.button }
-          title = "Patient"
-        />
-        <Button
-          onPress = { () => this.handleStandby() }
-          style = { styles.button }
-          title = "Standby"
-        />
+      <View style = { styles.containerSpaced }>
+        <View>
+          <Image
+            PlaceholderContent = { <ActivityIndicator/> }
+            resizeMode = 'contain'
+            source = { BLUE_LOGO }
+          />
+        </View>
+        <View>
+          <Button
+            buttonStyle = { styles.button }
+            onPress = { () => this.handlePatient() }
+            title = 'I&#39;m a Member'
+          />
+          <Button
+            buttonStyle = { styles.button }
+            onPress = { () => this.handleStandby() }
+            title = 'I&#39;m a Buddy'
+          />
+        </View>
       </View>
     )
   }

@@ -2,7 +2,7 @@ import React from 'react'
 import { View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { addPatient, signoutStandby } from '../redux/ActionCreators'
+import { addPatient } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -13,8 +13,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    addPatient: (email) => dispatch(addPatient(email)),
-    signoutStandby: () => dispatch(signoutStandby())
+    addPatient: (email) => dispatch(addPatient(email))
   }
 )
 
@@ -54,27 +53,24 @@ class StandbyPatientSelection extends React.Component {
 
   render () {
     return (
-      <View style = { styles.container }>
+      <View style = { styles.containerCentered }>
         <Input
           ref = { this.emailRef }
-          placeholder = "Patient's E-Mail Address"
+          placeholder = 'Patient&#39;s E-Mail Address'
           onChangeText = { (email) => this.validateEmail(email) }
           value = { this.state.email }
         />
-        <Text style = { styles.errorText }>
+        <Text style = { styles.textError }>
           { this.state.isEmailValid ? '' : this.state.emailError }
         </Text>
-        <Button
-          disabled = { !this.state.isEmailValid }
-          onPress = { () => this.handleSignin() }
-          style = { styles.button }
-          title = "Submit"
-        />
-        <Button
-          onPress = { () => this.props.signoutStandby() }
-          style = { styles.button }
-          title = "Sign Out"
-        />
+        <View>
+          <Button
+            buttonStyle = { styles.button }
+            disabled = { !this.state.isEmailValid }
+            onPress = { () => this.handleSignin() }
+            title = 'Submit'
+          />
+        </View>
       </View>
     )
   }

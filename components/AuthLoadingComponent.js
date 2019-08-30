@@ -19,9 +19,9 @@ class AuthLoading extends React.Component {
   // Render any loading content that you like here
   render () {
     return (
-      <View style = { styles.container }>
+      <View style = { styles.containerCentered }>
         <ActivityIndicator />
-        <StatusBar barStyle="default" />
+        <StatusBar barStyle='default' />
       </View>
     )
   }

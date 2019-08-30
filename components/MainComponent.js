@@ -3,12 +3,15 @@ import { createAppContainer, createStackNavigator, createSwitchNavigator }
   from 'react-navigation'
 import { connect } from 'react-redux'
 import NavigationService from '../services/NavigationService'
+import { colors, styles } from '../styles/Styles'
 import AuthLoading from './AuthLoadingComponent'
 import PatientHome from './PatientHomeComponent'
 import PatientSignIn from './PatientSignInComponent'
+import PatientSignOut from './PatientSignOutComponent'
 import StandbyHome from './StandbyHomeComponent'
 import StandbyPatientSelection from './StandbyPatientSelectionComponent'
 import StandbySignIn from './StandbySignInComponent'
+import StandbySignOut from './StandbySignOutComponent'
 import Welcome from './WelcomeComponent'
 
 // Setup Redux
@@ -77,19 +80,76 @@ class WelcomeScreen extends React.Component {
 
 const AuthStack = createStackNavigator(
   {
-    PatientAuth: PatientSignInScreen,
-    StandbyAuth: StandbySignInScreen,
-    Welcome: WelcomeScreen
+    PatientAuth: {
+      screen: PatientSignInScreen,
+      navigationOptions: () => (
+        {
+          headerStyle: styles.header,
+          headerTintColor: colors.light
+        }
+      )
+    },
+    StandbyAuth: {
+      screen: StandbySignInScreen,
+      navigationOptions: () => (
+        {
+          headerStyle: styles.header,
+          headerTintColor: colors.light
+        }
+      )
+    },
+    Welcome: {
+      screen: WelcomeScreen,
+      navigationOptions: () => (
+        {
+          headerStyle: styles.header,
+          headerTintColor: colors.light
+        }
+      )
+    }
   },
   {
     initialRouteName: 'Welcome'
   }
 )
 
+const PatientAppStack = createStackNavigator(
+  {
+    PatientHome: {
+      screen: PatientHomeScreen,
+      navigationOptions: () => (
+        {
+          headerRight: <PatientSignOut/>,
+          headerStyle: styles.header,
+          headerTintColor: colors.light
+        }
+      )
+    }
+  }
+)
+
 const StandbyAppStack = createStackNavigator(
   {
-    StandbyHome: StandbyHomeScreen,
-    StandbyPatientSelection: StandbyPatientSelectionScreen
+    StandbyHome: {
+      screen: StandbyHomeScreen,
+      navigationOptions: () => (
+        {
+          headerRight: <StandbySignOut/>,
+          headerStyle: styles.header,
+          headerTintColor: colors.light
+        }
+      )
+    },
+    StandbyPatientSelection: {
+      screen: StandbyPatientSelectionScreen,
+      navigationOptions: () => (
+        {
+          headerRight: <StandbySignOut/>,
+          headerStyle: styles.header,
+          headerTintColor: colors.light
+        }
+      )
+    }
   },
   {
     initialRouteName: 'StandbyPatientSelection'
@@ -99,8 +159,16 @@ const StandbyAppStack = createStackNavigator(
 const AppContainer = createAppContainer(
   createSwitchNavigator(
     {
-      AuthLoading: AuthLoadingScreen,
-      PatientApp: PatientHomeScreen,
+      AuthLoading: {
+        screen: AuthLoadingScreen,
+        navigationOptions: () => (
+          {
+            headerStyle: styles.header,
+            headerTintColor: colors.light
+          }
+        )
+      },
+      PatientApp: PatientAppStack,
       StandbyApp: StandbyAppStack,
       Auth: AuthStack
     },
