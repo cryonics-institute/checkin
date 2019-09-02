@@ -2,7 +2,6 @@ import React from 'react'
 import { Impress, Step } from 'react-impressjs'
 import 'react-impressjs/styles/react-impressjs.css'
 import '../App.css'
-// import alfredFeelsPoorly from '../images/alfred_feels_poorly.svg'
 import presentation from './PresentationComponent'
 
 class Main extends React.Component {
