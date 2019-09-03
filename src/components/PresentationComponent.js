@@ -202,10 +202,7 @@ const presentation = [
             width = '40%'
           />
         </div>
-        <p className = 'center'>
-          your buddy will get an alert on her phone<br/>
-          letting her know you might need help!
-        </p>
+        <p className = 'center'>your buddy will get an alert too!</p>
       </div>
     ]
   },
