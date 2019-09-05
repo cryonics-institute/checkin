@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { Dimensions, StyleSheet } from 'react-native'
 
 export const colors = {
   dark: 'steelblue',
@@ -34,6 +34,11 @@ export const styles = StyleSheet.create(
     header: {
       backgroundColor: colors.dark,
       color: colors.light
+    },
+    image: {
+      height: Dimensions.get('window').width * 0.8,
+      margin: 5,
+      width: Dimensions.get('window').width * 0.8
     },
     paragraph: {
       margin: 5,
