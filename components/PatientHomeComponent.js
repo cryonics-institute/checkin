@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView } from 'react-native'
 import { Slider, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { removeTimers, setTimer } from '../redux/ActionCreators'
@@ -36,7 +36,10 @@ class PatientHome extends React.Component {
 
   render () {
     return (
-      <View style = { styles.containerCentered }>
+      <KeyboardAvoidingView
+        behavior = 'padding'
+        style = { styles.containerCentered }
+      >
         <Text h4 style = { styles.title }>Check-In Interval</Text>
         <Slider
           maximumValue = { this.props.timer.maximumInterval }
@@ -50,7 +53,7 @@ class PatientHome extends React.Component {
         <Text style = { styles.text }>
           { this.state.interval / 1000 } Seconds
         </Text>
-      </View>
+      </KeyboardAvoidingView>
     )
   }
 }

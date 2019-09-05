@@ -1,6 +1,6 @@
 // TODO: Handle rejected sign-ins!
 import React from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView, View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { signinPatient, registerPatient } from '../redux/ActionCreators'
@@ -21,7 +21,10 @@ const mapDispatchToProps = (dispatch) => (
 
 const RenderSignInPatientView = (props) => {
   return (
-    <View style = { styles.containerCentered }>
+    <KeyboardAvoidingView
+      behavior = 'padding'
+      style = { styles.containerCentered }
+    >
       <Input
         ref = { props.usernameRef }
         placeholder = 'E-Mail Address'
@@ -54,13 +57,16 @@ const RenderSignInPatientView = (props) => {
           type = 'clear'
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 
 const RenderRegisterPatientView = (props) => {
   return (
-    <View style = { styles.containerCentered }>
+    <KeyboardAvoidingView
+      behavior = 'padding'
+      style = { styles.containerCentered }
+    >
       <Input
         placeholder = 'E-Mail Address'
         onChangeText = { (username) => props.validateEmail(username) }
@@ -91,7 +97,7 @@ const RenderRegisterPatientView = (props) => {
           type = 'clear'
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 

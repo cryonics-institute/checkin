@@ -1,6 +1,6 @@
 // TODO: Handle rejected sign-ins!
 import React from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { signinStandby, registerStandby } from '../redux/ActionCreators'
@@ -21,7 +21,10 @@ const mapDispatchToProps = (dispatch) => (
 
 const RenderSignInStandbyView = (props) => {
   return (
-    <View style = { styles.containerCentered }>
+    <KeyboardAvoidingView
+      behavior = 'padding'
+      style = { styles.containerCentered }
+    >
       <Input
         ref = { props.usernameRef }
         placeholder = 'E-Mail Address'
@@ -52,13 +55,16 @@ const RenderSignInStandbyView = (props) => {
         titleStyle = { styles.buttonTitleColorDark }
         type = 'clear'
       />
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 
 const RenderRegisterStandbyView = (props) => {
   return (
-    <View style = { styles.containerCentered }>
+    <KeyboardAvoidingView
+      behavior = 'padding'
+      style = { styles.containerCentered }
+    >
       <Input
         placeholder = 'E-Mail Address'
         onChangeText = { (username) => props.validateEmail(username) }
@@ -87,7 +93,7 @@ const RenderRegisterStandbyView = (props) => {
         titleStyle = { styles.buttonTitleColorDark }
         type = 'clear'
       />
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 
