@@ -1,9 +1,9 @@
 import React from 'react'
-import { KeyboardAvoidingView } from 'react-native'
-import { Slider, Text } from 'react-native-elements'
+import { KeyboardAvoidingView, View } from 'react-native'
+import { Icon, Slider, Text, Tooltip } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { removeTimers, setTimer } from '../redux/ActionCreators'
-import { styles } from '../styles/Styles'
+import { colors, styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
@@ -52,6 +52,49 @@ class PatientHome extends React.Component {
         />
         <Text style = { styles.text }>
           { this.state.interval / 1000 } Seconds
+        </Text>
+        <View style = { styles.row }>
+          <Tooltip
+            height = { 80 }
+            backgroundColor = { colors.medium }
+            popover = {
+              <Text>
+                How long would you like to wait before your buddy is contacted
+                if you miss a check-in?
+              </Text>
+            }
+            width = { 222 }
+          >
+            <Text h4 style = { styles.title }>
+              Snooze Interval
+            </Text>
+          </Tooltip>
+          <Tooltip
+            height = { 80 }
+            backgroundColor = { colors.medium }
+            popover = {
+              <Text>
+                How long would you like to wait before your buddy is contacted
+                if you miss a check-in?
+              </Text>
+            }
+            width = { 222 }
+          >
+            <Icon
+              color = { colors.dark }
+              name = 'info'
+              type = 'material'
+            />
+          </Tooltip>
+        </View>
+        <Slider
+          maximumValue = { this.props.timer.maximumInterval }
+          minimumValue = { this.props.timer.minimumInterval }
+          step = { 1000 }
+          style = { styles.slider }
+        />
+        <Text style = { styles.text }>
+          { this.state.interval / 1000 } Seconds // TODO: Change this!
         </Text>
       </KeyboardAvoidingView>
     )
