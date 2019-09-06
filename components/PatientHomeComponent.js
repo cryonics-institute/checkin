@@ -50,9 +50,17 @@ class PatientHome extends React.Component {
           style = { styles.slider }
           value = { this.props.timer.interval }
         />
-        <Text style = { styles.text }>
-          { this.state.interval / 1000 } Seconds
-        </Text>
+        <View style = { styles.row }>
+          <Text style = { styles.text }>
+            { this.state.interval / 1000 }
+          </Text>
+          <Text style = { styles.textStrikeThrough }>
+             Hours
+          </Text>
+          <Text style = { styles.text }>
+             Seconds
+          </Text>
+        </View>
         <View style = { styles.row }>
           <Tooltip
             height = { 80 }

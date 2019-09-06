@@ -60,6 +60,10 @@ export const styles = StyleSheet.create(
       fontSize: 12,
       margin: 5
     },
+    textStrikeThrough: {
+      color: colors.medium,
+      textDecorationLine: 'line-through'
+    },
     title: {
       margin: 5
     }

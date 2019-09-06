@@ -4,7 +4,7 @@ export const Timer = (
   state = {
     errMess: null,
     interval: 5000,
-    maximumInterval: 10000,
+    maximumInterval: 24000,
     minimumInterval: 1000,
     timers: []
   },
