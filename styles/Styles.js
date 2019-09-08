@@ -64,6 +64,12 @@ export const styles = StyleSheet.create(
       color: colors.medium,
       textDecorationLine: 'line-through'
     },
+    timeRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      margin: 5,
+      width: '80%'
+    },
     title: {
       margin: 5
     }

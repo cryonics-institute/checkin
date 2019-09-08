@@ -1,6 +1,6 @@
 import React from 'react'
-import { KeyboardAvoidingView, View } from 'react-native'
-import { Icon, Slider, Text, Tooltip } from 'react-native-elements'
+import { ScrollView, View } from 'react-native'
+import { Icon, Input, Slider, Text, Tooltip } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { removeTimers, setTimer } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
@@ -18,15 +18,70 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
+const RenderTimeInput = (props) => {
+  return (
+    <View>
+      <View style = { styles.timeRow }>
+        <Input
+          ref = { props.timeRef }
+          placeholder = 'HH:MM AM/PM'
+          onChangeText = { value => props.validateTime(value) }
+          value = { props.time }
+        />
+        <Icon
+          color = { colors.dark }
+          name = 'add-circle'
+          onPress = { () => props.addTimeInput(props.timeInput.length) }
+          type = 'material'
+        />
+      </View>
+      <View style = { styles.row }>
+        <Text style = { styles.textError }>
+          { props.isTimeValid ? '' : props.timeError }
+        </Text>
+      </View>
+    </View>
+  )
+}
+
 class PatientHome extends React.Component {
   constructor (props) {
     super(props)
 
+    this.timeRef = React.createRef()
+
     this.state = {
-      interval: this.props.timer.interval
+      interval: this.props.timer.interval,
+      isTimeValid: false,
+      time: '',
+      timeError: '',
+      timeInput: []
     }
 
+    this.addTimeInput = this.addTimeInput.bind(this)
     this.handleIntervalChange = this.handleIntervalChange.bind(this)
+    this.validateTime = this.validateTime.bind(this)
+  }
+
+  componentDidMount () {
+    this.addTimeInput(0)
+  }
+
+  addTimeInput (key) {
+    const timeInput = this.state.timeInput
+    timeInput.push(
+      <RenderTimeInput
+        key = { key }
+        time = { this.state.time }
+        timeRef = { this.timeRef }
+        validateTime = { time => this.validateTime(time) }
+        isTimeValid = { this.state.isTimeValid }
+        timeError = { this.state.timeError }
+        timeInput = { this.state.timeInput }
+        addTimeInput = { input => this.addTimeInput(input) }
+      />
+    )
+    this.setState({ timeInput })
   }
 
   handleIntervalChange (value) {
@@ -34,12 +89,24 @@ class PatientHome extends React.Component {
     this.props.setTimer(this.state.interval)
   }
 
+  validateTime (time) {
+    if (!time) {
+      this.setState({ timeError: 'Required' })
+      this.setState({ isTimeValid: false })
+    } else if (!/^(0?[1-9]|1[012])(:[0-5]\d) [APap][mM]$/i.test(time)) {
+      this.setState({ timeError: 'Invalid Time' })
+      this.setState({ isTimeValid: false })
+    } else {
+      this.setState({ isTimeValid: true })
+    }
+
+    this.setState({ time: time })
+  }
+
   render () {
     return (
-      <KeyboardAvoidingView
-        behavior = 'padding'
-        style = { styles.containerCentered }
-      >
+      <ScrollView contentContainerStyle = { { alignItems: 'center' } }>
+        { this.state.timeInput.map((value, index) => { return value }) }
         <Text h4 style = { styles.title }>Check-In Interval</Text>
         <Slider
           maximumValue = { this.props.timer.maximumInterval }
@@ -104,7 +171,7 @@ class PatientHome extends React.Component {
         <Text style = { styles.text }>
           { this.state.interval / 1000 } Seconds // TODO: Change this!
         </Text>
-      </KeyboardAvoidingView>
+      </ScrollView>
     )
   }
 }
