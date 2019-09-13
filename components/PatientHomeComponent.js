@@ -2,6 +2,7 @@ import React from 'react'
 import { ScrollView, View } from 'react-native'
 import { Icon, Input, Slider, Text, Tooltip } from 'react-native-elements'
 import { connect } from 'react-redux'
+import * as shortid from 'shortid'
 import { removeTimers, setTimer } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
@@ -18,32 +19,6 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
-const RenderTimeInput = (props) => {
-  return (
-    <View>
-      <View style = { styles.timeRow }>
-        <Input
-          ref = { props.timeRef }
-          placeholder = 'HH:MM AM/PM'
-          onChangeText = { value => props.validateTime(value) }
-          value = { props.time }
-        />
-        <Icon
-          color = { colors.dark }
-          name = 'add-circle'
-          onPress = { () => props.addTimeInput(props.timeInput.length) }
-          type = 'material'
-        />
-      </View>
-      <View style = { styles.row }>
-        <Text style = { styles.textError }>
-          { props.isTimeValid ? '' : props.timeError }
-        </Text>
-      </View>
-    </View>
-  )
-}
-
 class PatientHome extends React.Component {
   constructor (props) {
     super(props)
@@ -52,10 +27,10 @@ class PatientHome extends React.Component {
 
     this.state = {
       interval: this.props.timer.interval,
-      isTimeValid: false,
-      time: '',
-      timeError: '',
-      timeInput: []
+      areTimesValid: [],
+      timeErrors: [],
+      timeInputs: [],
+      times: []
     }
 
     this.addTimeInput = this.addTimeInput.bind(this)
@@ -64,32 +39,81 @@ class PatientHome extends React.Component {
   }
 
   componentDidMount () {
-    this.addTimeInput(0)
+    this.addTimeInput()
   }
 
-  addTimeInput (key) {
-    const timeInput = this.state.timeInput
-    timeInput.push(
-      <RenderTimeInput
-        key = { key }
-        time = { this.state.time }
-        timeRef = { this.timeRef }
-        validateTime = { time => this.validateTime(time) }
-        isTimeValid = { this.state.isTimeValid }
-        timeError = { this.state.timeError }
-        timeInput = { this.state.timeInput }
-        addTimeInput = { input => this.addTimeInput(input) }
-      />
+  addTimeInput () {
+    const identifier = shortid.generate()
+    const timeInputs = this.state.timeInputs
+    const times = this.state.times
+
+    timeInputs.push(
+      <View key = { identifier }>
+        <View style = { styles.timeRow }>
+          <Input
+            placeholder = 'HH:MM AM/PM'
+            onChangeText = {
+              value => {
+                times[identifier] = value
+                console.log('TIME ' + identifier + ': ' + times[identifier])
+              }
+            }
+          />
+          <Icon
+            color = { colors.dark }
+            name = 'add-circle'
+            onPress = { () => this.addTimeInput() }
+            type = 'material'
+          />
+          <Icon
+            color = { colors.dark }
+            name = 'remove-circle'
+            onPress = {
+              () => {
+                if (this.state.timeInputs.length > 1) {
+                  this.removeTimeInput(identifier)
+                } else {
+                  console.log('LENGTH: ' + this.state.timeInputs.length)
+                }
+              }
+            }
+            type = 'material'
+          />
+        </View>
+      </View>
     )
-    this.setState({ timeInput })
+
+    this.setState({ timeInputs: timeInputs })
+    this.setState({ times: times })
   }
 
-  handleIntervalChange (value) {
+  removeTimeInput (key) {
+    // const areTimesValid = this.state.areTimesValid.filter(
+    //   isTimeValid => isTimeValid.key !== key
+    // )
+    // const timeErrors = this.state.timeErrors.filter(
+    //   timeError => timeError.key !== key
+    // )
+    const timeInputs = this.state.timeInputs.filter(
+      timeInput => timeInput.key !== key
+    )
+    const times = this.state.times.filter(time => time.key !== key)
+    this.setState(
+      {
+        // areTimesValid: areTimesValid,
+        // timeErrors: timeErrors,
+        timeInputs: timeInputs,
+        times: times
+      }
+    )
+  }
+
+  handleIntervalChange () {
     this.props.removeTimers()
     this.props.setTimer(this.state.interval)
   }
 
-  validateTime (time) {
+  validateTime (time, index) {
     if (!time) {
       this.setState({ timeError: 'Required' })
       this.setState({ isTimeValid: false })
@@ -106,12 +130,16 @@ class PatientHome extends React.Component {
   render () {
     return (
       <ScrollView contentContainerStyle = { { alignItems: 'center' } }>
-        { this.state.timeInput.map((value, index) => { return value }) }
+        {
+          this.state.timeInputs.map(
+            (value) => { return value }
+          )
+        }
         <Text h4 style = { styles.title }>Check-In Interval</Text>
         <Slider
           maximumValue = { this.props.timer.maximumInterval }
           minimumValue = { this.props.timer.minimumInterval }
-          onSlidingComplete = { value => this.handleIntervalChange(value) }
+          onSlidingComplete = { () => this.handleIntervalChange() }
           onValueChange = { value => this.setState({ interval: value }) }
           step = { 1000 }
           style = { styles.slider }
