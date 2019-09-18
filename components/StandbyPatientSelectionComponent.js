@@ -21,8 +21,6 @@ class StandbyPatientSelection extends React.Component {
   constructor (props) {
     super(props)
 
-    this.emailRef = React.createRef()
-
     this.state = {
       email: '',
       isEmailValid: false,
@@ -58,7 +56,6 @@ class StandbyPatientSelection extends React.Component {
         style = { styles.containerCentered }
       >
         <Input
-          ref = { this.emailRef }
           placeholder = 'Patient&#39;s E-Mail Address'
           onChangeText = { (email) => this.validateEmail(email) }
           value = { this.state.email }

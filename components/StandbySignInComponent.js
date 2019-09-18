@@ -26,7 +26,6 @@ const RenderSignInStandbyView = (props) => {
       style = { styles.containerCentered }
     >
       <Input
-        ref = { props.usernameRef }
         placeholder = 'E-Mail Address'
         onChangeText = { (username) => props.validateEmail(username) }
         value = { props.username }
@@ -35,7 +34,6 @@ const RenderSignInStandbyView = (props) => {
         { props.isUsernameValid ? '' : props.usernameError }
       </Text>
       <Input
-        ref = { props.passwordRef }
         placeholder = 'Password'
         onChangeText = { (password) => props.validatePassword(password) }
         value = { props.password }
@@ -100,9 +98,6 @@ const RenderRegisterStandbyView = (props) => {
 class StandbySignIn extends React.Component {
   constructor (props) {
     super(props)
-
-    this.usernameRef = React.createRef()
-    this.passwordRef = React.createRef()
 
     this.state = {
       isRegistered: true,
@@ -198,8 +193,6 @@ class StandbySignIn extends React.Component {
     return (
       this.state.isRegistered
         ? <RenderSignInStandbyView
-          usernameRef = { this.usernameRef }
-          passwordRef = { this.passwordRef }
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }
@@ -213,8 +206,6 @@ class StandbySignIn extends React.Component {
           validatePassword = { password => this.validatePassword(password) }
         />
         : <RenderRegisterStandbyView
-          usernameRef = { this.usernameRef }
-          passwordRef = { this.passwordRef }
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }

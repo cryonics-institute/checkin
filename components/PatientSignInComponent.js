@@ -26,7 +26,6 @@ const RenderSignInPatientView = (props) => {
       style = { styles.containerCentered }
     >
       <Input
-        ref = { props.usernameRef }
         placeholder = 'E-Mail Address'
         onChangeText = { username => props.validateEmail(username) }
         value = { props.username }
@@ -35,7 +34,6 @@ const RenderSignInPatientView = (props) => {
         { props.isUsernameValid ? '' : props.usernameError }
       </Text>
       <Input
-        ref = { props.passwordRef }
         placeholder = 'Password'
         onChangeText = { password => props.validatePassword(password) }
         value = { props.password }
@@ -104,9 +102,6 @@ const RenderRegisterPatientView = (props) => {
 class PatientSignIn extends React.Component {
   constructor (props) {
     super(props)
-
-    this.usernameRef = React.createRef()
-    this.passwordRef = React.createRef()
 
     this.state = {
       isRegistered: true,
@@ -202,8 +197,6 @@ class PatientSignIn extends React.Component {
     return (
       this.state.isRegistered
         ? <RenderSignInPatientView
-          usernameRef = { this.usernameRef }
-          passwordRef = { this.passwordRef }
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }
@@ -217,8 +210,6 @@ class PatientSignIn extends React.Component {
           validatePassword = { password => this.validatePassword(password) }
         />
         : <RenderRegisterPatientView
-          usernameRef = { this.usernameRef }
-          passwordRef = { this.passwordRef }
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }
