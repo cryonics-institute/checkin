@@ -1,6 +1,6 @@
 /**
- * Redux reducer for the project, Cryonics Check-In, that stores in state all
- * JavaScript timers used throughout the app.
+ * Redux reducer for the project, Cryonics Check-In, that stores the state for
+ * time-inputs using an array.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -24,52 +24,24 @@
 
 import * as ActionTypes from './ActionTypes'
 
-export const Timer = (
+export const Inputs = (
   state = {
     errMess: null,
-    interval: 5000,
-    maximumInterval: 24000,
-    minimumInterval: 1000,
-    timers: []
+    array: []
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.SET_TIMER_REQUESTED:
+    case ActionTypes.MUTATE_INPUTS_FULFILLED:
       return {
         ...state,
-        errMess: null
+        array: action.payload
       }
 
-    case ActionTypes.SET_TIMER_REJECTED:
+    case ActionTypes.MUTATE_INPUTS_REJECTED:
       return {
         ...state,
         errMess: action.payload
-      }
-
-    case ActionTypes.SET_TIMER_FULFILLED:
-      return {
-        ...state,
-        errMess: null,
-        timers: state.timers.concat(action.payload)
-      }
-
-    case ActionTypes.SET_TIMER_INTERVAL:
-      return {
-        ...state,
-        interval: action.payload
-      }
-
-    case ActionTypes.REMOVE_TIMER:
-      return {
-        ...state,
-        timers: action.payload
-      }
-
-    case ActionTypes.REMOVE_TIMERS:
-      return {
-        ...state,
-        timers: []
       }
 
     default:

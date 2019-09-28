@@ -1,3 +1,26 @@
+/**
+ * Redux action-creators for the project, Cryonics Check-In.
+ *
+ * @author Michael David Gill <michaelgill1969@gmail.com>
+ * @license
+ * Copyright 2019 Cryonics Institute
+ *
+ * This file is part of Cryonics Check-In.
+ *
+ * Cryonics Check-In is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Cryonics Check-In is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { Alert } from 'react-native'
 import moment from 'moment'
 import * as ActionTypes from './ActionTypes'
@@ -175,6 +198,93 @@ export const getDocumentFulfilledAction = (data) => (
   {
     type: ActionTypes.GET_DOCUMENT_FULFILLED,
     payload: data
+  }
+)
+
+/**
+ * Mutate an input in the inputs array if it exists or add it if it does not
+ * exist.
+ * @param  {String}   id        Unique identifier for input.
+ * @param  {String}   time      Time entered into input.
+ * @param  {Boolean}  validity  Is the time valid?
+ * @return {Array}              Array of input objects.
+ */
+export const mutateInput = (id, time, validity) => (dispatch, getState) => {
+  try {
+    const input = {
+      id: id,
+      time: time,
+      validity: validity
+    }
+    const index = getState().inputs.array.findIndex(input => input.id === id)
+
+    if (getState().inputs.array != null && index === -1) {
+      dispatch(
+        mutateInputs(
+          [
+            ...getState().inputs.array.filter(input => input.id !== id),
+            input
+          ]
+        )
+      )
+    } else if (getState().inputs.array != null && index !== -1) {
+      dispatch(
+        mutateInputs(
+          [
+            ...getState().inputs.array.slice(0, index),
+            input,
+            ...getState().inputs.array.slice(index + 1)
+          ]
+        )
+      )
+    } else {
+      if (getState().inputs.array == null) {
+        throw new Error('Input array is null or undefined.')
+      } else {
+        throw new Error(
+          'Error encountered in the function, mutateInput, of ActionCreators.js'
+        )
+      }
+    }
+  } catch (error) {
+    dispatch(mutateInputsRejectedAction(error))
+  }
+}
+
+/**
+ * Remove an input in the inputs array.
+ * @param  {String} id  Unique identifier for input.
+ * @return {Array}      Array of input objects.
+ */
+export const removeInput = (id) => (dispatch, getState) => {
+  try {
+    dispatch(
+      mutateInputs(getState().inputs.array.filter(input => input.id !== id))
+    )
+  } catch (error) {
+    dispatch(mutateInputsRejectedAction(error))
+  }
+}
+
+/**
+ * Initiate an action to set the inputs array.
+ * @param  {Array} inputs Array of input objects.
+ */
+export const mutateInputs = (inputs) => (
+  {
+    type: ActionTypes.MUTATE_INPUTS_FULFILLED,
+    payload: inputs
+  }
+)
+
+/**
+ * Initiate an error indicating that mutation of the inputs array failed.
+ * @param  {Error} error Error describing the input-mutation failure.
+ */
+export const mutateInputsRejectedAction = (error) => (
+  {
+    type: ActionTypes.MUTATE_INPUTS_REJECTED,
+    payload: error
   }
 )
 
