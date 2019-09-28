@@ -1,5 +1,6 @@
 /**
- * Redux store for the project, Cryonics Check-In.
+ * Redux reducer for the project, Cryonics Check-In, that stores the state for
+ * time-inputs using an array.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -21,26 +22,29 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createStore, combineReducers, applyMiddleware } from 'redux'
-import thunk from 'redux-thunk'
-import logger from 'redux-logger'
-import { Auth } from './authReducer'
-import { Inputs } from './inputsReducer'
-import { Patient } from './patientReducer'
-import { Timer } from './timerReducer'
+import * as ActionTypes from './ActionTypes'
 
-export const ConfigureStore = () => {
-  const store = createStore(
-    combineReducers(
-      {
-        auth: Auth,
-        inputs: Inputs,
-        patient: Patient,
-        timer: Timer
+export const Inputs = (
+  state = {
+    errMess: null,
+    array: []
+  },
+  action
+) => {
+  switch (action.type) {
+    case ActionTypes.MUTATE_INPUTS_FULFILLED:
+      return {
+        ...state,
+        array: action.payload
       }
-    ),
-    applyMiddleware(thunk, logger)
-  )
 
-  return store
+    case ActionTypes.MUTATE_INPUTS_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    default:
+      return state
+  }
 }
