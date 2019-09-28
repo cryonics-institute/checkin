@@ -1,0 +1,23 @@
+{
+  "tags": {
+      "allowUnknownTags": true
+  },
+  "source": {
+      "include": ["./src"]
+  },
+  "plugins": [
+      "plugins/markdown"
+  ],
+  "opts": {
+      "encoding": "utf8",
+      "destination": "docs/",
+      "recurse": true,
+      "verbose": true,
+      "template": "./node_modules/better-docs"
+  },
+  "templates": {
+      "better-docs": {
+          "name": "My React components"
+      }
+  }
+}
