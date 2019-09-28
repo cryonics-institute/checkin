@@ -16,7 +16,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#4682b4"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -35,6 +35,7 @@
       "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
       "publishManifestPath": "android/app/src/main/assets/shell-app-manifest.json"
     },
-    "scheme": "exp073cd0aac7b54b94b9b9dbfcbdddf422"
+    "scheme": "exp073cd0aac7b54b94b9b9dbfcbdddf422",
+    "githubUrl": "https://github.com/cryonics-institute/checkin"
   }
 }

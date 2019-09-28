@@ -1,6 +1,6 @@
 // TODO: Handle rejected sign-ins!
 import React from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView, View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { signinPatient, registerPatient } from '../redux/ActionCreators'
@@ -21,9 +21,11 @@ const mapDispatchToProps = (dispatch) => (
 
 const RenderSignInPatientView = (props) => {
   return (
-    <View style = { styles.containerCentered }>
+    <KeyboardAvoidingView
+      behavior = 'padding'
+      style = { styles.containerCentered }
+    >
       <Input
-        ref = { props.usernameRef }
         placeholder = 'E-Mail Address'
         onChangeText = { username => props.validateEmail(username) }
         value = { props.username }
@@ -32,7 +34,6 @@ const RenderSignInPatientView = (props) => {
         { props.isUsernameValid ? '' : props.usernameError }
       </Text>
       <Input
-        ref = { props.passwordRef }
         placeholder = 'Password'
         onChangeText = { password => props.validatePassword(password) }
         value = { props.password }
@@ -54,13 +55,16 @@ const RenderSignInPatientView = (props) => {
           type = 'clear'
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 
 const RenderRegisterPatientView = (props) => {
   return (
-    <View style = { styles.containerCentered }>
+    <KeyboardAvoidingView
+      behavior = 'padding'
+      style = { styles.containerCentered }
+    >
       <Input
         placeholder = 'E-Mail Address'
         onChangeText = { (username) => props.validateEmail(username) }
@@ -91,16 +95,13 @@ const RenderRegisterPatientView = (props) => {
           type = 'clear'
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 
 class PatientSignIn extends React.Component {
   constructor (props) {
     super(props)
-
-    this.usernameRef = React.createRef()
-    this.passwordRef = React.createRef()
 
     this.state = {
       isRegistered: true,
@@ -196,8 +197,6 @@ class PatientSignIn extends React.Component {
     return (
       this.state.isRegistered
         ? <RenderSignInPatientView
-          usernameRef = { this.usernameRef }
-          passwordRef = { this.passwordRef }
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }
@@ -211,8 +210,6 @@ class PatientSignIn extends React.Component {
           validatePassword = { password => this.validatePassword(password) }
         />
         : <RenderRegisterPatientView
-          usernameRef = { this.usernameRef }
-          passwordRef = { this.passwordRef }
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }

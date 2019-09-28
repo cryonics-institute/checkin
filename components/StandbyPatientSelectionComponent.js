@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from 'react-native'
+import { KeyboardAvoidingView } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { addPatient } from '../redux/ActionCreators'
@@ -20,8 +20,6 @@ const mapDispatchToProps = (dispatch) => (
 class StandbyPatientSelection extends React.Component {
   constructor (props) {
     super(props)
-
-    this.emailRef = React.createRef()
 
     this.state = {
       email: '',
@@ -53,9 +51,11 @@ class StandbyPatientSelection extends React.Component {
 
   render () {
     return (
-      <View style = { styles.containerCentered }>
+      <KeyboardAvoidingView
+        behavior = 'padding'
+        style = { styles.containerCentered }
+      >
         <Input
-          ref = { this.emailRef }
           placeholder = 'Patient&#39;s E-Mail Address'
           onChangeText = { (email) => this.validateEmail(email) }
           value = { this.state.email }
@@ -63,15 +63,13 @@ class StandbyPatientSelection extends React.Component {
         <Text style = { styles.textError }>
           { this.state.isEmailValid ? '' : this.state.emailError }
         </Text>
-        <View>
-          <Button
-            buttonStyle = { styles.button }
-            disabled = { !this.state.isEmailValid }
-            onPress = { () => this.handleSignin() }
-            title = 'Submit'
-          />
-        </View>
-      </View>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { !this.state.isEmailValid }
+          onPress = { () => this.handleSignin() }
+          title = 'Submit'
+        />
+      </KeyboardAvoidingView>
     )
   }
 }

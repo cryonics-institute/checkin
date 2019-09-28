@@ -84,4 +84,4 @@ That's a pretty brief introduction!  For a much better introduction, please see 
 
 ## Code of Conduct
 
-This project and everyone participating in it is governed by a [Code of Conduct](../docs/CODE_OF_CONDUCT.md).  By participating, you are expected to uphold this code. Please report unacceptable behavior to [michaelgill1969@gmail.com](mailto:michaelgill1969@gmail.com).
+The project maintainers reserve all rights and remedies under law regarding the conduct of contributors relevant to their participation in this project.  Please report unacceptable behavior to [michaelgill1969@gmail.com](mailto:michaelgill1969@gmail.com).

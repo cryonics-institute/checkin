@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { Dimensions, StyleSheet } from 'react-native'
 
 export const colors = {
   dark: 'steelblue',
@@ -35,9 +35,18 @@ export const styles = StyleSheet.create(
       backgroundColor: colors.dark,
       color: colors.light
     },
+    image: {
+      height: Dimensions.get('window').width * 0.8,
+      margin: 5,
+      width: Dimensions.get('window').width * 0.8
+    },
     paragraph: {
       margin: 5,
       textAlign: 'center'
+    },
+    row: {
+      alignItems: 'center',
+      flexDirection: 'row'
     },
     slider: {
       margin: 5,
@@ -50,6 +59,16 @@ export const styles = StyleSheet.create(
       color: colors.error,
       fontSize: 12,
       margin: 5
+    },
+    textStrikeThrough: {
+      color: colors.medium,
+      textDecorationLine: 'line-through'
+    },
+    timeRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      margin: 5,
+      width: '80%'
     },
     title: {
       margin: 5

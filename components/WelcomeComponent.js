@@ -1,5 +1,5 @@
 import React from 'react'
-import { ActivityIndicator, View } from 'react-native'
+import { View } from 'react-native'
 import { Button, Image } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { BLUE_LOGO } from '../assets'
@@ -26,14 +26,6 @@ class Welcome extends React.Component {
     this.handleStandby = this.handleStandby.bind(this)
   }
 
-  // componentDidMount () {
-  //   if (this.props.auth.isAuthenticated) {
-  //     this.props.navigation.navigate('App')
-  //   } else if (this.props.auth.isPatient != null) {
-  //     this.props.navigation.navigate('Auth')
-  //   }
-  // }
-
   handlePatient () {
     this.props.selectStatus(true)
     this.props.navigation.navigate('PatientAuth')
@@ -47,13 +39,11 @@ class Welcome extends React.Component {
   render () {
     return (
       <View style = { styles.containerSpaced }>
-        <View>
-          <Image
-            PlaceholderContent = { <ActivityIndicator/> }
-            resizeMode = 'contain'
-            source = { BLUE_LOGO }
-          />
-        </View>
+        <Image
+          resizeMode = 'contain'
+          source = { BLUE_LOGO }
+          style = { styles.image }
+        />
         <View>
           <Button
             buttonStyle = { styles.button }
