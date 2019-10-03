@@ -1,18 +1,48 @@
+/**
+ * Main component for the project, Dynamic Text-Input for React Native, that
+ * presents the view inside of which the text-input components are presented.
+ *
+ * @author Michael David Gill <michaelgill1969@gmail.com>
+ * @license
+ * Copyright 2019 Cryonics Institute
+ *
+ * This file is part of Cryonics Check-In.
+ *
+ * Cryonics Check-In is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * Cryonics Check-In is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import React from 'react'
 import { ScrollView, View } from 'react-native'
-import { Icon, Slider, Text, Tooltip } from 'react-native-elements'
+import { Button, Icon, Slider, Text, Tooltip } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { removeTimers, setTimer } from '../redux/ActionCreators'
+import * as Shortid from 'shortid'
+import { mutateInput, removeTimers, setTimer } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
+import TimeInput from './TimeInputComponent'
 
 const mapStateToProps = state => {
   return {
+    inputs: state.inputs,
     timer: state.timer
   }
 }
 
 const mapDispatchToProps = (dispatch) => (
   {
+    mutateInput: (identifier, text, validity) => dispatch(
+      mutateInput(identifier, text, validity)
+    ),
     removeTimers: () => dispatch(removeTimers()),
     setTimer: interval => dispatch(setTimer(interval))
   }
@@ -29,6 +59,10 @@ class PatientHome extends React.Component {
     this.handleIntervalChange = this.handleIntervalChange.bind(this)
   }
 
+  componentDidMount () {
+    this.props.mutateInput(Shortid.generate(), '', false)
+  }
+
   handleIntervalChange () {
     this.props.removeTimers()
     this.props.setTimer(this.state.interval)
@@ -36,7 +70,31 @@ class PatientHome extends React.Component {
 
   render () {
     return (
-      <ScrollView contentContainerStyle = { { alignItems: 'center' } }>
+      <ScrollView contentContainerStyle = { styles.containerCentered }>
+        <Text h4 style = { styles.title }>Time Inputs</Text>
+        {
+          this.props.inputs.array.map(
+            input => <TimeInput
+              key = { input.id.toString() }
+              value = { input.id }
+            />
+          )
+        }
+        <Button
+          buttonStyle = { styles.button }
+          onPress = {
+            () => {
+              console.log('LENGTH: ' + this.props.inputs.array.length)
+              this.props.inputs.array.map(
+                input => console.log(input.id + '+++' + input.text)
+              )
+              this.props.inputs.array.map(
+                input => console.log(input.id + '+++' + input.validity)
+              )
+            }
+          }
+          title = 'Log Validities'
+        />
         <Text h4 style = { styles.title }>Check-In Interval</Text>
         <Slider
           maximumValue = { this.props.timer.maximumInterval }
