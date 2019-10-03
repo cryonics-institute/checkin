@@ -27,6 +27,15 @@ import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
 
+/**
+ * Add a new document to Firebase for the currently authorized user.  The
+ * document includes the sign-in and check-in times, both set to the current
+ * time, and the check-in interval.  After Firebase returns a promise that the
+ * document has been created, an action for document-fulfillment is initiated,
+ * the setTimer action creator is called with the check-in interval, and the
+ * navigation service is told to navigate to the patient's app-stack.
+ * @return {Promise}  A promise to create a new Firebase document.
+ */
 export const addDocument = () => (dispatch, getState) => {
   dispatch(addDocumentRequestedAction())
 
@@ -47,12 +56,19 @@ export const addDocument = () => (dispatch, getState) => {
     .catch(error => dispatch(addDocumentRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to create a new Firebase document.
+ */
 export const addDocumentRequestedAction = () => (
   {
     type: ActionTypes.ADD_DOCUMENT_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that creation of a new Firebase document failed.
+ * @param  {Error} error Error describing the add-document failure.
+ */
 export const addDocumentRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.ADD_DOCUMENT_REJECTED,
@@ -60,12 +76,23 @@ export const addDocumentRejectedAction = (errorMessage) => (
   }
 )
 
+/**
+ * Initiate an action indicating that a new Firebase document has been created.
+ */
 export const addDocumentFulfilledAction = () => (
   {
     type: ActionTypes.ADD_DOCUMENT_FULFILLED
   }
 )
 
+/**
+ * Add a patient to be be tracked by the current standby user.  First, a
+ * setListener action creator is called with the patient's e-mail.  After that
+ * promise is returned, an action for add-patient-fulfillment is initiated and
+ * the navigation service is told to navigate to the standby's app-stack.
+ * @param  {String}   email E-mail of the patient to be added.
+ * @return {Promise}        A promise to add a patient to be tracked by standby.
+ */
 export const addPatient = (email) => (dispatch) => {
   return Promise.resolve(
     dispatch(addPatientRequestedAction(email))
@@ -92,6 +119,10 @@ export const addPatient = (email) => (dispatch) => {
     .catch(error => dispatch(addPatientRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to add a patient to be be tracked by the current standby.
+ * @param  {String}   email E-mail of the patient to be added.
+ */
 export const addPatientRequestedAction = (email) => (
   {
     type: ActionTypes.ADD_PATIENT_REQUESTED,
@@ -99,6 +130,10 @@ export const addPatientRequestedAction = (email) => (
   }
 )
 
+/**
+ * Initiate an error indicating that adding a patient to be be tracked failed.
+ * @param  {Error} error Error describing the add-patient failure.
+ */
 export const addPatientRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.ADD_PATIENT_REJECTED,
@@ -106,6 +141,9 @@ export const addPatientRejectedAction = (errorMessage) => (
   }
 )
 
+/**
+ * Initiate an action indicating that a patient to be be tracked has been added.
+ */
 export const addPatientFulfilledAction = () => (
   {
     type: ActionTypes.ADD_PATIENT_FULFILLED
