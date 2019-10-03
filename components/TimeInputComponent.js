@@ -93,7 +93,7 @@ class TimeInput extends React.Component {
                 input => input.id === this.state.identifier
               )[0].validity
                 ? styles.transparent
-                : styles.error
+                : styles.textError
             }
             onChangeText = {
               time => {
@@ -132,7 +132,7 @@ class TimeInput extends React.Component {
                 input => input.id === this.state.identifier
               )[0].validity
                 ? styles.transparent
-                : styles.error
+                : styles.textError
             }
             onChangeText = {
               time => {
@@ -171,7 +171,7 @@ class TimeInput extends React.Component {
                 input => input.id === this.state.identifier
               )[0].validity
                 ? styles.transparent
-                : styles.error
+                : styles.textError
             }
             onChangeText = {
               time => {
