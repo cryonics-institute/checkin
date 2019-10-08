@@ -150,6 +150,14 @@ export const addPatientFulfilledAction = () => (
   }
 )
 
+/**
+ * Initiate a check-in by updating the check-in time and the check-in interval
+ * in the currently authorized user's Firebase document.  After that
+ * promise is returned, an action for check-in-fulfillment is initiated and
+ * a timer is set to alert the user to check-in again after the interval has
+ * elapsed.
+ * @return {Promise}        A promise to update the check-in time and interval.
+ */
 export const checkin = () => (dispatch, getState) => {
   dispatch(checkinRequestedAction())
 
@@ -168,12 +176,20 @@ export const checkin = () => (dispatch, getState) => {
     .catch(error => dispatch(checkinRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to update a patient's check-in time and interval.
+ */
 export const checkinRequestedAction = () => (
   {
     type: ActionTypes.CHECKIN_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that updating a patient's check-in time and
+ * interval failed.
+ * @param  {Error} error Error describing the check-in failure.
+ */
 export const checkinRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.CHECKIN_REJECTED,
@@ -181,12 +197,25 @@ export const checkinRejectedAction = (errorMessage) => (
   }
 )
 
+/**
+ * Initiate an action indicating that a patient's check-in time and interval has
+ * been added.
+ */
 export const checkinFulfilledAction = () => (
   {
     type: ActionTypes.CHECKIN_FULFILLED
   }
 )
 
+/**
+ * Update the sign-in and check-in times and the check-in interval in the Redux
+ * store using the currently-authorized user's Firebase document.  First, the
+ * document is retrieved from Firebase.  After that promise is returned, the
+ * appropriate state parameter are updated.  Finally, an action for get-
+ * document-fulfillment is initiated.
+ * @param  {String}   email E-mail of the currently-authorized patient.
+ * @return {Promise}        A promise to update check-in state parameters.
+ */
 export const getDocument = (email) => (dispatch) => {
   dispatch(getDocumentRequestedAction())
 
@@ -219,12 +248,20 @@ export const getDocument = (email) => (dispatch) => {
     .catch(error => dispatch(getDocumentRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to update the sign-in and check-in times and the check-in
+ * interval in the Redux store.
+ */
 export const getDocumentRequestedAction = () => (
   {
     type: ActionTypes.GET_DOCUMENT_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that updating the Redux store has failed.
+ * @param  {Error} error Error describing the check-in failure.
+ */
 export const getDocumentRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.GET_DOCUMENT_REJECTED,
@@ -232,6 +269,9 @@ export const getDocumentRejectedAction = (errorMessage) => (
   }
 )
 
+/**
+ * Initiate an action indicating that updating the Redux store has completed.
+ */
 export const getDocumentFulfilledAction = (data) => (
   {
     type: ActionTypes.GET_DOCUMENT_FULFILLED,
