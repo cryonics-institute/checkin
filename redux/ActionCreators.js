@@ -366,6 +366,13 @@ export const mutateInputsRejectedAction = (error) => (
   }
 )
 
+/**
+ * Register a new account for a patient on Firebase.  After that promise is
+ * returned, an action for registration-fulfillment is initiated and a
+ * request to add a document for that patient in initiated.
+ * @param  {String}   creds Username and password for the patient.
+ * @return {Promise}        A promise to create a new patient-user.
+ */
 export const registerPatient = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
@@ -383,6 +390,13 @@ export const registerPatient = (creds) => (dispatch) => {
     .catch(error => dispatch(registrationRejectedAction(error.message)))
 }
 
+/**
+ * Register a new account for a standby-user on Firebase.  After that promise is
+ * returned, an action for registration-fulfillment is initiated and the
+ * navigation service is told to navigate to the standby's app-stack.
+ * @param  {String}   creds Username and password for the standby-user.
+ * @return {Promise}        A promise to create a new standby-user.
+ */
 export const registerStandby = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
@@ -400,12 +414,19 @@ export const registerStandby = (creds) => (dispatch) => {
     .catch(error => dispatch(registrationRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to register a new user on Firebase.
+ */
 export const registrationRequestedAction = () => (
   {
     type: ActionTypes.REGISTRATION_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the new-user registration has failed.
+ * @param  {Error} error Error describing the registration failure.
+ */
 export const registrationRejectedAction = (message) => (
   {
     type: ActionTypes.REGISTRATION_REJECTED,
@@ -413,6 +434,9 @@ export const registrationRejectedAction = (message) => (
   }
 )
 
+/**
+ * Initiate an action indicating that the new-user registration has completed.
+ */
 export const registrationFulfilledAction = (user) => (
   {
     type: ActionTypes.REGISTRATION_FULFILLED,
@@ -420,8 +444,11 @@ export const registrationFulfilledAction = (user) => (
   }
 )
 
-// TODO: Add removal actions for one listener and all listeners.
-
+/**
+ * Removes a single listener added in the addPatient action from the array of
+ * listeners in the Redux store.
+ * @param  {Promise} listener A promise to set another listener after a timeout.
+ */
 export const removeListener = (listener) => (dispatch, getState) => {
   clearTimeout(listener)
 
@@ -434,24 +461,28 @@ export const removeListener = (listener) => (dispatch, getState) => {
   dispatch(removeTimerAction(listeners))
 }
 
-export const removeListenerAction = (newListeners) => (
-  {
-    type: ActionTypes.REMOVE_LISTENER,
-    payload: newListeners
-  }
-)
-
+/**
+ * Removes all listeners added in the addPatient action from the array of
+ * listeners in the Redux store.
+ */
 export const removeListeners = () => (dispatch, getState) => {
   getState().patient.listeners.forEach(listener => clearTimeout(listener))
   dispatch(removeListenersAction())
 }
 
+/**
+ * Initiate an action indicating that all listeners have been removed.
+ */
 export const removeListenersAction = () => (
   {
     type: ActionTypes.REMOVE_LISTENERS
   }
 )
 
+/**
+ * Removes a single timer from the array of timers in the Redux store.
+ * @param {Integer} timer ID of a time-out object.
+ */
 export const removeTimer = (timer) => (dispatch, getState) => {
   clearTimeout(timer)
 
@@ -464,6 +495,9 @@ export const removeTimer = (timer) => (dispatch, getState) => {
   dispatch(removeTimerAction(timers))
 }
 
+/**
+ * Initiate an action indicating that the timer has been removed.
+ */
 export const removeTimerAction = (newTimers) => (
   {
     type: ActionTypes.REMOVE_TIMER,
@@ -471,21 +505,35 @@ export const removeTimerAction = (newTimers) => (
   }
 )
 
+/**
+ * Removes all timers from the array of timers in the Redux store.
+ */
 export const removeTimers = () => (dispatch, getState) => {
   getState().timer.timers.forEach(timer => clearTimeout(timer))
   dispatch(removeTimersAction())
 }
 
+/**
+ * Initiate an action indicating that all timers have been removed.
+ */
 export const removeTimersAction = () => (
   {
     type: ActionTypes.REMOVE_TIMERS
   }
 )
 
+/**
+ * Sets the status of the currently-authorized user as patient or standby.
+ * @param {Boolean} isPatient Whether user is a patient or standby.
+ */
 export const selectStatus = (isPatient) => (dispatch) => {
   dispatch(selectStatusAction(isPatient))
 }
 
+/**
+ * Initiate an action indicating that the user's status has been set.
+ * @param {Boolean} isPatient Whether user is a patient or standby.
+ */
 export const selectStatusAction = (isPatient) => (
   {
     type: ActionTypes.SELECT_STATUS,
