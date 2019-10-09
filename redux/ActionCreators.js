@@ -67,7 +67,7 @@ export const addDocumentRequestedAction = () => (
 
 /**
  * Initiate an error indicating that creation of a new Firebase document failed.
- * @param  {Error} error Error describing the add-document failure.
+ * @param  {Error} errorMessage Message describing the add-document failure.
  */
 export const addDocumentRejectedAction = (errorMessage) => (
   {
@@ -132,7 +132,7 @@ export const addPatientRequestedAction = (email) => (
 
 /**
  * Initiate an error indicating that adding a patient to be be tracked failed.
- * @param  {Error} error Error describing the add-patient failure.
+ * @param  {Error} errorMessage Message describing the add-patient failure.
  */
 export const addPatientRejectedAction = (errorMessage) => (
   {
@@ -188,7 +188,7 @@ export const checkinRequestedAction = () => (
 /**
  * Initiate an error indicating that updating a patient's check-in time and
  * interval failed.
- * @param  {Error} error Error describing the check-in failure.
+ * @param  {Error} errorMessage Message describing the check-in failure.
  */
 export const checkinRejectedAction = (errorMessage) => (
   {
@@ -241,7 +241,7 @@ export const getDocument = (email) => (dispatch) => {
       }
     )
     .then(
-      (data) => {
+      data => {
         dispatch(getDocumentFulfilledAction(data))
       }
     )
@@ -260,7 +260,7 @@ export const getDocumentRequestedAction = () => (
 
 /**
  * Initiate an error indicating that updating the Redux store has failed.
- * @param  {Error} error Error describing the check-in failure.
+ * @param  {Error} errorMessage Message describing the check-in failure.
  */
 export const getDocumentRejectedAction = (errorMessage) => (
   {
@@ -271,6 +271,7 @@ export const getDocumentRejectedAction = (errorMessage) => (
 
 /**
  * Initiate an action indicating that updating the Redux store has completed.
+ * @param {Array} data  An array of values for the patient reducer.
  */
 export const getDocumentFulfilledAction = (data) => (
   {
@@ -357,12 +358,12 @@ export const mutateInputs = (inputs) => (
 
 /**
  * Initiate an error indicating that mutation of the inputs array failed.
- * @param  {Error} error Error describing the input-mutation failure.
+ * @param  {Error} errorMessage Message describing the input-mutation failure.
  */
-export const mutateInputsRejectedAction = (error) => (
+export const mutateInputsRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.MUTATE_INPUTS_REJECTED,
-    payload: error
+    payload: errorMessage
   }
 )
 
@@ -425,7 +426,7 @@ export const registrationRequestedAction = () => (
 
 /**
  * Initiate an error indicating that the new-user registration has failed.
- * @param  {Error} error Error describing the registration failure.
+ * @param  {Error} errorMessage Message describing the registration failure.
  */
 export const registrationRejectedAction = (message) => (
   {
@@ -436,6 +437,9 @@ export const registrationRejectedAction = (message) => (
 
 /**
  * Initiate an action indicating that the new-user registration has completed.
+ * @param {User}  user  A Firebase User object
+ * @see Google. (n.d.). User [Software documentation]. Retrieved from
+ * {@link https://firebase.google.com/docs/reference/js/firebase.User}
  */
 export const registrationFulfilledAction = (user) => (
   {
@@ -445,7 +449,7 @@ export const registrationFulfilledAction = (user) => (
 )
 
 /**
- * Removes a single listener added in the addPatient action from the array of
+ * Remove a single listener added in the addPatient action from the array of
  * listeners in the Redux store.
  * @param  {Promise} listener A promise to set another listener after a timeout.
  */
@@ -462,7 +466,7 @@ export const removeListener = (listener) => (dispatch, getState) => {
 }
 
 /**
- * Removes all listeners added in the addPatient action from the array of
+ * Remove all listeners added in the addPatient action from the array of
  * listeners in the Redux store.
  */
 export const removeListeners = () => (dispatch, getState) => {
@@ -480,7 +484,7 @@ export const removeListenersAction = () => (
 )
 
 /**
- * Removes a single timer from the array of timers in the Redux store.
+ * Remove a single timer from the array of timers in the Redux store.
  * @param {Integer} timer ID of a time-out object.
  */
 export const removeTimer = (timer) => (dispatch, getState) => {
@@ -497,6 +501,7 @@ export const removeTimer = (timer) => (dispatch, getState) => {
 
 /**
  * Initiate an action indicating that the timer has been removed.
+ * @param {Array} newTimers Array of IDs of time-out objects
  */
 export const removeTimerAction = (newTimers) => (
   {
@@ -506,7 +511,7 @@ export const removeTimerAction = (newTimers) => (
 )
 
 /**
- * Removes all timers from the array of timers in the Redux store.
+ * Remove all timers from the array of timers in the Redux store.
  */
 export const removeTimers = () => (dispatch, getState) => {
   getState().timer.timers.forEach(timer => clearTimeout(timer))
@@ -523,7 +528,7 @@ export const removeTimersAction = () => (
 )
 
 /**
- * Sets the status of the currently-authorized user as patient or standby.
+ * Set the status of the currently-authorized user as patient or standby.
  * @param {Boolean} isPatient Whether user is a patient or standby.
  */
 export const selectStatus = (isPatient) => (dispatch) => {
@@ -541,6 +546,13 @@ export const selectStatusAction = (isPatient) => (
   }
 )
 
+/**
+ * Set a recurring listener that will check if the patient that the standby-user
+ * is following has checked in within the alotted interval or else alert standby
+ * that the user has not checked in.
+ * @param  {String} email E-mail of the patient to listen to.
+ * @return {Promise}      Promise to create another listener after an interval.
+ */
 export const setListener = (email) => (dispatch, getState) => {
   const setInterval = () => {
     const interval = getState().patient.checkinInterval
@@ -631,12 +643,19 @@ export const setListener = (email) => (dispatch, getState) => {
     .catch(error => dispatch(setListenerRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to set a listener for patient check-ins.
+ */
 export const setListenerRequestedAction = () => (
   {
     type: ActionTypes.SET_LISTENER_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the listener was not set.
+ * @param  {Error} errorMessage Message describing the listening failure.
+ */
 export const setListenerRejectedAction = (message) => (
   {
     type: ActionTypes.SET_LISTENER_REJECTED,
@@ -644,13 +663,23 @@ export const setListenerRejectedAction = (message) => (
   }
 )
 
-export const setListenerFulfilledAction = (timer) => (
+/**
+ * Initiate an action indicating that the new-user registration has completed.
+ * @param  {Promise} listener A promise to set another listener after a timeout.
+ */
+export const setListenerFulfilledAction = (listener) => (
   {
     type: ActionTypes.SET_LISTENER_FULFILLED,
-    payload: timer
+    payload: listener
   }
 )
 
+/**
+ * Set a timer that will issue an alert for the currently authorized patient to
+ * check-in after an interval of time.
+ * @param  {Integer}  interval  The interval between alerts.
+ * @return {Integer}            ID of a time-out object.
+ */
 export const setTimer = (interval) => (dispatch, getState) => {
   const checkinAlert = () => {
     const timers = getState().timer.timers
@@ -702,12 +731,19 @@ export const setTimer = (interval) => (dispatch, getState) => {
     .catch(error => dispatch(setTimerRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to set a timer for patient check-in alerts.
+ */
 export const setTimerRequestedAction = () => (
   {
     type: ActionTypes.SET_TIMER_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the timer was not set.
+ * @param  {Error} errorMessage Message describing the timer failure.
+ */
 export const setTimerRejectedAction = (message) => (
   {
     type: ActionTypes.SET_TIMER_REJECTED,
@@ -715,6 +751,10 @@ export const setTimerRejectedAction = (message) => (
   }
 )
 
+/**
+ * Initiate an action indicating that the timer has been set.
+ * @param {Integer} timer ID of a time-out object.
+ */
 export const setTimerFulfilledAction = (timer) => (
   {
     type: ActionTypes.SET_TIMER_FULFILLED,
@@ -722,10 +762,18 @@ export const setTimerFulfilledAction = (timer) => (
   }
 )
 
+/**
+ * Set the interval for the setTimer function.
+ * @param  {Integer}  interval  The interval between alerts.
+ */
 export const setTimerInterval = (interval) => (dispatch, getState) => {
   dispatch(setTimerIntervalAction(interval))
 }
 
+/**
+ * Initiate an action indicating that the timer-interval has been set.
+ * @param  {Integer}  interval  The interval between alerts.
+ */
 export const setTimerIntervalAction = (interval) => (
   {
     type: ActionTypes.SET_TIMER_INTERVAL,
