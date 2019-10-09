@@ -781,6 +781,13 @@ export const setTimerIntervalAction = (interval) => (
   }
 )
 
+/**
+ * Sign in a patient on Firebase.  After that promise is returned, an action for
+ * sign-in-fulfillment is initiated and a request to add a document for that
+ * patient in initiated.
+ * @param  {String}   creds Username and password for the patient.
+ * @return {Promise}        A promise to sign-in a patient-user.
+ */
 export const signinPatient = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
@@ -798,6 +805,13 @@ export const signinPatient = (creds) => (dispatch) => {
     .catch(error => dispatch(signinRejectedAction(error.message)))
 }
 
+/**
+ * Sign in a standby-user on Firebase.  After that promise is returned, an
+ * action for sign-in-fulfillment is initiated and a request to add a document
+ * for that patient in initiated.
+ * @param  {String}   creds Username and password for the standby-user.
+ * @return {Promise}        A promise to sign-in a standby-user.
+ */
 export const signinStandby = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
@@ -815,12 +829,19 @@ export const signinStandby = (creds) => (dispatch) => {
     .catch(error => dispatch(signinRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to sign-in a user on Firebase.
+ */
 export const signinRequestedAction = () => (
   {
     type: ActionTypes.SIGNIN_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the sign-in has failed.
+ * @param  {Error} errorMessage Message describing the sign-in failure.
+ */
 export const signinRejectedAction = (message) => (
   {
     type: ActionTypes.SIGNIN_REJECTED,
@@ -828,6 +849,12 @@ export const signinRejectedAction = (message) => (
   }
 )
 
+/**
+ * Initiate an action indicating that the sign-in has completed.
+ * @param {User}  user  A Firebase User object
+ * @see Google. (n.d.). User [Software documentation]. Retrieved from
+ * {@link https://firebase.google.com/docs/reference/js/firebase.User}
+ */
 export const signinFulfilledAction = (user) => (
   {
     type: ActionTypes.SIGNIN_FULFILLED,
@@ -835,6 +862,13 @@ export const signinFulfilledAction = (user) => (
   }
 )
 
+/**
+ * Sign out a patient on Firebase, which first removes that patient's document on
+ * Firebase.  After those promises are returned, an action for sign-out-
+ * fulfillment is initiated, a request to remove timers is initiated, and the
+ * navigation service is told to navigate to the authorization stack.
+ * @return {Promise}  A promise to sign-out a patient-user.
+ */
 export const signoutPatient = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
@@ -866,6 +900,13 @@ export const signoutPatient = () => (dispatch, getState) => {
     )
 }
 
+/**
+ * Sign out a standby-user on Firebase.  After those promises are returned, an
+ * action for sign-out-fulfillment is initiated, a request to remove listeners
+ * is initiated, and the navigation service is told to navigate to the
+ * authorization stack.
+ * @return {Promise}  A promise to sign-out a standby-user.
+ */
 export const signoutStandby = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
@@ -888,12 +929,19 @@ export const signoutStandby = () => (dispatch, getState) => {
     )
 }
 
+/**
+ * Initiate an action to sign-out a user on Firebase.
+ */
 export const signoutRequestedAction = () => (
   {
     type: ActionTypes.SIGNOUT_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the sign-out has failed.
+ * @param  {Error} errorMessage Message describing the sign-in failure.
+ */
 export const signoutRejectedAction = (message) => (
   {
     type: ActionTypes.SIGNOUT_REJECTED,
@@ -901,6 +949,9 @@ export const signoutRejectedAction = (message) => (
   }
 )
 
+/**
+ * Initiate an action indicating that the sign-out has completed.
+ */
 export const signoutFulfilledAction = () => (
   {
     type: ActionTypes.SIGNOUT_FULFILLED
