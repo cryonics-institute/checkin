@@ -27,6 +27,15 @@ import * as ActionTypes from './ActionTypes'
 import { auth, db, firestore } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
 
+/**
+ * Add a new document to Firebase for the currently authorized user.  The
+ * document includes the sign-in and check-in times, both set to the current
+ * time, and the check-in interval.  After Firebase returns a promise that the
+ * document has been created, an action for document-fulfillment is initiated,
+ * the setTimer action creator is called with the check-in interval, and the
+ * navigation service is told to navigate to the patient's app-stack.
+ * @return {Promise}  A promise to create a new Firebase document.
+ */
 export const addDocument = () => (dispatch, getState) => {
   dispatch(addDocumentRequestedAction())
 
@@ -47,12 +56,19 @@ export const addDocument = () => (dispatch, getState) => {
     .catch(error => dispatch(addDocumentRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to create a new Firebase document.
+ */
 export const addDocumentRequestedAction = () => (
   {
     type: ActionTypes.ADD_DOCUMENT_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that creation of a new Firebase document failed.
+ * @param  {Error} errorMessage Message describing the add-document failure.
+ */
 export const addDocumentRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.ADD_DOCUMENT_REJECTED,
@@ -60,12 +76,23 @@ export const addDocumentRejectedAction = (errorMessage) => (
   }
 )
 
+/**
+ * Initiate an action indicating that a new Firebase document has been created.
+ */
 export const addDocumentFulfilledAction = () => (
   {
     type: ActionTypes.ADD_DOCUMENT_FULFILLED
   }
 )
 
+/**
+ * Add a patient to be be tracked by the current standby user.  First, a
+ * setListener action creator is called with the patient's e-mail.  After that
+ * promise is returned, an action for add-patient-fulfillment is initiated and
+ * the navigation service is told to navigate to the standby's app-stack.
+ * @param  {String}   email E-mail of the patient to be added.
+ * @return {Promise}        A promise to add a patient to be tracked by standby.
+ */
 export const addPatient = (email) => (dispatch) => {
   return Promise.resolve(
     dispatch(addPatientRequestedAction(email))
@@ -92,6 +119,10 @@ export const addPatient = (email) => (dispatch) => {
     .catch(error => dispatch(addPatientRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to add a patient to be be tracked by the current standby.
+ * @param  {String}   email E-mail of the patient to be added.
+ */
 export const addPatientRequestedAction = (email) => (
   {
     type: ActionTypes.ADD_PATIENT_REQUESTED,
@@ -99,6 +130,10 @@ export const addPatientRequestedAction = (email) => (
   }
 )
 
+/**
+ * Initiate an error indicating that adding a patient to be be tracked failed.
+ * @param  {Error} errorMessage Message describing the add-patient failure.
+ */
 export const addPatientRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.ADD_PATIENT_REJECTED,
@@ -106,12 +141,23 @@ export const addPatientRejectedAction = (errorMessage) => (
   }
 )
 
+/**
+ * Initiate an action indicating that a patient to be be tracked has been added.
+ */
 export const addPatientFulfilledAction = () => (
   {
     type: ActionTypes.ADD_PATIENT_FULFILLED
   }
 )
 
+/**
+ * Initiate a check-in by updating the check-in time and the check-in interval
+ * in the currently authorized user's Firebase document.  After that
+ * promise is returned, an action for check-in-fulfillment is initiated and
+ * a timer is set to alert the user to check-in again after the interval has
+ * elapsed.
+ * @return {Promise}        A promise to update the check-in time and interval.
+ */
 export const checkin = () => (dispatch, getState) => {
   dispatch(checkinRequestedAction())
 
@@ -130,12 +176,20 @@ export const checkin = () => (dispatch, getState) => {
     .catch(error => dispatch(checkinRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to update a patient's check-in time and interval.
+ */
 export const checkinRequestedAction = () => (
   {
     type: ActionTypes.CHECKIN_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that updating a patient's check-in time and
+ * interval failed.
+ * @param  {Error} errorMessage Message describing the check-in failure.
+ */
 export const checkinRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.CHECKIN_REJECTED,
@@ -143,12 +197,25 @@ export const checkinRejectedAction = (errorMessage) => (
   }
 )
 
+/**
+ * Initiate an action indicating that a patient's check-in time and interval has
+ * been added.
+ */
 export const checkinFulfilledAction = () => (
   {
     type: ActionTypes.CHECKIN_FULFILLED
   }
 )
 
+/**
+ * Update the sign-in and check-in times and the check-in interval in the Redux
+ * store using the currently-authorized user's Firebase document.  First, the
+ * document is retrieved from Firebase.  After that promise is returned, the
+ * appropriate state parameter are updated.  Finally, an action for get-
+ * document-fulfillment is initiated.
+ * @param  {String}   email E-mail of the currently-authorized patient.
+ * @return {Promise}        A promise to update check-in state parameters.
+ */
 export const getDocument = (email) => (dispatch) => {
   dispatch(getDocumentRequestedAction())
 
@@ -174,19 +241,27 @@ export const getDocument = (email) => (dispatch) => {
       }
     )
     .then(
-      (data) => {
+      data => {
         dispatch(getDocumentFulfilledAction(data))
       }
     )
     .catch(error => dispatch(getDocumentRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to update the sign-in and check-in times and the check-in
+ * interval in the Redux store.
+ */
 export const getDocumentRequestedAction = () => (
   {
     type: ActionTypes.GET_DOCUMENT_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that updating the Redux store has failed.
+ * @param  {Error} errorMessage Message describing the check-in failure.
+ */
 export const getDocumentRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.GET_DOCUMENT_REJECTED,
@@ -194,6 +269,10 @@ export const getDocumentRejectedAction = (errorMessage) => (
   }
 )
 
+/**
+ * Initiate an action indicating that updating the Redux store has completed.
+ * @param {Array} data  An array of values for the patient reducer.
+ */
 export const getDocumentFulfilledAction = (data) => (
   {
     type: ActionTypes.GET_DOCUMENT_FULFILLED,
@@ -279,15 +358,22 @@ export const mutateInputs = (inputs) => (
 
 /**
  * Initiate an error indicating that mutation of the inputs array failed.
- * @param  {Error} error Error describing the input-mutation failure.
+ * @param  {Error} errorMessage Message describing the input-mutation failure.
  */
-export const mutateInputsRejectedAction = (error) => (
+export const mutateInputsRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.MUTATE_INPUTS_REJECTED,
-    payload: error
+    payload: errorMessage
   }
 )
 
+/**
+ * Register a new account for a patient on Firebase.  After that promise is
+ * returned, an action for registration-fulfillment is initiated and a
+ * request to add a document for that patient in initiated.
+ * @param  {String}   creds Username and password for the patient.
+ * @return {Promise}        A promise to create a new patient-user.
+ */
 export const registerPatient = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
@@ -305,6 +391,13 @@ export const registerPatient = (creds) => (dispatch) => {
     .catch(error => dispatch(registrationRejectedAction(error.message)))
 }
 
+/**
+ * Register a new account for a standby-user on Firebase.  After that promise is
+ * returned, an action for registration-fulfillment is initiated and the
+ * navigation service is told to navigate to the standby's app-stack.
+ * @param  {String}   creds Username and password for the standby-user.
+ * @return {Promise}        A promise to create a new standby-user.
+ */
 export const registerStandby = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
@@ -322,12 +415,19 @@ export const registerStandby = (creds) => (dispatch) => {
     .catch(error => dispatch(registrationRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to register a new user on Firebase.
+ */
 export const registrationRequestedAction = () => (
   {
     type: ActionTypes.REGISTRATION_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the new-user registration has failed.
+ * @param  {Error} errorMessage Message describing the registration failure.
+ */
 export const registrationRejectedAction = (message) => (
   {
     type: ActionTypes.REGISTRATION_REJECTED,
@@ -335,6 +435,12 @@ export const registrationRejectedAction = (message) => (
   }
 )
 
+/**
+ * Initiate an action indicating that the new-user registration has completed.
+ * @param {User}  user  A Firebase User object
+ * @see Google. (n.d.). User [Software documentation]. Retrieved from
+ * {@link https://firebase.google.com/docs/reference/js/firebase.User}
+ */
 export const registrationFulfilledAction = (user) => (
   {
     type: ActionTypes.REGISTRATION_FULFILLED,
@@ -342,8 +448,11 @@ export const registrationFulfilledAction = (user) => (
   }
 )
 
-// TODO: Add removal actions for one listener and all listeners.
-
+/**
+ * Remove a single listener added in the addPatient action from the array of
+ * listeners in the Redux store.
+ * @param  {Promise} listener A promise to set another listener after a timeout.
+ */
 export const removeListener = (listener) => (dispatch, getState) => {
   clearTimeout(listener)
 
@@ -356,24 +465,28 @@ export const removeListener = (listener) => (dispatch, getState) => {
   dispatch(removeTimerAction(listeners))
 }
 
-export const removeListenerAction = (newListeners) => (
-  {
-    type: ActionTypes.REMOVE_LISTENER,
-    payload: newListeners
-  }
-)
-
+/**
+ * Remove all listeners added in the addPatient action from the array of
+ * listeners in the Redux store.
+ */
 export const removeListeners = () => (dispatch, getState) => {
   getState().patient.listeners.forEach(listener => clearTimeout(listener))
   dispatch(removeListenersAction())
 }
 
+/**
+ * Initiate an action indicating that all listeners have been removed.
+ */
 export const removeListenersAction = () => (
   {
     type: ActionTypes.REMOVE_LISTENERS
   }
 )
 
+/**
+ * Remove a single timer from the array of timers in the Redux store.
+ * @param {Integer} timer ID of a time-out object.
+ */
 export const removeTimer = (timer) => (dispatch, getState) => {
   clearTimeout(timer)
 
@@ -386,6 +499,10 @@ export const removeTimer = (timer) => (dispatch, getState) => {
   dispatch(removeTimerAction(timers))
 }
 
+/**
+ * Initiate an action indicating that the timer has been removed.
+ * @param {Array} newTimers Array of IDs of time-out objects
+ */
 export const removeTimerAction = (newTimers) => (
   {
     type: ActionTypes.REMOVE_TIMER,
@@ -393,21 +510,35 @@ export const removeTimerAction = (newTimers) => (
   }
 )
 
+/**
+ * Remove all timers from the array of timers in the Redux store.
+ */
 export const removeTimers = () => (dispatch, getState) => {
   getState().timer.timers.forEach(timer => clearTimeout(timer))
   dispatch(removeTimersAction())
 }
 
+/**
+ * Initiate an action indicating that all timers have been removed.
+ */
 export const removeTimersAction = () => (
   {
     type: ActionTypes.REMOVE_TIMERS
   }
 )
 
+/**
+ * Set the status of the currently-authorized user as patient or standby.
+ * @param {Boolean} isPatient Whether user is a patient or standby.
+ */
 export const selectStatus = (isPatient) => (dispatch) => {
   dispatch(selectStatusAction(isPatient))
 }
 
+/**
+ * Initiate an action indicating that the user's status has been set.
+ * @param {Boolean} isPatient Whether user is a patient or standby.
+ */
 export const selectStatusAction = (isPatient) => (
   {
     type: ActionTypes.SELECT_STATUS,
@@ -415,6 +546,13 @@ export const selectStatusAction = (isPatient) => (
   }
 )
 
+/**
+ * Set a recurring listener that will check if the patient that the standby-user
+ * is following has checked in within the alotted interval or else alert standby
+ * that the user has not checked in.
+ * @param  {String} email E-mail of the patient to listen to.
+ * @return {Promise}      Promise to create another listener after an interval.
+ */
 export const setListener = (email) => (dispatch, getState) => {
   const setInterval = () => {
     const interval = getState().patient.checkinInterval
@@ -444,7 +582,7 @@ export const setListener = (email) => (dispatch, getState) => {
   const noCheckinAlert = () => {
     Alert.alert(
       'Cryonics-Patient Alert',
-      `Your buddy has not checked in.\nMake contact immediately!`,
+      'Your buddy has not checked in.\nMake contact immediately!',
       [
         {
           text: 'OK',
@@ -505,12 +643,19 @@ export const setListener = (email) => (dispatch, getState) => {
     .catch(error => dispatch(setListenerRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to set a listener for patient check-ins.
+ */
 export const setListenerRequestedAction = () => (
   {
     type: ActionTypes.SET_LISTENER_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the listener was not set.
+ * @param  {Error} errorMessage Message describing the listening failure.
+ */
 export const setListenerRejectedAction = (message) => (
   {
     type: ActionTypes.SET_LISTENER_REJECTED,
@@ -518,13 +663,23 @@ export const setListenerRejectedAction = (message) => (
   }
 )
 
-export const setListenerFulfilledAction = (timer) => (
+/**
+ * Initiate an action indicating that the new-user registration has completed.
+ * @param  {Promise} listener A promise to set another listener after a timeout.
+ */
+export const setListenerFulfilledAction = (listener) => (
   {
     type: ActionTypes.SET_LISTENER_FULFILLED,
-    payload: timer
+    payload: listener
   }
 )
 
+/**
+ * Set a timer that will issue an alert for the currently authorized patient to
+ * check-in after an interval of time.
+ * @param  {Integer}  interval  The interval between alerts.
+ * @return {Integer}            ID of a time-out object.
+ */
 export const setTimer = (interval) => (dispatch, getState) => {
   const checkinAlert = () => {
     const timers = getState().timer.timers
@@ -576,12 +731,19 @@ export const setTimer = (interval) => (dispatch, getState) => {
     .catch(error => dispatch(setTimerRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to set a timer for patient check-in alerts.
+ */
 export const setTimerRequestedAction = () => (
   {
     type: ActionTypes.SET_TIMER_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the timer was not set.
+ * @param  {Error} errorMessage Message describing the timer failure.
+ */
 export const setTimerRejectedAction = (message) => (
   {
     type: ActionTypes.SET_TIMER_REJECTED,
@@ -589,6 +751,10 @@ export const setTimerRejectedAction = (message) => (
   }
 )
 
+/**
+ * Initiate an action indicating that the timer has been set.
+ * @param {Integer} timer ID of a time-out object.
+ */
 export const setTimerFulfilledAction = (timer) => (
   {
     type: ActionTypes.SET_TIMER_FULFILLED,
@@ -596,10 +762,18 @@ export const setTimerFulfilledAction = (timer) => (
   }
 )
 
+/**
+ * Set the interval for the setTimer function.
+ * @param  {Integer}  interval  The interval between alerts.
+ */
 export const setTimerInterval = (interval) => (dispatch, getState) => {
   dispatch(setTimerIntervalAction(interval))
 }
 
+/**
+ * Initiate an action indicating that the timer-interval has been set.
+ * @param  {Integer}  interval  The interval between alerts.
+ */
 export const setTimerIntervalAction = (interval) => (
   {
     type: ActionTypes.SET_TIMER_INTERVAL,
@@ -607,6 +781,13 @@ export const setTimerIntervalAction = (interval) => (
   }
 )
 
+/**
+ * Sign in a patient on Firebase.  After that promise is returned, an action for
+ * sign-in-fulfillment is initiated and a request to add a document for that
+ * patient in initiated.
+ * @param  {String}   creds Username and password for the patient.
+ * @return {Promise}        A promise to sign-in a patient-user.
+ */
 export const signinPatient = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
@@ -624,6 +805,13 @@ export const signinPatient = (creds) => (dispatch) => {
     .catch(error => dispatch(signinRejectedAction(error.message)))
 }
 
+/**
+ * Sign in a standby-user on Firebase.  After that promise is returned, an
+ * action for sign-in-fulfillment is initiated and a request to add a document
+ * for that patient in initiated.
+ * @param  {String}   creds Username and password for the standby-user.
+ * @return {Promise}        A promise to sign-in a standby-user.
+ */
 export const signinStandby = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
@@ -641,12 +829,19 @@ export const signinStandby = (creds) => (dispatch) => {
     .catch(error => dispatch(signinRejectedAction(error.message)))
 }
 
+/**
+ * Initiate an action to sign-in a user on Firebase.
+ */
 export const signinRequestedAction = () => (
   {
     type: ActionTypes.SIGNIN_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the sign-in has failed.
+ * @param  {Error} errorMessage Message describing the sign-in failure.
+ */
 export const signinRejectedAction = (message) => (
   {
     type: ActionTypes.SIGNIN_REJECTED,
@@ -654,6 +849,12 @@ export const signinRejectedAction = (message) => (
   }
 )
 
+/**
+ * Initiate an action indicating that the sign-in has completed.
+ * @param {User}  user  A Firebase User object
+ * @see Google. (n.d.). User [Software documentation]. Retrieved from
+ * {@link https://firebase.google.com/docs/reference/js/firebase.User}
+ */
 export const signinFulfilledAction = (user) => (
   {
     type: ActionTypes.SIGNIN_FULFILLED,
@@ -661,6 +862,13 @@ export const signinFulfilledAction = (user) => (
   }
 )
 
+/**
+ * Sign out a patient on Firebase, which first removes that patient's document on
+ * Firebase.  After those promises are returned, an action for sign-out-
+ * fulfillment is initiated, a request to remove timers is initiated, and the
+ * navigation service is told to navigate to the authorization stack.
+ * @return {Promise}  A promise to sign-out a patient-user.
+ */
 export const signoutPatient = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
@@ -692,6 +900,13 @@ export const signoutPatient = () => (dispatch, getState) => {
     )
 }
 
+/**
+ * Sign out a standby-user on Firebase.  After those promises are returned, an
+ * action for sign-out-fulfillment is initiated, a request to remove listeners
+ * is initiated, and the navigation service is told to navigate to the
+ * authorization stack.
+ * @return {Promise}  A promise to sign-out a standby-user.
+ */
 export const signoutStandby = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
@@ -714,12 +929,19 @@ export const signoutStandby = () => (dispatch, getState) => {
     )
 }
 
+/**
+ * Initiate an action to sign-out a user on Firebase.
+ */
 export const signoutRequestedAction = () => (
   {
     type: ActionTypes.SIGNOUT_REQUESTED
   }
 )
 
+/**
+ * Initiate an error indicating that the sign-out has failed.
+ * @param  {Error} errorMessage Message describing the sign-in failure.
+ */
 export const signoutRejectedAction = (message) => (
   {
     type: ActionTypes.SIGNOUT_REJECTED,
@@ -727,6 +949,9 @@ export const signoutRejectedAction = (message) => (
   }
 )
 
+/**
+ * Initiate an action indicating that the sign-out has completed.
+ */
 export const signoutFulfilledAction = () => (
   {
     type: ActionTypes.SIGNOUT_FULFILLED
