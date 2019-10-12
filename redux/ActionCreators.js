@@ -51,6 +51,10 @@ export const addDocument = () => (dispatch, getState) => {
         dispatch(addDocumentFulfilledAction())
         dispatch(setTimer(getState().timer.interval))
         NavigationService.navigate('PatientApp')
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .catch(error => dispatch(addDocumentRejectedAction(error.message)))
@@ -94,18 +98,11 @@ export const addDocumentFulfilledAction = () => (
  * @return {Promise}        A promise to add a patient to be tracked by standby.
  */
 export const addPatient = (email) => (dispatch) => {
+  dispatch(addPatientRequestedAction(email))
+
   return Promise.resolve(
-    dispatch(addPatientRequestedAction(email))
+    dispatch(setListener(email))
   )
-    .then(
-      () => {
-        dispatch(setListener(email))
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
     .then(
       () => {
         dispatch(addPatientFulfilledAction())
@@ -163,14 +160,22 @@ export const checkin = () => (dispatch, getState) => {
 
   return db.collection('users').doc(getState().auth.user.email).update(
     {
-      checkinTime: firestore.Timestamp.now(),
-      checkinInterval: getState().timer.interval
+      checkinTime: firestore.Timestamp.now()
     }
   )
     .then(
       () => {
+        dispatch(removeTimers())
+      }
+    )
+    .then(
+      () => {
         dispatch(checkinFulfilledAction())
         dispatch(setTimer(getState().timer.interval))
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .catch(error => dispatch(checkinRejectedAction(error.message)))
@@ -211,7 +216,7 @@ export const checkinFulfilledAction = () => (
  * Update the sign-in and check-in times and the check-in interval in the Redux
  * store using the currently-authorized user's Firebase document.  First, the
  * document is retrieved from Firebase.  After that promise is returned, the
- * appropriate state parameter are updated.  Finally, an action for get-
+ * appropriate state parameters are updated.  Finally, an action for get-
  * document-fulfillment is initiated.
  * @param  {String}   email E-mail of the currently-authorized patient.
  * @return {Promise}        A promise to update check-in state parameters.
@@ -243,6 +248,10 @@ export const getDocument = (email) => (dispatch) => {
     .then(
       data => {
         dispatch(getDocumentFulfilledAction(data))
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .catch(error => dispatch(getDocumentRejectedAction(error.message)))
@@ -286,7 +295,6 @@ export const getDocumentFulfilledAction = (data) => (
  * @param  {String}   id        Unique identifier for input.
  * @param  {String}   time      Time entered into input.
  * @param  {Boolean}  validity  Is the time valid?
- * @return {Array}              Array of input objects.
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
   try {
@@ -333,7 +341,6 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
 /**
  * Remove an input in the inputs array.
  * @param  {String} id  Unique identifier for input.
- * @return {Array}      Array of input objects.
  */
 export const removeInput = (id) => (dispatch, getState) => {
   try {
@@ -678,7 +685,7 @@ export const setListenerFulfilledAction = (listener) => (
  * Set a timer that will issue an alert for the currently authorized patient to
  * check-in after an interval of time.
  * @param  {Integer}  interval  The interval between alerts.
- * @return {Integer}            ID of a time-out object.
+ * @return {Promise}            Promise to set a timer.
  */
 export const setTimer = (interval) => (dispatch, getState) => {
   const checkinAlert = () => {
@@ -711,14 +718,23 @@ export const setTimer = (interval) => (dispatch, getState) => {
   }
 
   dispatch(setTimerRequestedAction())
-  dispatch(setTimerInterval(interval))
 
   return Promise.resolve(
-    setTimeout(
-      () => { checkinAlert() },
-      getState().timer.interval
-    )
+    dispatch(setTimerInterval(interval))
   )
+    .then(
+      () => {
+        const timer = setTimeout(
+          () => { checkinAlert() },
+          interval
+        )
+        return timer
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
     .then(
       timer => {
         dispatch(setTimerFulfilledAction(timer))
@@ -767,16 +783,48 @@ export const setTimerFulfilledAction = (timer) => (
  * @param  {Integer}  interval  The interval between alerts.
  */
 export const setTimerInterval = (interval) => (dispatch, getState) => {
-  dispatch(setTimerIntervalAction(interval))
+  dispatch(setTimerIntervalRequestedAction())
+
+  db.collection('users').doc(getState().auth.user.email).update(
+    {
+      checkinInterval: interval
+    }
+  )
+    .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
+    .finally(
+      () => {
+        dispatch(setTimerIntervalFulfilledAction(interval))
+      }
+    )
 }
+
+/**
+ * Initiate an action to set a timer-interval for patient check-in alerts.
+ */
+export const setTimerIntervalRequestedAction = () => (
+  {
+    type: ActionTypes.SET_TIMER_INTERVAL_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that the timer-interval was not set.
+ * @param  {Error} errorMessage Message describing the timer-interval failure.
+ */
+export const setTimerIntervalRejectedAction = (message) => (
+  {
+    type: ActionTypes.SET_TIMER_INTERVAL_REJECTED,
+    payload: message
+  }
+)
 
 /**
  * Initiate an action indicating that the timer-interval has been set.
  * @param  {Integer}  interval  The interval between alerts.
  */
-export const setTimerIntervalAction = (interval) => (
+export const setTimerIntervalFulfilledAction = (interval) => (
   {
-    type: ActionTypes.SET_TIMER_INTERVAL,
+    type: ActionTypes.SET_TIMER_INTERVAL_FULFILLED,
     payload: interval
   }
 )
