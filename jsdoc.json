@@ -3,7 +3,14 @@
       "allowUnknownTags": true
   },
   "source": {
-      "include": ["./src"]
+      "include": ["./"],
+      "exclude": [
+        "./node_modules",
+        "./expo",
+        "./expo-shared",
+        "./git",
+        "./github"
+      ]
   },
   "plugins": [
       "plugins/markdown"

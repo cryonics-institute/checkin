@@ -54,7 +54,19 @@ export const Timer = (
         timers: state.timers.concat(action.payload)
       }
 
-    case ActionTypes.SET_TIMER_INTERVAL:
+    case ActionTypes.SET_TIMER_INTERVAL_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.SET_TIMER_INTERVAL_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SET_TIMER_INTERVAL_FULFILLED:
       return {
         ...state,
         interval: action.payload
