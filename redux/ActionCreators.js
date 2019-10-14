@@ -297,6 +297,8 @@ export const getDocumentFulfilledAction = (data) => (
  * @param  {Boolean}  validity  Is the time valid?
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
+  dispatch(mutateInputsRequestedAction())
+
   try {
     const input = {
       id: id,
@@ -307,7 +309,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
 
     if (getState().inputs.array != null && index === -1) {
       dispatch(
-        mutateInputs(
+        mutateInputsFulfilledAction(
           [
             ...getState().inputs.array.filter(input => input.id !== id),
             input
@@ -316,7 +318,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
       )
     } else if (getState().inputs.array != null && index !== -1) {
       dispatch(
-        mutateInputs(
+        mutateInputsFulfilledAction(
           [
             ...getState().inputs.array.slice(0, index),
             input,
@@ -343,9 +345,13 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
  * @param  {String} id  Unique identifier for input.
  */
 export const removeInput = (id) => (dispatch, getState) => {
+  dispatch(mutateInputsRequestedAction())
+
   try {
     dispatch(
-      mutateInputs(getState().inputs.array.filter(input => input.id !== id))
+      mutateInputsFulfilledAction(
+        getState().inputs.array.filter(input => input.id !== id)
+      )
     )
   } catch (error) {
     dispatch(mutateInputsRejectedAction(error))
@@ -354,12 +360,10 @@ export const removeInput = (id) => (dispatch, getState) => {
 
 /**
  * Initiate an action to set the inputs array.
- * @param  {Array} inputs Array of input objects.
  */
-export const mutateInputs = (inputs) => (
+export const mutateInputsRequestedAction = () => (
   {
-    type: ActionTypes.MUTATE_INPUTS_FULFILLED,
-    payload: inputs
+    type: ActionTypes.MUTATE_INPUTS_REQUESTED
   }
 )
 
@@ -371,6 +375,17 @@ export const mutateInputsRejectedAction = (errorMessage) => (
   {
     type: ActionTypes.MUTATE_INPUTS_REJECTED,
     payload: errorMessage
+  }
+)
+
+/**
+ * Initiate an action indicating that setting the inputs array has completed.
+ * @param  {Array} inputs Array of input objects.
+ */
+export const mutateInputsFulfilledAction = (inputs) => (
+  {
+    type: ActionTypes.MUTATE_INPUTS_FULFILLED,
+    payload: inputs
   }
 )
 

@@ -32,16 +32,23 @@ export const Inputs = (
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.MUTATE_INPUTS_FULFILLED:
+    case ActionTypes.MUTATE_INPUTS_REQUESTED:
       return {
         ...state,
-        array: action.payload
+        errMess: null
       }
 
     case ActionTypes.MUTATE_INPUTS_REJECTED:
       return {
         ...state,
         errMess: action.payload
+      }
+
+    case ActionTypes.MUTATE_INPUTS_FULFILLED:
+      return {
+        ...state,
+        array: action.payload,
+        errMess: null
       }
 
     default:
