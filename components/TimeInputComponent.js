@@ -98,7 +98,10 @@ class TimeInput extends React.Component {
             onChangeText = {
               time => {
                 const isValid = this.validate(time)
-                this.props.mutateInput(this.state.identifier, time, isValid)
+
+                if (isValid) {
+                  this.props.mutateInput(this.state.identifier, time, isValid)
+                }
               }
             }
             placeholder = 'HH:MM AM/PM'
@@ -137,7 +140,10 @@ class TimeInput extends React.Component {
             onChangeText = {
               time => {
                 const isValid = this.validate(time)
-                this.props.mutateInput(this.state.identifier, time, isValid)
+
+                if (isValid) {
+                  this.props.mutateInput(this.state.identifier, time, isValid)
+                }
               }
             }
             placeholder = 'HH:MM AM/PM'
@@ -176,7 +182,10 @@ class TimeInput extends React.Component {
             onChangeText = {
               time => {
                 const isValid = this.validate(time)
-                this.props.mutateInput(this.state.identifier, time, isValid)
+
+                if (isValid) {
+                  this.props.mutateInput(this.state.identifier, time, isValid)
+                }
               }
             }
             placeholder = 'HH:MM AM/PM'
