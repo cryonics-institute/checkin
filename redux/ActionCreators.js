@@ -41,9 +41,10 @@ export const addDocument = () => (dispatch, getState) => {
 
   return db.collection('users').doc(getState().auth.user.email).set(
     {
-      signinTime: firestore.Timestamp.now(),
+      alertTimes: getState().inputs.array,
+      checkinInterval: getState().timer.interval,
       checkinTime: firestore.Timestamp.now(),
-      checkinInterval: getState().timer.interval
+      signinTime: firestore.Timestamp.now()
     }
   )
     .then(
@@ -299,44 +300,52 @@ export const getDocumentFulfilledAction = (data) => (
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
   dispatch(mutateInputsRequestedAction())
 
-  try {
-    const input = {
-      id: id,
-      time: time,
-      validity: validity
-    }
-    const index = getState().inputs.array.findIndex(input => input.id === id)
+  const input = {
+    id: id,
+    time: time,
+    validity: validity
+  }
+  const index = getState().inputs.array.findIndex(input => input.id === id)
 
-    if (getState().inputs.array != null && index === -1) {
-      dispatch(
-        mutateInputsFulfilledAction(
-          [
-            ...getState().inputs.array.filter(input => input.id !== id),
-            input
-          ]
-        )
-      )
-    } else if (getState().inputs.array != null && index !== -1) {
-      dispatch(
-        mutateInputsFulfilledAction(
-          [
-            ...getState().inputs.array.slice(0, index),
-            input,
-            ...getState().inputs.array.slice(index + 1)
-          ]
-        )
-      )
-    } else {
-      if (getState().inputs.array == null) {
-        throw new Error('Input array is null or undefined.')
+  try {
+    if (getState().inputs.array !== null) {
+      let inputsArray = null
+
+      if (index === -1) {
+        inputsArray = [
+          ...getState().inputs.array.filter(input => input.id !== id),
+          input
+        ]
       } else {
-        throw new Error(
-          'Error encountered in the function, mutateInput, of ActionCreators.js'
-        )
+        inputsArray = [
+          ...getState().inputs.array.slice(0, index),
+          input,
+          ...getState().inputs.array.slice(index + 1)
+        ]
       }
+
+      return db.collection('users').doc(getState().auth.user.email).update(
+        {
+          alertTimes: inputsArray
+        }
+      )
+        .then(
+          dispatch(
+            mutateInputsFulfilledAction(
+              inputsArray
+            )
+          )
+        )
+        .catch(error => dispatch(mutateInputsRejectedAction(error.message)))
+    } else if (getState().inputs.array == null) {
+      throw new Error('Input array is null or undefined.')
+    } else {
+      throw new Error(
+        'Error encountered in the function, mutateInput, of ActionCreators.js'
+      )
     }
   } catch (error) {
-    dispatch(mutateInputsRejectedAction(error))
+    dispatch(mutateInputsRejectedAction(error.message))
   }
 }
 
