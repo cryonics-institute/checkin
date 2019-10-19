@@ -58,6 +58,16 @@ class TimeInput extends React.Component {
     }
   }
 
+  mutate (time) {
+    const isValid = this.validate(time)
+
+    if (isValid) {
+      this.props.mutateInput(this.state.identifier, time, isValid)
+    } else {
+      this.props.mutateInput(this.state.identifier, '', isValid)
+    }
+  }
+
   validate (time) {
     if (!time) {
       return false
@@ -95,15 +105,7 @@ class TimeInput extends React.Component {
                 ? styles.transparent
                 : styles.textError
             }
-            onChangeText = {
-              time => {
-                const isValid = this.validate(time)
-
-                if (isValid) {
-                  this.props.mutateInput(this.state.identifier, time, isValid)
-                }
-              }
-            }
+            onChangeText = { time => { this.mutate(time) } }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
               <MaterialIcons
@@ -137,15 +139,7 @@ class TimeInput extends React.Component {
                 ? styles.transparent
                 : styles.textError
             }
-            onChangeText = {
-              time => {
-                const isValid = this.validate(time)
-
-                if (isValid) {
-                  this.props.mutateInput(this.state.identifier, time, isValid)
-                }
-              }
-            }
+            onChangeText = { time => { this.mutate(time) } }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
               <MaterialIcons
@@ -179,15 +173,7 @@ class TimeInput extends React.Component {
                 ? styles.transparent
                 : styles.textError
             }
-            onChangeText = {
-              time => {
-                const isValid = this.validate(time)
-
-                if (isValid) {
-                  this.props.mutateInput(this.state.identifier, time, isValid)
-                }
-              }
-            }
+            onChangeText = { time => { this.mutate(time) } }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
               <MaterialIcons
