@@ -585,7 +585,27 @@ export const selectStatusAction = (isPatient) => (
  * @return {Promise}      Promise to create another listener after an interval.
  */
 export const setListener = (email) => (dispatch, getState) => {
+  const findClosestCheckinTime = () => {
+    const past = moment('10:00 pm', 'hh:mm A').utc()
+    const future = moment('9:22 pm', 'hh:mm A').utc()
+    const now = moment().utc()
+
+    // TODO: get real values into this function next
+    const array1 = [now, past, future] // reducer will return 1st el if false
+    const reducer =
+      (accumulator, currentValue) =>
+        now - currentValue >= 0 && now - accumulator < now - currentValue
+          ? currentValue
+          : accumulator
+
+    console.log('PAST MOMENT: ' + past)
+    console.log('FUTURE MOMENT: ' + future)
+    console.log('NOW: ' + now)
+    console.log('LATEST MOMENT: ' + array1.reduce(reducer))
+  }
+
   const setInterval = () => {
+    findClosestCheckinTime()
     const interval = getState().patient.checkinInterval
     const lastCheckin = moment(getState().patient.checkinTime)
     const elapsedTime = moment().diff(lastCheckin)
@@ -654,6 +674,9 @@ export const setListener = (email) => (dispatch, getState) => {
           } else {
             return noCheckinAlert()
           }
+        } else {
+          // TODO: Add logic for when patient is signed out, such as an
+          // indicator on the standby home screen that says so.
         }
       },
       error => {
