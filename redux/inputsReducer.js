@@ -26,8 +26,8 @@ import * as ActionTypes from './ActionTypes'
 
 export const Inputs = (
   state = {
-    errMess: null,
-    array: []
+    array: [],
+    errMess: null
   },
   action
 ) => {
