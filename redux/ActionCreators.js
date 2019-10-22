@@ -229,11 +229,12 @@ export const getDocument = (email) => (dispatch) => {
     .then(
       doc => {
         if (doc.exists) {
-          const signinTime = doc.data().signinTime.toDate()
-          const checkinTime = doc.data().checkinTime.toDate()
+          const alertTimes = doc.data().alertTimes
           const checkinInterval = doc.data().checkinInterval
+          const checkinTime = doc.data().checkinTime.toDate()
+          const signinTime = doc.data().signinTime.toDate()
 
-          return [true, signinTime, checkinTime, checkinInterval]
+          return [true, alertTimes, checkinInterval, checkinTime, signinTime]
         } else {
           // doc.data() will be undefined in this case
           console.log('No such document!')
@@ -350,24 +351,6 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
 }
 
 /**
- * Remove an input in the inputs array.
- * @param  {String} id  Unique identifier for input.
- */
-export const removeInput = (id) => (dispatch, getState) => {
-  dispatch(mutateInputsRequestedAction())
-
-  try {
-    dispatch(
-      mutateInputsFulfilledAction(
-        getState().inputs.array.filter(input => input.id !== id)
-      )
-    )
-  } catch (error) {
-    dispatch(mutateInputsRejectedAction(error))
-  }
-}
-
-/**
  * Initiate an action to set the inputs array.
  */
 export const mutateInputsRequestedAction = () => (
@@ -480,6 +463,40 @@ export const registrationFulfilledAction = (user) => (
 )
 
 /**
+ * Remove an input in the inputs array.
+ * @param  {String} id  Unique identifier for input.
+ */
+export const removeInput = (id) => (dispatch, getState) => {
+  dispatch(mutateInputsRequestedAction())
+
+  try {
+    dispatch(
+      mutateInputsFulfilledAction(
+        getState().inputs.array.filter(input => input.id !== id)
+      )
+    )
+  } catch (error) {
+    dispatch(mutateInputsRejectedAction(error))
+  }
+}
+
+/**
+ * Remove an input in the inputs array.
+ * @param  {String} id  Unique identifier for input.
+ */
+export const removeInputs = (id) => (dispatch, getState) => {
+  dispatch(mutateInputsRequestedAction())
+
+  try {
+    dispatch(
+      mutateInputsFulfilledAction([])
+    )
+  } catch (error) {
+    dispatch(mutateInputsRejectedAction(error))
+  }
+}
+
+/**
  * Remove a single listener added in the addPatient action from the array of
  * listeners in the Redux store.
  * @param  {Promise} listener A promise to set another listener after a timeout.
@@ -501,7 +518,9 @@ export const removeListener = (listener) => (dispatch, getState) => {
  * listeners in the Redux store.
  */
 export const removeListeners = () => (dispatch, getState) => {
-  getState().patient.listeners.forEach(listener => clearTimeout(listener))
+  getState().patient.listeners.forEach(
+    listener => clearTimeout(listener)
+  )
   dispatch(removeListenersAction())
 }
 
@@ -590,18 +609,21 @@ export const setListener = (email) => (dispatch, getState) => {
     const future = moment('9:22 pm', 'hh:mm A').utc()
     const now = moment().utc()
 
-    // TODO: get real values into this function next
-    const array1 = [now, past, future] // reducer will return 1st el if false
+    // TODO: test output, then integrate into action creator
+    const alertTimes = getState().patient.alertTimes.map(element => moment(element.time, 'hh:mm A').utc())
+    alertTimes.forEach(
+      element => console.log('TIME: ' + element)
+    )
     const reducer =
       (accumulator, currentValue) =>
         now - currentValue >= 0 && now - accumulator < now - currentValue
-          ? currentValue
-          : accumulator
+          ? accumulator
+          : currentValue
 
     console.log('PAST MOMENT: ' + past)
     console.log('FUTURE MOMENT: ' + future)
     console.log('NOW: ' + now)
-    console.log('LATEST MOMENT: ' + array1.reduce(reducer))
+    console.log('LATEST MOMENT: ' + alertTimes.reduce(reducer))
   }
 
   const setInterval = () => {
@@ -980,6 +1002,7 @@ export const signoutPatient = () => (dispatch, getState) => {
     .then(
       () => {
         dispatch(removeTimers())
+        dispatch(removeInputs())
         dispatch(signoutFulfilledAction())
         NavigationService.navigate('PatientAuth')
       },
