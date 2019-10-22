@@ -26,13 +26,14 @@ import * as ActionTypes from './ActionTypes'
 
 export const Patient = (
   state = {
-    checkinTime: null,
+    alertTimes: [],
     checkinInterval: null,
+    checkinTime: null,
+    email: null,
     errMess: null,
     isSignedIn: null,
-    email: null,
-    signinTime: null,
-    listeners: []
+    listeners: [],
+    signinTime: null
   },
   action
 ) => {
@@ -73,11 +74,12 @@ export const Patient = (
     case ActionTypes.GET_DOCUMENT_FULFILLED:
       return {
         ...state,
-        checkinTime: action.payload[2],
-        checkinInterval: action.payload[3],
+        alertTimes: action.payload[1],
+        checkinInterval: action.payload[2],
+        checkinTime: action.payload[3],
         errMess: null,
         isSignedIn: action.payload[0],
-        signinTime: action.payload[1]
+        signinTime: action.payload[4]
       }
 
     // TODO: Set results of actions.
