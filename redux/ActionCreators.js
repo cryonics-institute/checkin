@@ -231,8 +231,8 @@ export const getDocument = (email) => (dispatch) => {
         if (doc.exists) {
           const alertTimes = doc.data().alertTimes
           const checkinInterval = doc.data().checkinInterval
-          const checkinTime = doc.data().checkinTime.toDate()
-          const signinTime = doc.data().signinTime.toDate()
+          const checkinTime = doc.data().checkinTime
+          const signinTime = doc.data().signinTime
 
           return [true, alertTimes, checkinInterval, checkinTime, signinTime]
         } else {
