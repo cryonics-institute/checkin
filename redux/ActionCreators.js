@@ -632,50 +632,44 @@ export const selectStatusAction = (isPatient) => (
  * @return {Promise}      Promise to create another listener after an interval.
  */
 export const setListener = (email) => (dispatch, getState) => {
+  // TODO: Remove the date part of the Date objects before calculating differences.
   const findClosestCheckinTime = () => {
-    const past = moment('10:00 pm', 'hh:mm A').utc()
-    const future = moment('9:22 pm', 'hh:mm A').utc()
-    const now = moment().utc()
+    const now = moment.utc()
 
-    // TODO: test output, then integrate into action creator
-    const alertTimes = getState().patient.alertTimes.map(element => moment(element.time, 'hh:mm A').utc())
+    const alertTimes = getState().patient.alertTimes.map(
+      element => moment.utc(element.time)
+    )
     alertTimes.forEach(
       element => console.log('TIME: ' + element)
     )
     const reducer =
       (accumulator, currentValue) =>
-        now - currentValue >= 0 && now - accumulator < now - currentValue
+        now - currentValue <= 0 || now - accumulator < now - currentValue
           ? accumulator
           : currentValue
 
-    console.log('PAST MOMENT: ' + past)
-    console.log('FUTURE MOMENT: ' + future)
     console.log('NOW: ' + now)
-    console.log('LATEST MOMENT: ' + alertTimes.reduce(reducer))
+    console.log('LATEST TIME: ' + alertTimes.reduce(reducer))
   }
 
   const setInterval = () => {
     findClosestCheckinTime()
-    const interval = getState().patient.checkinInterval
-    const lastCheckin = moment(getState().patient.checkinTime)
-    const elapsedTime = moment().diff(lastCheckin)
+    const interval = moment.utc(getState().patient.checkinInterval)
+    console.log('Interval: ' + interval)
+    const lastCheckin = moment.utc(getState().patient.checkinTime)
+    console.log('Last Check-In: ' + lastCheckin)
+    const now = moment.utc((new Date()).toUTCString())
+    console.log('Now: ' + lastCheckin)
+    const elapsedTime = now - lastCheckin
+    console.log('Elapsed Time: ' + elapsedTime)
     if (elapsedTime < interval) {
-      console.log(
-        'Elapsed Time: ' +
-        moment.duration(elapsedTime, 'milliseconds').humanize()
-      )
+      console.log('Elapsed Time: ' + elapsedTime)
       return elapsedTime
     } else if (elapsedTime > interval) {
-      console.log(
-        'Elapsed Time: ' +
-        moment.duration(elapsedTime, 'milliseconds').humanize()
-      )
+      console.log('Elapsed Time: ' + elapsedTime)
       return 0
     } else {
-      console.log(
-        'Interval: ' +
-        moment.duration(interval, 'milliseconds').humanize()
-      )
+      console.log('Interval: ' + interval)
       return interval
     }
   }
