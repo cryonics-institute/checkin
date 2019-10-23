@@ -491,15 +491,21 @@ export const registrationFulfilledAction = (user) => (
 export const removeInput = (id) => (dispatch, getState) => {
   dispatch(mutateInputsRequestedAction())
 
-  try {
-    dispatch(
-      mutateInputsFulfilledAction(
-        getState().inputs.array.filter(input => input.id !== id)
+  const inputsArray = getState().inputs.array.filter(input => input.id !== id)
+
+  return db.collection('users').doc(getState().auth.user.email).update(
+    {
+      alertTimes: inputsArray
+    }
+  )
+    .then(
+      dispatch(
+        mutateInputsFulfilledAction(
+          inputsArray
+        )
       )
     )
-  } catch (error) {
-    dispatch(mutateInputsRejectedAction(error))
-  }
+    .catch(error => dispatch(mutateInputsRejectedAction(error.message)))
 }
 
 /**
