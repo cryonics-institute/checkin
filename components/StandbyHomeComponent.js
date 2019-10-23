@@ -2,7 +2,7 @@ import React from 'react'
 import { ActivityIndicator, StatusBar, View } from 'react-native'
 import { Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { format } from 'date-fns'
+import moment from 'moment'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -32,13 +32,15 @@ const RenderSignedInPatientView = (props) => {
       <Text h4 style = { styles.title }>Sign-In Time</Text>
       <Text style = { styles.text }>
         {
-          format(props.signinTime, 'dddd, MMMM Do YYYY, h:mm:ss a')
+          moment(props.signinTime)
+            .format('dddd, MMMM Do YYYY, h:mm:ss a')
         }
       </Text>
       <Text h4 style = { styles.title }>Check-In Time</Text>
       <Text style = { styles.text }>
         {
-          format(props.checkinTime, 'dddd, MMMM Do YYYY, h:mm:ss a')
+          moment(props.checkinTime)
+            .format('dddd, MMMM Do YYYY, h:mm:ss a')
         }
       </Text>
     </View>
