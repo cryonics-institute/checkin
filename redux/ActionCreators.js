@@ -299,11 +299,33 @@ export const getDocumentFulfilledAction = (data) => (
  * @param  {Boolean}  validity  Is the time valid?
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
+  const convertHour = () => {
+    const hour = parseInt(time.slice(-8, -6))
+
+    if (period === 'AM') {
+      if (hour === 12) {
+        return 0
+      } else {
+        return hour
+      }
+    } else {
+      if (hour === 12) {
+        return hour
+      } else {
+        return hour + 12
+      }
+    }
+  }
+
   dispatch(mutateInputsRequestedAction())
+
+  const period = time.slice(-2).toUpperCase()
+  const hours = convertHour()
+  const minutes = parseInt(time.slice(-5, -3))
 
   const input = {
     id: id,
-    time: time,
+    time: (new Date(1970, 1, 2, hours, minutes)).toUTCString(),
     validity: validity
   }
   const index = getState().inputs.array.findIndex(input => input.id === id)
