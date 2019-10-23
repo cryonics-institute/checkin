@@ -24,7 +24,7 @@
 import { Alert } from 'react-native'
 import moment from 'moment'
 import * as ActionTypes from './ActionTypes'
-import { auth, db, firestore } from '../firebase/firebase'
+import { auth, db } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
 
 /**
@@ -43,8 +43,8 @@ export const addDocument = () => (dispatch, getState) => {
     {
       alertTimes: getState().inputs.array,
       checkinInterval: getState().timer.interval,
-      checkinTime: firestore.Timestamp.now(),
-      signinTime: firestore.Timestamp.now()
+      checkinTime: (new Date()).toUTCString(),
+      signinTime: (new Date()).toUTCString()
     }
   )
     .then(
@@ -161,7 +161,7 @@ export const checkin = () => (dispatch, getState) => {
 
   return db.collection('users').doc(getState().auth.user.email).update(
     {
-      checkinTime: firestore.Timestamp.now()
+      checkinTime: (new Date()).toUTCString()
     }
   )
     .then(
