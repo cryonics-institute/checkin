@@ -304,15 +304,17 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
 
     if (period === 'AM') {
       if (hour === 12) {
-        return 0
+        return '00'
+      } else if (hour < 10) {
+        return '0' + hour
       } else {
-        return hour
+        return hour.toString()
       }
     } else {
       if (hour === 12) {
-        return hour
+        return hour.toString()
       } else {
-        return hour + 12
+        return (hour + 12).toString()
       }
     }
   }
@@ -321,7 +323,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
 
   const period = time.slice(-2).toUpperCase()
   const hours = convertHour()
-  const minutes = parseInt(time.slice(-5, -3))
+  const minutes = time.slice(-5, -3)
 
   const input = {
     id: id,
