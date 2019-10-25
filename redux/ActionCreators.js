@@ -28,6 +28,33 @@ import { auth, db } from '../firebase/firebase'
 import NavigationService from '../services/NavigationService'
 
 /**
+ * Take a string representing a time in AM/PM format from a Time-Input component
+ * and return the hour in 24-hour format.
+ * @param  {String} time  String from Time-Input Component.
+ * @return {String}       Hour in 24-Hour Format.
+ */
+const convertTo24Hour = (time) => {
+  const period = time.slice(-2).toUpperCase()
+  const hour = parseInt(time.slice(-8, -6))
+
+  if (period === 'AM') {
+    if (hour === 12) {
+      return '00'
+    } else if (hour < 10) {
+      return '0' + hour
+    } else {
+      return hour.toString()
+    }
+  } else {
+    if (hour === 12) {
+      return hour.toString()
+    } else {
+      return (hour + 12).toString()
+    }
+  }
+}
+
+/**
  * Add a new document to Firebase for the currently authorized user.  The
  * document includes the sign-in and check-in times, both set to the current
  * time, and the check-in interval.  After Firebase returns a promise that the
@@ -299,30 +326,9 @@ export const getDocumentFulfilledAction = (data) => (
  * @param  {Boolean}  validity  Is the time valid?
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
-  const convertHour = () => {
-    const hour = parseInt(time.slice(-8, -6))
-
-    if (period === 'AM') {
-      if (hour === 12) {
-        return '00'
-      } else if (hour < 10) {
-        return '0' + hour
-      } else {
-        return hour.toString()
-      }
-    } else {
-      if (hour === 12) {
-        return hour.toString()
-      } else {
-        return (hour + 12).toString()
-      }
-    }
-  }
-
   dispatch(mutateInputsRequestedAction())
 
-  const period = time.slice(-2).toUpperCase()
-  const hours = convertHour()
+  const hours = convertTo24Hour(time)
   const minutes = time.slice(-5, -3)
 
   const input = {
@@ -634,23 +640,31 @@ export const selectStatusAction = (isPatient) => (
  * @return {Promise}      Promise to create another listener after an interval.
  */
 export const setListener = (email) => (dispatch, getState) => {
-  // TODO: Remove the date part of the Date objects before calculating differences.
   const findClosestCheckinTime = () => {
-    const now = moment.utc()
+    const now = moment.utc('2:00', 'H:mm').format('HH:mm')
+    console.log('NOW: ' + now)
 
     const alertTimes = getState().patient.alertTimes.map(
       element => moment.utc(element.time)
     )
+    alertTimes.sort()
     alertTimes.forEach(
-      element => console.log('TIME: ' + element)
+      element => console.log('TIME: ' + element.format('HH:mm'))
     )
+    // TODO: finish reducer function
     const reducer =
-      (accumulator, currentValue) =>
+      (accumulator, currentValue) => // {
+      //   const accumulatorHour = accumulator.slice(0, 2)
+      //   const accumulatorMinute = accumulator.slice(3)
+      //   const currentValueHour = currentValue.slice(0, 2)
+      //   const currentValueMinute = currentValue.slice(3)
+      //   const nowHour = now.slice(0, 2)
+      //   const nowMinute = now.slice(3)
+      // }
         now - currentValue <= 0 || now - accumulator < now - currentValue
           ? accumulator
           : currentValue
 
-    console.log('NOW: ' + now)
     console.log('LATEST TIME: ' + alertTimes.reduce(reducer))
   }
 
@@ -660,8 +674,8 @@ export const setListener = (email) => (dispatch, getState) => {
     console.log('Interval: ' + interval)
     const lastCheckin = moment.utc(getState().patient.checkinTime)
     console.log('Last Check-In: ' + lastCheckin)
-    const now = moment.utc((new Date()).toUTCString())
-    console.log('Now: ' + lastCheckin)
+    const now = moment.utc()
+    console.log('Now: ' + now)
     const elapsedTime = now - lastCheckin
     console.log('Elapsed Time: ' + elapsedTime)
     if (elapsedTime < interval) {
