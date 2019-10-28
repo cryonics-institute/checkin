@@ -70,8 +70,8 @@ export const addDocument = () => (dispatch, getState) => {
     {
       alertTimes: getState().inputs.array,
       checkinInterval: getState().timer.interval,
-      checkinTime: (new Date()).toUTCString(),
-      signinTime: (new Date()).toUTCString()
+      checkinTime: (new Date()).toISOString(),
+      signinTime: (new Date()).toISOString()
     }
   )
     .then(
@@ -188,7 +188,7 @@ export const checkin = () => (dispatch, getState) => {
 
   return db.collection('users').doc(getState().auth.user.email).update(
     {
-      checkinTime: (new Date()).toUTCString()
+      checkinTime: (new Date()).toISOString()
     }
   )
     .then(
@@ -328,12 +328,12 @@ export const getDocumentFulfilledAction = (data) => (
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
   dispatch(mutateInputsRequestedAction())
 
-  const hours = convertTo24Hour(time)
-  const minutes = time.slice(-5, -3)
+  const hours = time.length > 0 ? convertTo24Hour(time) : 0
+  const minutes = time.length > 0 ? time.slice(-5, -3) : 0
 
   const input = {
     id: id,
-    time: (new Date(1970, 1, 2, hours, minutes)).toUTCString(),
+    time: (new Date(1970, 0, 1, hours, minutes)).toISOString(),
     validity: validity
   }
   const index = getState().inputs.array.findIndex(input => input.id === id)
@@ -641,7 +641,7 @@ export const selectStatusAction = (isPatient) => (
  */
 export const setListener = (email) => (dispatch, getState) => {
   const findClosestCheckinTime = () => {
-    const now = moment.utc('2:00', 'H:mm').format('HH:mm')
+    const now = moment.utc((new Date(1970, 0, 1, 2, 0)).toISOString()) // .format('HH:mm')
     console.log('NOW: ' + now)
 
     const alertTimes = getState().patient.alertTimes.map(
@@ -649,7 +649,7 @@ export const setListener = (email) => (dispatch, getState) => {
     )
     alertTimes.sort()
     alertTimes.forEach(
-      element => console.log('TIME: ' + element.format('HH:mm'))
+      element => console.log('TIME: ' + element) // .format('HH:mm'))
     )
     // TODO: finish reducer function
     const reducer =
