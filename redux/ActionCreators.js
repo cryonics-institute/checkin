@@ -644,6 +644,9 @@ export const selectStatusAction = (isPatient) => (
 // know the time immediately before now because you need to calculate if the
 // last check-in was submitted by the patient.  You want the time immediately
 // after because you need to calculate when to set the next listener.
+// TODO: The first negative difference is the time immediately after now.  Of
+// course, the time immediately before now is the immediately previous time in
+// the array.
 export const setListener = (email) => (dispatch, getState) => {
   const findClosestCheckinTime = () => {
     const alertTimes = getState().patient.alertTimes.map(
