@@ -654,24 +654,25 @@ export const setListener = (email) => (dispatch, getState) => {
     )
     const now = moment.utc((new Date(1970, 0, 1, 0, 0)).toISOString())
     console.log('NOW: ' + now)
-    const reducer = (accumulator, currentValue) => {
-      if (
-        now - moment(currentValue) >= 0 &&
-        now - moment(currentValue) < now - moment(accumulator)
-      ) {
-        console.log('currentValue: ' + moment(currentValue) + ' ' + now)
-        return currentValue
-      } else {
-        console.log('accumulator: ' + moment(accumulator) + ' ' + now)
-        return accumulator
-      }
-    }
+    // const reducer = (accumulator, currentValue) => {
+    //   if (
+    //     now - moment(currentValue) >= 0 &&
+    //     now - moment(currentValue) < now - moment(accumulator)
+    //   ) {
+    //     console.log('currentValue: ' + moment(currentValue) + ' ' + now)
+    //     return currentValue
+    //   } else {
+    //     console.log('accumulator: ' + moment(accumulator) + ' ' + now)
+    //     return accumulator
+    //   }
+    // }
 
     return Promise.resolve({ array: alertTimes.sort(), now: now })
       .then(
         result => {
           result.array.forEach(element => console.log('TIME: ' + element))
 
+          // TODO: Account for before and after midnight.
           let timeBeforeNow = null
           let timeAfterNow = null
           let i = 0
