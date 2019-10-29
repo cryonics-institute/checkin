@@ -639,33 +639,44 @@ export const selectStatusAction = (isPatient) => (
  * @param  {String} email E-mail of the patient to listen to.
  * @return {Promise}      Promise to create another listener after an interval.
  */
+// TODO: You want to find the least difference greater than AND less than zero,
+// which will give you the times immediately before and after now.  You need to
+// know the time immediately before now because you need to calculate if the
+// last check-in was submitted by the patient.  You want the time immediately
+// after because you need to calculate when to set the next listener.
 export const setListener = (email) => (dispatch, getState) => {
   const findClosestCheckinTime = () => {
-    const now = moment.utc((new Date(1970, 0, 1, 2, 0)).toISOString()) // .format('HH:mm')
-    console.log('NOW: ' + now)
-
     const alertTimes = getState().patient.alertTimes.map(
       element => moment.utc(element.time)
     )
-    alertTimes.sort()
-    alertTimes.forEach(
-      element => console.log('TIME: ' + element) // .format('HH:mm'))
-    )
-    // TODO: finish reducer function
-    const reducer =
-      (accumulator, currentValue) => // {
-      //   const accumulatorHour = accumulator.slice(0, 2)
-      //   const accumulatorMinute = accumulator.slice(3)
-      //   const currentValueHour = currentValue.slice(0, 2)
-      //   const currentValueMinute = currentValue.slice(3)
-      //   const nowHour = now.slice(0, 2)
-      //   const nowMinute = now.slice(3)
-      // }
-        now - currentValue <= 0 || now - accumulator < now - currentValue
-          ? accumulator
-          : currentValue
+    const now = moment.utc((new Date(1970, 0, 1, 0, 0)).toISOString())
+    console.log('NOW: ' + now)
+    const reducer = (accumulator, currentValue) => {
+      if (
+        now - moment(currentValue) >= 0 &&
+        now - moment(currentValue) < now - moment(accumulator)
+      ) {
+        console.log('currentValue: ' + moment(currentValue) + ' ' + now)
+        return currentValue
+      } else {
+        console.log('accumulator: ' + moment(accumulator) + ' ' + now)
+        return accumulator
+      }
+    }
 
-    console.log('LATEST TIME: ' + alertTimes.reduce(reducer))
+    return Promise.resolve([alertTimes.sort(), now])
+      .then(
+        result => {
+          result[0].forEach(element => console.log('TIME: ' + element))
+          // TODO: This gets you the time immediately before now.
+          if (result[1] - result[0][0] < 0) {
+            console.log('LAST TIME: ' + result[0][result.length - 1])
+          } else {
+            console.log('LATEST TIME: ' + result[0].reduce(reducer))
+          }
+        }
+      )
+      .catch(error => dispatch(setListenerRejectedAction(error.message)))
   }
 
   const setInterval = () => {
