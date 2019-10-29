@@ -667,16 +667,31 @@ export const setListener = (email) => (dispatch, getState) => {
       }
     }
 
-    return Promise.resolve([alertTimes.sort(), now])
+    return Promise.resolve({ array: alertTimes.sort(), now: now })
       .then(
         result => {
-          result[0].forEach(element => console.log('TIME: ' + element))
-          // TODO: This gets you the time immediately before now.
-          if (result[1] - result[0][0] < 0) {
-            console.log('LAST TIME: ' + result[0][result.length - 1])
-          } else {
-            console.log('LATEST TIME: ' + result[0].reduce(reducer))
+          result.array.forEach(element => console.log('TIME: ' + element))
+
+          let timeBeforeNow = null
+          let timeAfterNow = null
+          let i = 0
+          while (timeAfterNow === null) {
+            if (result.now - result.array[i] < 0) {
+              timeBeforeNow = result.array[i - 1]
+              timeAfterNow = result.array[i]
+            }
+
+            i += 1
           }
+
+          console.log('TIME BEFORE NOW: ' + timeBeforeNow)
+          console.log('TIME AFTER NOW: ' + timeAfterNow)
+          // TODO: This gets you the time immediately before now.
+          // if (result.now - result.array[0] < 0) {
+          //   console.log('LAST TIME: ' + result.array[result.length - 1])
+          // } else {
+          //   console.log('LATEST TIME: ' + result.array.reduce(reducer))
+          // }
         }
       )
       .catch(error => dispatch(setListenerRejectedAction(error.message)))
