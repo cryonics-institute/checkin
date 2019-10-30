@@ -696,25 +696,33 @@ export const setListener = (email) => (dispatch, getState) => {
   }
 
   const setInterval = () => {
-    findClosestCheckinTime()
     const interval = moment.utc(getState().patient.checkinInterval)
-    console.log('Interval: ' + interval)
     const lastCheckin = moment.utc(getState().patient.checkinTime)
-    console.log('Last Check-In: ' + lastCheckin)
-    const now = moment.utc()
-    console.log('Now: ' + now)
+    const now = moment.utc((new Date(1970, 0, 1, 0, 0)).toISOString())
     const elapsedTime = now - lastCheckin
-    console.log('Elapsed Time: ' + elapsedTime)
-    if (elapsedTime < interval) {
-      console.log('Elapsed Time: ' + elapsedTime)
-      return elapsedTime
-    } else if (elapsedTime > interval) {
-      console.log('Elapsed Time: ' + elapsedTime)
-      return 0
-    } else {
-      console.log('Interval: ' + interval)
-      return interval
-    }
+
+    return findClosestCheckinTimes(now)
+      .then(
+        alertTime => {
+          console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
+          console.log('TIME AFTER NOW: ' + alertTime.afterNow)
+          console.log('INTERVAL: ' + interval)
+          console.log('LAST CHECK-IN: ' + lastCheckin)
+          console.log('NOW: ' + now)
+          console.log('ELAPSED TIME: ' + elapsedTime)
+          if (elapsedTime < interval) {
+            console.log('ELAPSED TIME: ' + elapsedTime)
+            return elapsedTime
+          } else if (elapsedTime > interval) {
+            console.log('ELAPSED TIME: ' + elapsedTime)
+            return 0
+          } else {
+            console.log('INTERVAL: ' + interval)
+            return interval
+          }
+        }
+      )
+      .catch(error => dispatch(setListenerRejectedAction(error.message)))
   }
 
   const noCheckinAlert = () => {
