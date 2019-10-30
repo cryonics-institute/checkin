@@ -649,59 +649,47 @@ export const selectStatusAction = (isPatient) => (
  * @return {Promise}      Promise to create another listener after an interval.
  */
 // TODO: You want to find the least difference greater than AND less than zero,
-// which will give you the times immediately before and after now.  You need to
-// know the time immediately before now because you need to calculate if the
-// last check-in was submitted by the patient.  You want the time immediately
-// after because you need to calculate when to set the next listener.
-// TODO: The first negative difference is the time immediately after now.  Of
-// course, the time immediately before now is the immediately previous time in
-// the array.
+// which will give you the times immediately before and after last check-in.
+// You need to know the time immediately before last check-in because you need
+// to calculate if the last check-in was submitted by the patient.  You want the
+// time immediately after because you need to calculate when to set the next
+// listener.
 export const setListener = (email) => (dispatch, getState) => {
-  const findClosestCheckinTime = () => {
+  const findClosestCheckinTimes = (lastCheckin) => {
     const alertTimes = getState().patient.alertTimes.map(
       element => moment.utc(element.time)
     )
-    const now = moment.utc((new Date(1970, 0, 1, 0, 0)).toISOString())
-    console.log('NOW: ' + now)
-    // const reducer = (accumulator, currentValue) => {
-    //   if (
-    //     now - moment(currentValue) >= 0 &&
-    //     now - moment(currentValue) < now - moment(accumulator)
-    //   ) {
-    //     console.log('currentValue: ' + moment(currentValue) + ' ' + now)
-    //     return currentValue
-    //   } else {
-    //     console.log('accumulator: ' + moment(accumulator) + ' ' + now)
-    //     return accumulator
-    //   }
-    // }
 
-    return Promise.resolve({ array: alertTimes.sort(), now: now })
+    return Promise.resolve(
+      {
+        array: alertTimes.sort(),
+        lastCheckin: lastCheckin
+      }
+    )
       .then(
         result => {
           result.array.forEach(element => console.log('TIME: ' + element))
 
-          // TODO: Account for before and after midnight.
           let timeBeforeNow = null
           let timeAfterNow = null
           let i = 0
-          while (timeAfterNow === null) {
-            if (result.now - result.array[i] < 0) {
+          while (timeAfterNow === null && i < result.array.length) {
+            if (result.lastCheckin - result.array[i] < 0) {
               timeBeforeNow = result.array[i - 1]
               timeAfterNow = result.array[i]
+              break
             }
-
             i += 1
+          }
+
+          if (isNaN(timeBeforeNow)) {
+            timeBeforeNow = result.array[result.array.length - 1]
+            timeAfterNow = result.array[0]
           }
 
           console.log('TIME BEFORE NOW: ' + timeBeforeNow)
           console.log('TIME AFTER NOW: ' + timeAfterNow)
-          // TODO: This gets you the time immediately before now.
-          // if (result.now - result.array[0] < 0) {
-          //   console.log('LAST TIME: ' + result.array[result.length - 1])
-          // } else {
-          //   console.log('LATEST TIME: ' + result.array.reduce(reducer))
-          // }
+          return { beforeNow: timeBeforeNow, afterNow: timeAfterNow }
         }
       )
       .catch(error => dispatch(setListenerRejectedAction(error.message)))
