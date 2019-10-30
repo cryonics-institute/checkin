@@ -71,7 +71,8 @@ export const addDocument = () => (dispatch, getState) => {
       alertTimes: getState().inputs.array,
       checkinInterval: getState().timer.interval,
       checkinTime: (new Date()).toISOString(),
-      signinTime: (new Date()).toISOString()
+      signinTime: (new Date()).toISOString(),
+      snooze: 9 // TODO: Let patient set this.
     }
   )
     .then(
@@ -260,13 +261,21 @@ export const getDocument = (email) => (dispatch) => {
           const checkinInterval = doc.data().checkinInterval
           const checkinTime = doc.data().checkinTime
           const signinTime = doc.data().signinTime
+          const snooze = doc.data().snooze
 
-          return [true, alertTimes, checkinInterval, checkinTime, signinTime]
+          return [
+            true,
+            alertTimes,
+            checkinInterval,
+            checkinTime,
+            signinTime,
+            snooze
+          ]
         } else {
           // doc.data() will be undefined in this case
           console.log('No such document!')
 
-          return [false, null, null, null]
+          return [false, null, null, null, null, null]
         }
       },
       error => {
