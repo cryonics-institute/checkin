@@ -33,7 +33,8 @@ export const Patient = (
     errMess: null,
     isSignedIn: null,
     listeners: [],
-    signinTime: null
+    signinTime: null,
+    snooze: null
   },
   action
 ) => {
@@ -79,7 +80,8 @@ export const Patient = (
         checkinTime: action.payload[3],
         errMess: null,
         isSignedIn: action.payload[0],
-        signinTime: action.payload[4]
+        signinTime: action.payload[4],
+        snooze: action.payload[5]
       }
 
     // TODO: Set results of actions.
