@@ -733,28 +733,53 @@ export const setListener = (email) => (dispatch, getState) => {
 
   const setInterval = () => {
     const interval = moment.utc(getState().patient.checkinInterval)
-    const lastCheckin = moment.utc(getState().patient.checkinTime)
+    const lastCheckin = moment.utc(
+      '1970-01-01' + getState().patient.checkinTime.slice(-14)
+    )
     const now = moment.utc((new Date(1970, 0, 1, 0, 0)).toISOString())
     const elapsedTime = now - lastCheckin
 
     return findClosestCheckinTimes(now)
       .then(
         alertTime => {
-          console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
-          console.log('TIME AFTER NOW: ' + alertTime.afterNow)
-          console.log('INTERVAL: ' + interval)
-          console.log('LAST CHECK-IN: ' + lastCheckin)
-          console.log('NOW: ' + now)
-          console.log('ELAPSED TIME: ' + elapsedTime)
-          if (elapsedTime < interval) {
-            console.log('ELAPSED TIME: ' + elapsedTime)
-            return elapsedTime
-          } else if (elapsedTime > interval) {
-            console.log('ELAPSED TIME: ' + elapsedTime)
-            return 0
+          const timeBeforeNowString =
+            moment().year().toString() + '-' +
+            (moment().month() + 1).toString() + '-' +
+            moment().date().toString() +
+            moment.utc(new Date(alertTime.beforeNow)).toISOString().slice(-14)
+          const timeBeforeNow = moment.utc(timeBeforeNowString)
+          const checkinTime = moment.utc(getState().patient.checkinTime)
+
+          if (alertTime.beforeNow === alertTime.afterNow) {
+            if (timeBeforeNow - checkinTime > 86400000) {
+              return 0
+            } else {
+              return 86400000 - (timeBeforeNow - checkinTime)
+            }
           } else {
+            // TODO: Time before and after last check-in should be the same as
+            // time before and after now or else you should return 0 so that an
+            // alert will fire.
+            console.log('TIME BEFORE NOW ISO STRING: ' + timeBeforeNowString)
+            console.log(moment.utc(timeBeforeNowString) - moment.utc(getState().patient.checkinTime) > 86400000)
+            console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
+            console.log('TIME AFTER NOW: ' + alertTime.afterNow)
+            console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
+            console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
             console.log('INTERVAL: ' + interval)
-            return interval
+            console.log('LAST CHECK-IN: ' + lastCheckin)
+            console.log('NOW: ' + now)
+            console.log('ELAPSED TIME: ' + elapsedTime)
+            if (elapsedTime < interval) {
+              console.log('ELAPSED TIME: ' + elapsedTime)
+              return elapsedTime
+            } else if (elapsedTime > interval) {
+              console.log('ELAPSED TIME: ' + elapsedTime)
+              return 0
+            } else {
+              console.log('INTERVAL: ' + interval)
+              return interval
+            }
           }
         }
       )
