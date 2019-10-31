@@ -655,44 +655,80 @@ export const selectStatusAction = (isPatient) => (
 // time immediately after because you need to calculate when to set the next
 // listener.
 export const setListener = (email) => (dispatch, getState) => {
-  const findClosestCheckinTimes = (lastCheckin) => {
+  const findClosestCheckinTimes = (lastCheckin, now) => {
     const alertTimes = getState().patient.alertTimes.map(
       element => moment.utc(element.time)
     )
 
-    return Promise.resolve(
-      {
-        array: alertTimes.sort(),
-        lastCheckin: lastCheckin
+    if (alertTimes.length === 1) {
+      const alertTime = alertTimes[0]
+      return {
+        beforeNow: alertTime,
+        afterNow: alertTime,
+        beforeCheckin: alertTime,
+        afterCheckin: alertTime
       }
-    )
-      .then(
-        result => {
-          result.array.forEach(element => console.log('TIME: ' + element))
-
-          let timeBeforeNow = null
-          let timeAfterNow = null
-          let i = 0
-          while (timeAfterNow === null && i < result.array.length) {
-            if (result.lastCheckin - result.array[i] < 0) {
-              timeBeforeNow = result.array[i - 1]
-              timeAfterNow = result.array[i]
-              break
-            }
-            i += 1
-          }
-
-          if (isNaN(timeBeforeNow)) {
-            timeBeforeNow = result.array[result.array.length - 1]
-            timeAfterNow = result.array[0]
-          }
-
-          console.log('TIME BEFORE NOW: ' + timeBeforeNow)
-          console.log('TIME AFTER NOW: ' + timeAfterNow)
-          return { beforeNow: timeBeforeNow, afterNow: timeAfterNow }
+    } else {
+      return Promise.resolve(
+        {
+          array: alertTimes.sort(),
+          lastCheckin: lastCheckin,
+          now: now
         }
       )
-      .catch(error => dispatch(setListenerRejectedAction(error.message)))
+        .then(
+          result => {
+            result.array.forEach(element => console.log('TIME: ' + element))
+
+            let timeBeforeNow = null
+            let timeAfterNow = null
+            let timeBeforeCheckin = null
+            let timeAfterCheckin = null
+
+            let i = 0
+            while (timeAfterNow === null && i < result.array.length) {
+              if (result.lastCheckin - result.array[i] < 0) {
+                timeBeforeNow = result.array[i - 1]
+                timeAfterNow = result.array[i]
+                break
+              }
+              i += 1
+            }
+
+            if (isNaN(timeBeforeNow)) {
+              timeBeforeNow = result.array[result.array.length - 1]
+              timeAfterNow = result.array[0]
+            }
+
+            let j = 0
+            while (timeAfterCheckin === null && j < result.array.length) {
+              if (result.lastCheckin - result.array[j] < 0) {
+                timeBeforeCheckin = result.array[j - 1]
+                timeAfterCheckin = result.array[j]
+                break
+              }
+              j += 1
+            }
+
+            if (isNaN(timeBeforeCheckin)) {
+              timeBeforeCheckin = result.array[result.array.length - 1]
+              timeAfterCheckin = result.array[0]
+            }
+
+            console.log('TIME BEFORE NOW: ' + timeBeforeNow)
+            console.log('TIME AFTER NOW: ' + timeAfterNow)
+            console.log('TIME BEFORE NOW: ' + timeBeforeCheckin)
+            console.log('TIME AFTER NOW: ' + timeAfterCheckin)
+            return {
+              beforeNow: timeBeforeNow,
+              afterNow: timeAfterNow,
+              beforeCheckin: timeBeforeCheckin,
+              afterCheckin: timeAfterCheckin
+            }
+          }
+        )
+        .catch(error => dispatch(setListenerRejectedAction(error.message)))
+    }
   }
 
   const setInterval = () => {
