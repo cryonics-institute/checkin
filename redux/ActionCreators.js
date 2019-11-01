@@ -671,7 +671,7 @@ export const setListener = (email) => (dispatch, getState) => {
     } else {
       return Promise.resolve(
         {
-          array: alertTimes.sort(),
+          array: alertTimes.sort((el1, el2) => el1 - el2),
           lastCheckin: lastCheckin,
           now: now
         }
@@ -744,10 +744,14 @@ export const setListener = (email) => (dispatch, getState) => {
     return findClosestCheckinTimes(lastCheckin, now)
       .then(
         alertTime => {
-          const timeBeforeNowString =
-            moment().year().toString() + '-' +
-            (moment().month() + 1).toString() + '-' +
-            moment().date().toString() +
+          const year = moment().year().toString()
+          const month = (moment().month() + 1) < 10
+            ? '0' + moment().month().toString()
+            : moment().month().toString()
+          const date = moment().date() < 10
+            ? '0' + moment().date()
+            : moment().date()
+          const timeBeforeNowString = year + '-' + month + '-' + date +
             moment.utc(new Date(alertTime.beforeNow)).toISOString().slice(-14)
           const timeBeforeNow = moment.utc(timeBeforeNowString)
           const checkinTime = moment.utc(getState().patient.checkinTime)
@@ -774,9 +778,7 @@ export const setListener = (email) => (dispatch, getState) => {
               return 86400000 - (timeBeforeNow - checkinTime)
             }
           } else {
-            if (timeBeforeNow - checkinTime > 86400000) {
-              return 0
-            } else if (
+            if (
               alertTime.beforeNow === alertTime.beforeCheckin &&
               alertTime.afterNow === alertTime.afterCheckin
             ) {
@@ -829,7 +831,9 @@ export const setListener = (email) => (dispatch, getState) => {
         dispatch(removeListeners())
 
         if (getState().patient.isSignedIn) {
-          // TODO: Interval grows larger each time time-out finishes.
+          // TODO: Interval grows larger each time time-out finishes.  I think
+          // the problem lies in passing times into findClosestCheckinTimes as
+          // milliseconds from 1970-01-01.
           console.log('TIMEOUT SHOULD SET TO: ' + interval)
           if (interval > 0) {
             const listener = Promise.resolve(
