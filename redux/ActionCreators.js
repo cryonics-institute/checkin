@@ -736,10 +736,12 @@ export const setListener = (email) => (dispatch, getState) => {
     const lastCheckin = moment.utc(
       '1970-01-01' + getState().patient.checkinTime.slice(-14)
     )
-    const now = moment.utc((new Date(1970, 0, 1, 0, 0)).toISOString())
+    const now = moment.utc(
+      '1970-01-01' + (new Date()).toISOString().slice(-14)
+    ) // (new Date(1970, 0, 1, 0, 0)).toISOString())
     const elapsedTime = now - lastCheckin
 
-    return findClosestCheckinTimes(now)
+    return findClosestCheckinTimes(lastCheckin, now)
       .then(
         alertTime => {
           const timeBeforeNowString =
@@ -750,6 +752,21 @@ export const setListener = (email) => (dispatch, getState) => {
           const timeBeforeNow = moment.utc(timeBeforeNowString)
           const checkinTime = moment.utc(getState().patient.checkinTime)
 
+          console.log('TIME BEFORE NOW ISO STRING: ' + timeBeforeNowString)
+          console.log(timeBeforeNow - checkinTime > 86400000)
+          console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
+          console.log('TIME AFTER NOW: ' + alertTime.afterNow)
+          console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
+          console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
+          console.log('INTERVAL: ' + interval)
+          console.log('LAST CHECK-IN: ' + lastCheckin)
+          console.log('NOW: ' + now)
+          console.log('ELAPSED TIME: ' + elapsedTime)
+          console.log(alertTime.beforeNow === alertTime.afterNow)
+          console.log(timeBeforeNow - checkinTime > 86400000)
+          console.log(alertTime.beforeNow === alertTime.beforeCheckin)
+          console.log(alertTime.afterNow === alertTime.afterCheckin)
+
           if (alertTime.beforeNow === alertTime.afterNow) {
             if (timeBeforeNow - checkinTime > 86400000) {
               return 0
@@ -757,28 +774,16 @@ export const setListener = (email) => (dispatch, getState) => {
               return 86400000 - (timeBeforeNow - checkinTime)
             }
           } else {
-            // TODO: Time before and after last check-in should be the same as
-            // time before and after now or else you should return 0 so that an
-            // alert will fire.
-            console.log('TIME BEFORE NOW ISO STRING: ' + timeBeforeNowString)
-            console.log(moment.utc(timeBeforeNowString) - moment.utc(getState().patient.checkinTime) > 86400000)
-            console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
-            console.log('TIME AFTER NOW: ' + alertTime.afterNow)
-            console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
-            console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
-            console.log('INTERVAL: ' + interval)
-            console.log('LAST CHECK-IN: ' + lastCheckin)
-            console.log('NOW: ' + now)
-            console.log('ELAPSED TIME: ' + elapsedTime)
-            if (elapsedTime < interval) {
-              console.log('ELAPSED TIME: ' + elapsedTime)
-              return elapsedTime
-            } else if (elapsedTime > interval) {
-              console.log('ELAPSED TIME: ' + elapsedTime)
+            if (timeBeforeNow - checkinTime > 86400000) {
               return 0
+            } else if (
+              alertTime.beforeNow === alertTime.beforeCheckin &&
+              alertTime.afterNow === alertTime.afterCheckin
+            ) {
+              console.log(alertTime.afterNow - now)
+              return alertTime.afterNow - now
             } else {
-              console.log('INTERVAL: ' + interval)
-              return interval
+              return 0
             }
           }
         }
@@ -815,10 +820,17 @@ export const setListener = (email) => (dispatch, getState) => {
   return dispatch(getDocument(email))
     .then(
       () => {
+        const interval = setInterval()
+        return interval
+      }
+    )
+    .then(
+      interval => {
         dispatch(removeListeners())
 
         if (getState().patient.isSignedIn) {
-          const interval = setInterval()
+          // TODO: Interval grows larger each time time-out finishes.
+          console.log('TIMEOUT SHOULD SET TO: ' + interval)
           if (interval > 0) {
             const listener = Promise.resolve(
               setTimeout(
