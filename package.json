@@ -40,7 +40,8 @@
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-standard": "^4.0.1",
     "jsdoc": "^3.6.3",
-    "prop-types": "^15.7.2"
+    "prop-types": "^15.7.2",
+    "typescript": "^3.6.4"
   },
   "eslintConfig": {
     "extends": "react-app"
