@@ -648,42 +648,26 @@ export const selectStatusAction = (isPatient) => (
  * @param  {String} email E-mail of the patient to listen to.
  * @return {Promise}      Promise to create another listener after an interval.
  */
-// TODO: You want to find the least difference greater than AND less than zero,
-// which will give you the times immediately before and after last check-in.
-// You need to know the time immediately before last check-in because you need
-// to calculate if the last check-in was submitted by the patient.  You want the
-// time immediately after because you need to calculate when to set the next
-// listener.
 export const setListener = (email) => (dispatch, getState) => {
-  const year = moment().year().toString()
-  const month = (moment().month() + 1) < 10
-    ? '0' + (moment().month() + 1).toString()
-    : (moment().month() + 1).toString()
-  const date = moment().date() < 10
-    ? '0' + moment.utc().date()
-    : moment().date()
-
-  const findClosestCheckinTimes = (checkinTime, now) => {
+  const findClosestCheckinTimes = (checkinMinutes, nowMinutes) => {
     const alertTimes = getState().patient.alertTimes.map(
-      element => moment.utc(
-        year + '-' + month + '-' + date + element.time.slice(-14)
-      )
+      element => (parseInt(element.time.slice(-13, -11), 10) * 60) +
+        parseInt(element.time.slice(-10, -8), 10)
     )
 
     if (alertTimes.length === 1) {
-      const alertTime = alertTimes[0]
       return {
-        beforeNow: alertTime,
-        afterNow: alertTime,
-        beforeCheckin: alertTime,
-        afterCheckin: alertTime
+        beforeNow: alertTimes[0],
+        afterNow: alertTimes[0],
+        beforeCheckin: alertTimes[0],
+        afterCheckin: alertTimes[0]
       }
     } else {
       return Promise.resolve(
         {
           array: alertTimes.sort((el1, el2) => el1 - el2),
-          checkinTime: checkinTime,
-          now: now
+          checkinMinutes: checkinMinutes,
+          nowMinutes: nowMinutes
         }
       )
         .then(
@@ -696,47 +680,37 @@ export const setListener = (email) => (dispatch, getState) => {
             let timeAfterCheckin = null
 
             let i = 0
-            while (timeAfterNow === null && i < result.array.length) {
-              if (result.now - result.array[i] < 0) {
+            while (timeBeforeNow === null && i < result.array.length) {
+              if (result.nowMinutes - result.array[i] < 0) {
                 timeBeforeNow = result.array[i - 1]
                 timeAfterNow = result.array[i]
-                break
               }
               i += 1
             }
 
             console.log('timeBeforeNow: ' + timeBeforeNow)
-            if (timeBeforeNow === null) {
+            if (timeBeforeNow === null || timeBeforeNow === undefined) {
               timeBeforeNow = result.array[result.array.length - 1]
-              timeAfterNow = moment(result.array[0])
-                .add(1, 'days')
-            } else if (timeBeforeNow === undefined) {
-              timeBeforeNow = moment(result.array[result.array.length - 1])
-                .subtract(1, 'days')
               timeAfterNow = result.array[0]
             }
 
             let j = 0
-            while (timeAfterCheckin === null && j < result.array.length) {
-              if (result.checkinTime - result.array[j] < 0) {
+            while (timeBeforeCheckin === null && j < result.array.length) {
+              if (result.checkinMinutes - result.array[j] < 0) {
                 timeBeforeCheckin = result.array[j - 1]
                 timeAfterCheckin = result.array[j]
-                break
               }
               j += 1
             }
 
             console.log('timeBeforeCheckin: ' + timeBeforeCheckin)
-            if (timeBeforeCheckin === null) {
+            if (timeBeforeCheckin === null || timeBeforeCheckin === undefined) {
               timeBeforeCheckin = result.array[result.array.length - 1]
-              timeAfterCheckin = moment(result.array[0])
-                .add(1, 'days')
-            } else if (timeBeforeCheckin === undefined) {
-              timeBeforeNow = moment(result.array[result.array.length - 1])
-                .subtract(1, 'days')
-              timeAfterNow = result.array[0]
+              timeAfterCheckin = result.array[0]
             }
 
+            console.log('CHECKIN MINUTES: ' + result.checkinMinutes)
+            console.log('NOW MINUTES: ' + result.nowMinutes)
             console.log('TIME BEFORE NOW: ' + timeBeforeNow)
             console.log('TIME AFTER NOW: ' + timeAfterNow)
             console.log('TIME BEFORE CHECKIN: ' + timeBeforeCheckin)
@@ -754,53 +728,50 @@ export const setListener = (email) => (dispatch, getState) => {
   }
 
   const setInterval = () => {
-    const interval = moment.utc(getState().patient.checkinInterval)
-    const checkinTime = moment.utc(year + '-' + month + '-' + date + getState().patient.checkinTime.slice(-14)) // moment.utc(getState().patient.checkinTime)
-    const now = moment.utc((new Date()).toISOString())
-    const elapsedTime = now - checkinTime
+    const checkinTime = getState().patient.checkinTime
+    const now = (new Date(2019, 9, 31, 19, 59)).toISOString()
+    console.log('LAST CHECK-IN: ' + checkinTime)
+    console.log('NOW: ' + now)
 
-    return findClosestCheckinTimes(checkinTime, now)
-      .then(
-        alertTime => {
-          const timeBeforeNowString = year + '-' + month + '-' + date +
-            moment.utc(new Date(alertTime.beforeNow)).toISOString().slice(-14)
-          const timeBeforeNow = moment.utc(timeBeforeNowString)
+    if (moment(now) - moment(checkinTime) > 86400000) {
+      return 0
+    } else {
+      const checkinMinutes = (parseInt(checkinTime.slice(-13, -11), 10) * 60) +
+        parseInt(checkinTime.slice(-10, -8), 10)
+      const nowMinutes = (parseInt(now.slice(-13, -11), 10) * 60) +
+        parseInt(now.slice(-10, -8), 10)
 
-          console.log('NOW ISO STRING: ' + moment().toISOString())
-          console.log('TIME BEFORE NOW ISO STRING: ' + timeBeforeNowString)
-          console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
-          console.log('TIME AFTER NOW: ' + alertTime.afterNow)
-          console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
-          console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
-          console.log('INTERVAL: ' + interval)
-          console.log('LAST CHECK-IN: ' + checkinTime)
-          console.log('NOW: ' + now)
-          console.log('ELAPSED TIME: ' + elapsedTime)
-          console.log(alertTime.beforeNow.isSame(alertTime.afterNow))
-          console.log(timeBeforeNow - checkinTime > 86400000)
-          console.log(alertTime.beforeNow.isSame(alertTime.beforeCheckin))
-          console.log(alertTime.afterNow.isSame(alertTime.afterCheckin))
+      return findClosestCheckinTimes(checkinMinutes, nowMinutes)
+        .then(
+          alertTime => {
+            console.log('CHECKIN MINUTES: ' + checkinMinutes)
+            console.log('NOW MINUTES: ' + nowMinutes)
+            console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
+            console.log('TIME AFTER NOW: ' + alertTime.afterNow)
+            console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
+            console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
+            console.log(alertTime.beforeNow === alertTime.beforeCheckin)
+            console.log(alertTime.afterNow === alertTime.afterCheckin)
 
-          if (alertTime.beforeNow.isSame(alertTime.afterNow)) {
-            if (timeBeforeNow - checkinTime > 86400000) {
-              return 0
-            } else {
-              return 86400000 - (timeBeforeNow - checkinTime)
-            }
-          } else {
             if (
-              alertTime.beforeNow.isSame(alertTime.beforeCheckin) &&
-              alertTime.afterNow.isSame(alertTime.afterCheckin)
+              alertTime.beforeNow === alertTime.beforeCheckin &&
+              alertTime.afterNow === alertTime.afterCheckin
             ) {
-              console.log(alertTime.afterNow - now)
-              return alertTime.afterNow - now
+              const interval = alertTime.afterNow - nowMinutes
+              console.log(interval)
+
+              if (interval > 0) {
+                return interval * 60000
+              } else {
+                return (interval + 1440) * 60000
+              }
             } else {
               return 0
             }
           }
-        }
-      )
-      .catch(error => dispatch(setListenerRejectedAction(error.message)))
+        )
+        .catch(error => dispatch(setListenerRejectedAction(error.message)))
+    }
   }
 
   const noCheckinAlert = () => {
@@ -866,7 +837,6 @@ export const setListener = (email) => (dispatch, getState) => {
     .then(
       listener => {
         dispatch(setListenerFulfilledAction(listener))
-        // dispatch(setListener(getState().patient.email))
       },
       error => {
         var errorMessage = new Error(error.message)
