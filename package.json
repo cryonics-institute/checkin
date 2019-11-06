@@ -39,12 +39,20 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-standard": "^4.0.1",
+    "jest-expo": "^35.0.0",
     "jsdoc": "^3.6.3",
     "prop-types": "^15.7.2",
+    "react-test-renderer": "^16.11.0",
     "typescript": "^3.6.4"
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "jest": {
+    "preset": "jest-expo",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|sentry-expo|native-base)"
+    ]
   },
   "scripts": {
     "android": "expo start --android",
@@ -53,6 +61,7 @@
     "ios": "expo start --ios",
     "lint": "eslint",
     "start": "expo start",
+    "test": "jest",
     "web": "expo start --web"
   }
 }
