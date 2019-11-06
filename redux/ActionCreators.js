@@ -805,6 +805,10 @@ export const setListener = (email) => (dispatch, getState) => {
       () => {
         const interval = setInterval()
         return interval
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
