@@ -63,10 +63,10 @@ const convertTo24Hour = (time) => {
  * navigation service is told to navigate to the patient's app-stack.
  * @return {Promise}  A promise to create a new Firebase document.
  */
-export const addDocument = () => (dispatch, getState) => {
+export const addDocument = (database, email) => (dispatch, getState) => {
   dispatch(addDocumentRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.email).set(
+  return database.collection('users').doc(email).set(
     {
       alertTimes: getState().inputs.array,
       checkinInterval: getState().timer.interval,
@@ -184,10 +184,10 @@ export const addPatientFulfilledAction = () => (
  * elapsed.
  * @return {Promise}        A promise to update the check-in time and interval.
  */
-export const checkin = () => (dispatch, getState) => {
+export const checkin = (database, email) => (dispatch, getState) => {
   dispatch(checkinRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.email).update(
+  return database.collection('users').doc(email).update(
     {
       checkinTime: (new Date()).toISOString()
     }
@@ -250,10 +250,10 @@ export const checkinFulfilledAction = () => (
  * @param  {String}   email E-mail of the currently-authorized patient.
  * @return {Promise}        A promise to update check-in state parameters.
  */
-export const getDocument = (email) => (dispatch) => {
+export const getDocument = (database, email) => (dispatch) => {
   dispatch(getDocumentRequestedAction())
 
-  return db.collection('users').doc(email).get()
+  return database.collection('users').doc(email).get()
     .then(
       doc => {
         if (doc.exists) {
@@ -434,7 +434,7 @@ export const registerPatient = (creds) => (dispatch) => {
     .then(
       (userCredential) => {
         dispatch(registrationFulfilledAction(userCredential.user))
-        dispatch(addDocument())
+        dispatch(addDocument(db, userCredential.user.email))
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -529,7 +529,7 @@ export const removeInput = (id) => (dispatch, getState) => {
  * Remove an input in the inputs array.
  * @param  {String} id  Unique identifier for input.
  */
-export const removeInputs = (id) => (dispatch, getState) => {
+export const removeInputs = (id) => (dispatch) => {
   dispatch(mutateInputsRequestedAction())
 
   try {
@@ -783,7 +783,7 @@ export const setListener = (email) => (dispatch, getState) => {
           text: 'OK',
           onPress: () => {
             console.log('OK Pressed')
-            dispatch(setListener(getState().patient.email))
+            dispatch(setListener(email))
           }
         },
         {
@@ -800,7 +800,7 @@ export const setListener = (email) => (dispatch, getState) => {
 
   dispatch(setListenerRequestedAction())
 
-  return dispatch(getDocument(email))
+  return dispatch(getDocument(db, email))
     .then(
       () => {
         const interval = setInterval()
@@ -820,7 +820,7 @@ export const setListener = (email) => (dispatch, getState) => {
           if (interval > 0) {
             const listener = Promise.resolve(
               setTimeout(
-                () => { dispatch(setListener(getState().patient.email)) },
+                () => { dispatch(setListener(email)) },
                 interval
               )
             )
@@ -900,7 +900,7 @@ export const setTimer = (interval) => (dispatch, getState) => {
             onPress: () => {
               console.log('OK Pressed')
               dispatch(removeTimers())
-              dispatch(checkin())
+              dispatch(checkin(db))
             }
           },
           {
@@ -920,7 +920,7 @@ export const setTimer = (interval) => (dispatch, getState) => {
   dispatch(setTimerRequestedAction())
 
   return Promise.resolve(
-    dispatch(setTimerInterval(interval))
+    dispatch(setTimerInterval(db, interval))
   )
     .then(
       () => {
@@ -982,10 +982,10 @@ export const setTimerFulfilledAction = (timer) => (
  * Set the interval for the setTimer function.
  * @param  {Integer}  interval  The interval between alerts.
  */
-export const setTimerInterval = (interval) => (dispatch, getState) => {
+export const setTimerInterval = (database, interval) => (dispatch, getState) => {
   dispatch(setTimerIntervalRequestedAction())
 
-  db.collection('users').doc(getState().auth.user.email).update(
+  database.collection('users').doc(getState().auth.user.email).update(
     {
       checkinInterval: interval
     }
@@ -1043,7 +1043,7 @@ export const signinPatient = (creds) => (dispatch) => {
     .then(
       userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))
-        dispatch(addDocument())
+        dispatch(addDocument(db, userCredential.user.email))
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1156,7 +1156,7 @@ export const signoutPatient = () => (dispatch, getState) => {
  * authorization stack.
  * @return {Promise}  A promise to sign-out a standby-user.
  */
-export const signoutStandby = () => (dispatch, getState) => {
+export const signoutStandby = () => (dispatch) => {
   dispatch(signoutRequestedAction())
 
   return auth.signOut()
