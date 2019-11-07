@@ -130,8 +130,17 @@ export const addPatient = (email) => (dispatch) => {
   dispatch(addPatientRequestedAction(email))
 
   return Promise.resolve(
-    dispatch(setListener(email))
+    dispatch(getDocument(db, email))
   )
+    .then(
+      () => {
+        dispatch(setListener(email))
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
     .then(
       () => {
         dispatch(addPatientFulfilledAction())
@@ -800,17 +809,9 @@ export const setListener = (email) => (dispatch, getState) => {
 
   dispatch(setListenerRequestedAction())
 
-  return dispatch(getDocument(db, email))
-    .then(
-      () => {
-        const interval = setInterval()
-        return interval
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
+  return Promise.resolve(
+    setInterval()
+  )
     .then(
       interval => {
         dispatch(removeListeners())
