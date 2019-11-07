@@ -43,8 +43,10 @@ describe(
         )
 
         const expectedActions = {
-          type: ActionTypes.SET_LISTENER_REQUESTED
+          payload: null,
+          type: ActionTypes.SET_LISTENER_FULFILLED
         }
+        const now = (new Date()).toISOString()
         const store = mockStore(
           {
             patient: {
@@ -82,7 +84,16 @@ describe(
           }
         )
 
-        await store.dispatch(Actions.setListener('a@a.aa'))
+        await store.dispatch(
+          Actions.setListener(
+            store.getState().patient.alertTimes,
+            store.getState().patient.checkinTime,
+            store.getState().patient.email,
+            store.getState().patient.isSignedIn,
+            now,
+            true
+          )
+        )
         // await expect(store.getState().patient.isSignedIn).toBeTruthy()
         await expect(store.getActions()).toContainEqual(expectedActions)
       }
