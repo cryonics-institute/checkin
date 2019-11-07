@@ -126,7 +126,7 @@ export const addDocumentFulfilledAction = () => (
  * @param  {String}   email E-mail of the patient to be added.
  * @return {Promise}        A promise to add a patient to be tracked by standby.
  */
-export const addPatient = (email) => (dispatch) => {
+export const addPatient = (email) => (dispatch, getState) => {
   dispatch(addPatientRequestedAction(email))
 
   return Promise.resolve(
@@ -134,7 +134,15 @@ export const addPatient = (email) => (dispatch) => {
   )
     .then(
       () => {
-        dispatch(setListener(email))
+        dispatch(
+          setListener(
+            getState().patient.alertTimes,
+            getState().patient.checkinTime,
+            email,
+            getState().patient.isSignedIn,
+            (new Date()).toISOString()
+          )
+        )
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -657,24 +665,26 @@ export const selectStatusAction = (isPatient) => (
  * @param  {String} email E-mail of the patient to listen to.
  * @return {Promise}      Promise to create another listener after an interval.
  */
-export const setListener = (email) => (dispatch, getState) => {
+export const setListener = (
+  alertTimes, checkinTime, email, isSignedIn, now, isTest = false
+) => (dispatch, getState) => {
   const findClosestCheckinTimes = (checkinMinutes, nowMinutes) => {
-    const alertTimes = getState().patient.alertTimes.map(
+    const alertMinutes = alertTimes.map(
       element => (parseInt(element.time.slice(-13, -11), 10) * 60) +
         parseInt(element.time.slice(-10, -8), 10)
     )
 
-    if (alertTimes.length === 1) {
+    if (alertMinutes.length === 1) {
       return {
-        beforeNow: alertTimes[0],
-        afterNow: alertTimes[0],
-        beforeCheckin: alertTimes[0],
-        afterCheckin: alertTimes[0]
+        beforeNow: alertMinutes[0],
+        afterNow: alertMinutes[0],
+        beforeCheckin: alertMinutes[0],
+        afterCheckin: alertMinutes[0]
       }
     } else {
       return Promise.resolve(
         {
-          array: alertTimes.sort((el1, el2) => el1 - el2),
+          array: alertMinutes.sort((el1, el2) => el1 - el2),
           checkinMinutes: checkinMinutes,
           nowMinutes: nowMinutes
         }
@@ -730,6 +740,10 @@ export const setListener = (email) => (dispatch, getState) => {
               beforeCheckin: timeBeforeCheckin,
               afterCheckin: timeAfterCheckin
             }
+          },
+          error => {
+            var errorMessage = new Error(error.message)
+            throw errorMessage
           }
         )
         .catch(error => dispatch(setListenerRejectedAction(error.message)))
@@ -737,8 +751,6 @@ export const setListener = (email) => (dispatch, getState) => {
   }
 
   const setInterval = () => {
-    const checkinTime = getState().patient.checkinTime
-    const now = (new Date(2019, 9, 31, 19, 59)).toISOString()
     console.log('LAST CHECK-IN: ' + checkinTime)
     console.log('NOW: ' + now)
 
@@ -777,6 +789,10 @@ export const setListener = (email) => (dispatch, getState) => {
             } else {
               return 0
             }
+          },
+          error => {
+            var errorMessage = new Error(error.message)
+            throw errorMessage
           }
         )
         .catch(error => dispatch(setListenerRejectedAction(error.message)))
@@ -792,7 +808,15 @@ export const setListener = (email) => (dispatch, getState) => {
           text: 'OK',
           onPress: () => {
             console.log('OK Pressed')
-            dispatch(setListener(email))
+            dispatch(
+              setListener(
+                getState().patient.alertTimes,
+                getState().patient.checkinTime,
+                email,
+                getState().patient.isSignedIn,
+                (new Date()).toISOString()
+              )
+            )
           }
         },
         {
@@ -815,19 +839,41 @@ export const setListener = (email) => (dispatch, getState) => {
     .then(
       interval => {
         dispatch(removeListeners())
-
-        if (getState().patient.isSignedIn) {
+        return interval
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      interval => {
+        if (isSignedIn) {
           console.log('TIMEOUT SHOULD SET TO: ' + interval)
-          if (interval > 0) {
-            const listener = Promise.resolve(
-              setTimeout(
-                () => { dispatch(setListener(email)) },
-                interval
-              )
-            )
-            return listener
+          if (isTest) {
+            return null
           } else {
-            return noCheckinAlert()
+            if (interval > 0) {
+              const listener = Promise.resolve(
+                setTimeout(
+                  () => {
+                    dispatch(
+                      setListener(
+                        getState().patient.alertTimes,
+                        getState().patient.checkinTime,
+                        email,
+                        getState().patient.isSignedIn,
+                        (new Date()).toISOString()
+                      )
+                    )
+                  },
+                  interval
+                )
+              )
+              return listener
+            } else {
+              return noCheckinAlert()
+            }
           }
         } else {
           // TODO: Add logic for when patient is signed out, such as an
@@ -841,6 +887,7 @@ export const setListener = (email) => (dispatch, getState) => {
     )
     .then(
       listener => {
+        console.log('LISTENER ID: ' + listener)
         dispatch(setListenerFulfilledAction(listener))
       },
       error => {
