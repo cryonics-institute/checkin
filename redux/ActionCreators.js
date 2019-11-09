@@ -851,7 +851,7 @@ export const setListener = (
         if (isSignedIn) {
           console.log('TIMEOUT SHOULD SET TO: ' + interval)
           if (isTest) {
-            return null
+            return interval
           } else {
             if (interval > 0) {
               const listener = Promise.resolve(
