@@ -48,6 +48,7 @@ function getRandomIntInclusive (min, max) {
 describe(
   'setListener',
   () => {
+    // TODO: Gives SIGABRT error when iterating 1000 times.
     for (var i = 0; i < 100; i++) {
       beforeEach(
         () => { // Runs before each test in the suite
