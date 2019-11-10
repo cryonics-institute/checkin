@@ -210,7 +210,7 @@ describe(
             action => action.payload !== undefined
           ).payload
           // console.log(actionPayload)
-          await expect(actionPayload).toBeLessThanOrEqual(86400000)
+          await expect(actionPayload).toBeLessThanOrEqual(86400000 / 4)
         }
       )
     }
