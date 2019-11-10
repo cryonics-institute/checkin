@@ -30,6 +30,20 @@ import * as ActionTypes from './ActionTypes'
 const middlewares = [thunk, logger]
 const mockStore = configureStore(middlewares)
 
+/**
+ * Getting a random integer between two values, inclusive.  Both, the maximum
+ * and the minimum are inclusive.
+ * @param {Integer}   min Minimum end of range.
+ * @param {Integer}   max Maximum end of range.
+ * @return {Integer}      Random integer.
+ * @see Mozilla. (2019). Math.random() [Software documentation]. Retrieved from {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random}
+ */
+function getRandomIntInclusive (min, max) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return parseInt(Math.floor(Math.random() * (max - min + 1)) + min)
+}
+
 describe(
   'setListener',
   () => {
@@ -39,7 +53,6 @@ describe(
       }
     )
 
-    const now = (new Date()).toISOString()
     const store = mockStore(
       {
         patient: {
@@ -77,47 +90,126 @@ describe(
       }
     )
 
-    test(
-      'fulfills',
-      async () => {
-        await store.dispatch(
-          Actions.setListener(
-            store.getState().patient.alertTimes,
-            store.getState().patient.checkinTime,
-            store.getState().patient.email,
-            store.getState().patient.isSignedIn,
-            now,
-            true
-          )
+    for (var i = 0; i < 100; i++) {
+      const today = (new Date())
+      const now = (
+        new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          getRandomIntInclusive(0, 23),
+          getRandomIntInclusive(0, 59)
         )
+      ).toISOString()
 
-        console.log(store.getActions())
-        const actionTypes = store.getActions().map(action => action.type)
-        console.log(actionTypes)
-        await expect(actionTypes).toContain(ActionTypes.SET_LISTENER_FULFILLED)
-      }
-    )
-
-    test(
-      'returns',
-      async () => {
-        await store.dispatch(
-          Actions.setListener(
-            store.getState().patient.alertTimes,
-            store.getState().patient.checkinTime,
-            store.getState().patient.email,
-            store.getState().patient.isSignedIn,
-            now,
-            true
+      test(
+        'fulfills',
+        async () => {
+          await store.dispatch(
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
           )
-        )
 
-        const actionPayload = store.getActions().find(
-          action => action.payload !== undefined
-        ).payload
-        console.log(actionPayload)
-        await expect(actionPayload).toBeDefined()
-      }
-    )
+          // console.log(store.getActions())
+          const actionTypes = store.getActions().map(action => action.type)
+          // console.log(actionTypes)
+          await expect(actionTypes).toContain(ActionTypes.SET_LISTENER_FULFILLED)
+        }
+      )
+
+      test(
+        'returns defined value',
+        async () => {
+          await store.dispatch(
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
+          )
+
+          const actionPayload = store.getActions().find(
+            action => action.payload !== undefined
+          ).payload
+          // console.log(actionPayload)
+          await expect(actionPayload).toBeDefined()
+        }
+      )
+
+      test(
+        'returns integer',
+        async () => {
+          await store.dispatch(
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
+          )
+
+          const actionPayload = store.getActions().find(
+            action => action.payload !== undefined
+          ).payload
+          // console.log(actionPayload)
+          await expect(Number.isInteger(actionPayload)).toBe(true)
+        }
+      )
+
+      test(
+        'returns positive number',
+        async () => {
+          await store.dispatch(
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
+          )
+
+          const actionPayload = store.getActions().find(
+            action => action.payload !== undefined
+          ).payload
+          // console.log(actionPayload)
+          await expect(actionPayload).toBeGreaterThanOrEqual(0)
+        }
+      )
+
+      test(
+        'returns value signifying less than a day',
+        async () => {
+          await store.dispatch(
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
+          )
+
+          const actionPayload = store.getActions().find(
+            action => action.payload !== undefined
+          ).payload
+          // console.log(actionPayload)
+          await expect(actionPayload).toBeLessThanOrEqual(1440)
+        }
+      )
+    }
   }
 )
