@@ -21,6 +21,7 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import moment from 'moment'
 import configureStore from 'redux-mock-store'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
@@ -47,50 +48,13 @@ function getRandomIntInclusive (min, max) {
 describe(
   'setListener',
   () => {
-    beforeEach(
-      () => { // Runs before each test in the suite
-        store.clearActions()
-      }
-    )
-
-    const store = mockStore(
-      {
-        patient: {
-          alertTimes: [
-            {
-              id: 'RiK-fQFj',
-              time: '1970-01-01T06:00:00.000Z',
-              validity: true
-            },
-            {
-              id: 'vgsRueN0',
-              time: '1970-01-01T12:00:00.000Z',
-              validity: true
-            },
-            {
-              id: 'IUIPqCHx',
-              time: '1970-01-01T18:00:00.000Z',
-              validity: true
-            },
-            {
-              id: 'SakR1lCV',
-              time: '1970-01-02T00:00:00.000Z',
-              validity: true
-            }
-          ],
-          checkinInterval: 5000,
-          checkinTime: '2019-10-31T22:47:02.340Z',
-          email: 'a@a.aa',
-          errMess: null,
-          isSignedIn: true,
-          listeners: [],
-          signinTime: '2019-10-31T22:45:35.794Z',
-          snooze: 9
-        }
-      }
-    )
-
     for (var i = 0; i < 100; i++) {
+      beforeEach(
+        () => { // Runs before each test in the suite
+          store.clearActions()
+        }
+      )
+
       const today = (new Date())
       const now = (
         new Date(
@@ -101,6 +65,45 @@ describe(
           getRandomIntInclusive(0, 59)
         )
       ).toISOString()
+      const checkinTime = moment(now).subtract(
+        getRandomIntInclusive(0, 14400), 'minutes'
+      ).toISOString()
+      const store = mockStore(
+        {
+          patient: {
+            alertTimes: [
+              {
+                id: 'RiK-fQFj',
+                time: '1970-01-01T06:00:00.000Z',
+                validity: true
+              },
+              {
+                id: 'vgsRueN0',
+                time: '1970-01-01T12:00:00.000Z',
+                validity: true
+              },
+              {
+                id: 'IUIPqCHx',
+                time: '1970-01-01T18:00:00.000Z',
+                validity: true
+              },
+              {
+                id: 'SakR1lCV',
+                time: '1970-01-02T00:00:00.000Z',
+                validity: true
+              }
+            ],
+            checkinInterval: 5000,
+            checkinTime: checkinTime,
+            email: 'a@a.aa',
+            errMess: null,
+            isSignedIn: true,
+            listeners: [],
+            signinTime: '2019-10-31T22:45:35.794Z',
+            snooze: 9
+          }
+        }
+      )
 
       test(
         'fulfills',
@@ -207,7 +210,7 @@ describe(
             action => action.payload !== undefined
           ).payload
           // console.log(actionPayload)
-          await expect(actionPayload).toBeLessThanOrEqual(1440)
+          await expect(actionPayload).toBeLessThanOrEqual(86400000)
         }
       )
     }
