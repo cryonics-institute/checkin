@@ -31,59 +31,55 @@ const middlewares = [thunk, logger]
 const mockStore = configureStore(middlewares)
 
 describe(
-  'selectAvatar',
+  'setListener',
   () => {
-    test(
-      'setListener',
-      async () => {
-        beforeEach(
-          () => { // Runs before each test in the suite
-            store.clearActions()
-          }
-        )
+    beforeEach(
+      () => { // Runs before each test in the suite
+        store.clearActions()
+      }
+    )
 
-        const expectedActions = {
-          payload: null,
-          type: ActionTypes.SET_LISTENER_FULFILLED
-        }
-        const now = (new Date()).toISOString()
-        const store = mockStore(
-          {
-            patient: {
-              alertTimes: [
-                {
-                  id: 'RiK-fQFj',
-                  time: '1970-01-01T06:00:00.000Z',
-                  validity: true
-                },
-                {
-                  id: 'vgsRueN0',
-                  time: '1970-01-01T12:00:00.000Z',
-                  validity: true
-                },
-                {
-                  id: 'IUIPqCHx',
-                  time: '1970-01-01T18:00:00.000Z',
-                  validity: true
-                },
-                {
-                  id: 'SakR1lCV',
-                  time: '1970-01-02T00:00:00.000Z',
-                  validity: true
-                }
-              ],
-              checkinInterval: 5000,
-              checkinTime: '2019-10-31T22:47:02.340Z',
-              email: 'a@a.aa',
-              errMess: null,
-              isSignedIn: true,
-              listeners: [],
-              signinTime: '2019-10-31T22:45:35.794Z',
-              snooze: 9
+    const now = (new Date()).toISOString()
+    const store = mockStore(
+      {
+        patient: {
+          alertTimes: [
+            {
+              id: 'RiK-fQFj',
+              time: '1970-01-01T06:00:00.000Z',
+              validity: true
+            },
+            {
+              id: 'vgsRueN0',
+              time: '1970-01-01T12:00:00.000Z',
+              validity: true
+            },
+            {
+              id: 'IUIPqCHx',
+              time: '1970-01-01T18:00:00.000Z',
+              validity: true
+            },
+            {
+              id: 'SakR1lCV',
+              time: '1970-01-02T00:00:00.000Z',
+              validity: true
             }
-          }
-        )
+          ],
+          checkinInterval: 5000,
+          checkinTime: '2019-10-31T22:47:02.340Z',
+          email: 'a@a.aa',
+          errMess: null,
+          isSignedIn: true,
+          listeners: [],
+          signinTime: '2019-10-31T22:45:35.794Z',
+          snooze: 9
+        }
+      }
+    )
 
+    test(
+      'fulfills',
+      async () => {
         await store.dispatch(
           Actions.setListener(
             store.getState().patient.alertTimes,
@@ -94,8 +90,33 @@ describe(
             true
           )
         )
-        // await expect(store.getState().patient.isSignedIn).toBeTruthy()
-        await expect(store.getActions()).toContainEqual(expectedActions)
+
+        console.log(store.getActions())
+        const actionTypes = store.getActions().map(action => action.type)
+        console.log(actionTypes)
+        await expect(actionTypes).toContain(ActionTypes.SET_LISTENER_FULFILLED)
+      }
+    )
+
+    test(
+      'returns',
+      async () => {
+        await store.dispatch(
+          Actions.setListener(
+            store.getState().patient.alertTimes,
+            store.getState().patient.checkinTime,
+            store.getState().patient.email,
+            store.getState().patient.isSignedIn,
+            now,
+            true
+          )
+        )
+
+        const actionPayload = store.getActions().find(
+          action => action.payload !== undefined
+        ).payload
+        console.log(actionPayload)
+        await expect(actionPayload).toBeDefined()
       }
     )
   }
