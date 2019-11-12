@@ -786,7 +786,7 @@ export const setListener = (
               if (interval > 0) {
                 return interval * 60000
               } else {
-                return (interval + 1440) * 60000
+                return 0 // (interval + 1440) * 60000
               }
             } else {
               return 0
@@ -811,6 +811,7 @@ export const setListener = (
           onPress: () => {
             console.log('OK Pressed')
             dispatch(
+              // TODO: Grab values from Firestore instead of state.
               setListener(
                 getState().patient.alertTimes,
                 getState().patient.checkinTime,
@@ -860,6 +861,7 @@ export const setListener = (
                 setTimeout(
                   () => {
                     dispatch(
+                      // TODO: Grab values from Firestore instead of state.
                       setListener(
                         getState().patient.alertTimes,
                         getState().patient.checkinTime,
