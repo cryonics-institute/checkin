@@ -669,7 +669,7 @@ export const setListener = (
   alertTimes, checkinTime, email, isSignedIn, now, isTest = false
 ) => (dispatch, getState) => {
   const findClosestCheckinTimes = (checkinMinutes, nowMinutes) => {
-    const alertMinutes = alertTimes.map(
+    const alertMinutes = alertTimes.filter(alert => alert.validity).map(
       element => (parseInt(element.time.slice(-13, -11), 10) * 60) +
         parseInt(element.time.slice(-10, -8), 10)
     )
