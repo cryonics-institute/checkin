@@ -807,25 +807,11 @@ export const setListener = (
       'Your buddy has not checked in.\nMake contact immediately!',
       [
         {
-          text: 'OK',
-          onPress: () => {
-            console.log('OK Pressed')
-            dispatch(
-              // TODO: Grab values from Firestore instead of state.
-              setListener(
-                getState().patient.alertTimes,
-                getState().patient.checkinTime,
-                email,
-                getState().patient.isSignedIn,
-                (new Date()).toISOString()
-              )
-            )
-          }
-        },
-        {
           text: 'Dismiss',
           onPress: () => {
             console.log('Dismiss Pressed')
+            dispatch(removeListeners())
+            // TODO: Go to new screen indicating that patient hasn't checked in.
           },
           style: 'cancel'
         }
@@ -876,7 +862,15 @@ export const setListener = (
               )
               return listener
             } else {
-              return noCheckinAlert()
+              const listener = Promise.resolve(
+                setTimeout(
+                  () => {
+                    noCheckinAlert()
+                  },
+                  1000
+                )
+              )
+              return listener
             }
           }
         } else {
