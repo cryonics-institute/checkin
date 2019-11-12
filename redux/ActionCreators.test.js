@@ -32,7 +32,7 @@ const middlewares = [thunk, logger]
 const mockStore = configureStore(middlewares)
 
 /**
- * Getting a random integer between two values, inclusive.  Both, the maximum
+ * Returns a random integer between two values, inclusive.  Both, the maximum
  * and the minimum are inclusive.
  * @param {Integer}   min Minimum end of range.
  * @param {Integer}   max Maximum end of range.
@@ -48,7 +48,6 @@ function getRandomIntInclusive (min, max) {
 describe(
   'setListener',
   () => {
-    // TODO: Gives SIGABRT error when iterating 1000 times.
     for (var i = 0; i < 100; i++) {
       beforeEach(
         () => { // Runs before each test in the suite
@@ -69,31 +68,31 @@ describe(
       const checkinTime = moment(now).subtract(
         getRandomIntInclusive(0, 14400), 'minutes'
       ).toISOString()
+      const alertTimes = []
+      const length = getRandomIntInclusive(1, 10)
+      for (var j = 0; j < length; j++) {
+        const time = (
+          new Date(
+            1970,
+            0,
+            1,
+            getRandomIntInclusive(0, 11),
+            getRandomIntInclusive(0, 59)
+          )
+        ).toISOString()
+        // console.log('TIME ADDED TO ARRAY: ' + time)
+        alertTimes.push(
+          {
+            id: '',
+            time: time,
+            validity: true
+          }
+        )
+      }
       const store = mockStore(
         {
           patient: {
-            alertTimes: [
-              {
-                id: 'RiK-fQFj',
-                time: '1970-01-01T06:00:00.000Z',
-                validity: true
-              },
-              {
-                id: 'vgsRueN0',
-                time: '1970-01-01T12:00:00.000Z',
-                validity: true
-              },
-              {
-                id: 'IUIPqCHx',
-                time: '1970-01-01T18:00:00.000Z',
-                validity: true
-              },
-              {
-                id: 'SakR1lCV',
-                time: '1970-01-02T00:00:00.000Z',
-                validity: true
-              }
-            ],
+            alertTimes: alertTimes,
             checkinInterval: 5000,
             checkinTime: checkinTime,
             email: 'a@a.aa',
@@ -211,7 +210,7 @@ describe(
             action => action.payload !== undefined
           ).payload
           // console.log(actionPayload)
-          await expect(actionPayload).toBeLessThanOrEqual(86400000 / 4)
+          await expect(actionPayload).toBeLessThanOrEqual(86400000)
         }
       )
     }
