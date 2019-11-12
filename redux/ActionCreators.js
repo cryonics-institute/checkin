@@ -675,12 +675,14 @@ export const setListener = (
     )
 
     if (alertMinutes.length === 1) {
-      return {
-        beforeNow: alertMinutes[0],
-        afterNow: alertMinutes[0],
-        beforeCheckin: alertMinutes[0],
-        afterCheckin: alertMinutes[0]
-      }
+      return Promise.resolve(
+        {
+          beforeNow: alertMinutes[0],
+          afterNow: alertMinutes[0],
+          beforeCheckin: alertMinutes[0],
+          afterCheckin: alertMinutes[0]
+        }
+      )
     } else {
       return Promise.resolve(
         {
