@@ -31,7 +31,9 @@ export const Patient = (
     checkinTime: null,
     email: null,
     errMess: null,
+    isAlertActive: false,
     isSignedIn: null,
+    lastAlertTime: null,
     listeners: [],
     signinTime: null,
     snooze: null
@@ -84,7 +86,30 @@ export const Patient = (
         snooze: action.payload[5]
       }
 
-    // TODO: Set results of actions.
+    case ActionTypes.REMOVE_LISTENER:
+      return {
+        ...state,
+        listeners: action.payload
+      }
+
+    case ActionTypes.REMOVE_LISTENERS:
+      return {
+        ...state,
+        listeners: []
+      }
+
+    case ActionTypes.SET_ALERT_ACTIVE:
+      return {
+        ...state,
+        isAlertActive: true
+      }
+
+    case ActionTypes.SET_LAST_ALERT_TIME:
+      return {
+        ...state,
+        lastAlertTime: action.payload
+      }
+
     case ActionTypes.SET_LISTENER_REQUESTED:
       return {
         ...state,
@@ -102,18 +127,6 @@ export const Patient = (
         ...state,
         errMess: null,
         listeners: state.listeners.concat(action.payload)
-      }
-
-    case ActionTypes.REMOVE_LISTENER:
-      return {
-        ...state,
-        listeners: action.payload
-      }
-
-    case ActionTypes.REMOVE_LISTENERS:
-      return {
-        ...state,
-        listeners: []
       }
 
     default:

@@ -659,6 +659,41 @@ export const selectStatusAction = (isPatient) => (
 )
 
 /**
+ * Set the status of the patient's alert-indicator to active.
+ */
+export const setAlertActive = () => (dispatch) => {
+  dispatch(setAlertActiveAction())
+}
+
+/**
+ * Initiate an action indicating that the patient has missed a check-in.
+ */
+export const setAlertActiveAction = () => (
+  {
+    type: ActionTypes.SET_ALERT_ACTIVE
+  }
+)
+
+/**
+ * Set the last time the patient should have checked in.
+ * @param {String} lastAlertTime  Time patient should have checked in.
+ */
+export const setLastAlertTime = (lastAlertTime) => (dispatch) => {
+  dispatch(setLastAlertTimeAction(lastAlertTime))
+}
+
+/**
+ * Initiate an action setting the last time the patient should checked in.
+ * @param {String} lastAlertTime  Time patient should have checked in.
+ */
+export const setLastAlertTimeAction = (lastAlertTime) => (
+  {
+    type: ActionTypes.SET_LAST_ALERT_TIME,
+    payload: lastAlertTime
+  }
+)
+
+/**
  * Set a recurring listener that will check if the patient that the standby-user
  * is following has checked in within the alotted interval or else alert standby
  * that the user has not checked in.
@@ -755,50 +790,58 @@ export const setListener = (
   const setInterval = () => {
     console.log('LAST CHECK-IN: ' + checkinTime)
     console.log('NOW: ' + now)
+    const checkinMinutes = (parseInt(checkinTime.slice(-13, -11), 10) * 60) +
+      parseInt(checkinTime.slice(-10, -8), 10)
+    const nowMinutes = (parseInt(now.slice(-13, -11), 10) * 60) +
+      parseInt(now.slice(-10, -8), 10)
 
-    if (moment(now) - moment(checkinTime) > 86400000) {
-      return 0
-    } else {
-      const checkinMinutes = (parseInt(checkinTime.slice(-13, -11), 10) * 60) +
-        parseInt(checkinTime.slice(-10, -8), 10)
-      const nowMinutes = (parseInt(now.slice(-13, -11), 10) * 60) +
-        parseInt(now.slice(-10, -8), 10)
+    return findClosestCheckinTimes(checkinMinutes, nowMinutes)
+      .then(
+        alertTime => {
+          console.log('CHECKIN MINUTES: ' + checkinMinutes)
+          console.log('NOW MINUTES: ' + nowMinutes)
+          console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
+          console.log('TIME AFTER NOW: ' + alertTime.afterNow)
+          console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
+          console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
+          console.log(alertTime.beforeNow === alertTime.beforeCheckin)
+          console.log(alertTime.afterNow === alertTime.afterCheckin)
 
-      return findClosestCheckinTimes(checkinMinutes, nowMinutes)
-        .then(
-          alertTime => {
-            console.log('CHECKIN MINUTES: ' + checkinMinutes)
-            console.log('NOW MINUTES: ' + nowMinutes)
-            console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
-            console.log('TIME AFTER NOW: ' + alertTime.afterNow)
-            console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
-            console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
-            console.log(alertTime.beforeNow === alertTime.beforeCheckin)
-            console.log(alertTime.afterNow === alertTime.afterCheckin)
+          const lastAlertTime = moment(
+            alertTimes.filter(
+              alert => alert.validity
+            ).filter(
+              element => (parseInt(element.time.slice(-13, -11), 10) * 60) +
+                parseInt(element.time.slice(-10, -8), 10) === alertTime.beforeNow
+            )[0].time
+          ).format('h:mm a')
+          dispatch(setLastAlertTime(lastAlertTime))
+          console.log('LAST ALERT TIME: ' + lastAlertTime)
 
-            if (
-              alertTime.beforeNow === alertTime.beforeCheckin &&
-              alertTime.afterNow === alertTime.afterCheckin
-            ) {
-              const interval = alertTime.afterNow - nowMinutes
-              console.log(interval)
+          if (moment(now) - moment(checkinTime) > 86400000) {
+            return 0
+          } else if (
+            alertTime.beforeNow === alertTime.beforeCheckin &&
+            alertTime.afterNow === alertTime.afterCheckin
+          ) {
+            const interval = alertTime.afterNow - nowMinutes
+            console.log(interval)
 
-              if (interval > 0) {
-                return interval * 60000
-              } else {
-                return 0 // (interval + 1440) * 60000
-              }
+            if (interval > 0) {
+              return interval * 60000
             } else {
-              return 0
+              return 0 // (interval + 1440) * 60000
             }
-          },
-          error => {
-            var errorMessage = new Error(error.message)
-            throw errorMessage
+          } else {
+            return 0
           }
-        )
-        .catch(error => dispatch(setListenerRejectedAction(error.message)))
-    }
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .catch(error => dispatch(setListenerRejectedAction(error.message)))
   }
 
   const noCheckinAlert = () => {
@@ -811,7 +854,7 @@ export const setListener = (
           onPress: () => {
             console.log('Dismiss Pressed')
             dispatch(removeListeners())
-            // TODO: Go to new screen indicating that patient hasn't checked in.
+            dispatch(setAlertActive())
           },
           style: 'cancel'
         }

@@ -8,10 +8,37 @@ import { styles } from '../styles/Styles'
 const mapStateToProps = state => {
   return {
     checkinTime: state.patient.checkinTime,
+    lastAlertTime: state.patient.lastAlertTime,
     patientEmail: state.patient.email,
+    patientAlertActive: state.patient.isAlertActive,
     patientSignedIn: state.patient.isSignedIn,
     signinTime: state.patient.signinTime
   }
+}
+
+const RenderActiveAlertView = (props) => {
+  return (
+    <View style = { styles.containerCentered }>
+      <Text h1 style = { styles.title }>ALERT</Text>
+      <Text style = { styles.text }>
+        The member should have checked in at {props.lastAlertTime}.
+      </Text>
+      <Text h4 style = { styles.title }>Sign-In Time</Text>
+      <Text style = { styles.text }>
+        {
+          moment(props.signinTime)
+            .format('dddd, MMMM Do YYYY, h:mm:ss a')
+        }
+      </Text>
+      <Text h4 style = { styles.title }>Check-In Time</Text>
+      <Text style = { styles.text }>
+        {
+          moment(props.checkinTime)
+            .format('dddd, MMMM Do YYYY, h:mm:ss a')
+        }
+      </Text>
+    </View>
+  )
 }
 
 const RenderNullPatientStatusView = (props) => {
@@ -68,10 +95,18 @@ class StandbyHome extends React.Component {
       return (
         <RenderNullPatientStatusView/>
       )
-    } else if (this.props.patientSignedIn) {
+    } else if (this.props.patientSignedIn && !this.props.patientAlertActive) {
       return (
         <RenderSignedInPatientView
           checkinTime = { this.props.checkinTime }
+          signinTime = { this.props.signinTime }
+        />
+      )
+    } else if (this.props.patientSignedIn && this.props.patientAlertActive) {
+      return (
+        <RenderActiveAlertView
+          checkinTime = { this.props.checkinTime }
+          lastAlertTime = { this.props.lastAlertTime }
           signinTime = { this.props.signinTime }
         />
       )
