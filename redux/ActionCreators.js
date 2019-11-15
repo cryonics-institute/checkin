@@ -118,6 +118,7 @@ export const addDocumentFulfilledAction = () => (
   }
 )
 
+// TODO: The most recent commit fails in the app at addDocument and setListener.
 /**
  * Add a patient to be be tracked by the current standby user.  First, a
  * setListener action creator is called with the patient's e-mail.  After that
