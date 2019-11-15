@@ -63,10 +63,10 @@ const convertTo24Hour = (time) => {
  * navigation service is told to navigate to the patient's app-stack.
  * @return {Promise}  A promise to create a new Firebase document.
  */
-export const addDocument = (database, email) => (dispatch, getState) => {
+export const addDocument = (email) => (dispatch, getState) => {
   dispatch(addDocumentRequestedAction())
 
-  return database.collection('users').doc(email).set(
+  return db.collection('users').doc(email).set(
     {
       alertTimes: getState().inputs.array,
       checkinInterval: getState().timer.interval,
@@ -129,26 +129,7 @@ export const addDocumentFulfilledAction = () => (
 export const addPatient = (email) => (dispatch, getState) => {
   dispatch(addPatientRequestedAction(email))
 
-  return Promise.resolve(
-    dispatch(getDocument(db, email))
-  )
-    .then(
-      () => {
-        dispatch(
-          setListener(
-            getState().patient.alertTimes,
-            getState().patient.checkinTime,
-            email,
-            getState().patient.isSignedIn,
-            (new Date()).toISOString()
-          )
-        )
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
+  return Promise.resolve(dispatch(setListener(email)))
     .then(
       () => {
         dispatch(addPatientFulfilledAction())
@@ -201,10 +182,10 @@ export const addPatientFulfilledAction = () => (
  * elapsed.
  * @return {Promise}        A promise to update the check-in time and interval.
  */
-export const checkin = (database, email) => (dispatch, getState) => {
+export const checkin = () => (dispatch, getState) => {
   dispatch(checkinRequestedAction())
 
-  return database.collection('users').doc(email).update(
+  return db.collection('users').doc(getState().patient.email).update(
     {
       checkinTime: (new Date()).toISOString()
     }
@@ -267,10 +248,10 @@ export const checkinFulfilledAction = () => (
  * @param  {String}   email E-mail of the currently-authorized patient.
  * @return {Promise}        A promise to update check-in state parameters.
  */
-export const getDocument = (database, email) => (dispatch) => {
+export const getDocument = () => (dispatch, getState) => {
   dispatch(getDocumentRequestedAction())
 
-  return database.collection('users').doc(email).get()
+  return db.collection('users').doc(getState().patient.email).get()
     .then(
       doc => {
         if (doc.exists) {
@@ -451,7 +432,7 @@ export const registerPatient = (creds) => (dispatch) => {
     .then(
       (userCredential) => {
         dispatch(registrationFulfilledAction(userCredential.user))
-        dispatch(addDocument(db, userCredential.user.email))
+        dispatch(addDocument(userCredential.user.email))
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -700,10 +681,8 @@ export const setLastAlertTimeAction = (lastAlertTime) => (
  * @param  {String} email E-mail of the patient to listen to.
  * @return {Promise}      Promise to create another listener after an interval.
  */
-export const setListener = (
-  alertTimes, checkinTime, email, isSignedIn, now, isTest = false
-) => (dispatch, getState) => {
-  const findClosestCheckinTimes = (checkinMinutes, nowMinutes) => {
+export const setListener = (email, isTest = false) => (dispatch, getState) => {
+  const findClosestCheckinTimes = (alertTimes, checkinMinutes, nowMinutes) => {
     const alertMinutes = alertTimes.filter(alert => alert.validity).map(
       element => (parseInt(element.time.slice(-13, -11), 10) * 60) +
         parseInt(element.time.slice(-10, -8), 10)
@@ -787,7 +766,7 @@ export const setListener = (
     }
   }
 
-  const setInterval = () => {
+  const setInterval = (alertTimes, checkinTime, now) => {
     console.log('LAST CHECK-IN: ' + checkinTime)
     console.log('NOW: ' + now)
     const checkinMinutes = (parseInt(checkinTime.slice(-13, -11), 10) * 60) +
@@ -795,7 +774,7 @@ export const setListener = (
     const nowMinutes = (parseInt(now.slice(-13, -11), 10) * 60) +
       parseInt(now.slice(-10, -8), 10)
 
-    return findClosestCheckinTimes(checkinMinutes, nowMinutes)
+    return findClosestCheckinTimes(alertTimes, checkinMinutes, nowMinutes)
       .then(
         alertTime => {
           console.log('CHECKIN MINUTES: ' + checkinMinutes)
@@ -807,16 +786,19 @@ export const setListener = (
           console.log(alertTime.beforeNow === alertTime.beforeCheckin)
           console.log(alertTime.afterNow === alertTime.afterCheckin)
 
-          const lastAlertTime = moment(
-            alertTimes.filter(
-              alert => alert.validity
-            ).filter(
-              element => (parseInt(element.time.slice(-13, -11), 10) * 60) +
-                parseInt(element.time.slice(-10, -8), 10) === alertTime.beforeNow
-            )[0].time
-          ).format('h:mm a')
-          dispatch(setLastAlertTime(lastAlertTime))
-          console.log('LAST ALERT TIME: ' + lastAlertTime)
+          if (!isTest) {
+            const lastAlertTime = moment(
+              alertTimes.filter(
+                alert => alert.validity
+              ).filter(
+                element => (parseInt(element.time.slice(-13, -11), 10) * 60) +
+                  parseInt(element.time.slice(-10, -8), 10) ===
+                  alertTime.beforeNow
+              )[0].time
+            ).format('h:mm a')
+            dispatch(setLastAlertTime(lastAlertTime))
+            console.log('LAST ALERT TIME: ' + lastAlertTime)
+          }
 
           if (moment(now) - moment(checkinTime) > 86400000) {
             return 0
@@ -866,11 +848,25 @@ export const setListener = (
   dispatch(setListenerRequestedAction())
 
   return Promise.resolve(
-    setInterval()
+    getDocument(getState().patient.email)
   )
+    .then(
+      () => {
+        return setInterval(
+          getState().patient.alertTimes,
+          getState().patient.checkinTime,
+          (new Date()).toISOString()
+        )
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
     .then(
       interval => {
         dispatch(removeListeners())
+        console.log('INTERVAL PASSED: ' + interval)
         return interval
       },
       error => {
@@ -880,25 +876,18 @@ export const setListener = (
     )
     .then(
       interval => {
-        if (isSignedIn) {
+        if (getState().patient.isSignedIn) {
           console.log('TIMEOUT SHOULD SET TO: ' + interval)
+          console.log('IS TESTING SET? ' + isTest)
           if (isTest) {
+            console.log('TIMEOUT SHOULD SET TO: ' + interval)
             return interval
           } else {
             if (interval > 0) {
               const listener = Promise.resolve(
                 setTimeout(
                   () => {
-                    dispatch(
-                      // TODO: Grab values from Firestore instead of state.
-                      setListener(
-                        getState().patient.alertTimes,
-                        getState().patient.checkinTime,
-                        email,
-                        getState().patient.isSignedIn,
-                        (new Date()).toISOString()
-                      )
-                    )
+                    dispatch(setListener(getState().patient.email))
                   },
                   interval
                 )
@@ -989,7 +978,7 @@ export const setTimer = (interval) => (dispatch, getState) => {
             onPress: () => {
               console.log('OK Pressed')
               dispatch(removeTimers())
-              dispatch(checkin(db))
+              dispatch(checkin())
             }
           },
           {
@@ -1071,10 +1060,10 @@ export const setTimerFulfilledAction = (timer) => (
  * Set the interval for the setTimer function.
  * @param  {Integer}  interval  The interval between alerts.
  */
-export const setTimerInterval = (database, interval) => (dispatch, getState) => {
+export const setTimerInterval = (interval) => (dispatch, getState) => {
   dispatch(setTimerIntervalRequestedAction())
 
-  database.collection('users').doc(getState().auth.user.email).update(
+  db.collection('users').doc(getState().auth.user.email).update(
     {
       checkinInterval: interval
     }
@@ -1132,7 +1121,7 @@ export const signinPatient = (creds) => (dispatch) => {
     .then(
       userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))
-        dispatch(addDocument(db, userCredential.user.email))
+        dispatch(addDocument(userCredential.user.email))
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1200,8 +1189,8 @@ export const signinFulfilledAction = (user) => (
 )
 
 /**
- * Sign out a patient on Firebase, which first removes that patient's document on
- * Firebase.  After those promises are returned, an action for sign-out-
+ * Sign out a patient on Firebase, which first removes that patient's document
+ * on Firebase.  After those promises are returned, an action for sign-out-
  * fulfillment is initiated, a request to remove timers is initiated, and the
  * navigation service is told to navigate to the authorization stack.
  * @return {Promise}  A promise to sign-out a patient-user.
