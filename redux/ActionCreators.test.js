@@ -97,7 +97,9 @@ describe(
             checkinTime: checkinTime,
             email: 'a@a.aa',
             errMess: null,
+            isAlertActive: false,
             isSignedIn: true,
+            lastAlertTime: null,
             listeners: [],
             signinTime: '2019-10-31T22:45:35.794Z',
             snooze: 9
@@ -109,14 +111,7 @@ describe(
         'fulfills',
         async () => {
           await store.dispatch(
-            Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
-              now,
-              true
-            )
+            Actions.setListener(store.getState().patient.email, true)
           )
 
           // console.log(store.getActions())
@@ -130,14 +125,7 @@ describe(
         'returns defined value',
         async () => {
           await store.dispatch(
-            Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
-              now,
-              true
-            )
+            Actions.setListener(store.getState().patient.email, true)
           )
 
           const actionPayload = store.getActions().find(
@@ -152,14 +140,7 @@ describe(
         'returns integer',
         async () => {
           await store.dispatch(
-            Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
-              now,
-              true
-            )
+            Actions.setListener(store.getState().patient.email, true)
           )
 
           const actionPayload = store.getActions().find(
@@ -174,14 +155,7 @@ describe(
         'returns positive number',
         async () => {
           await store.dispatch(
-            Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
-              now,
-              true
-            )
+            Actions.setListener(store.getState().patient.email, true)
           )
 
           const actionPayload = store.getActions().find(
@@ -196,14 +170,7 @@ describe(
         'returns value signifying less than a day',
         async () => {
           await store.dispatch(
-            Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
-              now,
-              true
-            )
+            Actions.setListener(store.getState().patient.email, true)
           )
 
           const actionPayload = store.getActions().find(
