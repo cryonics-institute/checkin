@@ -111,12 +111,19 @@ describe(
         'fulfills',
         async () => {
           await store.dispatch(
-            Actions.setListener(store.getState().patient.email, true)
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
           )
 
           // console.log(store.getActions())
           const actionTypes = store.getActions().map(action => action.type)
-          // console.log(actionTypes)
+          // console.log('ACTION TYPES: ' + actionTypes)
           await expect(actionTypes).toContain(ActionTypes.SET_LISTENER_FULFILLED)
         }
       )
@@ -125,13 +132,20 @@ describe(
         'returns defined value',
         async () => {
           await store.dispatch(
-            Actions.setListener(store.getState().patient.email, true)
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
           )
 
           const actionPayload = store.getActions().find(
-            action => action.payload !== undefined
+            action => action.type === 'SET_LISTENER_FULFILLED'
           ).payload
-          // console.log(actionPayload)
+          // console.log('PAYLOAD: ' + actionPayload)
           await expect(actionPayload).toBeDefined()
         }
       )
@@ -140,13 +154,20 @@ describe(
         'returns integer',
         async () => {
           await store.dispatch(
-            Actions.setListener(store.getState().patient.email, true)
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
           )
 
           const actionPayload = store.getActions().find(
-            action => action.payload !== undefined
+            action => action.type === 'SET_LISTENER_FULFILLED'
           ).payload
-          // console.log(actionPayload)
+          // console.log('PAYLOAD: ' + actionPayload)
           await expect(Number.isInteger(actionPayload)).toBe(true)
         }
       )
@@ -155,13 +176,20 @@ describe(
         'returns positive number',
         async () => {
           await store.dispatch(
-            Actions.setListener(store.getState().patient.email, true)
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
           )
 
           const actionPayload = store.getActions().find(
-            action => action.payload !== undefined
+            action => action.type === 'SET_LISTENER_FULFILLED'
           ).payload
-          // console.log(actionPayload)
+          // console.log('PAYLOAD: ' + actionPayload)
           await expect(actionPayload).toBeGreaterThanOrEqual(0)
         }
       )
@@ -170,13 +198,20 @@ describe(
         'returns value signifying less than a day',
         async () => {
           await store.dispatch(
-            Actions.setListener(store.getState().patient.email, true)
+            Actions.setListener(
+              store.getState().patient.alertTimes,
+              store.getState().patient.checkinTime,
+              store.getState().patient.email,
+              store.getState().patient.isSignedIn,
+              now,
+              true
+            )
           )
 
           const actionPayload = store.getActions().find(
-            action => action.payload !== undefined
+            action => action.type === 'SET_LISTENER_FULFILLED'
           ).payload
-          // console.log(actionPayload)
+          // console.log('PAYLOAD: ' + actionPayload)
           await expect(actionPayload).toBeLessThanOrEqual(86400000)
         }
       )
