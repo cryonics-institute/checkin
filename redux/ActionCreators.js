@@ -787,7 +787,7 @@ export const setListener = (
     }
   }
 
-  const setInterval = (alertTimes, checkinTime, now) => {
+  const setInterval = () => {
     console.log('LAST CHECK-IN: ' + checkinTime)
     console.log('NOW: ' + now)
     const checkinMinutes = (parseInt(checkinTime.slice(-13, -11), 10) * 60) +
@@ -795,7 +795,7 @@ export const setListener = (
     const nowMinutes = (parseInt(now.slice(-13, -11), 10) * 60) +
       parseInt(now.slice(-10, -8), 10)
 
-    return findClosestCheckinTimes(alertTimes, checkinMinutes, nowMinutes)
+    return findClosestCheckinTimes(checkinMinutes, nowMinutes)
       .then(
         alertTime => {
           console.log('CHECKIN MINUTES: ' + checkinMinutes)
@@ -807,19 +807,16 @@ export const setListener = (
           console.log(alertTime.beforeNow === alertTime.beforeCheckin)
           console.log(alertTime.afterNow === alertTime.afterCheckin)
 
-          if (!isTest) {
-            const lastAlertTime = moment(
-              alertTimes.filter(
-                alert => alert.validity
-              ).filter(
-                element => (parseInt(element.time.slice(-13, -11), 10) * 60) +
-                  parseInt(element.time.slice(-10, -8), 10) ===
-                  alertTime.beforeNow
-              )[0].time
-            ).format('h:mm a')
-            dispatch(setLastAlertTime(lastAlertTime))
-            console.log('LAST ALERT TIME: ' + lastAlertTime)
-          }
+          const lastAlertTime = moment(
+            alertTimes.filter(
+              alert => alert.validity
+            ).filter(
+              element => (parseInt(element.time.slice(-13, -11), 10) * 60) +
+                parseInt(element.time.slice(-10, -8), 10) === alertTime.beforeNow
+            )[0].time
+          ).format('h:mm a')
+          dispatch(setLastAlertTime(lastAlertTime))
+          console.log('LAST ALERT TIME: ' + lastAlertTime)
 
           if (moment(now) - moment(checkinTime) > 86400000) {
             return 0
@@ -869,25 +866,11 @@ export const setListener = (
   dispatch(setListenerRequestedAction())
 
   return Promise.resolve(
-    getDocument(getState().patient.email)
+    setInterval()
   )
-    .then(
-      () => {
-        return setInterval(
-          getState().patient.alertTimes,
-          getState().patient.checkinTime,
-          (new Date()).toISOString()
-        )
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
     .then(
       interval => {
         dispatch(removeListeners())
-        console.log('INTERVAL PASSED: ' + interval)
         return interval
       },
       error => {
@@ -897,18 +880,25 @@ export const setListener = (
     )
     .then(
       interval => {
-        if (getState().patient.isSignedIn) {
+        if (isSignedIn) {
           console.log('TIMEOUT SHOULD SET TO: ' + interval)
-          console.log('IS TESTING SET? ' + isTest)
           if (isTest) {
-            console.log('TIMEOUT SHOULD SET TO: ' + interval)
             return interval
           } else {
             if (interval > 0) {
               const listener = Promise.resolve(
                 setTimeout(
                   () => {
-                    dispatch(setListener(getState().patient.email))
+                    dispatch(
+                      // TODO: Grab values from Firestore instead of state.
+                      setListener(
+                        getState().patient.alertTimes,
+                        getState().patient.checkinTime,
+                        email,
+                        getState().patient.isSignedIn,
+                        (new Date()).toISOString()
+                      )
+                    )
                   },
                   interval
                 )
