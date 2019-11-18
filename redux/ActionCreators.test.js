@@ -45,6 +45,8 @@ function getRandomIntInclusive (min, max) {
   return parseInt(Math.floor(Math.random() * (max - min + 1)) + min)
 }
 
+jest.useFakeTimers()
+
 describe(
   'setListener',
   () => {
@@ -117,6 +119,7 @@ describe(
               store.getState().patient.email,
               store.getState().patient.isSignedIn,
               now,
+              store.getState().patient.snooze,
               true
             )
           )
@@ -138,6 +141,7 @@ describe(
               store.getState().patient.email,
               store.getState().patient.isSignedIn,
               now,
+              store.getState().patient.snooze,
               true
             )
           )
@@ -160,6 +164,7 @@ describe(
               store.getState().patient.email,
               store.getState().patient.isSignedIn,
               now,
+              store.getState().patient.snooze,
               true
             )
           )
@@ -182,6 +187,7 @@ describe(
               store.getState().patient.email,
               store.getState().patient.isSignedIn,
               now,
+              store.getState().patient.snooze,
               true
             )
           )
@@ -204,6 +210,7 @@ describe(
               store.getState().patient.email,
               store.getState().patient.isSignedIn,
               now,
+              store.getState().patient.snooze,
               true
             )
           )

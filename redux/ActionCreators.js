@@ -72,7 +72,7 @@ export const addDocument = (email) => (dispatch, getState) => {
       checkinInterval: getState().timer.interval,
       checkinTime: (new Date()).toISOString(),
       signinTime: (new Date()).toISOString(),
-      snooze: 9 // TODO: Let patient set this.
+      snooze: 9 // TODO: Let patient set this.  It must be smaller than the shortest interval.
     }
   )
     .then(
@@ -140,7 +140,9 @@ export const addPatient = (email) => (dispatch, getState) => {
             getState().patient.checkinTime,
             email,
             getState().patient.isSignedIn,
-            (new Date()).toISOString()
+            (new Date()).toISOString(),
+            // (new Date(2019, 10, 16, 13, 8)).toISOString(),
+            getState().patient.snooze
           )
         )
       },
@@ -695,13 +697,19 @@ export const setLastAlertTimeAction = (lastAlertTime) => (
 
 /**
  * Set a recurring listener that will check if the patient that the standby-user
- * is following has checked in within the alotted interval or else alert standby
- * that the user has not checked in.
- * @param  {String} email E-mail of the patient to listen to.
- * @return {Promise}      Promise to create another listener after an interval.
+ * is following has checked in within the alotted interval plus the snooze or
+ * else alert standby that the user has not checked in.
+ * @param  {Array} alertTimes   Alert times set by patient.
+ * @param  {String} checkinTime Last time patient checked in.
+ * @param  {String} email       E-mail of the patient to listen to.
+ * @param  {Boolean} isSignedIn Whether patient is signed in.
+ * @param  {String} now         Time now.
+ * @param  {Integer} snooze     Minutes to wait before firing alert.
+ * @param  {Boolean} isTest     Whether called by unit test (optional).
+ * @return {Promise}            Promise to create listener after interval.
  */
 export const setListener = (
-  alertTimes, checkinTime, email, isSignedIn, now, isTest = false
+  alertTimes, checkinTime, email, isSignedIn, now, snooze, isTest = false
 ) => (dispatch, getState) => {
   const findClosestCheckinTimes = (checkinMinutes, nowMinutes) => {
     const alertMinutes = alertTimes.filter(alert => alert.validity).map(
@@ -737,7 +745,7 @@ export const setListener = (
 
             let i = 0
             while (timeBeforeNow === null && i < result.array.length) {
-              if (result.nowMinutes - result.array[i] < 0) {
+              if (result.nowMinutes - snooze < result.array[i]) {
                 timeBeforeNow = result.array[i - 1]
                 timeAfterNow = result.array[i]
               }
@@ -752,7 +760,7 @@ export const setListener = (
 
             let j = 0
             while (timeBeforeCheckin === null && j < result.array.length) {
-              if (result.checkinMinutes - result.array[j] < 0) {
+              if (result.checkinMinutes - snooze < result.array[j]) {
                 timeBeforeCheckin = result.array[j - 1]
                 timeAfterCheckin = result.array[j]
               }
@@ -798,15 +806,6 @@ export const setListener = (
     return findClosestCheckinTimes(checkinMinutes, nowMinutes)
       .then(
         alertTime => {
-          console.log('CHECKIN MINUTES: ' + checkinMinutes)
-          console.log('NOW MINUTES: ' + nowMinutes)
-          console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
-          console.log('TIME AFTER NOW: ' + alertTime.afterNow)
-          console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
-          console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
-          console.log(alertTime.beforeNow === alertTime.beforeCheckin)
-          console.log(alertTime.afterNow === alertTime.afterCheckin)
-
           const lastAlertTime = moment(
             alertTimes.filter(
               alert => alert.validity
@@ -818,13 +817,31 @@ export const setListener = (
           dispatch(setLastAlertTime(lastAlertTime))
           console.log('LAST ALERT TIME: ' + lastAlertTime)
 
+          return alertTime
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        alertTime => {
+          console.log('CHECKIN MINUTES: ' + checkinMinutes)
+          console.log('NOW MINUTES: ' + nowMinutes)
+          console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
+          console.log('TIME AFTER NOW: ' + alertTime.afterNow)
+          console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
+          console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
+          console.log(alertTime.beforeNow === alertTime.beforeCheckin)
+          console.log(alertTime.afterNow === alertTime.afterCheckin)
+
           if (moment(now) - moment(checkinTime) > 86400000) {
             return 0
           } else if (
             alertTime.beforeNow === alertTime.beforeCheckin &&
             alertTime.afterNow === alertTime.afterCheckin
           ) {
-            const interval = alertTime.afterNow - nowMinutes
+            const interval = alertTime.afterNow - (nowMinutes - snooze)
             console.log(interval)
 
             if (interval > 0) {
@@ -896,7 +913,9 @@ export const setListener = (
                         getState().patient.checkinTime,
                         email,
                         getState().patient.isSignedIn,
-                        (new Date()).toISOString()
+                        (new Date()).toISOString(),
+                        // (new Date(2019, 10, 16, 13, 8)).toISOString(),
+                        getState().patient.snooze
                       )
                     )
                   },
@@ -916,10 +935,10 @@ export const setListener = (
               return listener
             }
           }
-        } else {
-          // TODO: Add logic for when patient is signed out, such as an
-          // indicator on the standby home screen that says so.
-        }
+        } // else {
+        //   // TODO: Add logic for when patient is signed out, such as an
+        //   // indicator on the standby home screen that says so.
+        // }
       },
       error => {
         var errorMessage = new Error(error.message)
