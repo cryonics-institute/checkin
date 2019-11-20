@@ -98,6 +98,11 @@ export const styles = StyleSheet.create(
     title: {
       margin: 5
     },
+    tooltip: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      margin: 5
+    },
     transparent: {
       color: colors.transparent,
       fontSize: 12
