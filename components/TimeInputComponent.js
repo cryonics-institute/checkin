@@ -85,42 +85,8 @@ class TimeInput extends React.Component {
 
     if (
       length > 1 &&
-      this.props.inputs.array[length - 1].id === this.state.identifier
+      this.props.inputs.array[length - 1].id !== this.state.identifier
     ) {
-      return (
-        <View key = { this.state.identifier } style = { styles.row }>
-          <Input
-            autoCorrect = { false }
-            errorMessage = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
-              )[0].validity
-                ? valid
-                : invalid
-            }
-            errorStyle = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
-              )[0].validity
-                ? styles.transparent
-                : styles.textError
-            }
-            onChangeText = { time => { this.mutate(time) } }
-            placeholder = 'HH:MM AM/PM'
-            rightIcon = {
-              <MaterialIcons
-                color = { colors.dark }
-                name = 'add-circle'
-                onPress = {
-                  () => this.props.mutateInput(Shortid.generate(), '', false)
-                }
-                size = { 30 }
-              />
-            }
-          />
-        </View>
-      )
-    } else if (length > 1) {
       return (
         <View key = { this.state.identifier } style = { styles.row }>
           <Input
