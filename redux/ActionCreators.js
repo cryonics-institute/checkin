@@ -883,6 +883,7 @@ export const setListener = (
   dispatch(setListenerRequestedAction())
 
   return Promise.resolve(
+    // TODO: Change setInterval to dispatch(setListenerInterval) and give the function its own actions.
     setInterval()
   )
     .then(
@@ -992,51 +993,91 @@ export const setListenerFulfilledAction = (listener) => (
 /**
  * Set a timer that will issue an alert for the currently authorized patient to
  * check-in after an interval of time.
- * @param  {Integer}  interval  The interval between alerts.
+ * @param  {Boolean} isTest     Whether called by unit test (optional).
  * @return {Promise}            Promise to set a timer.
  */
-export const setTimer = (interval) => (dispatch, getState) => {
+export const setTimer = (isTest = false) => (dispatch, getState) => {
   const checkinAlert = () => {
-    const timers = getState().timer.timers
-    if (typeof timers !== 'undefined' && timers.length > 0) {
-      Alert.alert(
-        'Check In?',
-        'Your buddy will be alerted if not.',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              console.log('OK Pressed')
-              dispatch(removeTimers())
-              dispatch(checkin())
-            }
-          },
-          {
-            text: 'Cancel',
-            onPress: () => {
-              console.log('Cancel Pressed')
-              dispatch(removeTimers())
-            },
-            style: 'cancel'
+    Alert.alert(
+      'Check In?',
+      'Your buddy will be alerted if not.',
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('OK Pressed')
+            dispatch(removeTimers())
+            dispatch(checkin())
           }
-        ],
-        { cancelable: false }
-      )
-    }
+        },
+        {
+          text: 'Cancel',
+          onPress: () => {
+            console.log('Cancel Pressed')
+            dispatch(removeTimers())
+          },
+          style: 'cancel'
+        }
+      ],
+      { cancelable: false }
+    )
   }
 
   dispatch(setTimerRequestedAction())
 
   return Promise.resolve(
-    dispatch(setTimerInterval(interval))
+    dispatch(setTimerInterval())
   )
     .then(
       () => {
-        const timer = setTimeout(
-          () => { checkinAlert() },
-          interval
-        )
-        return timer
+        dispatch(removeTimers())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
+        const interval = getState().timer.interval
+        console.log('TIMEOUT SHOULD SET TO: ' + interval)
+
+        if (isTest) {
+          return interval
+        } else {
+          if (interval > 0) {
+            const timer = Promise.resolve(
+              setTimeout(
+                () => {
+                  dispatch(
+                    // TODO: Grab values from Firestore instead of state.
+                    setTimer(
+                      // getState().patient.alertTimes,
+                      // getState().patient.checkinTime,
+                      // email,
+                      // getState().patient.isSignedIn,
+                      // (new Date()).toISOString(),
+                      // // (new Date(2019, 10, 16, 13, 8)).toISOString(),
+                      // getState().patient.snooze
+                    )
+                  )
+                },
+                interval
+              )
+            )
+            return timer
+          } else {
+            const listener = Promise.resolve(
+              setTimeout(
+                () => {
+                  checkinAlert()
+                },
+                1000
+              )
+            )
+            return listener
+          }
+        }
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1045,7 +1086,8 @@ export const setTimer = (interval) => (dispatch, getState) => {
     )
     .then(
       timer => {
-        dispatch(setTimerFulfilledAction(timer))
+        console.log('TIMER ID: ' + timer)
+        dispatch(setTimerFulfilledAction())
       },
       error => {
         var errorMessage = new Error(error.message)
