@@ -27,7 +27,7 @@ import { ScrollView, View } from 'react-native'
 import { Icon, Slider, Text, Tooltip } from 'react-native-elements'
 import { connect } from 'react-redux'
 import * as Shortid from 'shortid'
-import { mutateInput, removeTimers, setTimer } from '../redux/ActionCreators'
+import { mutateInput } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
 
@@ -42,30 +42,13 @@ const mapDispatchToProps = (dispatch) => (
   {
     mutateInput: (identifier, text, validity) => dispatch(
       mutateInput(identifier, text, validity)
-    ),
-    removeTimers: () => dispatch(removeTimers()),
-    setTimer: interval => dispatch(setTimer(interval))
+    )
   }
 )
 
 class PatientHome extends React.Component {
-  constructor (props) {
-    super(props)
-
-    this.state = {
-      interval: this.props.timer.interval
-    }
-
-    this.handleIntervalChange = this.handleIntervalChange.bind(this)
-  }
-
   componentDidMount () {
     this.props.mutateInput(Shortid.generate(), '', false)
-  }
-
-  handleIntervalChange () {
-    this.props.removeTimers()
-    this.props.setTimer(this.state.interval)
   }
 
   render () {
@@ -109,7 +92,7 @@ class PatientHome extends React.Component {
           style = { styles.slider }
         />
         <Text style = { styles.text }>
-          { this.state.interval / 1000 } Seconds // TODO: Change this!
+          { 15 } Minutes // TODO: Change this!
         </Text>
       </ScrollView>
     )
