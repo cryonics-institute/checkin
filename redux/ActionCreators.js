@@ -887,11 +887,13 @@ export const setListener = (
             alertTime.beforeNow === alertTime.beforeCheckin &&
             alertTime.afterNow === alertTime.afterCheckin
           ) {
-            const interval = alertTime.afterNow - (nowMinutes - snooze)
+            const interval = (
+              alertTime.afterNow - (nowMinutes - snooze)
+            ) * 60000
             console.log(interval)
 
             if (interval > 0) {
-              return interval * 60000
+              return interval
             } else {
               return 0 // (interval + 1440) * 60000
             }
