@@ -62,13 +62,19 @@ const convertTo24Hour = (time) => {
  * @param  {Integer} nowMinutes     Minutes from midnight to now.
  * @return {Promise}                Times before and after check-in and now.
  */
-const findClosestCheckinTimes = (alertTimes, checkinMinutes, nowMinutes) => {
+const findClosestCheckinTimes = (
+  alertTimes, checkinMinutes, nowMinutes
+) => (dispatch) => {
+  dispatch(findClosestCheckinTimesRequestedAction())
+
   const alertMinutes = alertTimes.filter(alert => alert.validity).map(
     alert => (parseInt(alert.time.slice(-13, -11), 10) * 60) +
       parseInt(alert.time.slice(-10, -8), 10)
   )
 
   if (alertMinutes.length === 1) {
+    dispatch(findClosestCheckinTimesFulfilledAction())
+
     return Promise.resolve(
       {
         beforeNow: alertMinutes[0],
@@ -130,6 +136,9 @@ const findClosestCheckinTimes = (alertTimes, checkinMinutes, nowMinutes) => {
           console.log('TIME AFTER NOW: ' + timeAfterNow)
           console.log('TIME BEFORE CHECKIN: ' + timeBeforeCheckin)
           console.log('TIME AFTER CHECKIN: ' + timeAfterCheckin)
+
+          dispatch(findClosestCheckinTimesFulfilledAction())
+
           return {
             beforeNow: timeBeforeNow,
             afterNow: timeAfterNow,
@@ -142,9 +151,40 @@ const findClosestCheckinTimes = (alertTimes, checkinMinutes, nowMinutes) => {
           throw errorMessage
         }
       )
-      .catch(error => dispatch(setListenerRejectedAction(error.message)))
+      .catch(
+        error => dispatch(findClosestCheckinTimesRejectedAction(error.message))
+      )
   }
 }
+
+/**
+ * Initiate an action to find the closest check-in times.
+ */
+export const findClosestCheckinTimesRequestedAction = () => (
+  {
+    type: ActionTypes.FIND_CHECKIN_TIMES_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that the closest check-in times were not found.
+ * @param  {Error} errorMessage Message describing the listening failure.
+ */
+export const findClosestCheckinTimesRejectedAction = (message) => (
+  {
+    type: ActionTypes.FIND_CHECKIN_TIMES_REJECTED,
+    payload: message
+  }
+)
+
+/**
+ * Initiate an action indicating that the closest check-in times were found.
+ */
+export const findClosestCheckinTimesFulfilledAction = () => (
+  {
+    type: ActionTypes.FIND_CHECKIN_TIMES_FULFILLED
+  }
+)
 
 /**
  * Add a new document to Firebase for the currently authorized user.  The
