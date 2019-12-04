@@ -41,23 +41,46 @@ export const Patient = (
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.ADD_PATIENT_REQUESTED:
+    case ActionTypes.ADD_DOCUMENT_REQUESTED:
       return {
         ...state,
-        email: action.payload,
         errMess: null
       }
 
-    case ActionTypes.ADD_PATIENT_REJECTED:
+    case ActionTypes.ADD_DOCUMENT_REJECTED:
       return {
         ...state,
-        email: null,
         errMess: action.payload
       }
 
-    case ActionTypes.ADD_PATIENT_FULFILLED:
+    case ActionTypes.ADD_DOCUMENT_FULFILLED:
       return {
         ...state,
+        alertTimes: action.payload.alertTimes,
+        checkinTime: action.payload.checkinTime,
+        email: action.payload.email,
+        errMess: null,
+        isSignedIn: action.payload.isSignedIn,
+        signinTime: action.payload.signinTime,
+        snooze: action.payload.snooze
+      }
+
+    case ActionTypes.CHECKIN_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.CHECKIN_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.CHECKIN_FULFILLED:
+      return {
+        ...state,
+        checkinTime: action.payload,
         errMess: null
       }
 
