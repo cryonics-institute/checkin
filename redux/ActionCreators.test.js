@@ -48,6 +48,172 @@ function getRandomIntInclusive (min, max) {
 jest.useFakeTimers()
 
 describe(
+  'setTimerInterval',
+  () => {
+    for (var i = 0; i < 100; i++) {
+      beforeEach(
+        () => { // Runs before each test in the suite
+          store.clearActions()
+        }
+      )
+
+      const today = (new Date())
+      const now = (
+        new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate(),
+          getRandomIntInclusive(0, 23),
+          getRandomIntInclusive(0, 59)
+        )
+      ).toISOString()
+      const checkinTime = moment(now).subtract(
+        getRandomIntInclusive(0, 14400), 'minutes'
+      ).toISOString()
+      const alertTimes = []
+      const length = getRandomIntInclusive(1, 10)
+      for (var j = 0; j < length; j++) {
+        const time = (
+          new Date(
+            1970,
+            0,
+            1,
+            getRandomIntInclusive(0, 11),
+            getRandomIntInclusive(0, 59)
+          )
+        ).toISOString()
+        // console.log('TIME ADDED TO ARRAY: ' + time)
+        alertTimes.push(
+          {
+            id: '',
+            time: time,
+            validity: true
+          }
+        )
+      }
+      const store = mockStore(
+        {
+          patient: {
+            alertTimes: alertTimes,
+            checkinInterval: 5000,
+            checkinTime: checkinTime,
+            email: 'a@a.aa',
+            errMess: null,
+            isAlertActive: false,
+            isSignedIn: true,
+            lastAlertTime: null,
+            listeners: [],
+            signinTime: '2019-10-31T22:45:35.794Z',
+            snooze: 9
+          }
+        }
+      )
+
+      test(
+        'fulfills',
+        async () => {
+          await store.dispatch(
+            Actions.setTimerInterval(
+              alertTimes,
+              store.getState().patient.checkinTime,
+              now,
+              true
+            )
+          )
+
+          // console.log(store.getActions())
+          const actionTypes = store.getActions().map(action => action.type)
+          // console.log('ACTION TYPES: ' + actionTypes)
+          await expect(actionTypes).toContain(
+            ActionTypes.SET_TIMER_INTERVAL_FULFILLED
+          )
+        }
+      )
+
+      test(
+        'returns defined value',
+        async () => {
+          await store.dispatch(
+            Actions.setTimerInterval(
+              alertTimes,
+              store.getState().patient.checkinTime,
+              now,
+              true
+            )
+          )
+
+          const actionPayload = store.getActions().find(
+            action => action.type === 'SET_TIMER_INTERVAL_FULFILLED'
+          ).payload
+          // console.log('PAYLOAD: ' + actionPayload)
+          await expect(actionPayload).toBeDefined()
+        }
+      )
+
+      test(
+        'returns integer',
+        async () => {
+          await store.dispatch(
+            Actions.setTimerInterval(
+              alertTimes,
+              store.getState().patient.checkinTime,
+              now,
+              true
+            )
+          )
+
+          const actionPayload = store.getActions().find(
+            action => action.type === 'SET_TIMER_INTERVAL_FULFILLED'
+          ).payload
+          // console.log('PAYLOAD: ' + actionPayload)
+          await expect(Number.isInteger(actionPayload)).toBe(true)
+        }
+      )
+
+      test(
+        'returns positive number',
+        async () => {
+          await store.dispatch(
+            Actions.setTimerInterval(
+              alertTimes,
+              store.getState().patient.checkinTime,
+              now,
+              true
+            )
+          )
+
+          const actionPayload = store.getActions().find(
+            action => action.type === 'SET_TIMER_INTERVAL_FULFILLED'
+          ).payload
+          // console.log('PAYLOAD: ' + actionPayload)
+          await expect(actionPayload).toBeGreaterThanOrEqual(0)
+        }
+      )
+
+      test(
+        'returns value signifying less than a day',
+        async () => {
+          await store.dispatch(
+            Actions.setTimerInterval(
+              alertTimes,
+              store.getState().patient.checkinTime,
+              now,
+              true
+            )
+          )
+
+          const actionPayload = store.getActions().find(
+            action => action.type === 'SET_TIMER_INTERVAL_FULFILLED'
+          ).payload
+          // console.log('PAYLOAD: ' + actionPayload)
+          await expect(actionPayload).toBeLessThanOrEqual(86400000)
+        }
+      )
+    }
+  }
+)
+
+describe(
   'setListener',
   () => {
     for (var i = 0; i < 100; i++) {
