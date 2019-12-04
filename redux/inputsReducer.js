@@ -51,6 +51,25 @@ export const Inputs = (
         errMess: null
       }
 
+    case ActionTypes.REMOVE_INPUTS_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.REMOVE_INPUTS_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.REMOVE_INPUTS_FULFILLED:
+      return {
+        ...state,
+        array: action.payload,
+        errMess: null
+      }
+
     default:
       return state
   }
