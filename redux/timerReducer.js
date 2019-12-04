@@ -27,7 +27,7 @@ import * as ActionTypes from './ActionTypes'
 export const Timer = (
   state = {
     errMess: null,
-    interval: 5000,
+    interval: null,
     maximumInterval: 24000,
     minimumInterval: 1000,
     timers: []
