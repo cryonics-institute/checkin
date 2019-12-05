@@ -1102,6 +1102,7 @@ export const setListenerInterval = (
         console.log(alertTime.beforeNow === alertTime.beforeCheckin)
         console.log(alertTime.afterNow === alertTime.afterCheckin)
 
+        // TODO: Does not calculate correctly at least for condition when there is only one alert time.
         if (moment(now) - moment(checkinTime) > 86400000) {
           dispatch(setListenerIntervalFulfilledAction(0))
           return 0
