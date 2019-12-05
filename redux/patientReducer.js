@@ -149,7 +149,9 @@ export const Patient = (
       return {
         ...state,
         errMess: null,
-        listeners: state.listeners.concat(action.payload)
+        listeners: action.payload
+          ? state.listeners.concat(action.payload)
+          : state.listeners
       }
 
     default:
