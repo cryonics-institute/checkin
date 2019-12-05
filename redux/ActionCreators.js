@@ -68,7 +68,6 @@ export const addDocument = (email) => (dispatch, getState) => {
   const patient = {
     alertTimes: getState().inputs.array,
     checkinTime: now,
-    email: email,
     isSignedIn: true,
     signinTime: now,
     snooze: 9 // TODO: Let patient set this.  It must be smaller than the shortest interval.
@@ -136,7 +135,7 @@ export const addDocumentFulfilledAction = (patient) => (
  * @return {Promise}        A promise to add a patient to be tracked by standby.
  */
 export const addPatient = (email) => (dispatch, getState) => {
-  dispatch(addPatientRequestedAction(email))
+  dispatch(addPatientRequestedAction())
 
   return Promise.resolve(
     dispatch(getDocument(email))
@@ -152,7 +151,7 @@ export const addPatient = (email) => (dispatch, getState) => {
     )
     .then(
       () => {
-        dispatch(addPatientFulfilledAction())
+        dispatch(addPatientFulfilledAction(email))
         NavigationService.navigate('StandbyHome')
       },
       error => {
@@ -165,12 +164,10 @@ export const addPatient = (email) => (dispatch, getState) => {
 
 /**
  * Initiate an action to add a patient to be be tracked by the current standby.
- * @param  {String}   email E-mail of the patient to be added.
  */
-export const addPatientRequestedAction = (email) => (
+export const addPatientRequestedAction = () => (
   {
-    type: ActionTypes.ADD_PATIENT_REQUESTED,
-    payload: email
+    type: ActionTypes.ADD_PATIENT_REQUESTED
   }
 )
 
@@ -187,10 +184,12 @@ export const addPatientRejectedAction = (errorMessage) => (
 
 /**
  * Initiate an action indicating that a patient to be be tracked has been added.
+ * @param  {String}   email E-mail of the patient to be added.
  */
-export const addPatientFulfilledAction = () => (
+export const addPatientFulfilledAction = (email) => (
   {
-    type: ActionTypes.ADD_PATIENT_FULFILLED
+    type: ActionTypes.ADD_PATIENT_FULFILLED,
+    payload: email
   }
 )
 
@@ -437,10 +436,10 @@ export const findClosestCheckinTimesFulfilledAction = () => (
  * @param  {String}   email E-mail of the currently-authorized patient.
  * @return {Promise}        A promise to update check-in state parameters.
  */
-export const getDocument = () => (dispatch, getState) => {
+export const getDocument = (email) => (dispatch, getState) => {
   dispatch(getDocumentRequestedAction())
 
-  return db.collection('users').doc(getState().patient.email).get()
+  return db.collection('users').doc(email).get()
     .then(
       doc => {
         if (doc.exists) {
@@ -917,12 +916,6 @@ export const setLastAlertTimeAction = (lastAlertTime) => (
  * Set a recurring listener that will check if the patient that the standby-user
  * is following has checked in within the alotted interval plus the snooze or
  * else alert standby that the user has not checked in.
- * @param  {Array} alertTimes   Alert times set by patient.
- * @param  {String} checkinTime Last time patient checked in.
- * @param  {String} email       E-mail of the patient to listen to.
- * @param  {Boolean} isSignedIn Whether patient is signed in.
- * @param  {String} now         Time now.
- * @param  {Integer} snooze     Minutes to wait before firing alert.
  * @param  {Boolean} isTest     Whether called by unit test (optional).
  * @return {Promise}            Promise to create listener after interval.
  */
@@ -949,7 +942,14 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
   dispatch(setListenerRequestedAction())
 
   return Promise.resolve(
-    dispatch(setListenerInterval())
+    dispatch(
+      setListenerInterval(
+        // TODO: Should these parameters be fetched from Firestore?
+        getState().patient.alertTimes,
+        getState().patient.checkinTime,
+        (new Date()).toISOString()
+      )
+    )
   )
     .then(
       interval => {
@@ -965,6 +965,7 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
       interval => {
         if (getState().patient.isSignedIn) {
           console.log('TIMEOUT SHOULD SET TO: ' + interval)
+
           if (isTest) {
             return interval
           } else {
@@ -1039,15 +1040,18 @@ export const setListenerFulfilledAction = (listener) => (
 
 /**
  * Set the interval for the setListener function.
+ * @param   {Array} alertTimes  Array of scheduled alert times.
+ * @param   {Date} checkinTime  Last time patient checked in.
+ * @param   {Array} now         Now as a JS Date object.
+ * @param   {Boolean} isTest    Whether called by unit test (optional).
  * @return  {Integer} The interval between alerts.
  */
-export const setListenerInterval = () => (dispatch, getState) => {
-  // TODO: Should the following values be fetched from Firestore?
-  const alertTimes = getState().patient.alertTimes
-  const checkinTime = getState().patient.checkinTime
-  const now = (new Date()).toISOString()
-  console.log('LAST CHECK-IN: ' + checkinTime)
-  console.log('NOW: ' + now)
+export const setListenerInterval = (
+  alertTimes,
+  checkinTime,
+  now,
+  isTest = false
+) => (dispatch, getState) => {
   const checkinMinutes = (((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
       parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
       parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
@@ -1056,6 +1060,9 @@ export const setListenerInterval = () => (dispatch, getState) => {
       parseInt(now.slice(-10, -8), 10)) * 60) +
       parseInt(now.slice(-7, -5), 10)) * 1000) +
       parseInt(now.slice(-4, -1), 10)
+
+  console.log('LAST CHECK-IN: ' + checkinTime)
+  console.log('NOW: ' + now)
   console.log('CHECKIN MINUTES: ' + checkinMinutes)
   console.log('NOW MINUTES: ' + nowMinutes)
 
@@ -1074,9 +1081,9 @@ export const setListenerInterval = () => (dispatch, getState) => {
                 parseInt(alert.time.slice(-4, -1), 10) === alertTime.beforeNow
           )[0].time
         ).format('h:mm a')
-        dispatch(setLastAlertTime(lastAlertTime))
         console.log('LAST ALERT TIME: ' + lastAlertTime)
 
+        dispatch(setLastAlertTime(lastAlertTime))
         return alertTime
       },
       error => {
@@ -1096,13 +1103,13 @@ export const setListenerInterval = () => (dispatch, getState) => {
         console.log(alertTime.afterNow === alertTime.afterCheckin)
 
         if (moment(now) - moment(checkinTime) > 86400000) {
-          dispatch(setTimerIntervalFulfilledAction(0))
+          dispatch(setListenerIntervalFulfilledAction(0))
           return 0
         } else if (
           alertTime.beforeNow === alertTime.afterNow
         ) {
           const interval = ((alertTime.afterNow - nowMinutes)) + 86400000
-          dispatch(setTimerIntervalFulfilledAction(interval))
+          dispatch(setListenerIntervalFulfilledAction(interval))
           return interval
         } else if (
           alertTime.beforeNow === alertTime.beforeCheckin &&
@@ -1114,14 +1121,14 @@ export const setListenerInterval = () => (dispatch, getState) => {
           console.log(interval)
 
           if (interval > 0) {
-            dispatch(setTimerIntervalFulfilledAction(interval))
+            dispatch(setListenerIntervalFulfilledAction(interval))
             return interval
           } else {
-            dispatch(setTimerIntervalFulfilledAction(0))
+            dispatch(setListenerIntervalFulfilledAction(0))
             return 0 // (interval + 1440) * 60000
           }
         } else {
-          dispatch(setTimerIntervalFulfilledAction(0))
+          dispatch(setListenerIntervalFulfilledAction(0))
           return 0
         }
       },
@@ -1210,8 +1217,9 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
     )
   )
     .then(
-      () => {
+      interval => {
         dispatch(removeTimers())
+        return interval
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1219,8 +1227,7 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
       }
     )
     .then(
-      () => {
-        const interval = getState().timer.interval
+      interval => {
         console.log('TIMEOUT SHOULD SET TO: ' + interval)
 
         if (isTest) {
