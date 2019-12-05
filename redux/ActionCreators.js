@@ -972,22 +972,15 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
               const listener = Promise.resolve(
                 setTimeout(
                   () => {
-                    dispatch(setListener())
+                    dispatch(setListener(isTest))
                   },
                   interval
                 )
               )
               return listener
             } else {
-              const listener = Promise.resolve(
-                setTimeout(
-                  () => {
-                    noCheckinAlert()
-                  },
-                  1000
-                )
-              )
-              return listener
+              noCheckinAlert()
+              return null
             }
           }
         } // else {
@@ -1244,8 +1237,8 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
             )
             return timer
           } else {
-            const timer = Promise.resolve(checkinAlert())
-            return timer
+            checkinAlert()
+            return null
           }
         }
       },
@@ -1257,7 +1250,7 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
     .then(
       timer => {
         console.log('TIMER ID: ' + timer)
-        dispatch(setTimerFulfilledAction())
+        dispatch(setTimerFulfilledAction(timer))
       },
       error => {
         var errorMessage = new Error(error.message)
