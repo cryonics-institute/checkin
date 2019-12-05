@@ -1102,35 +1102,71 @@ export const setListenerInterval = (
         console.log(alertTime.beforeNow === alertTime.beforeCheckin)
         console.log(alertTime.afterNow === alertTime.afterCheckin)
 
-        // TODO: Does not calculate correctly at least for condition when there is only one alert time.
-        if (moment(now) - moment(checkinTime) > 86400000) {
-          dispatch(setListenerIntervalFulfilledAction(0))
-          return 0
-        } else if (
-          alertTime.beforeNow === alertTime.afterNow
-        ) {
-          const interval = ((alertTime.afterNow - nowMinutes)) + 86400000
-          dispatch(setListenerIntervalFulfilledAction(interval))
-          return interval
-        } else if (
-          alertTime.beforeNow === alertTime.beforeCheckin &&
-          alertTime.afterNow === alertTime.afterCheckin
-        ) {
-          const interval = (
-            alertTime.afterNow - (nowMinutes - getState().patient.snooze)
-          )
-          console.log(interval)
-
-          if (interval > 0) {
+        // TODO: Fix the following to account for snooze.
+        if (alertTime.beforeCheckin === alertTime.afterCheckin) {
+          if (nowMinutes > checkinMinutes) {
+            if (alertTime.afterCheckin > nowMinutes) {
+              const interval = (alertTime.afterCheckin - nowMinutes)
+              dispatch(setListenerIntervalFulfilledAction(interval))
+              return interval
+            } else if (alertTime.afterCheckin > checkinMinutes) {
+              dispatch(setListenerIntervalFulfilledAction(0))
+              return 0
+            } else {
+              const interval = (
+                (alertTime.afterCheckin - nowMinutes)
+              ) + 86400000
+              dispatch(setListenerIntervalFulfilledAction(interval))
+              return interval
+            }
+          } else {
+            if (alertTime.afterCheckin > checkinMinutes) {
+              dispatch(setListenerIntervalFulfilledAction(0))
+              return 0
+            } else if (alertTime.afterCheckin > nowMinutes) {
+              const interval = (alertTime.afterCheckin - nowMinutes)
+              dispatch(setListenerIntervalFulfilledAction(interval))
+              return interval
+            } else {
+              const interval = (
+                (alertTime.afterCheckin - nowMinutes)
+              ) + 86400000
+              dispatch(setListenerIntervalFulfilledAction(interval))
+              return interval
+            }
+          }
+        } else if (alertTime.beforeCheckin < alertTime.afterCheckin) {
+          if (
+            alertTime.beforeCheckin === alertTime.beforeNow &&
+            alertTime.afterCheckin === alertTime.afterNow
+          ) {
+            const interval = (alertTime.afterCheckin - nowMinutes)
             dispatch(setListenerIntervalFulfilledAction(interval))
             return interval
           } else {
             dispatch(setListenerIntervalFulfilledAction(0))
-            return 0 // (interval + 1440) * 60000
+            return 0
           }
         } else {
-          dispatch(setListenerIntervalFulfilledAction(0))
-          return 0
+          if (
+            alertTime.beforeCheckin === alertTime.beforeNow &&
+            alertTime.afterCheckin === alertTime.afterNow
+          ) {
+            if (alertTime.afterCheckin > nowMinutes) {
+              const interval = (alertTime.afterCheckin - nowMinutes)
+              dispatch(setListenerIntervalFulfilledAction(interval))
+              return interval
+            } else {
+              const interval = (
+                (alertTime.afterCheckin - nowMinutes)
+              ) + 86400000
+              dispatch(setListenerIntervalFulfilledAction(interval))
+              return interval
+            }
+          } else {
+            dispatch(setListenerIntervalFulfilledAction(0))
+            return 0
+          }
         }
       },
       error => {
