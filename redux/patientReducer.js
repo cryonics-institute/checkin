@@ -31,6 +31,7 @@ export const Patient = (
     checkinTime: null,
     email: null,
     errMess: null,
+    interval: null,
     isAlertActive: false,
     isSignedIn: null,
     lastAlertTime: null,
@@ -58,11 +59,28 @@ export const Patient = (
         ...state,
         alertTimes: action.payload.alertTimes,
         checkinTime: action.payload.checkinTime,
-        email: action.payload.email,
         errMess: null,
         isSignedIn: action.payload.isSignedIn,
         signinTime: action.payload.signinTime,
         snooze: action.payload.snooze
+      }
+
+    case ActionTypes.ADD_PATIENT_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.ADD_PATIENT_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.ADD_PATIENT_FULFILLED:
+      return {
+        ...state,
+        email: action.payload
       }
 
     case ActionTypes.CHECKIN_REQUESTED:
@@ -152,6 +170,24 @@ export const Patient = (
         listeners: action.payload
           ? state.listeners.concat(action.payload)
           : state.listeners
+      }
+
+    case ActionTypes.SET_LISTENER_INTERVAL_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.SET_LISTENER_INTERVAL_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SET_LISTENER_INTERVAL_FULFILLED:
+      return {
+        ...state,
+        interval: action.payload
       }
 
     default:
