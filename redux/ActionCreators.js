@@ -1335,7 +1335,6 @@ export const setTimerFulfilledAction = (timer) => (
   }
 )
 
-// TODO: An alert fires for each time input; fix that.
 /**
  * Set the interval for the setTimer function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
