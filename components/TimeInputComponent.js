@@ -58,6 +58,16 @@ class TimeInput extends React.Component {
     }
   }
 
+  mutate (time) {
+    const isValid = this.validate(time)
+
+    if (isValid) {
+      this.props.mutateInput(this.state.identifier, time, isValid)
+    } else {
+      this.props.mutateInput(this.state.identifier, '', isValid)
+    }
+  }
+
   validate (time) {
     if (!time) {
       return false
@@ -75,7 +85,7 @@ class TimeInput extends React.Component {
 
     if (
       length > 1 &&
-      this.props.inputs.array[length - 1].id === this.state.identifier
+      this.props.inputs.array[length - 1].id !== this.state.identifier
     ) {
       return (
         <View key = { this.state.identifier } style = { styles.row }>
@@ -95,51 +105,7 @@ class TimeInput extends React.Component {
                 ? styles.transparent
                 : styles.textError
             }
-            onChangeText = {
-              time => {
-                const isValid = this.validate(time)
-                this.props.mutateInput(this.state.identifier, time, isValid)
-              }
-            }
-            placeholder = 'HH:MM AM/PM'
-            rightIcon = {
-              <MaterialIcons
-                color = { colors.dark }
-                name = 'add-circle'
-                onPress = {
-                  () => this.props.mutateInput(Shortid.generate(), '', false)
-                }
-                size = { 30 }
-              />
-            }
-          />
-        </View>
-      )
-    } else if (length > 1) {
-      return (
-        <View key = { this.state.identifier } style = { styles.row }>
-          <Input
-            autoCorrect = { false }
-            errorMessage = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
-              )[0].validity
-                ? valid
-                : invalid
-            }
-            errorStyle = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
-              )[0].validity
-                ? styles.transparent
-                : styles.textError
-            }
-            onChangeText = {
-              time => {
-                const isValid = this.validate(time)
-                this.props.mutateInput(this.state.identifier, time, isValid)
-              }
-            }
+            onChangeText = { time => { this.mutate(time) } }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
               <MaterialIcons
@@ -173,12 +139,7 @@ class TimeInput extends React.Component {
                 ? styles.transparent
                 : styles.textError
             }
-            onChangeText = {
-              time => {
-                const isValid = this.validate(time)
-                this.props.mutateInput(this.state.identifier, time, isValid)
-              }
-            }
+            onChangeText = { time => { this.mutate(time) } }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
               <MaterialIcons

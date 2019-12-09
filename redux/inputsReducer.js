@@ -26,22 +26,48 @@ import * as ActionTypes from './ActionTypes'
 
 export const Inputs = (
   state = {
-    errMess: null,
-    array: []
+    array: [],
+    errMess: null
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.MUTATE_INPUTS_FULFILLED:
+    case ActionTypes.MUTATE_INPUTS_REQUESTED:
       return {
         ...state,
-        array: action.payload
+        errMess: null
       }
 
     case ActionTypes.MUTATE_INPUTS_REJECTED:
       return {
         ...state,
         errMess: action.payload
+      }
+
+    case ActionTypes.MUTATE_INPUTS_FULFILLED:
+      return {
+        ...state,
+        array: action.payload,
+        errMess: null
+      }
+
+    case ActionTypes.REMOVE_INPUTS_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.REMOVE_INPUTS_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.REMOVE_INPUTS_FULFILLED:
+      return {
+        ...state,
+        array: action.payload,
+        errMess: null
       }
 
     default:

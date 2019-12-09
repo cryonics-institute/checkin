@@ -27,7 +27,7 @@ import * as ActionTypes from './ActionTypes'
 export const Timer = (
   state = {
     errMess: null,
-    interval: 5000,
+    interval: null,
     maximumInterval: 24000,
     minimumInterval: 1000,
     timers: []
@@ -51,7 +51,9 @@ export const Timer = (
       return {
         ...state,
         errMess: null,
-        timers: state.timers.concat(action.payload)
+        timers: action.payload
+          ? state.timers.concat(action.payload)
+          : state.timers
       }
 
     case ActionTypes.SET_TIMER_INTERVAL_REQUESTED:

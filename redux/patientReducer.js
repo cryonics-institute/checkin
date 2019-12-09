@@ -26,34 +26,79 @@ import * as ActionTypes from './ActionTypes'
 
 export const Patient = (
   state = {
-    checkinTime: null,
+    alertTimes: [],
     checkinInterval: null,
-    errMess: null,
-    isSignedIn: null,
+    checkinTime: null,
     email: null,
+    errMess: null,
+    interval: null,
+    isAlertActive: false,
+    isSignedIn: null,
+    lastAlertTime: null,
+    listeners: [],
     signinTime: null,
-    listeners: []
+    snooze: null
   },
   action
 ) => {
   switch (action.type) {
+    case ActionTypes.ADD_DOCUMENT_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.ADD_DOCUMENT_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.ADD_DOCUMENT_FULFILLED:
+      return {
+        ...state,
+        alertTimes: action.payload.alertTimes,
+        checkinTime: action.payload.checkinTime,
+        errMess: null,
+        isSignedIn: action.payload.isSignedIn,
+        signinTime: action.payload.signinTime,
+        snooze: action.payload.snooze
+      }
+
     case ActionTypes.ADD_PATIENT_REQUESTED:
       return {
         ...state,
-        email: action.payload,
         errMess: null
       }
 
     case ActionTypes.ADD_PATIENT_REJECTED:
       return {
         ...state,
-        email: null,
         errMess: action.payload
       }
 
     case ActionTypes.ADD_PATIENT_FULFILLED:
       return {
         ...state,
+        email: action.payload
+      }
+
+    case ActionTypes.CHECKIN_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.CHECKIN_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.CHECKIN_FULFILLED:
+      return {
+        ...state,
+        checkinTime: action.payload,
         errMess: null
       }
 
@@ -73,14 +118,39 @@ export const Patient = (
     case ActionTypes.GET_DOCUMENT_FULFILLED:
       return {
         ...state,
-        checkinTime: action.payload[2],
-        checkinInterval: action.payload[3],
+        alertTimes: action.payload[1],
+        checkinInterval: action.payload[2],
+        checkinTime: action.payload[3],
         errMess: null,
         isSignedIn: action.payload[0],
-        signinTime: action.payload[1]
+        signinTime: action.payload[4],
+        snooze: action.payload[5]
       }
 
-    // TODO: Set results of actions.
+    case ActionTypes.REMOVE_LISTENER:
+      return {
+        ...state,
+        listeners: action.payload
+      }
+
+    case ActionTypes.REMOVE_LISTENERS:
+      return {
+        ...state,
+        listeners: []
+      }
+
+    case ActionTypes.SET_ALERT_ACTIVE:
+      return {
+        ...state,
+        isAlertActive: true
+      }
+
+    case ActionTypes.SET_LAST_ALERT_TIME:
+      return {
+        ...state,
+        lastAlertTime: action.payload
+      }
+
     case ActionTypes.SET_LISTENER_REQUESTED:
       return {
         ...state,
@@ -97,19 +167,27 @@ export const Patient = (
       return {
         ...state,
         errMess: null,
-        listeners: state.listeners.concat(action.payload)
-      }
-
-    case ActionTypes.REMOVE_LISTENER:
-      return {
-        ...state,
         listeners: action.payload
+          ? state.listeners.concat(action.payload)
+          : state.listeners
       }
 
-    case ActionTypes.REMOVE_LISTENERS:
+    case ActionTypes.SET_LISTENER_INTERVAL_REQUESTED:
       return {
         ...state,
-        listeners: []
+        errMess: null
+      }
+
+    case ActionTypes.SET_LISTENER_INTERVAL_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SET_LISTENER_INTERVAL_FULFILLED:
+      return {
+        ...state,
+        interval: action.payload
       }
 
     default:
