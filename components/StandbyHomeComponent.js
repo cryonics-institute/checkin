@@ -20,21 +20,22 @@ const RenderActiveAlertView = (props) => {
   return (
     <View style = { styles.containerCentered }>
       <Text h1 style = { styles.title }>ALERT</Text>
-      <Text style = { styles.text }>
-        The member should have checked in at {props.lastAlertTime}.
+      <Text style = { styles.paragraph }>
+        The member should have checked in at{'\n'}
+        { props.lastAlertTime.format('h:mm A dddd') }.
       </Text>
       <Text h4 style = { styles.title }>Sign-In Time</Text>
       <Text style = { styles.text }>
         {
           moment(props.signinTime)
-            .format('dddd, MMMM Do YYYY, h:mm:ss a')
+            .format('dddd, MMMM D, YYYY, h:mm A')
         }
       </Text>
       <Text h4 style = { styles.title }>Check-In Time</Text>
       <Text style = { styles.text }>
         {
           moment(props.checkinTime)
-            .format('dddd, MMMM Do YYYY, h:mm:ss a')
+            .format('dddd, MMMM D, YYYY, h:mm A')
         }
       </Text>
     </View>

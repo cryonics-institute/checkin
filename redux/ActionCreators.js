@@ -1080,7 +1080,7 @@ export const setListenerInterval = (
                 parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
                 parseInt(alert.time.slice(-4, -1), 10) === alertTime.beforeNow
           )[0].time
-        ).format('h:mm a')
+        )
         console.log('LAST ALERT TIME: ' + lastAlertTime)
 
         dispatch(setLastAlertTime(lastAlertTime))
