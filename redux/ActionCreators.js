@@ -1103,7 +1103,10 @@ export const setListenerInterval = (
         console.log(alertTime.afterNow === alertTime.afterCheckin)
 
         // TODO: Fix the following to account for snooze.
-        if (alertTime.beforeCheckin === alertTime.afterCheckin) {
+        if ((moment(now) - moment(checkinTime)) > 86400000) {
+          dispatch(setTimerIntervalFulfilledAction(0))
+          return 0
+        } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
           if (nowMinutes > checkinMinutes) {
             if (alertTime.afterCheckin > nowMinutes) {
               const interval = (alertTime.afterCheckin - nowMinutes)
@@ -1399,7 +1402,10 @@ export const setTimerInterval = (
         console.log(alertTime.beforeNow === alertTime.beforeCheckin)
         console.log(alertTime.afterNow === alertTime.afterCheckin)
 
-        if (alertTime.beforeCheckin === alertTime.afterCheckin) {
+        if ((moment(now) - moment(checkinTime)) > 86400000) {
+          dispatch(setTimerIntervalFulfilledAction(0))
+          return 0
+        } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
           if (nowMinutes > checkinMinutes) {
             if (alertTime.afterCheckin > nowMinutes) {
               const interval = (alertTime.afterCheckin - nowMinutes)
