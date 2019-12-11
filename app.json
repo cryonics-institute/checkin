@@ -1,5 +1,6 @@
 {
   "expo": {
+    "displayName": "Check-In",
     "name": "checkin",
     "slug": "checkin",
     "description": "Cryonics Check-In is a multiplatform mobile app that reminds cryonics patients to check in with their family and friends.",
@@ -33,6 +34,7 @@
       "googleServicesFile": "./google-services.json"
     },
     "scheme": "exp073cd0aac7b54b94b9b9dbfcbdddf422",
-    "githubUrl": "https://github.com/cryonics-institute/checkin"
+    "githubUrl": "https://github.com/cryonics-institute/checkin",
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }
