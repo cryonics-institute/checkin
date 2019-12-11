@@ -25,11 +25,11 @@
       "**/*"
     ],
     "ios": {
-      "bundleIdentifier": "org.cryonics.checkin",
+      "bundleIdentifier": "com.michaelgill1969.checkin",
       "supportsTablet": true
     },
     "android": {
-      "package": "org.cryonics.checkin",
+      "package": "com.michaelgill1969.checkin",
       "googleServicesFile": "./google-services.json"
     },
     "scheme": "exp073cd0aac7b54b94b9b9dbfcbdddf422",
