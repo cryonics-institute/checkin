@@ -67,8 +67,7 @@
           // ...
         }];
   } else {
-    // iOS 10 notifications aren't available; fall back to iOS 8-9
-    // notifications.
+    // iOS 10 notifications aren't available; use iOS 8-9 notifications instead.
     UIUserNotificationType allNotificationTypes = (
       UIUserNotificationTypeSound |
       UIUserNotificationTypeAlert |
@@ -91,8 +90,8 @@
   NSArray<id<RCTBridgeModule>> *extraModules = [
     _moduleRegistryAdapter extraModulesForBridge: bridge
   ];
-  // You can inject any extra modules that you would like here, more information
-  // at:
+  // You can inject any extra modules that you would like here.
+  // More information at:
   // https://facebook.github.io/react-native/docs/native-modules-ios.html#dependency-injection
   return extraModules;
 }
