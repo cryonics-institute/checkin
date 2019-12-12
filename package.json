@@ -68,6 +68,6 @@
     "start": "react-native start",
     "test": "jest",
     "web": "expo start --web",
-    "postinstall": "jetify"
+    "postinstall": "jetify && jetify"
   }
 }
