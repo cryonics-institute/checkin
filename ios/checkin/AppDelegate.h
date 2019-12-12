@@ -10,7 +10,10 @@
 #import <React/RCTBridgeDelegate.h>
 #import <UMCore/UMAppDelegateWrapper.h>
 
-@interface AppDelegate : UMAppDelegateWrapper <RCTBridgeDelegate>
+@import Firebase;
+
+@interface AppDelegate:
+  UMAppDelegateWrapper <RCTBridgeDelegate, FIRMessagingDelegate>
 
 @property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
 @property (nonatomic, strong) UIWindow *window;
