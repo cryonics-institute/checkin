@@ -37,6 +37,8 @@ PODS:
     - React-Core (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/turbomodule/core (= 0.61.5)
+  - Firebase (6.13.0):
+    - Firebase/Core (= 6.13.0)
   - Firebase/Analytics (6.13.0):
     - Firebase/Core
   - Firebase/Core (6.13.0):
@@ -362,6 +364,7 @@ DEPENDENCIES:
   - EXWebBrowser (from `../node_modules/expo-web-browser/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
+  - Firebase
   - Firebase/Analytics
   - Firebase/Messaging
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
@@ -618,6 +621,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: a98e37a576a5220bf43b8faf33cfdc129d2f441d
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: 1dc7fa85b8b5680f35210c0994bbd1d4ea02ea8f
+PODFILE CHECKSUM: c0a1d8dfcb5bbac8445f73818cc297c4e1e0f9a4
 
 COCOAPODS: 1.8.4
