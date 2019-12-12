@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Make sure the uid of the requesting user matches name of the user
+    // document. The wildcard expression {userId} makes the userId variable
+    // available in rules.
+    match /users/{email} {
+      // allow read, write: if request.auth.uid != null;
+      allow update, delete: if request.auth.token.email == email;
+      allow read, create: if request.auth.uid != null;
+    }
+  }
+}
