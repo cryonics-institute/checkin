@@ -21,31 +21,27 @@ exports.pushNotification = functions.firestore.document('checkin/user').onWrite(
     console.log(before);
     console.log(before['a@a.aa']);
 
-    // const registrationToken = after['a@a.aa'].registrationToken
+    const registrationToken = after['a@a.aa'].registrationToken
     const message = {
-      // token: registrationToken,
-      data: {
-        score: '850',
-        time: '2:45'
+      token: registrationToken,
+      notification: {
+        title: "Test",
+        body: "This is a test."
       }
     };
+    console.log(registrationToken);
 
     // Send a message to the device corresponding to the provided token.
     return admin.messaging().send(message)
       .then(
         (response) => {
-          if (response.exists) {
+          if (typeof response !== "undefined") {
             // Response is a message ID string.
-            console.log('Successfully sent message:', response);
+            console.log('Successfully sent message.');
             return null;
           } else {
-            throw new Error(message)
+            throw new Error(registrationToken);
           }
-
-        },
-        (error) => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
         }
       )
       .catch(error => {console.log('Error sending message: ', error);});
