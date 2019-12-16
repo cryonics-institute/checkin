@@ -16,22 +16,35 @@ admin.initializeApp(functions.config().firebase)
 // TODO: Set up a scheduled function, following the guide at the following URL:
 // https://firebase.google.com/docs/functions/schedule-functions
 exports.scheduledFunction = functions.pubsub.schedule(
-  'every 5 minutes'
+  // 'every 5 minutes'
+  'every 1 minutes'
 ).onRun(
   context => {
     console.log('This will be run every 5 minutes!')
-    // TODO: Error thrown sometime after here.
 
-    // TODO: Something is wrong with the message.
-    const message = {
-      notification: {
-        title: "Test",
-        body: "This is a test."
-      }
-    }
+    return admin.firestore().collection('checkin').doc('user').get()
+      .then(
+        doc => {
+          if (typeof doc !== "undefined") {
+            // Response is a message ID string.
+            console.log('Successfully retrieved document.')
 
-    // Send a message to the device corresponding to the provided token.
-    return admin.messaging().send(message)
+            const registrationToken = doc.data()['a@a.aa'].registrationToken
+            const message = {
+              token: registrationToken,
+              notification: {
+                title: "Test",
+                body: "Successfully retrieved document."
+              }
+            }
+
+            // Send a message to the device corresponding to the provided token.
+            return admin.messaging().send(message)
+          } else {
+            throw new Error(registrationToken)
+          }
+        }
+      )
       .then(
         response => {
           if (typeof response !== "undefined") {
