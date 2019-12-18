@@ -1,5 +1,8 @@
+// TODO: In master branch, add registration token to each document when created.
+
 const admin = require('firebase-admin')
 const functions = require('firebase-functions')
+const moment = require('moment')
 
 admin.initializeApp(functions.config().firebase)
 
@@ -13,91 +16,79 @@ admin.initializeApp(functions.config().firebase)
 //   }
 // )
 
-// TODO: Set up a scheduled function, following the guide at the following URL:
-// https://firebase.google.com/docs/functions/schedule-functions
-exports.scheduledFunction = functions.pubsub.schedule(
+exports.checkCheckins = functions.pubsub.schedule(
   // 'every 5 minutes'
   'every 1 minutes'
 ).onRun(
   context => {
     console.log('This will be run every 5 minutes!')
 
-    return admin.firestore().collection('checkin').doc('user').get()
+    return admin.firestore().collection('users').get()
       .then(
-        doc => {
-          if (typeof doc !== "undefined") {
-            // Response is a message ID string.
+        querySnapshot => {
+          if (typeof querySnapshot !== 'undefined') {
             console.log('Successfully retrieved document.')
 
-            const registrationToken = doc.data()['a@a.aa'].registrationToken
-            const message = {
-              token: registrationToken,
-              notification: {
-                title: "Test",
-                body: "Successfully retrieved document."
+            const registrationTokens = []
+
+            querySnapshot.forEach(
+              doc => {
+                // doc.data() is never undefined for query doc snapshots
+                const registrationToken = getRegistrationTokenIfNotCheckedIn(
+                  doc.data()
+                )
+                if (registrationToken !== null) {
+                  registrationTokens.push(registrationToken)
+                }
               }
+            )
+
+            return Promise.all(registrationTokens)
+          } else {
+            throw new Error('The Firestore document was not retrieved.')
+          }
+        }
+      )
+        .then(
+          registrationTokens => {
+            if (typeof registrationTokens !== 'undefined') {
+              console.log('LENGTH: ' + registrationTokens.length)
+              registrationTokens.forEach(
+                token => console.log('Array contains ' + token)
+              )
+
+              const message = {
+                tokens: registrationTokens,
+                notification: {
+                  title: 'Check In?',
+                  body: 'Your buddy will be alerted if not.'
+                }
+              }
+
+              // Send a message to the device corresponding to the provided
+              // token.
+              // return admin.messaging().sendMulticast(message)
+              return null
+            } else {
+              throw new Error('The registration-token array was undefined.')
             }
-
-            // Send a message to the device corresponding to the provided token.
-            return admin.messaging().send(message)
-          } else {
-            throw new Error(registrationToken)
           }
-        }
-      )
+        )
       .then(
         response => {
-          if (typeof response !== "undefined") {
+          if (typeof response !== 'undefined') {
             // Response is a message ID string.
-            console.log('Successfully sent message.')
+            console.log(
+              // response.successCount + ' messages were sent successfully.'
+              'The checkCheckins function completed successfully.'
+            )
             return null
           } else {
-            throw new Error(registrationToken)
+            throw new Error('The multicast-messaging response was undefined.')
           }
         }
       )
-      .catch(error => {console.log('Error sending message: ', error)})
-  }
-)
-
-// TODO: What you really need is a notification to be sent when the document
-// does not change.
-exports.pushNotification = functions.firestore.document('checkin/user').onWrite(
-  (change, context) => {
-    console.log('The Firebase Firestore user document has changed.')
-    const before = change.before.data()
-    const after = change.after.data()
-    console.log(before)
-    console.log(before['a@a.aa'])
-    console.log(after)
-    console.log(after['a@a.aa'])
-
-    // TODO: Compare the before and after data to see which field changed.
-
-    const registrationToken = after['a@a.aa'].registrationToken
-    const message = {
-      token: registrationToken,
-      notification: {
-        title: "Test",
-        body: "This is a test."
-      }
-    }
-    console.log(registrationToken)
-
-    // Send a message to the device corresponding to the provided token.
-    return admin.messaging().send(message)
-      .then(
-        response => {
-          if (typeof response !== "undefined") {
-            // Response is a message ID string.
-            console.log('Successfully sent message.')
-            return null
-          } else {
-            throw new Error(registrationToken)
-          }
-        }
-      )
-      .catch(error => {console.log('Error sending message: ', error)})
+      .catch(error => {console.log('NOTIFICATION ERROR: ', error)})
   }
 )
 
@@ -107,93 +98,236 @@ exports.pushNotification = functions.firestore.document('checkin/user').onWrite(
  * @param  {Boolean} isTest     Whether called by unit test (optional).
  * @return {Promise}            Promise to set a timer.
  */
-// setTimer = (isTest = false) => (dispatch, getState) => {
-//   const checkinAlert = () => {
-//     Alert.alert(
-//       'Check In?',
-//       'Your buddy will be alerted if not.',
-//       [
-//         {
-//           text: 'OK',
-//           onPress: () => {
-//             console.log('OK Pressed')
-//             dispatch(removeTimers())
-//             dispatch(checkin())
-//           }
-//         },
-//         {
-//           text: 'Cancel',
-//           onPress: () => {
-//             console.log('Cancel Pressed')
-//             dispatch(removeTimers())
-//           },
-//           style: 'cancel'
-//         }
-//       ],
-//       { cancelable: false }
-//     )
-//   }
-//
-//   dispatch(setTimerRequestedAction())
-//
-//   return Promise.resolve(
-//     dispatch(
-//       setTimerInterval(
-//         // TODO: Should these parameters be fetched from Firestore?
-//         getState().inputs.array,
-//         getState().patient.checkinTime,
-//         (new Date()).toISOString()
-//       )
-//     )
-//   )
-//     .then(
-//       interval => {
-//         dispatch(removeTimers())
-//         return interval
-//       },
-//       error => {
-//         var errorMessage = new Error(error.message)
-//         throw errorMessage
-//       }
-//     )
-//     .then(
-//       interval => {
-//         console.log('TIMEOUT SHOULD SET TO: ' + interval)
-//
-//         if (isTest) {
-//           return interval
-//         } else {
-//           if (interval > 0) {
-//             const timer = Promise.resolve(
-//               setTimeout(
-//                 () => {
-//                   dispatch(setTimer(isTest))
-//                 },
-//                 interval
-//               )
-//             )
-//             return timer
-//           } else {
-//             checkinAlert()
-//             return null
-//           }
-//         }
-//       },
-//       error => {
-//         var errorMessage = new Error(error.message)
-//         throw errorMessage
-//       }
-//     )
-//     .then(
-//       timer => {
-//         console.log('TIMER ID: ' + timer)
-//         dispatch(setTimerFulfilledAction(timer))
-//         return null
-//       },
-//       error => {
-//         var errorMessage = new Error(error.message)
-//         throw errorMessage
-//       }
-//     )
-//     .catch(error => dispatch(setTimerRejectedAction(error.message)))
-// }
+const getRegistrationTokenIfNotCheckedIn = data => {
+  return Promise.resolve(
+    getInterval(
+      data.alertTimes,
+      data.checkinTime
+    )
+  )
+    .then(
+      interval => {
+        if (interval > 0) {
+          // wait until next check
+          return null
+        } else {
+          // return the registrationToken to be added to the array
+          return data.registrationToken
+        }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => {console.log('NOTIFICATION ERROR: ', error)})
+}
+
+/**
+ * Get the interval for the getRegistrationTokenIfNotCheckedIn function.
+ * @param   {Array} alertTimes  Array of scheduled alert times.
+ * @param   {Date} checkinTime  Last time patient checked in.\
+ * @return  {Integer}           Interval to wait before check-in alert.
+ */
+const getInterval = (alertTimes, checkinTime) => {
+  const now = (new Date()).toISOString()
+  const checkinMinutes = (((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
+      parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
+      parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
+      parseInt(checkinTime.slice(-4, -1), 10)
+  const nowMinutes = (((((parseInt(now.slice(-13, -11), 10) * 60) +
+      parseInt(now.slice(-10, -8), 10)) * 60) +
+      parseInt(now.slice(-7, -5), 10)) * 1000) +
+      parseInt(now.slice(-4, -1), 10)
+
+  // console.log('LAST CHECK-IN: ' + checkinTime)
+  // console.log('NOW: ' + now)
+  // console.log('CHECKIN MINUTES: ' + checkinMinutes)
+  // console.log('NOW MINUTES: ' + nowMinutes)
+
+  return Promise.resolve(
+    findClosestCheckinTimes(alertTimes, checkinMinutes, nowMinutes)
+  )
+    .then(
+      alertTime => {
+        // console.log('CHECKIN MINUTES: ' + checkinMinutes)
+        // console.log('NOW MINUTES: ' + nowMinutes)
+        // console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
+        // console.log('TIME AFTER NOW: ' + alertTime.afterNow)
+        // console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
+        // console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
+        // console.log(alertTime.beforeNow === alertTime.beforeCheckin)
+        // console.log(alertTime.afterNow === alertTime.afterCheckin)
+
+        if ((moment(now) - moment(checkinTime)) > 86400000) {
+          return 0
+        } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
+          if (nowMinutes > checkinMinutes) {
+            if (alertTime.afterCheckin > nowMinutes) {
+              const interval = (alertTime.afterCheckin - nowMinutes)
+              return interval
+            } else if (alertTime.afterCheckin > checkinMinutes) {
+              return 0
+            } else {
+              const interval = (
+                (alertTime.afterCheckin - nowMinutes)
+              ) + 86400000
+              return interval
+            }
+          } else {
+            if (alertTime.afterCheckin > checkinMinutes) {
+              return 0
+            } else if (alertTime.afterCheckin > nowMinutes) {
+              const interval = (alertTime.afterCheckin - nowMinutes)
+              return interval
+            } else {
+              const interval = (
+                (alertTime.afterCheckin - nowMinutes)
+              ) + 86400000
+              return interval
+            }
+          }
+        } else if (alertTime.beforeCheckin < alertTime.afterCheckin) {
+          if (
+            alertTime.beforeCheckin === alertTime.beforeNow &&
+            alertTime.afterCheckin === alertTime.afterNow
+          ) {
+            const interval = (alertTime.afterCheckin - nowMinutes)
+            return interval
+          } else {
+            return 0
+          }
+        } else {
+          if (
+            alertTime.beforeCheckin === alertTime.beforeNow &&
+            alertTime.afterCheckin === alertTime.afterNow
+          ) {
+            if (alertTime.afterCheckin > nowMinutes) {
+              const interval = (alertTime.afterCheckin - nowMinutes)
+              return interval
+            } else {
+              const interval = (
+                (alertTime.afterCheckin - nowMinutes)
+              ) + 86400000
+              return interval
+            }
+          } else {
+            return 0
+          }
+        }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
+}
+
+/**
+ * Find the check-in times immediately before and after the last check-in and
+ * immediately before and after now.
+ * @param  {Array} alertTimes       Array of times to check in.
+ * @param  {Integer} checkinMinutes Minutes from midnight to last check-in.
+ * @param  {Integer} nowMinutes     Minutes from midnight to now.
+ * @return {Promise}                Times before and after check-in and now.
+ */
+const findClosestCheckinTimes = (alertTimes, checkinMinutes, nowMinutes) => {
+
+  const alertMinutes = alertTimes.filter(alert => alert.validity).map(
+    alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
+      parseInt(alert.time.slice(-10, -8), 10)) * 60) +
+      parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
+      parseInt(alert.time.slice(-4, -1), 10)
+  )
+  // console.log('ALERT MINUTES LENGTH: ' + alertMinutes.length)
+  // console.log('ALERT MINUTES ZERO: ' + alertMinutes[0])
+
+  if (alertMinutes.length === 1) {
+    return Promise.resolve(
+      {
+        beforeNow: alertMinutes[0],
+        afterNow: alertMinutes[0],
+        beforeCheckin: alertMinutes[0],
+        afterCheckin: alertMinutes[0]
+      }
+    )
+      .then(
+        alertTime => {
+          return alertTime
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .catch(error => {console.log('FIND CLOSEST TIMES ERROR: ', error)})
+  } else {
+    return Promise.resolve(
+      {
+        array: alertMinutes.sort((el1, el2) => el1 - el2),
+        checkinMinutes: checkinMinutes,
+        nowMinutes: nowMinutes
+      }
+    )
+      .then(
+        result => {
+          // result.array.forEach(element => console.log('TIME: ' + element))
+
+          let timeBeforeNow = null
+          let timeAfterNow = null
+          let timeBeforeCheckin = null
+          let timeAfterCheckin = null
+
+          let i = 0
+          while (timeBeforeNow === null && i < result.array.length) {
+            if (result.nowMinutes < result.array[i]) {
+              timeBeforeNow = result.array[i - 1]
+              timeAfterNow = result.array[i]
+            }
+            i += 1
+          }
+
+          // console.log('timeBeforeNow: ' + timeBeforeNow)
+          if (timeBeforeNow === null || timeBeforeNow === undefined) {
+            timeBeforeNow = result.array[result.array.length - 1]
+            timeAfterNow = result.array[0]
+          }
+
+          let j = 0
+          while (timeBeforeCheckin === null && j < result.array.length) {
+            if (result.checkinMinutes < result.array[j]) {
+              timeBeforeCheckin = result.array[j - 1]
+              timeAfterCheckin = result.array[j]
+            }
+            j += 1
+          }
+
+          // console.log('timeBeforeCheckin: ' + timeBeforeCheckin)
+          if (timeBeforeCheckin === null || timeBeforeCheckin === undefined) {
+            timeBeforeCheckin = result.array[result.array.length - 1]
+            timeAfterCheckin = result.array[0]
+          }
+
+          // console.log('CHECKIN MINUTES: ' + result.checkinMinutes)
+          // console.log('NOW MINUTES: ' + result.nowMinutes)
+          // console.log('TIME BEFORE NOW: ' + timeBeforeNow)
+          // console.log('TIME AFTER NOW: ' + timeAfterNow)
+          // console.log('TIME BEFORE CHECKIN: ' + timeBeforeCheckin)
+          // console.log('TIME AFTER CHECKIN: ' + timeAfterCheckin)
+
+          return {
+            beforeNow: timeBeforeNow,
+            afterNow: timeAfterNow,
+            beforeCheckin: timeBeforeCheckin,
+            afterCheckin: timeAfterCheckin
+          }
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .catch(error => {console.log('FIND CLOSEST TIMES ERROR: ', error)})
+  }
+}
