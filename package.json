@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@expo/vector-icons": "^10.0.0",
-    "core-js": "3",
+    "core-js": "^3.6.0",
     "expo": "^36.0.0",
     "firebase": "^7.0.0",
     "mem": "^5.1.1",
@@ -16,7 +16,7 @@
     "react-native-elements": "^1.2.3",
     "react-native-gesture-handler": "~1.5.0",
     "react-native-reanimated": "~1.4.0",
-    "react-native-screens": "^1.0.0-alpha.23",
+    "react-native-screens": "^2.0.0-alpha.20",
     "react-native-unimodules": "~0.7.0",
     "react-native-vector-icons": "^6.6.0",
     "react-native-web": "^0.11.7",
@@ -60,11 +60,12 @@
     ]
   },
   "scripts": {
-    "android": "react-native run-android",
+    "android": "expo run-android",
     "docs": "jsdoc -c ./jsdoc.json",
-    "ios": "react-native run-ios",
+    "ios": "expo run-ios",
     "lint": "eslint",
-    "start": "react-native start",
+    "publish": "expo publish",
+    "start": "expo start",
     "test": "jest",
     "web": "expo start --web",
     "postinstall": "jetify && jetify"

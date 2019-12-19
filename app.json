@@ -1,6 +1,5 @@
 {
   "expo": {
-    "displayName": "Check-In",
     "name": "checkin",
     "slug": "checkin",
     "description": "Cryonics Check-In is a multiplatform mobile app that reminds cryonics patients to check in with their family and friends.",
