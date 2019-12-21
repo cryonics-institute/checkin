@@ -16,6 +16,11 @@ console.warn = message => {
 const store = ConfigureStore()
 
 class App extends React.Component {
+  constructor (props) {
+    super(props)
+    console.log('initial props:', props)
+  }
+
   render () {
     return (
       <Provider store={store}>
