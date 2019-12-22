@@ -140,5 +140,5 @@ iOSInjectionProject/
 # Expo Ejection
 #
 # Comment the following two exclusions after ejecting permanently.
-ios/
+#ios/
 android/
