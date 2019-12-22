@@ -36,6 +36,7 @@ export const Patient = (
     isSignedIn: null,
     lastAlertTime: null,
     listeners: [],
+    registrationToken: null,
     signinTime: null,
     snooze: null
   },
@@ -125,6 +126,12 @@ export const Patient = (
         isSignedIn: action.payload[0],
         signinTime: action.payload[4],
         snooze: action.payload[5]
+      }
+
+    case ActionTypes.INITIALIZE_STORE:
+      return {
+        ...state,
+        registrationToken: action.payload
       }
 
     case ActionTypes.REMOVE_LISTENER:

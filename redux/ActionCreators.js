@@ -79,6 +79,7 @@ export const addDocument = (email) => (dispatch, getState) => {
     {
       alertTimes: patient.alertTimes,
       checkinTime: patient.checkinTime,
+      registrationToken: getState().patient.registrationToken,
       signinTime: patient.signinTime,
       snooze: patient.snooze
     }
@@ -510,6 +511,13 @@ export const getDocumentFulfilledAction = (data) => (
   {
     type: ActionTypes.GET_DOCUMENT_FULFILLED,
     payload: data
+  }
+)
+
+export const initializeStore = (props) => (
+  {
+    type: ActionTypes.INITIALIZE_STORE,
+    payload: props
   }
 )
 
