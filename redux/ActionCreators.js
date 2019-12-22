@@ -1,4 +1,5 @@
 // TODO: Put all your dispatches in an arrow function ... maybe ... so check it out.
+// TODO: It erases the collection if nothing is in it.  Fix that!
 /**
  * Redux action-creators for the project, Cryonics Check-In.
  *
