@@ -1,6 +1,6 @@
 import React from 'react'
-import { createAppContainer, createStackNavigator, createSwitchNavigator }
-  from 'react-navigation'
+import { createAppContainer, createSwitchNavigator } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
 import { connect } from 'react-redux'
 import NavigationService from '../services/NavigationService'
 import { colors, styles } from '../styles/Styles'
