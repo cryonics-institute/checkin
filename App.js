@@ -21,7 +21,11 @@ class App extends React.Component {
     super(props)
 
     console.log('INITIAL PROPS:', props)
-    store.dispatch(initializeStore(props.FCMToken))
+  }
+
+  componentDidMount () {
+    console.log('INITIAL PROPS:', this.props)
+    store.dispatch(initializeStore(this.props.FCMToken))
   }
 
   render () {
