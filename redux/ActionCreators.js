@@ -1,6 +1,5 @@
 // TODO: Put all your dispatches in an arrow function ... maybe ... so check it out.
 // TODO: It erases the collection if nothing is in it.  Fix that!
-// TODO: You need to switch from RCTRootView appProperties to something else.
 /**
  * Redux action-creators for the project, Cryonics Check-In.
  *
@@ -516,10 +515,14 @@ export const getDocumentFulfilledAction = (data) => (
   }
 )
 
-export const initializeStore = (props) => (
+export const initializeStore = (registrationToken) => (dispatch, getState) => {
+  dispatch(initializeStoreAction(registrationToken))
+}
+
+export const initializeStoreAction = (registrationToken) => (
   {
     type: ActionTypes.INITIALIZE_STORE,
-    payload: props
+    payload: registrationToken
   }
 )
 
