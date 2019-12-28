@@ -1,4 +1,5 @@
 // TODO: Put all your dispatches in an arrow function ... maybe ... so check it out.
+// TODO: It erases the collection if nothing is in it.  Fix that!
 /**
  * Redux action-creators for the project, Cryonics Check-In.
  *
@@ -79,6 +80,7 @@ export const addDocument = (email) => (dispatch, getState) => {
     {
       alertTimes: patient.alertTimes,
       checkinTime: patient.checkinTime,
+      registrationToken: getState().patient.registrationToken,
       signinTime: patient.signinTime,
       snooze: patient.snooze
     }
@@ -510,6 +512,17 @@ export const getDocumentFulfilledAction = (data) => (
   {
     type: ActionTypes.GET_DOCUMENT_FULFILLED,
     payload: data
+  }
+)
+
+export const initializeStore = (registrationToken) => (dispatch, getState) => {
+  dispatch(initializeStoreAction(registrationToken))
+}
+
+export const initializeStoreAction = (registrationToken) => (
+  {
+    type: ActionTypes.INITIALIZE_STORE,
+    payload: registrationToken
   }
 )
 

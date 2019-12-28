@@ -136,3 +136,9 @@ fastlane/test_output
 # https://github.com/johnno1962/injectionforxcode
 
 iOSInjectionProject/
+
+# Expo Ejection
+#
+# Comment the following two exclusions after ejecting permanently.
+#ios/
+android/
