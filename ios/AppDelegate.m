@@ -30,31 +30,6 @@
   (UIApplication *)application
     didFinishLaunchingWithOptions: (NSDictionary *)launchOptions
 {
-  self.moduleRegistryAdapter = [
-    [UMModuleRegistryAdapter alloc]
-      initWithModuleRegistryProvider: [[UMModuleRegistryProvider alloc] init]
-  ];
-  RCTBridge *bridge = [
-    [RCTBridge alloc]
-      initWithDelegate: self
-      launchOptions: launchOptions
-  ];
-  RCTRootView *rootView = [
-    [RCTRootView alloc]
-      initWithBridge: bridge
-      moduleName: @"checkin"
-      initialProperties: nil
-  ];
-  rootView.backgroundColor = [
-    [UIColor alloc] initWithRed: 1.0f green: 1.0f blue: 1.0f alpha: 1
-  ];
-
-  self.window = [[UIWindow alloc] initWithFrame: [UIScreen mainScreen].bounds];
-  UIViewController *rootViewController = [UIViewController new];
-  rootViewController.view = rootView;
-  self.window.rootViewController = rootViewController;
-  [self.window makeKeyAndVisible];
-
   [super application: application didFinishLaunchingWithOptions: launchOptions];
   
   [FIRApp configure];
@@ -126,13 +101,40 @@
 //          NSString stringWithFormat: @"Remote InstanceID token: %@", result.token
 //        ];
 //        self.instanceIDTokenMessage.text = message;
-        ((RCTRootView *) self.window.rootViewController.view).appProperties = @{
-          @"FCMToken": result.token
-          
-        };
-        NSLog(
-          @"Root view application properties: %@", @{@"FCMToken": result.token}
-        );
+
+        self.moduleRegistryAdapter = [
+          [UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider: [
+            [UMModuleRegistryProvider alloc] init
+          ]
+        ];
+        RCTBridge *bridge = [
+          [RCTBridge alloc]
+            initWithDelegate: self
+            launchOptions: nil
+        ];
+        RCTRootView *rootView = [
+          [RCTRootView alloc]
+            initWithBridge: bridge
+            moduleName: @"checkin"
+            initialProperties: @{
+              @"FCMToken": result.token
+            }
+        ];
+        rootView.backgroundColor = [
+          [UIColor alloc] initWithRed: 1.0f green: 1.0f blue: 1.0f alpha: 1
+        ];
+
+        self.window = [
+          [UIWindow alloc] initWithFrame: [UIScreen mainScreen].bounds
+        ];
+        UIViewController *rootViewController = [UIViewController new];
+        rootViewController.view = rootView;
+        self.window.rootViewController = rootViewController;
+        [self.window makeKeyAndVisible];
+
+//        ((RCTRootView *) self.window.rootViewController.view).appProperties = @{
+//          @"FCMToken": result.token
+//        };
         NSLog(
           @"Root view application properties: %@", (
             (RCTRootView *) self.window.rootViewController.view
