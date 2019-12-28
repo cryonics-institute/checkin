@@ -5,11 +5,10 @@ const moment = require('moment')
 admin.initializeApp(functions.config().firebase)
 
 exports.checkCheckins = functions.pubsub.schedule(
-  // 'every 5 minutes'
   'every 1 minutes'
 ).onRun(
   context => {
-    console.log('This will be run every 5 minutes!')
+    console.log('This will be run every minute!')
 
     return admin.firestore().collection('users').get()
       .then(
