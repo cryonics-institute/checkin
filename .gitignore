@@ -66,3 +66,12 @@ node_modules/
 
 # dotenv environment variables file
 .env
+
+# System Files
+.DS_Store
+
+# Master Branch Files
+.expo/
+android/
+ios/
+google-services.json
