@@ -142,3 +142,6 @@ iOSInjectionProject/
 # Comment the following two exclusions after ejecting permanently.
 #ios/
 android/
+
+# Files from Other Branches
+functions/
