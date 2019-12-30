@@ -21,7 +21,11 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// TODO: Swap comments before ejecting again.
+import { AsyncStorage } from 'react-native'
+// import AsyncStorage from '@react-native-community/async-storage'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
+import { persistStore, persistReducer } from 'redux-persist'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import { Auth } from './authReducer'
@@ -29,18 +33,29 @@ import { Inputs } from './inputsReducer'
 import { Patient } from './patientReducer'
 import { Timer } from './timerReducer'
 
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage
+}
+
+const rootReducer = combineReducers(
+  {
+    auth: Auth,
+    inputs: Inputs,
+    patient: Patient,
+    timer: Timer
+  }
+)
+
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
 export const ConfigureStore = () => {
   const store = createStore(
-    combineReducers(
-      {
-        auth: Auth,
-        inputs: Inputs,
-        patient: Patient,
-        timer: Timer
-      }
-    ),
+    persistedReducer,
     applyMiddleware(thunk, logger)
   )
 
-  return store
+  const persistor = persistStore(store)
+
+  return { store, persistor }
 }
