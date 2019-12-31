@@ -21,9 +21,7 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// TODO: Swap comments before ejecting again.
-import { AsyncStorage } from 'react-native'
-// import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-community/async-storage'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
 import thunk from 'redux-thunk'
