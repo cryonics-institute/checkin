@@ -22,13 +22,11 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { REHYDRATE } from 'redux-persist'
 import * as ActionTypes from './ActionTypes'
 
 export const Auth = (
   state = {
     errMess: null,
-    isHydrated: null,
     isPatient: null,
     user: null
   },
@@ -57,21 +55,6 @@ export const Auth = (
         ...state,
         errMess: null,
         user: action.payload
-      }
-
-    case REHYDRATE:
-      return {
-        ...state,
-        errMess: (typeof action.payload !== 'undefined')
-          ? action.payload.auth.errMess
-          : null,
-        isHydrated: true,
-        isPatient: (typeof action.payload !== 'undefined')
-          ? action.payload.auth.isPatient
-          : null,
-        user: (typeof action.payload !== 'undefined')
-          ? action.payload.auth.user
-          : null
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
