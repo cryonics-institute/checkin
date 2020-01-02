@@ -25,7 +25,8 @@
 import { Alert } from 'react-native'
 import moment from 'moment'
 import * as ActionTypes from './ActionTypes'
-import { auth, db } from '../firebase/firebase'
+import auth from '@react-native-firebase/auth'
+import db from '@react-native-firebase/firestore'
 import NavigationService from '../services/NavigationService'
 
 /**
@@ -1620,8 +1621,8 @@ export const signinFulfilledAction = (user) => (
 )
 
 /**
- * Sign out a patient on Firebase, which first removes that patient's document on
- * Firebase.  After those promises are returned, an action for sign-out-
+ * Sign out a patient on Firebase, which first removes that patient's document
+ * on Firebase.  After those promises are returned, an action for sign-out-
  * fulfillment is initiated, a request to remove timers is initiated, and the
  * navigation service is told to navigate to the authorization stack.
  * @return {Promise}  A promise to sign-out a patient-user.
