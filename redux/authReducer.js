@@ -29,7 +29,6 @@ export const Auth = (
   state = {
     errMess: null,
     isHydrated: null,
-    isLoading: null,
     isPatient: null,
     user: null
   },
@@ -44,82 +43,70 @@ export const Auth = (
 
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
-        ...state,
-        isLoading: true
+        ...state
       }
 
     case ActionTypes.REGISTRATION_REJECTED:
       return {
         ...state,
-        errMess: action.payload,
-        isLoading: false
+        errMess: action.payload
       }
 
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
         errMess: null,
-        isLoading: false,
         user: action.payload
       }
 
     case REHYDRATE:
       return {
         ...state,
-        errMess: action.payload.auth !== undefined
+        errMess: (typeof action.payload !== 'undefined')
           ? action.payload.auth.errMess
           : null,
         isHydrated: true,
-        isLoading: action.payload.auth !== undefined
-          ? action.payload.auth.isLoading
-          : null,
-        isPatient: action.payload.auth !== undefined
+        isPatient: (typeof action.payload !== 'undefined')
           ? action.payload.auth.isPatient
           : null,
-        user: action.payload.auth !== undefined
+        user: (typeof action.payload !== 'undefined')
           ? action.payload.auth.user
           : null
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
       return {
-        ...state,
-        isLoading: true
+        ...state
       }
 
     case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
-        errMess: action.payload,
-        isLoading: false
+        errMess: action.payload
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
         errMess: null,
-        isLoading: false,
         user: action.payload
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
-        ...state,
-        isLoading: true
+        ...state
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errMess: action.payload,
-        isLoading: false
+        errMess: action.payload
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
         errMess: null,
-        isLoading: false,
         user: null
       }
 
