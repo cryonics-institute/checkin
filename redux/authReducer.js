@@ -66,11 +66,19 @@ export const Auth = (
     case REHYDRATE:
       return {
         ...state,
-        errMess: action.payload.auth !== undefined ? action.payload.auth.errMess : null,
+        errMess: action.payload.auth !== undefined
+          ? action.payload.auth.errMess
+          : null,
         isHydrated: true,
-        isLoading: action.payload.auth !== undefined ? action.payload.auth.isLoading : null,
-        isPatient: action.payload.auth !== undefined ? action.payload.auth.isPatient : null,
-        user: action.payload.auth !== undefined ? action.payload.auth.user : null
+        isLoading: action.payload.auth !== undefined
+          ? action.payload.auth.isLoading
+          : null,
+        isPatient: action.payload.auth !== undefined
+          ? action.payload.auth.isPatient
+          : null,
+        user: action.payload.auth !== undefined
+          ? action.payload.auth.user
+          : null
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
