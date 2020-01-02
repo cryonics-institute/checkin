@@ -76,6 +76,7 @@
     "test": "jest",
     "web": "expo start --web",
     "ios": "react-native run-ios",
-    "android": "react-native run-android"
+    "android": "react-native run-android",
+    "postinstall": "jetify"
   }
 }
