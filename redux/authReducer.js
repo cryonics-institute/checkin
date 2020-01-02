@@ -28,8 +28,8 @@ import * as ActionTypes from './ActionTypes'
 export const Auth = (
   state = {
     errMess: null,
-    isHydrated: false,
-    isLoading: false,
+    isHydrated: null,
+    isLoading: null,
     isPatient: null,
     user: null
   },
@@ -66,7 +66,11 @@ export const Auth = (
     case REHYDRATE:
       return {
         ...state,
-        isHydrated: true
+        errMess: action.payload.auth !== undefined ? action.payload.auth.errMess : null,
+        isHydrated: true,
+        isLoading: action.payload.auth !== undefined ? action.payload.auth.isLoading : null,
+        isPatient: action.payload.auth !== undefined ? action.payload.auth.isPatient : null,
+        user: action.payload.auth !== undefined ? action.payload.auth.user : null
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
