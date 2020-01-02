@@ -18,14 +18,7 @@ console.warn = message => {
 const { persistor, store } = ConfigureStore()
 
 class App extends React.Component {
-  constructor (props) {
-    super(props)
-
-    console.log('INITIAL PROPS:', props)
-  }
-
   componentDidMount () {
-    console.log('INITIAL PROPS:', this.props)
     store.dispatch(initializeStore(this.props.FCMToken))
   }
 

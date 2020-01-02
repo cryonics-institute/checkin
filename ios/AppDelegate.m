@@ -97,10 +97,6 @@
         NSLog(@"Error fetching remote instance ID: %@", error);
       } else {
         NSLog(@"Remote instance ID token: %@", result.token);
-//        NSString* message = [
-//          NSString stringWithFormat: @"Remote InstanceID token: %@", result.token
-//        ];
-//        self.instanceIDTokenMessage.text = message;
 
         self.moduleRegistryAdapter = [
           [UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider: [
@@ -131,15 +127,6 @@
         rootViewController.view = rootView;
         self.window.rootViewController = rootViewController;
         [self.window makeKeyAndVisible];
-
-//        ((RCTRootView *) self.window.rootViewController.view).appProperties = @{
-//          @"FCMToken": result.token
-//        };
-        NSLog(
-          @"Root view application properties: %@", (
-            (RCTRootView *) self.window.rootViewController.view
-          ).appProperties
-        );
       }
     }
   ];
