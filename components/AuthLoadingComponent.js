@@ -1,5 +1,5 @@
 import React from 'react'
-import { ActivityIndicator, StatusBar, View } from 'react-native'
+import { ActivityIndicator, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 import { styles } from '../styles/Styles'
 
@@ -20,8 +20,8 @@ class AuthLoading extends React.Component {
   render () {
     return (
       <View style = { styles.containerCentered }>
+        <Text>Cryonics Check-In</Text>
         <ActivityIndicator />
-        <StatusBar barStyle='default' />
       </View>
     )
   }
