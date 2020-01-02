@@ -11,7 +11,7 @@ const mapStateToProps = state => {
 
 class AuthLoading extends React.Component {
   componentDidMount () {
-    this.props.auth.isAuthenticated
+    this.props.auth.user !== null
       ? this.props.navigation.navigate('App')
       : this.props.navigation.navigate('Auth')
   }

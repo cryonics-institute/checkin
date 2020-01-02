@@ -22,12 +22,13 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { REHYDRATE } from 'redux-persist'
 import * as ActionTypes from './ActionTypes'
 
 export const Auth = (
   state = {
     errMess: null,
-    isAuthenticated: false,
+    isHydrated: false,
     isLoading: false,
     isPatient: null,
     user: null
@@ -44,7 +45,6 @@ export const Auth = (
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
         ...state,
-        isAuthenticated: false,
         isLoading: true
       }
 
@@ -52,7 +52,6 @@ export const Auth = (
       return {
         ...state,
         errMess: action.payload,
-        isAuthenticated: false,
         isLoading: false
       }
 
@@ -60,15 +59,19 @@ export const Auth = (
       return {
         ...state,
         errMess: null,
-        isAuthenticated: true,
         isLoading: false,
         user: action.payload
+      }
+
+    case REHYDRATE:
+      return {
+        ...state,
+        isHydrated: true
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
-        isAuthenticated: false,
         isLoading: true
       }
 
@@ -76,7 +79,6 @@ export const Auth = (
       return {
         ...state,
         errMess: action.payload,
-        isAuthenticated: false,
         isLoading: false
       }
 
@@ -84,7 +86,6 @@ export const Auth = (
       return {
         ...state,
         errMess: null,
-        isAuthenticated: true,
         isLoading: false,
         user: action.payload
       }
@@ -92,7 +93,6 @@ export const Auth = (
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        isAuthenticated: true,
         isLoading: true
       }
 
@@ -100,7 +100,6 @@ export const Auth = (
       return {
         ...state,
         errMess: action.payload,
-        isAuthenticated: true,
         isLoading: false
       }
 
@@ -108,7 +107,6 @@ export const Auth = (
       return {
         ...state,
         errMess: null,
-        isAuthenticated: false,
         isLoading: false,
         user: null
       }
