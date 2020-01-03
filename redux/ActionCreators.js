@@ -76,7 +76,7 @@ export const addDocument = (email) => (dispatch, getState) => {
 
   dispatch(addDocumentRequestedAction())
 
-  return db.collection('users').doc(email).set(
+  return db().collection('users').doc(email).set(
     {
       alertTimes: patient.alertTimes,
       checkinTime: patient.checkinTime,
@@ -211,7 +211,7 @@ export const checkin = () => (dispatch, getState) => {
 
   dispatch(checkinRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.email).update(
+  return db().collection('users').doc(getState().auth.user.email).update(
     {
       checkinTime: patient.checkinTime
     }
@@ -441,7 +441,7 @@ export const findClosestCheckinTimesFulfilledAction = () => (
 export const getDocument = (email) => (dispatch, getState) => {
   dispatch(getDocumentRequestedAction())
 
-  return db.collection('users').doc(email).get()
+  return db().collection('users').doc(email).get()
     .then(
       doc => {
         if (doc.exists) {
@@ -565,7 +565,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
         ]
       }
 
-      return db.collection('users').doc(getState().auth.user.email).update(
+      return db().collection('users').doc(getState().auth.user.email).update(
         {
           alertTimes: inputsArray
         }
@@ -640,7 +640,7 @@ export const mutateInputFulfilledAction = (inputs) => (
 export const registerPatient = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
-  return auth.createUserWithEmailAndPassword(creds.username, creds.password)
+  return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
       (userCredential) => {
         dispatch(registrationFulfilledAction(userCredential.user))
@@ -664,7 +664,7 @@ export const registerPatient = (creds) => (dispatch) => {
 export const registerStandby = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
-  return auth.createUserWithEmailAndPassword(creds.username, creds.password)
+  return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
       (userCredential) => {
         dispatch(registrationFulfilledAction(userCredential.user))
@@ -720,7 +720,7 @@ export const removeInput = (id) => (dispatch, getState) => {
 
   const inputsArray = getState().inputs.array.filter(input => input.id !== id)
 
-  return db.collection('users').doc(getState().auth.user.email).update(
+  return db().collection('users').doc(getState().auth.user.email).update(
     {
       alertTimes: inputsArray
     }
@@ -743,7 +743,7 @@ export const removeInput = (id) => (dispatch, getState) => {
 export const removeInputs = () => (dispatch, getState) => {
   dispatch(removeInputsRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.email).update(
+  return db().collection('users').doc(getState().auth.user.email).update(
     {
       alertTimes: []
     }
@@ -1492,7 +1492,7 @@ export const setTimerInterval = (
     .then(
       interval => {
         if (!isTest) {
-          db.collection('users').doc(getState().auth.user.email).update(
+          db().collection('users').doc(getState().auth.user.email).update(
             {
               checkinInterval: interval
             }
@@ -1549,7 +1549,7 @@ export const setTimerIntervalFulfilledAction = (interval) => (
 export const signinPatient = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
-  return auth.signInWithEmailAndPassword(creds.username, creds.password)
+  return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))
@@ -1573,7 +1573,7 @@ export const signinPatient = (creds) => (dispatch) => {
 export const signinStandby = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
-  return auth.signInWithEmailAndPassword(creds.username, creds.password)
+  return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
         dispatch(signinFulfilledAction(userCredential.user))
@@ -1630,10 +1630,10 @@ export const signinFulfilledAction = (user) => (
 export const signoutPatient = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.email).delete()
+  return db().collection('users').doc(getState().auth.user.email).delete()
     .then(
       () => {
-        auth.signOut()
+        auth().signOut()
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1669,7 +1669,7 @@ export const signoutPatient = () => (dispatch, getState) => {
 export const signoutStandby = () => (dispatch) => {
   dispatch(signoutRequestedAction())
 
-  return auth.signOut()
+  return auth().signOut()
     .then(
       () => {
         dispatch(removeListeners())

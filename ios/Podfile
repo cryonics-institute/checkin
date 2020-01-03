@@ -46,7 +46,9 @@ target 'checkin' do
   
   # React Native Firebase
   pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
+  pod 'RNFBAuth', :path => '../node_modules/@react-native-firebase/auth'
   pod 'RNFBAnalytics', :path => '../node_modules/@react-native-firebase/analytics'
+  pod 'RNFBFirestore', :path => '../node_modules/@react-native-firebase/firestore'
   pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
 
   # Automatically detect installed unimodules
