@@ -1,4 +1,3 @@
-// TODO: Fill fields from store in componentDidMount.
 // TODO: Handle rejected sign-ins!
 import React from 'react'
 import { KeyboardAvoidingView, View } from 'react-native'
@@ -9,7 +8,7 @@ import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    token: state.token
   }
 }
 
@@ -120,6 +119,26 @@ class PatientSignIn extends React.Component {
     this.toggleRegistration = this.toggleRegistration.bind(this)
     this.validateEmail = this.validateEmail.bind(this)
     this.validatePassword = this.validatePassword.bind(this)
+  }
+
+  componentDidMount () {
+    if (
+      this.props.token.username !== null && this.props.token.password !== null
+    ) {
+      Promise.resolve(
+        this.setState(
+          {
+            username: this.props.token.username,
+            password: this.props.token.password
+          }
+        )
+      )
+        .then(
+          () => {
+            this.handleSignin()
+          }
+        )
+    }
   }
 
   handleSignin () {
