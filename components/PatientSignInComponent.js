@@ -1,3 +1,4 @@
+// TODO: Fill fields from store in componentDidMount.
 // TODO: Handle rejected sign-ins!
 import React from 'react'
 import { KeyboardAvoidingView, View } from 'react-native'
