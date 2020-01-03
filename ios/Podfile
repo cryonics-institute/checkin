@@ -5,7 +5,7 @@ require_relative '../node_modules/react-native-unimodules/cocoapods'
 target 'checkin' do
 
   rnPrefix = "../node_modules/react-native"
-  
+
   # React Native and its dependencies
   pod 'FBLazyVector', :path => "#{rnPrefix}/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "#{rnPrefix}/Libraries/FBReactNativeSpec"
@@ -40,10 +40,10 @@ target 'checkin' do
   pod 'RNGestureHandler', :podspec => '../node_modules/react-native-gesture-handler/RNGestureHandler.podspec'
   pod 'RNReanimated', :podspec => '../node_modules/react-native-reanimated/RNReanimated.podspec'
   pod 'RNScreens', :path => '../node_modules/react-native-screens'
-  
+
   # Redux Persist
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
-  
+
   # React Native Firebase
   pod 'RNFBApp', :path => '../node_modules/@react-native-firebase/app'
   pod 'RNFBAuth', :path => '../node_modules/@react-native-firebase/auth'
@@ -51,6 +51,10 @@ target 'checkin' do
   pod 'RNFBFirestore', :path => '../node_modules/@react-native-firebase/firestore'
   pod 'RNFBMessaging', :path => '../node_modules/@react-native-firebase/messaging'
 
+  # React Native Sensitive Info
+  pod 'react-native-sensitive-info', :path => '../node_modules/react-native-sensitive-info'
+
   # Automatically detect installed unimodules
   use_unimodules!
+
 end

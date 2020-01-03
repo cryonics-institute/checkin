@@ -643,7 +643,14 @@ export const registerPatient = (creds) => (dispatch) => {
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
       (userCredential) => {
-        dispatch(registrationFulfilledAction(userCredential.user))
+        dispatch(
+          registrationFulfilledAction(
+            {
+              user: userCredential.user,
+              creds: creds
+            }
+          )
+        )
         dispatch(addDocument(userCredential.user.email))
       },
       error => {
@@ -667,7 +674,14 @@ export const registerStandby = (creds) => (dispatch) => {
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
       (userCredential) => {
-        dispatch(registrationFulfilledAction(userCredential.user))
+        dispatch(
+          registrationFulfilledAction(
+            {
+              user: userCredential.user,
+              creds: creds
+            }
+          )
+        )
         NavigationService.navigate('StandbyApp')
       },
       error => {
@@ -704,10 +718,10 @@ export const registrationRejectedAction = (message) => (
  * @see Google. (n.d.). User [Software documentation]. Retrieved from
  * {@link https://firebase.google.com/docs/reference/js/firebase.User}
  */
-export const registrationFulfilledAction = (user) => (
+export const registrationFulfilledAction = (data) => (
   {
     type: ActionTypes.REGISTRATION_FULFILLED,
-    payload: user
+    payload: data
   }
 )
 
@@ -1552,7 +1566,14 @@ export const signinPatient = (creds) => (dispatch) => {
   return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
-        dispatch(signinFulfilledAction(userCredential.user))
+        dispatch(
+          signinFulfilledAction(
+            {
+              user: userCredential.user,
+              creds: creds
+            }
+          )
+        )
         dispatch(addDocument(userCredential.user.email))
       },
       error => {
@@ -1576,7 +1597,14 @@ export const signinStandby = (creds) => (dispatch) => {
   return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
-        dispatch(signinFulfilledAction(userCredential.user))
+        dispatch(
+          signinFulfilledAction(
+            {
+              user: userCredential.user,
+              creds: creds
+            }
+          )
+        )
         NavigationService.navigate('StandbyApp')
       },
       error => {
@@ -1613,10 +1641,10 @@ export const signinRejectedAction = (message) => (
  * @see Google. (n.d.). User [Software documentation]. Retrieved from
  * {@link https://firebase.google.com/docs/reference/js/firebase.User}
  */
-export const signinFulfilledAction = (user) => (
+export const signinFulfilledAction = (data) => (
   {
     type: ActionTypes.SIGNIN_FULFILLED,
-    payload: user
+    payload: data
   }
 )
 

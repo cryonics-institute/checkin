@@ -24,6 +24,7 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
+import createSensitiveStorage from 'redux-persist-sensitive-storage'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import { composeWithDevTools } from 'remote-redux-devtools' // TODO: Remove before compiling to production.
@@ -31,29 +32,55 @@ import { Auth } from './authReducer'
 import { Inputs } from './inputsReducer'
 import { Patient } from './patientReducer'
 import { Timer } from './timerReducer'
+import { Token } from './tokenReducer'
 
-const persistConfig = {
-  key: 'root',
+const sensitiveStorage = createSensitiveStorage(
+  {
+    keychainService: 'keychain',
+    sharedPreferencesName: 'sharedPrefs'
+  }
+)
+
+const authPersistConfig = {
+  key: 'auth',
   storage: AsyncStorage
+}
+
+const inputsPersistConfig = {
+  key: 'inputs',
+  storage: AsyncStorage
+}
+
+const patientPersistConfig = {
+  key: 'patient',
+  storage: AsyncStorage
+}
+
+const timerPersistConfig = {
+  key: 'timer',
+  storage: AsyncStorage
+}
+
+const tokenPersistConfig = {
+  key: 'token',
+  storage: sensitiveStorage
 }
 
 const rootReducer = combineReducers(
   {
-    auth: Auth,
-    inputs: Inputs,
-    patient: Patient,
-    timer: Timer
+    auth: persistReducer(authPersistConfig, Auth),
+    inputs: persistReducer(inputsPersistConfig, Inputs),
+    patient: persistReducer(patientPersistConfig, Patient),
+    timer: persistReducer(timerPersistConfig, Timer),
+    token: persistReducer(tokenPersistConfig, Token)
   }
 )
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
-
 export const ConfigureStore = () => {
   const store = createStore(
-    persistedReducer,
+    rootReducer,
     composeWithDevTools(applyMiddleware(thunk, logger))
   )
-
   const persistor = persistStore(store)
 
   return { store, persistor }

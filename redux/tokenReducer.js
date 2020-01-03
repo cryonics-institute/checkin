@@ -1,6 +1,6 @@
 /**
- * Redux reducer for the project, Cryonics Check-In, that stores the state for
- * Firebase authorization.
+ * Redux reducer for the project, Cryonics Check-In, that stores in state the
+ * login credentials for authorizing Firebase.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -24,21 +24,15 @@
 
 import * as ActionTypes from './ActionTypes'
 
-export const Auth = (
+export const Token = (
   state = {
     errMess: null,
-    isPatient: null,
-    user: null
+    username: null,
+    password: null
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.SELECT_STATUS:
-      return {
-        ...state,
-        isPatient: action.payload
-      }
-
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
         ...state
@@ -54,7 +48,8 @@ export const Auth = (
       return {
         ...state,
         errMess: null,
-        user: action.payload.user
+        username: action.payload.creds.username,
+        password: action.payload.creds.password
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
@@ -72,7 +67,8 @@ export const Auth = (
       return {
         ...state,
         errMess: null,
-        user: action.payload.user
+        username: action.payload.creds.username,
+        password: action.payload.creds.password
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
@@ -90,7 +86,8 @@ export const Auth = (
       return {
         ...state,
         errMess: null,
-        user: null
+        username: null,
+        password: null
       }
 
     default:
