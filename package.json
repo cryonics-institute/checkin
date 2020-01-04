@@ -74,11 +74,7 @@
     "docs": "jsdoc -c ./jsdoc.json",
     "lint": "eslint",
     "publish": "expo publish",
-    "start": "react-native start",
-    "test": "jest",
-    "web": "expo start --web",
-    "ios": "react-native run-ios",
-    "android": "react-native run-android",
-    "postinstall": "jetify"
+    "start": "expo start",
+    "test": "jest"
   }
 }
