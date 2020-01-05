@@ -24,14 +24,6 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "bundleIdentifier": "com.michaelgill1969.checkin",
-      "supportsTablet": true
-    },
-    "android": {
-      "package": "com.michaelgill1969.checkin",
-      "googleServicesFile": "./google-services.json"
-    },
     "scheme": "exp073cd0aac7b54b94b9b9dbfcbdddf422",
     "githubUrl": "https://github.com/cryonics-institute/checkin",
     "entryPoint": "node_modules/expo/AppEntry.js"

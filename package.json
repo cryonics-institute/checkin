@@ -3,6 +3,15 @@
   "version": "0.2.0",
   "private": true,
   "dependencies": {
+    "expo": "^36.0.0",
+    "react": "~16.9.0",
+    "react-dom": "^16.12.0",
+    "react-native": "~0.61.4",
+    "react-native-gesture-handler": "~1.5.0",
+    "react-native-reanimated": "~1.4.0",
+    "react-native-screens": "^1.0.0-alpha",
+    "react-native-unimodules": "~0.7.0",
+    "react-native-web": "^0.11.7",
     "@expo/vector-icons": "^10.0.0",
     "@react-native-community/async-storage": "^1.7.1",
     "@react-native-firebase/analytics": "^6.2.0",
@@ -11,21 +20,11 @@
     "@react-native-firebase/firestore": "^6.2.0",
     "@react-native-firebase/messaging": "^6.2.0",
     "core-js": "^3.6.0",
-    "expo": "^36.0.0",
-    "mem": "^5.1.1",
     "moment": "^2.24.0",
-    "react": "~16.9.0",
-    "react-dom": "^16.12.0",
-    "react-native": "~0.61.4",
     "react-native-config": "^0.11.7",
     "react-native-elements": "^1.2.3",
-    "react-native-gesture-handler": "~1.5.0",
-    "react-native-reanimated": "~1.4.0",
-    "react-native-screens": "2.0.0-alpha.12",
     "react-native-sensitive-info": "^5.5.4",
-    "react-native-unimodules": "~0.7.0",
     "react-native-vector-icons": "^6.6.0",
-    "react-native-web": "^0.11.7",
     "react-navigation": "^4.0.10",
     "react-navigation-stack": "^1.10.3",
     "react-redux": "^7.1.1",
@@ -38,9 +37,12 @@
   },
   "devDependencies": {
     "@babel/core": "~7.6.0",
-    "babel-jest": "^24.9.0",
+    "babel-jest": "~24.9.0",
+    "jest": "~24.9.0",
+    "jetifier": "~1.6.4",
+    "metro-react-native-babel-preset": "~0.56.0",
+    "react-test-renderer": "~16.9.0",
     "babel-preset-expo": "^7.0.0",
-    "better-docs": "^1.4.7",
     "eslint": "^6.4.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
@@ -48,33 +50,22 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "^7.14.3",
     "eslint-plugin-standard": "^4.0.1",
-    "fetch-mock": "^7.7.3",
-    "jest": "~24.9.0",
-    "jest-expo": "^36.0.0",
-    "jetifier": "~1.6.4",
-    "jsdoc": "^3.6.3",
-    "metro-react-native-babel-preset": "~0.56.0",
     "prop-types": "^15.7.2",
     "react-devtools": "^4.3.0",
-    "react-test-renderer": "^16.11.0",
-    "redux-mock-store": "^1.5.3",
     "remote-redux-devtools": "^0.5.16",
     "typescript": "^3.6.4"
   },
   "eslintConfig": {
     "extends": "react-app"
   },
-  "jest": {
-    "preset": "jest-expo",
-    "transformIgnorePatterns": [
-      "node_modules/(?!(jest-)?react-native|react-clone-referenced-element|@react-native-community|expo(nent)?|@expo(nent)?/.*|react-navigation|@react-navigation/.*|@unimodules/.*|sentry-expo|native-base)"
-    ]
-  },
   "scripts": {
     "docs": "jsdoc -c ./jsdoc.json",
     "lint": "eslint",
     "publish": "expo publish",
-    "start": "expo start",
-    "test": "jest"
+    "start": "react-native start",
+    "test": "jest",
+    "ios": "react-native run-ios",
+    "android": "react-native run-android",
+    "postinstall": "jetify"
   }
 }
