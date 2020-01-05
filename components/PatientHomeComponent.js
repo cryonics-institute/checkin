@@ -33,7 +33,7 @@ import TimeInput from './TimeInputComponent'
 
 const mapStateToProps = state => {
   return {
-    inputs: state.inputs,
+    patient: state.patient,
     timer: state.timer
   }
 }
@@ -56,10 +56,10 @@ class PatientHome extends React.Component {
       <ScrollView contentContainerStyle = { styles.containerCentered }>
         <Text h4 style = { styles.title }>Time Inputs</Text>
         {
-          this.props.inputs.array.map(
-            input => <TimeInput
-              key = { input.id.toString() }
-              value = { input.id }
+          this.props.patient.alertTimes.map(
+            alert => <TimeInput
+              key = { alert.id.toString() }
+              value = { alert.id }
             />
           )
         }

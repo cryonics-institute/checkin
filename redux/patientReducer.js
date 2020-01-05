@@ -134,6 +134,44 @@ export const Patient = (
         registrationToken: action.payload
       }
 
+    case ActionTypes.MUTATE_INPUTS_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.MUTATE_INPUTS_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.MUTATE_INPUTS_FULFILLED:
+      return {
+        ...state,
+        alertTimes: action.payload,
+        errMess: null
+      }
+
+    case ActionTypes.REMOVE_INPUTS_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.REMOVE_INPUTS_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.REMOVE_INPUTS_FULFILLED:
+      return {
+        ...state,
+        alertTimes: action.payload,
+        errMess: null
+      }
+
     case ActionTypes.REMOVE_LISTENER:
       return {
         ...state,

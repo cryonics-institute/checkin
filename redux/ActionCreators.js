@@ -67,7 +67,7 @@ const convertTo24Hour = (time) => {
 export const addDocument = (email) => (dispatch, getState) => {
   const now = (new Date()).toISOString()
   const patient = {
-    alertTimes: getState().inputs.array,
+    alertTimes: getState().patient.alertTimes,
     checkinTime: now,
     isSignedIn: true,
     signinTime: now,
@@ -527,7 +527,7 @@ export const initializeStoreAction = (registrationToken) => (
 )
 
 /**
- * Mutate an input in the inputs array if it exists or add it if it does not
+ * Mutate an alert in the alertTimes array if it exists or add it if it does not
  * exist.
  * @param  {String}   id        Unique identifier for input.
  * @param  {String}   time      Time entered into input.
@@ -544,24 +544,24 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
     time: (new Date(1970, 0, 1, hours, minutes)).toISOString(),
     validity: validity
   }
-  const index = getState().inputs.array.findIndex(input => input.id === id)
+  const index = getState().patient.alertTimes.findIndex(input => input.id === id)
 
   try {
-    if (getState().inputs.array !== null) {
-      console.log('TYPE OF INPUTS ARRAY: ' + typeof getState().inputs.array)
-      console.log('LENGTH OF INPUTS ARRAY: ' + getState().inputs.array.length)
+    if (getState().patient.alertTimes !== null) {
+      console.log('TYPE OF INPUTS ARRAY: ' + typeof getState().patient.alertTimes)
+      console.log('LENGTH OF INPUTS ARRAY: ' + getState().patient.alertTimes.length)
       let inputsArray = null
 
       if (index === -1) {
         inputsArray = [
-          ...getState().inputs.array.filter(input => input.id !== id),
+          ...getState().patient.alertTimes.filter(input => input.id !== id),
           input
         ]
       } else {
         inputsArray = [
-          ...getState().inputs.array.slice(0, index),
+          ...getState().patient.alertTimes.slice(0, index),
           input,
-          ...getState().inputs.array.slice(index + 1)
+          ...getState().patient.alertTimes.slice(index + 1)
         ]
       }
 
@@ -587,7 +587,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
             }
           }
         )
-    } else if (getState().inputs.array == null) {
+    } else if (getState().patient.alertTimes == null) {
       throw new Error('Input array is null or undefined.')
     } else {
       throw new Error(
@@ -732,7 +732,7 @@ export const registrationFulfilledAction = (data) => (
 export const removeInput = (id) => (dispatch, getState) => {
   dispatch(removeInputsRequestedAction())
 
-  const inputsArray = getState().inputs.array.filter(input => input.id !== id)
+  const inputsArray = getState().patient.alertTimes.filter(input => input.id !== id)
 
   return db().collection('users').doc(getState().auth.user.email).update(
     {
@@ -1277,7 +1277,7 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
     dispatch(
       setTimerInterval(
         // TODO: Should these parameters be fetched from Firestore?
-        getState().inputs.array,
+        getState().patient.alertTimes,
         getState().patient.checkinTime,
         (new Date()).toISOString()
       )

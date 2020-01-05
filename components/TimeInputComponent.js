@@ -34,7 +34,7 @@ import { colors, styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    inputs: state.inputs
+    patient: state.patient
   }
 }
 
@@ -79,28 +79,28 @@ class TimeInput extends React.Component {
   }
 
   render () {
-    const length = this.props.inputs.array.length
+    const length = this.props.patient.alertTimes.length
     const valid = 'VALID'
     const invalid = 'Please enter as HH:MM AM/PM'
 
     if (
       length > 1 &&
-      this.props.inputs.array[length - 1].id !== this.state.identifier
+      this.props.patient.alertTimes[length - 1].id !== this.state.identifier
     ) {
       return (
         <View key = { this.state.identifier } style = { styles.row }>
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : invalid
             }
             errorStyle = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
               )[0].validity
                 ? styles.transparent
                 : styles.textError
@@ -126,15 +126,15 @@ class TimeInput extends React.Component {
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : invalid
             }
             errorStyle = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
               )[0].validity
                 ? styles.transparent
                 : styles.textError
