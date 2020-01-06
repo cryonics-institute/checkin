@@ -1,3 +1,4 @@
+// TODO: Repopulate views from Firestore after auto-login.
 // TODO: Put all your dispatches in an arrow function ... maybe ... so check it out.
 /**
  * Redux action-creators for the project, Cryonics Check-In.
