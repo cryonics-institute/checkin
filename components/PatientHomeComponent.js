@@ -48,7 +48,9 @@ const mapDispatchToProps = (dispatch) => (
 
 class PatientHome extends React.Component {
   componentDidMount () {
-    this.props.mutateInput(Shortid.generate(), '', false)
+    if (this.props.patient.alertTimes.length === 0) {
+      this.props.mutateInput(Shortid.generate(), '', false)
+    }
   }
 
   render () {
