@@ -58,7 +58,6 @@ export const Patient = (
     case ActionTypes.ADD_DOCUMENT_FULFILLED:
       return {
         ...state,
-        alertTimes: action.payload.alertTimes,
         checkinTime: action.payload.checkinTime,
         errMess: null,
         isSignedIn: action.payload.isSignedIn,

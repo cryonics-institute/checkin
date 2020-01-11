@@ -68,7 +68,6 @@ const convertTo24Hour = (time) => {
 export const addDocument = (email) => (dispatch, getState) => {
   const now = (new Date()).toISOString()
   const patient = {
-    alertTimes: getState().patient.alertTimes,
     checkinTime: now,
     isSignedIn: true,
     signinTime: now,
@@ -79,7 +78,6 @@ export const addDocument = (email) => (dispatch, getState) => {
 
   return db().collection('users').doc(email).set(
     {
-      alertTimes: patient.alertTimes,
       checkinTime: patient.checkinTime,
       registrationToken: getState().patient.registrationToken,
       signinTime: patient.signinTime,
