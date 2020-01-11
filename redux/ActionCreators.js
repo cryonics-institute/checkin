@@ -77,6 +77,7 @@ export const addDocument = (email) => (dispatch, getState) => {
 
   return db().collection('users').doc(email).set(
     {
+      alertTimes: getState().patient.alertTimes,
       checkinTime: patient.checkinTime,
       registrationToken: getState().patient.registrationToken,
       signinTime: patient.signinTime,
