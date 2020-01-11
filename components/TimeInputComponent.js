@@ -24,6 +24,7 @@
  */
 
 import * as React from 'react'
+import moment from 'moment'
 import { View } from 'react-native'
 import { Input } from 'react-native-elements'
 import { connect } from 'react-redux'
@@ -54,7 +55,26 @@ class TimeInput extends React.Component {
     super(props)
 
     this.state = {
-      identifier: this.props.value
+      identifier: this.props.value,
+      time: null
+    }
+  }
+
+  componentDidMount () {
+    if (
+      this.props.patient.alertTimes.filter(
+        alert => alert.id === this.state.identifier
+      )[0].validity
+    ) {
+      this.setState(
+        {
+          time: moment(
+            this.props.patient.alertTimes.filter(
+              alert => alert.id === this.state.identifier
+            )[0].time
+          ).format('h:mm A')
+        }
+      )
     }
   }
 
@@ -105,7 +125,12 @@ class TimeInput extends React.Component {
                 ? styles.transparent
                 : styles.textError
             }
-            onChangeText = { time => { this.mutate(time) } }
+            onChangeText = {
+              time => {
+                this.mutate(time)
+                this.setState({ time: time })
+              }
+            }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
               <MaterialIcons
@@ -117,6 +142,7 @@ class TimeInput extends React.Component {
                 size = { 30 }
               />
             }
+            value = { this.state.time }
           />
         </View>
       )
@@ -139,7 +165,12 @@ class TimeInput extends React.Component {
                 ? styles.transparent
                 : styles.textError
             }
-            onChangeText = { time => { this.mutate(time) } }
+            onChangeText = {
+              time => {
+                this.mutate(time)
+                this.setState({ time: time })
+              }
+            }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
               <MaterialIcons
@@ -151,6 +182,7 @@ class TimeInput extends React.Component {
                 size = { 30 }
               />
             }
+            value = { this.state.time }
           />
         </View>
       )
