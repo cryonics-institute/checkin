@@ -534,7 +534,9 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
     time: (new Date(1970, 0, 1, hours, minutes)).toISOString(),
     validity: validity
   }
-  const index = getState().patient.alertTimes.findIndex(input => input.id === id)
+  const index = getState().patient.alertTimes.findIndex(
+    input => input.id === id
+  )
 
   try {
     if (getState().patient.alertTimes !== null) {
