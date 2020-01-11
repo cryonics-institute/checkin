@@ -234,6 +234,34 @@ export const Patient = (
         interval: action.payload
       }
 
+    case ActionTypes.SIGNOUT_REQUESTED:
+      return {
+        ...state
+      }
+
+    case ActionTypes.SIGNOUT_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SIGNOUT_FULFILLED:
+      return {
+        ...state,
+        alertTimes: [],
+        checkinInterval: null,
+        checkinTime: null,
+        email: null,
+        errMess: null,
+        interval: null,
+        isAlertActive: false,
+        isSignedIn: null,
+        lastAlertTime: null,
+        listeners: [],
+        signinTime: null,
+        snooze: null
+      }
+
     default:
       return state
   }

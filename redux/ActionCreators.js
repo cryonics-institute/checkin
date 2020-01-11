@@ -1688,7 +1688,23 @@ export const signoutPatient = () => (dispatch, getState) => {
     .then(
       () => {
         dispatch(removeTimers())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
         dispatch(signoutFulfilledAction())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
         NavigationService.navigate('PatientAuth')
       },
       error => {
