@@ -1406,26 +1406,6 @@ export const setTimerInterval = (
     )
       .then(
         alertTime => {
-          const lastAlertTime = moment(
-            alertTimes.filter(alert => alert.validity).filter(
-              alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-                  parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-                  parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-                  parseInt(alert.time.slice(-4, -1), 10) === alertTime.beforeNow
-            )[0].time
-          ).format('h:mm a')
-          console.log('LAST ALERT TIME: ' + lastAlertTime)
-
-          dispatch(setLastAlertTime(lastAlertTime))
-          return alertTime
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .then(
-        alertTime => {
           console.log('CHECKIN MINUTES: ' + checkinMinutes)
           console.log('NOW MINUTES: ' + nowMinutes)
           console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
