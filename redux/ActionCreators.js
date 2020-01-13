@@ -1559,7 +1559,7 @@ export const setTimerIntervalFulfilledAction = (interval) => (
  * @param  {String}   creds Username and password for the patient.
  * @return {Promise}        A promise to sign-in a patient-user.
  */
-export const signinPatient = (creds) => (dispatch) => {
+export const signinPatient = (creds, isAutomatic = false) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
   return auth().signInWithEmailAndPassword(creds.username, creds.password)
@@ -1575,6 +1575,13 @@ export const signinPatient = (creds) => (dispatch) => {
         )
         dispatch(addDocument(userCredential.user.email))
       },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => { if (isAutomatic) { dispatch(checkin()) } },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage

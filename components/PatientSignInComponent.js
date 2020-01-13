@@ -14,7 +14,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signinPatient: (creds) => dispatch(signinPatient(creds)),
+    signinPatient: (creds, isAutomatic) => dispatch(
+      signinPatient(creds, isAutomatic)
+    ),
     registerPatient: (creds) => dispatch(registerPatient(creds))
   }
 )
@@ -135,7 +137,13 @@ class PatientSignIn extends React.Component {
       )
         .then(
           () => {
-            this.handleSignin()
+            this.props.signinPatient(
+              {
+                username: this.state.username,
+                password: this.state.password
+              },
+              true
+            )
           }
         )
     }
