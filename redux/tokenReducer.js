@@ -1,6 +1,6 @@
 /**
- * Redux reducer for the project, Cryonics Check-In, that stores the state for
- * time-inputs using an array.
+ * Redux reducer for the project, Cryonics Check-In, that stores in state the
+ * login credentials for authorizing Firebase.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -24,50 +24,70 @@
 
 import * as ActionTypes from './ActionTypes'
 
-export const Inputs = (
+export const Token = (
   state = {
-    array: [],
-    errMess: null
+    errMess: null,
+    username: null,
+    password: null
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.MUTATE_INPUTS_REQUESTED:
+    case ActionTypes.REGISTRATION_REQUESTED:
       return {
-        ...state,
-        errMess: null
+        ...state
       }
 
-    case ActionTypes.MUTATE_INPUTS_REJECTED:
+    case ActionTypes.REGISTRATION_REJECTED:
       return {
         ...state,
         errMess: action.payload
       }
 
-    case ActionTypes.MUTATE_INPUTS_FULFILLED:
+    case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
-        array: action.payload,
-        errMess: null
+        errMess: null,
+        username: action.payload.creds.username,
+        password: action.payload.creds.password
       }
 
-    case ActionTypes.REMOVE_INPUTS_REQUESTED:
+    case ActionTypes.SIGNIN_REQUESTED:
       return {
-        ...state,
-        errMess: null
+        ...state
       }
 
-    case ActionTypes.REMOVE_INPUTS_REJECTED:
+    case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
         errMess: action.payload
       }
 
-    case ActionTypes.REMOVE_INPUTS_FULFILLED:
+    case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
-        array: action.payload,
-        errMess: null
+        errMess: null,
+        username: action.payload.creds.username,
+        password: action.payload.creds.password
+      }
+
+    case ActionTypes.SIGNOUT_REQUESTED:
+      return {
+        ...state
+      }
+
+    case ActionTypes.SIGNOUT_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SIGNOUT_FULFILLED:
+      return {
+        ...state,
+        errMess: null,
+        username: null,
+        password: null
       }
 
     default:

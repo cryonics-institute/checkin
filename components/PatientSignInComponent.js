@@ -8,13 +8,15 @@ import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    token: state.token
   }
 }
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signinPatient: (creds) => dispatch(signinPatient(creds)),
+    signinPatient: (creds, isAutomatic) => dispatch(
+      signinPatient(creds, isAutomatic)
+    ),
     registerPatient: (creds) => dispatch(registerPatient(creds))
   }
 )
@@ -119,6 +121,32 @@ class PatientSignIn extends React.Component {
     this.toggleRegistration = this.toggleRegistration.bind(this)
     this.validateEmail = this.validateEmail.bind(this)
     this.validatePassword = this.validatePassword.bind(this)
+  }
+
+  componentDidMount () {
+    if (
+      this.props.token.username !== null && this.props.token.password !== null
+    ) {
+      Promise.resolve(
+        this.setState(
+          {
+            username: this.props.token.username,
+            password: this.props.token.password
+          }
+        )
+      )
+        .then(
+          () => {
+            this.props.signinPatient(
+              {
+                username: this.state.username,
+                password: this.state.password
+              },
+              true
+            )
+          }
+        )
+    }
   }
 
   handleSignin () {

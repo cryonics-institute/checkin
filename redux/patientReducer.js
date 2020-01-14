@@ -58,7 +58,6 @@ export const Patient = (
     case ActionTypes.ADD_DOCUMENT_FULFILLED:
       return {
         ...state,
-        alertTimes: action.payload.alertTimes,
         checkinTime: action.payload.checkinTime,
         errMess: null,
         isSignedIn: action.payload.isSignedIn,
@@ -134,6 +133,44 @@ export const Patient = (
         registrationToken: action.payload
       }
 
+    case ActionTypes.MUTATE_INPUTS_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.MUTATE_INPUTS_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.MUTATE_INPUTS_FULFILLED:
+      return {
+        ...state,
+        alertTimes: action.payload,
+        errMess: null
+      }
+
+    case ActionTypes.REMOVE_INPUTS_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.REMOVE_INPUTS_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.REMOVE_INPUTS_FULFILLED:
+      return {
+        ...state,
+        alertTimes: action.payload,
+        errMess: null
+      }
+
     case ActionTypes.REMOVE_LISTENER:
       return {
         ...state,
@@ -195,6 +232,34 @@ export const Patient = (
       return {
         ...state,
         interval: action.payload
+      }
+
+    case ActionTypes.SIGNOUT_REQUESTED:
+      return {
+        ...state
+      }
+
+    case ActionTypes.SIGNOUT_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SIGNOUT_FULFILLED:
+      return {
+        ...state,
+        alertTimes: [],
+        checkinInterval: null,
+        checkinTime: null,
+        email: null,
+        errMess: null,
+        interval: null,
+        isAlertActive: false,
+        isSignedIn: null,
+        lastAlertTime: null,
+        listeners: [],
+        signinTime: null,
+        snooze: null
       }
 
     default:

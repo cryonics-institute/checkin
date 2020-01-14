@@ -8,7 +8,7 @@ import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    auth: state.auth
+    // Nothing in state is relevant here.
   }
 }
 

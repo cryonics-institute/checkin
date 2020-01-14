@@ -24,6 +24,7 @@
  */
 
 import * as React from 'react'
+import moment from 'moment'
 import { View } from 'react-native'
 import { Input } from 'react-native-elements'
 import { connect } from 'react-redux'
@@ -34,7 +35,7 @@ import { colors, styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    inputs: state.inputs
+    patient: state.patient
   }
 }
 
@@ -54,7 +55,26 @@ class TimeInput extends React.Component {
     super(props)
 
     this.state = {
-      identifier: this.props.value
+      identifier: this.props.value,
+      time: null
+    }
+  }
+
+  componentDidMount () {
+    if (
+      this.props.patient.alertTimes.filter(
+        alert => alert.id === this.state.identifier
+      )[0].validity
+    ) {
+      this.setState(
+        {
+          time: moment(
+            this.props.patient.alertTimes.filter(
+              alert => alert.id === this.state.identifier
+            )[0].time
+          ).format('h:mm A')
+        }
+      )
     }
   }
 
@@ -79,33 +99,38 @@ class TimeInput extends React.Component {
   }
 
   render () {
-    const length = this.props.inputs.array.length
+    const length = this.props.patient.alertTimes.length
     const valid = 'VALID'
     const invalid = 'Please enter as HH:MM AM/PM'
 
     if (
       length > 1 &&
-      this.props.inputs.array[length - 1].id !== this.state.identifier
+      this.props.patient.alertTimes[length - 1].id !== this.state.identifier
     ) {
       return (
         <View key = { this.state.identifier } style = { styles.row }>
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : invalid
             }
             errorStyle = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
               )[0].validity
                 ? styles.transparent
                 : styles.textError
             }
-            onChangeText = { time => { this.mutate(time) } }
+            onChangeText = {
+              time => {
+                this.mutate(time)
+                this.setState({ time: time })
+              }
+            }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
               <MaterialIcons
@@ -117,6 +142,7 @@ class TimeInput extends React.Component {
                 size = { 30 }
               />
             }
+            value = { this.state.time }
           />
         </View>
       )
@@ -126,20 +152,25 @@ class TimeInput extends React.Component {
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : invalid
             }
             errorStyle = {
-              this.props.inputs.array.filter(
-                input => input.id === this.state.identifier
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
               )[0].validity
                 ? styles.transparent
                 : styles.textError
             }
-            onChangeText = { time => { this.mutate(time) } }
+            onChangeText = {
+              time => {
+                this.mutate(time)
+                this.setState({ time: time })
+              }
+            }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
               <MaterialIcons
@@ -151,6 +182,7 @@ class TimeInput extends React.Component {
                 size = { 30 }
               />
             }
+            value = { this.state.time }
           />
         </View>
       )

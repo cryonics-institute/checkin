@@ -27,8 +27,6 @@ import * as ActionTypes from './ActionTypes'
 export const Auth = (
   state = {
     errMess: null,
-    isAuthenticated: false,
-    isLoading: false,
     isPatient: null,
     user: null
   },
@@ -43,73 +41,55 @@ export const Auth = (
 
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
-        ...state,
-        isAuthenticated: false,
-        isLoading: true
+        ...state
       }
 
     case ActionTypes.REGISTRATION_REJECTED:
       return {
         ...state,
-        errMess: action.payload,
-        isAuthenticated: false,
-        isLoading: false
+        errMess: action.payload
       }
 
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
         errMess: null,
-        isAuthenticated: true,
-        isLoading: false,
-        user: action.payload
+        user: action.payload.user
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
       return {
-        ...state,
-        isAuthenticated: false,
-        isLoading: true
+        ...state
       }
 
     case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
-        errMess: action.payload,
-        isAuthenticated: false,
-        isLoading: false
+        errMess: action.payload
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
         errMess: null,
-        isAuthenticated: true,
-        isLoading: false,
-        user: action.payload
+        user: action.payload.user
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
-        ...state,
-        isAuthenticated: true,
-        isLoading: true
+        ...state
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errMess: action.payload,
-        isAuthenticated: true,
-        isLoading: false
+        errMess: action.payload
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
         errMess: null,
-        isAuthenticated: false,
-        isLoading: false,
         user: null
       }
 

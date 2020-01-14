@@ -2,7 +2,7 @@ import React from 'react'
 import { YellowBox } from 'react-native'
 import { Provider } from 'react-redux'
 import _ from 'lodash'
-// import { initializeStore } from './redux/ActionCreators'
+import { initializeStore } from './redux/ActionCreators'
 import { ConfigureStore } from './redux/configureStore'
 import { PersistGate } from 'redux-persist/integration/react'
 import Main from './components/MainComponent'
@@ -18,17 +18,9 @@ console.warn = message => {
 const { persistor, store } = ConfigureStore()
 
 class App extends React.Component {
-  // TODO: Uncomment before ejecting again.
-  // constructor (props) {
-  //   super(props)
-  //
-  //   console.log('INITIAL PROPS:', props)
-  // }
-  //
-  // componentDidMount () {
-  //   console.log('INITIAL PROPS:', this.props)
-  //   store.dispatch(initializeStore(this.props.FCMToken))
-  // }
+  componentDidMount () {
+    store.dispatch(initializeStore(this.props.FCMToken))
+  }
 
   // TODO: Add a loading component.
   // render () {

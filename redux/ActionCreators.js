@@ -1,5 +1,4 @@
 // TODO: Put all your dispatches in an arrow function ... maybe ... so check it out.
-// TODO: It erases the collection if nothing is in it.  Fix that!
 /**
  * Redux action-creators for the project, Cryonics Check-In.
  *
@@ -26,7 +25,8 @@
 import { Alert } from 'react-native'
 import moment from 'moment'
 import * as ActionTypes from './ActionTypes'
-import { auth, db } from '../firebase/firebase'
+import auth from '@react-native-firebase/auth'
+import db from '@react-native-firebase/firestore'
 import NavigationService from '../services/NavigationService'
 
 /**
@@ -67,7 +67,6 @@ const convertTo24Hour = (time) => {
 export const addDocument = (email) => (dispatch, getState) => {
   const now = (new Date()).toISOString()
   const patient = {
-    alertTimes: getState().inputs.array,
     checkinTime: now,
     isSignedIn: true,
     signinTime: now,
@@ -76,9 +75,9 @@ export const addDocument = (email) => (dispatch, getState) => {
 
   dispatch(addDocumentRequestedAction())
 
-  return db.collection('users').doc(email).set(
+  return db().collection('users').doc(email).set(
     {
-      alertTimes: patient.alertTimes,
+      alertTimes: getState().patient.alertTimes,
       checkinTime: patient.checkinTime,
       registrationToken: getState().patient.registrationToken,
       signinTime: patient.signinTime,
@@ -211,7 +210,7 @@ export const checkin = () => (dispatch, getState) => {
 
   dispatch(checkinRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.email).update(
+  return db().collection('users').doc(getState().auth.user.email).update(
     {
       checkinTime: patient.checkinTime
     }
@@ -283,18 +282,9 @@ export const checkinFulfilledAction = (checkinTime) => (
  * @return {Promise}                Times before and after check-in and now.
  */
 const findClosestCheckinTimes = (
-  alertTimes, checkinMinutes, nowMinutes
+  alertMinutes, checkinMinutes, nowMinutes
 ) => (dispatch) => {
   dispatch(findClosestCheckinTimesRequestedAction())
-
-  const alertMinutes = alertTimes.filter(alert => alert.validity).map(
-    alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-      parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-      parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-      parseInt(alert.time.slice(-4, -1), 10)
-  )
-  console.log('ALERT MINUTES LENGTH: ' + alertMinutes.length)
-  console.log('ALERT MINUTES ZERO: ' + alertMinutes[0])
 
   if (alertMinutes.length === 1) {
     return Promise.resolve(
@@ -441,7 +431,7 @@ export const findClosestCheckinTimesFulfilledAction = () => (
 export const getDocument = (email) => (dispatch, getState) => {
   dispatch(getDocumentRequestedAction())
 
-  return db.collection('users').doc(email).get()
+  return db().collection('users').doc(email).get()
     .then(
       doc => {
         if (doc.exists) {
@@ -527,7 +517,7 @@ export const initializeStoreAction = (registrationToken) => (
 )
 
 /**
- * Mutate an input in the inputs array if it exists or add it if it does not
+ * Mutate an alert in the alertTimes array if it exists or add it if it does not
  * exist.
  * @param  {String}   id        Unique identifier for input.
  * @param  {String}   time      Time entered into input.
@@ -544,28 +534,30 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
     time: (new Date(1970, 0, 1, hours, minutes)).toISOString(),
     validity: validity
   }
-  const index = getState().inputs.array.findIndex(input => input.id === id)
+  const index = getState().patient.alertTimes.findIndex(
+    input => input.id === id
+  )
 
   try {
-    if (getState().inputs.array !== null) {
-      console.log('TYPE OF INPUTS ARRAY: ' + typeof getState().inputs.array)
-      console.log('LENGTH OF INPUTS ARRAY: ' + getState().inputs.array.length)
+    if (getState().patient.alertTimes !== null) {
+      console.log('TYPE OF INPUTS ARRAY: ' + typeof getState().patient.alertTimes)
+      console.log('LENGTH OF INPUTS ARRAY: ' + getState().patient.alertTimes.length)
       let inputsArray = null
 
       if (index === -1) {
         inputsArray = [
-          ...getState().inputs.array.filter(input => input.id !== id),
+          ...getState().patient.alertTimes.filter(input => input.id !== id),
           input
         ]
       } else {
         inputsArray = [
-          ...getState().inputs.array.slice(0, index),
+          ...getState().patient.alertTimes.slice(0, index),
           input,
-          ...getState().inputs.array.slice(index + 1)
+          ...getState().patient.alertTimes.slice(index + 1)
         ]
       }
 
-      return db.collection('users').doc(getState().auth.user.email).update(
+      return db().collection('users').doc(getState().auth.user.email).update(
         {
           alertTimes: inputsArray
         }
@@ -587,7 +579,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
             }
           }
         )
-    } else if (getState().inputs.array == null) {
+    } else if (getState().patient.alertTimes == null) {
       throw new Error('Input array is null or undefined.')
     } else {
       throw new Error(
@@ -640,10 +632,17 @@ export const mutateInputFulfilledAction = (inputs) => (
 export const registerPatient = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
-  return auth.createUserWithEmailAndPassword(creds.username, creds.password)
+  return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
       (userCredential) => {
-        dispatch(registrationFulfilledAction(userCredential.user))
+        dispatch(
+          registrationFulfilledAction(
+            {
+              user: userCredential.user,
+              creds: creds
+            }
+          )
+        )
         dispatch(addDocument(userCredential.user.email))
       },
       error => {
@@ -664,10 +663,17 @@ export const registerPatient = (creds) => (dispatch) => {
 export const registerStandby = (creds) => (dispatch) => {
   dispatch(registrationRequestedAction())
 
-  return auth.createUserWithEmailAndPassword(creds.username, creds.password)
+  return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
       (userCredential) => {
-        dispatch(registrationFulfilledAction(userCredential.user))
+        dispatch(
+          registrationFulfilledAction(
+            {
+              user: userCredential.user,
+              creds: creds
+            }
+          )
+        )
         NavigationService.navigate('StandbyApp')
       },
       error => {
@@ -704,10 +710,10 @@ export const registrationRejectedAction = (message) => (
  * @see Google. (n.d.). User [Software documentation]. Retrieved from
  * {@link https://firebase.google.com/docs/reference/js/firebase.User}
  */
-export const registrationFulfilledAction = (user) => (
+export const registrationFulfilledAction = (data) => (
   {
     type: ActionTypes.REGISTRATION_FULFILLED,
-    payload: user
+    payload: data
   }
 )
 
@@ -718,9 +724,11 @@ export const registrationFulfilledAction = (user) => (
 export const removeInput = (id) => (dispatch, getState) => {
   dispatch(removeInputsRequestedAction())
 
-  const inputsArray = getState().inputs.array.filter(input => input.id !== id)
+  const inputsArray = getState().patient.alertTimes.filter(
+    input => input.id !== id
+  )
 
-  return db.collection('users').doc(getState().auth.user.email).update(
+  return db().collection('users').doc(getState().auth.user.email).update(
     {
       alertTimes: inputsArray
     }
@@ -743,7 +751,7 @@ export const removeInput = (id) => (dispatch, getState) => {
 export const removeInputs = () => (dispatch, getState) => {
   dispatch(removeInputsRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.email).update(
+  return db().collection('users').doc(getState().auth.user.email).update(
     {
       alertTimes: []
     }
@@ -1243,15 +1251,15 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
             dispatch(removeTimers())
             dispatch(checkin())
           }
-        },
-        {
-          text: 'Cancel',
-          onPress: () => {
-            console.log('Cancel Pressed')
-            dispatch(removeTimers())
-          },
-          style: 'cancel'
-        }
+        } // ,
+        // {
+        //   text: 'Cancel',
+        //   onPress: () => {
+        //     console.log('Cancel Pressed')
+        //     dispatch(removeTimers())
+        //   },
+        //   style: 'cancel'
+        // }
       ],
       { cancelable: false }
     )
@@ -1263,9 +1271,8 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
     dispatch(
       setTimerInterval(
         // TODO: Should these parameters be fetched from Firestore?
-        getState().inputs.array,
-        getState().patient.checkinTime,
-        (new Date()).toISOString()
+        getState().patient.alertTimes,
+        getState().patient.checkinTime
       )
     )
   )
@@ -1286,18 +1293,22 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
         if (isTest) {
           return interval
         } else {
-          if (interval > 0) {
-            const timer = Promise.resolve(
-              setTimeout(
-                () => {
-                  dispatch(setTimer(isTest))
-                },
-                interval
+          if (interval !== null) {
+            if (interval > 0) {
+              const timer = Promise.resolve(
+                setTimeout(
+                  () => {
+                    dispatch(setTimer(isTest))
+                  },
+                  interval
+                )
               )
-            )
-            return timer
+              return timer
+            } else {
+              checkinAlert()
+              return null
+            }
           } else {
-            checkinAlert()
             return null
           }
         }
@@ -1362,150 +1373,152 @@ export const setTimerFulfilledAction = (timer) => (
 export const setTimerInterval = (
   alertTimes,
   checkinTime,
-  now,
   isTest = false
 ) => (dispatch, getState) => {
-  const checkinMinutes = (((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
-      parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
-      parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
-      parseInt(checkinTime.slice(-4, -1), 10)
-  const nowMinutes = (((((parseInt(now.slice(-13, -11), 10) * 60) +
-      parseInt(now.slice(-10, -8), 10)) * 60) +
-      parseInt(now.slice(-7, -5), 10)) * 1000) +
-      parseInt(now.slice(-4, -1), 10)
-
-  console.log('LAST CHECK-IN: ' + checkinTime)
-  console.log('NOW: ' + now)
-  console.log('CHECKIN MINUTES: ' + checkinMinutes)
-  console.log('NOW MINUTES: ' + nowMinutes)
-
-  dispatch(setTimerIntervalRequestedAction())
-
-  return Promise.resolve(
-    dispatch(findClosestCheckinTimes(alertTimes, checkinMinutes, nowMinutes))
+  const alertMinutes = alertTimes.filter(alert => alert.validity).map(
+    alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
+      parseInt(alert.time.slice(-10, -8), 10)) * 60) +
+      parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
+      parseInt(alert.time.slice(-4, -1), 10)
   )
-    .then(
-      alertTime => {
-        const lastAlertTime = moment(
-          alertTimes.filter(alert => alert.validity).filter(
-            alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-                parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-                parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-                parseInt(alert.time.slice(-4, -1), 10) === alertTime.beforeNow
-          )[0].time
-        ).format('h:mm a')
-        console.log('LAST ALERT TIME: ' + lastAlertTime)
 
-        dispatch(setLastAlertTime(lastAlertTime))
-        return alertTime
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
+  if (alertMinutes.length !== 0) {
+    const now = (new Date()).toISOString()
+    const checkinMinutes = (
+      ((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
+        parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
+        parseInt(checkinTime.slice(-7, -5), 10)) * 1000
+    ) + parseInt(checkinTime.slice(-4, -1), 10)
+    const nowMinutes = (((((parseInt(now.slice(-13, -11), 10) * 60) +
+        parseInt(now.slice(-10, -8), 10)) * 60) +
+        parseInt(now.slice(-7, -5), 10)) * 1000) +
+        parseInt(now.slice(-4, -1), 10)
+
+    console.log('LAST CHECK-IN: ' + checkinTime)
+    console.log('NOW: ' + now)
+    console.log('CHECKIN MINUTES: ' + checkinMinutes)
+    console.log('NOW MINUTES: ' + nowMinutes)
+
+    dispatch(setTimerIntervalRequestedAction())
+
+    return Promise.resolve(
+      dispatch(findClosestCheckinTimes(alertMinutes, checkinMinutes, nowMinutes))
     )
-    .then(
-      alertTime => {
-        console.log('CHECKIN MINUTES: ' + checkinMinutes)
-        console.log('NOW MINUTES: ' + nowMinutes)
-        console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
-        console.log('TIME AFTER NOW: ' + alertTime.afterNow)
-        console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
-        console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
-        console.log(alertTime.beforeNow === alertTime.beforeCheckin)
-        console.log(alertTime.afterNow === alertTime.afterCheckin)
+      .then(
+        alertTime => {
+          console.log('CHECKIN MINUTES: ' + checkinMinutes)
+          console.log('NOW MINUTES: ' + nowMinutes)
+          console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
+          console.log('TIME AFTER NOW: ' + alertTime.afterNow)
+          console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
+          console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
+          console.log(alertTime.beforeNow === alertTime.beforeCheckin)
+          console.log(alertTime.afterNow === alertTime.afterCheckin)
 
-        if ((moment(now) - moment(checkinTime)) > 86400000) {
-          dispatch(setTimerIntervalFulfilledAction(0))
-          return 0
-        } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
-          if (nowMinutes > checkinMinutes) {
-            if (alertTime.afterCheckin > nowMinutes) {
-              const interval = (alertTime.afterCheckin - nowMinutes)
-              dispatch(setTimerIntervalFulfilledAction(interval))
-              return interval
-            } else if (alertTime.afterCheckin > checkinMinutes) {
-              dispatch(setTimerIntervalFulfilledAction(0))
-              return 0
-            } else {
-              const interval = (
-                (alertTime.afterCheckin - nowMinutes)
-              ) + 86400000
-              dispatch(setTimerIntervalFulfilledAction(interval))
-              return interval
-            }
-          } else {
-            if (alertTime.afterCheckin > checkinMinutes) {
-              dispatch(setTimerIntervalFulfilledAction(0))
-              return 0
-            } else if (alertTime.afterCheckin > nowMinutes) {
-              const interval = (alertTime.afterCheckin - nowMinutes)
-              dispatch(setTimerIntervalFulfilledAction(interval))
-              return interval
-            } else {
-              const interval = (
-                (alertTime.afterCheckin - nowMinutes)
-              ) + 86400000
-              dispatch(setTimerIntervalFulfilledAction(interval))
-              return interval
-            }
-          }
-        } else if (alertTime.beforeCheckin < alertTime.afterCheckin) {
-          if (
-            alertTime.beforeCheckin === alertTime.beforeNow &&
-            alertTime.afterCheckin === alertTime.afterNow
-          ) {
-            const interval = (alertTime.afterCheckin - nowMinutes)
-            dispatch(setTimerIntervalFulfilledAction(interval))
-            return interval
-          } else {
+          if ((moment(now) - moment(checkinTime)) > 86400000) {
             dispatch(setTimerIntervalFulfilledAction(0))
             return 0
-          }
-        } else {
-          if (
-            alertTime.beforeCheckin === alertTime.beforeNow &&
-            alertTime.afterCheckin === alertTime.afterNow
-          ) {
-            if (alertTime.afterCheckin > nowMinutes) {
+          } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
+            if (nowMinutes > checkinMinutes) {
+              if (alertTime.afterCheckin > nowMinutes) {
+                const interval = (alertTime.afterCheckin - nowMinutes)
+                dispatch(setTimerIntervalFulfilledAction(interval))
+                return interval
+              } else if (alertTime.afterCheckin > checkinMinutes) {
+                dispatch(setTimerIntervalFulfilledAction(0))
+                return 0
+              } else {
+                const interval = (
+                  (alertTime.afterCheckin - nowMinutes)
+                ) + 86400000
+                dispatch(setTimerIntervalFulfilledAction(interval))
+                return interval
+              }
+            } else {
+              if (alertTime.afterCheckin > checkinMinutes) {
+                dispatch(setTimerIntervalFulfilledAction(0))
+                return 0
+              } else if (alertTime.afterCheckin > nowMinutes) {
+                const interval = (alertTime.afterCheckin - nowMinutes)
+                dispatch(setTimerIntervalFulfilledAction(interval))
+                return interval
+              } else {
+                const interval = (
+                  (alertTime.afterCheckin - nowMinutes)
+                ) + 86400000
+                dispatch(setTimerIntervalFulfilledAction(interval))
+                return interval
+              }
+            }
+          } else if (alertTime.beforeCheckin < alertTime.afterCheckin) {
+            if (
+              alertTime.beforeCheckin === alertTime.beforeNow &&
+              alertTime.afterCheckin === alertTime.afterNow
+            ) {
               const interval = (alertTime.afterCheckin - nowMinutes)
               dispatch(setTimerIntervalFulfilledAction(interval))
               return interval
             } else {
-              const interval = (
-                (alertTime.afterCheckin - nowMinutes)
-              ) + 86400000
-              dispatch(setTimerIntervalFulfilledAction(interval))
-              return interval
+              dispatch(setTimerIntervalFulfilledAction(0))
+              return 0
             }
           } else {
-            dispatch(setTimerIntervalFulfilledAction(0))
-            return 0
+            if (
+              alertTime.beforeCheckin === alertTime.beforeNow &&
+              alertTime.afterCheckin === alertTime.afterNow
+            ) {
+              if (alertTime.afterCheckin > nowMinutes) {
+                const interval = (alertTime.afterCheckin - nowMinutes)
+                dispatch(setTimerIntervalFulfilledAction(interval))
+                return interval
+              } else {
+                const interval = (
+                  (alertTime.afterCheckin - nowMinutes)
+                ) + 86400000
+                dispatch(setTimerIntervalFulfilledAction(interval))
+                return interval
+              }
+            } else {
+              dispatch(setTimerIntervalFulfilledAction(0))
+              return 0
+            }
           }
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
         }
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      interval => {
-        if (!isTest) {
-          db.collection('users').doc(getState().auth.user.email).update(
-            {
-              checkinInterval: interval
-            }
-          )
-            .catch(
-              error => dispatch(setTimerIntervalRejectedAction(error.message))
+      )
+      .then(
+        interval => {
+          if (!isTest) {
+            db().collection('users').doc(getState().auth.user.email).update(
+              {
+                checkinInterval: interval
+              }
             )
-        }
+              .catch(
+                error => dispatch(setTimerIntervalRejectedAction(error.message))
+              )
+          }
 
-        return interval
-      }
-    )
-    .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
+          return interval
+        }
+      )
+      .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
+  } else {
+    return Promise.resolve()
+      .then(
+        () => {
+          return null
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
+  }
 }
 
 /**
@@ -1546,15 +1559,29 @@ export const setTimerIntervalFulfilledAction = (interval) => (
  * @param  {String}   creds Username and password for the patient.
  * @return {Promise}        A promise to sign-in a patient-user.
  */
-export const signinPatient = (creds) => (dispatch) => {
+export const signinPatient = (creds, isAutomatic = false) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
-  return auth.signInWithEmailAndPassword(creds.username, creds.password)
+  return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
-        dispatch(signinFulfilledAction(userCredential.user))
+        dispatch(
+          signinFulfilledAction(
+            {
+              user: userCredential.user,
+              creds: creds
+            }
+          )
+        )
         dispatch(addDocument(userCredential.user.email))
       },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => { if (isAutomatic) { dispatch(checkin()) } },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1573,10 +1600,17 @@ export const signinPatient = (creds) => (dispatch) => {
 export const signinStandby = (creds) => (dispatch) => {
   dispatch(signinRequestedAction(creds))
 
-  return auth.signInWithEmailAndPassword(creds.username, creds.password)
+  return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
-        dispatch(signinFulfilledAction(userCredential.user))
+        dispatch(
+          signinFulfilledAction(
+            {
+              user: userCredential.user,
+              creds: creds
+            }
+          )
+        )
         NavigationService.navigate('StandbyApp')
       },
       error => {
@@ -1613,16 +1647,16 @@ export const signinRejectedAction = (message) => (
  * @see Google. (n.d.). User [Software documentation]. Retrieved from
  * {@link https://firebase.google.com/docs/reference/js/firebase.User}
  */
-export const signinFulfilledAction = (user) => (
+export const signinFulfilledAction = (data) => (
   {
     type: ActionTypes.SIGNIN_FULFILLED,
-    payload: user
+    payload: data
   }
 )
 
 /**
- * Sign out a patient on Firebase, which first removes that patient's document on
- * Firebase.  After those promises are returned, an action for sign-out-
+ * Sign out a patient on Firebase, which first removes that patient's document
+ * on Firebase.  After those promises are returned, an action for sign-out-
  * fulfillment is initiated, a request to remove timers is initiated, and the
  * navigation service is told to navigate to the authorization stack.
  * @return {Promise}  A promise to sign-out a patient-user.
@@ -1630,10 +1664,10 @@ export const signinFulfilledAction = (user) => (
 export const signoutPatient = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
-  return db.collection('users').doc(getState().auth.user.email).delete()
+  return db().collection('users').doc(getState().auth.user.email).delete()
     .then(
       () => {
-        auth.signOut()
+        auth().signOut()
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1643,8 +1677,23 @@ export const signoutPatient = () => (dispatch, getState) => {
     .then(
       () => {
         dispatch(removeTimers())
-        dispatch(removeInputs())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
         dispatch(signoutFulfilledAction())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
         NavigationService.navigate('PatientAuth')
       },
       error => {
@@ -1669,7 +1718,7 @@ export const signoutPatient = () => (dispatch, getState) => {
 export const signoutStandby = () => (dispatch) => {
   dispatch(signoutRequestedAction())
 
-  return auth.signOut()
+  return auth().signOut()
     .then(
       () => {
         dispatch(removeListeners())
