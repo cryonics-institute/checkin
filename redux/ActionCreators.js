@@ -965,7 +965,6 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
   return Promise.resolve(
     dispatch(
       setListenerInterval(
-        // TODO: Should these parameters be fetched from Firestore?
         getState().patient.alertTimes,
         getState().patient.checkinTime,
         (new Date()).toISOString()
