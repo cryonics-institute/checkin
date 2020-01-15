@@ -1251,15 +1251,7 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
             dispatch(removeTimers())
             dispatch(checkin())
           }
-        } // ,
-        // {
-        //   text: 'Cancel',
-        //   onPress: () => {
-        //     console.log('Cancel Pressed')
-        //     dispatch(removeTimers())
-        //   },
-        //   style: 'cancel'
-        // }
+        }
       ],
       { cancelable: false }
     )
@@ -1270,7 +1262,6 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
   return Promise.resolve(
     dispatch(
       setTimerInterval(
-        // TODO: Should these parameters be fetched from Firestore?
         getState().patient.alertTimes,
         getState().patient.checkinTime
       )
