@@ -46,6 +46,7 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
+// TODO: Add onValueChange parameter to slider component.
 class PatientHome extends React.Component {
   componentDidMount () {
     if (this.props.patient.alertTimes.length === 0) {
@@ -88,13 +89,14 @@ class PatientHome extends React.Component {
           </Tooltip>
         </View>
         <Slider
-          maximumValue = { this.props.timer.maximumInterval }
-          minimumValue = { this.props.timer.minimumInterval }
-          step = { 1000 }
+          maximumValue = { 60 }
+          minimumValue = { 1 }
+          step = { 1 }
           style = { styles.slider }
+          value = { this.props.patient.snooze }
         />
         <Text style = { styles.text }>
-          { 15 } Minutes // TODO: Change this!
+          { this.props.patient.snooze } Minutes
         </Text>
       </ScrollView>
     )
