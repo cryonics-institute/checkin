@@ -47,7 +47,6 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
-// TODO: Add onValueChange parameter to slider component.
 class PatientHome extends React.Component {
   componentDidMount () {
     if (this.props.patient.alertTimes.length === 0) {
