@@ -234,6 +234,24 @@ export const Patient = (
         interval: action.payload
       }
 
+    case ActionTypes.SET_SNOOZE_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.SET_SNOOZE_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SET_SNOOZE_FULFILLED:
+      return {
+        ...state,
+        snooze: action.payload
+      }
+
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state

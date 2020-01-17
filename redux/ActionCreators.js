@@ -1222,12 +1222,67 @@ export const setListenerIntervalRejectedAction = (message) => (
 
 /**
  * Initiate an action indicating that the timer-interval has been set.
- * @param  {Integer}  interval  The interval between alerts.
+ * @param  {Integer} interval   The interval between alerts.
  */
 export const setListenerIntervalFulfilledAction = (interval) => (
   {
     type: ActionTypes.SET_LISTENER_INTERVAL_FULFILLED,
     payload: interval
+  }
+)
+
+/**
+ * Set the patient's snooze interval, which indicates the delay between when the
+ * patient is alerted to check in and when the standby is alerted that the
+ * patient has failed to check in.
+ * @param {Integer} interval  Delay between patient and standby alerts.
+ */
+export const setSnooze = (snooze) => (dispatch, getState) => {
+  dispatch(setSnoozeRequestedAction())
+
+  return db().collection('users').doc(getState().auth.user.email).update(
+    { snooze: snooze }
+  )
+    .then(
+      () => {
+        dispatch(setSnoozeFulfilledAction(snooze))
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(setSnoozeRejectedAction(error.message)))
+}
+
+/**
+ * Initiate an action to set a snooze for patient check-in alerts.
+ */
+export const setSnoozeRequestedAction = () => (
+  {
+    type: ActionTypes.SET_SNOOZE_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that the snooze was not set.
+ * @param  {Error} errorMessage Message describing the timer-interval failure.
+ */
+export const setSnoozeRejectedAction = (message) => (
+  {
+    type: ActionTypes.SET_SNOOZE_REJECTED,
+    payload: message
+  }
+)
+
+/**
+ * Initiate an action indicating that the snooze has been set.
+ * @param  {Integer} snooze   The interval between alerts.
+ */
+export const setSnoozeFulfilledAction = (snooze) => (
+  {
+    type: ActionTypes.SET_SNOOZE_FULFILLED,
+    payload: snooze
   }
 )
 

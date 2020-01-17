@@ -27,7 +27,7 @@ import { ScrollView, View } from 'react-native'
 import { Icon, Slider, Text, Tooltip } from 'react-native-elements'
 import { connect } from 'react-redux'
 import * as Shortid from 'shortid'
-import { mutateInput } from '../redux/ActionCreators'
+import { mutateInput, setSnooze } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
 
@@ -42,7 +42,8 @@ const mapDispatchToProps = (dispatch) => (
   {
     mutateInput: (identifier, text, validity) => dispatch(
       mutateInput(identifier, text, validity)
-    )
+    ),
+    setSnooze: snooze => dispatch(setSnooze(snooze))
   }
 )
 
@@ -91,12 +92,17 @@ class PatientHome extends React.Component {
         <Slider
           maximumValue = { 60 }
           minimumValue = { 1 }
+          onSlidingComplete = { value => this.props.setSnooze(value) }
           step = { 1 }
           style = { styles.slider }
           value = { this.props.patient.snooze }
         />
         <Text style = { styles.text }>
-          { this.props.patient.snooze } Minutes
+          {
+            this.props.patient.snooze === 1
+              ? this.props.patient.snooze + ' Minute'
+              : this.props.patient.snooze + ' Minutes'
+          }
         </Text>
       </ScrollView>
     )
