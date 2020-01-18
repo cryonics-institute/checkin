@@ -318,8 +318,6 @@ const findClosestCheckinTimes = (
     )
       .then(
         result => {
-          result.array.forEach(element => console.log('TIME: ' + element))
-
           let timeBeforeNow = null
           let timeAfterNow = null
           let timeBeforeCheckin = null
@@ -334,12 +332,6 @@ const findClosestCheckinTimes = (
             i += 1
           }
 
-          console.log('timeBeforeNow: ' + timeBeforeNow)
-          if (timeBeforeNow === null || timeBeforeNow === undefined) {
-            timeBeforeNow = result.array[result.array.length - 1]
-            timeAfterNow = result.array[0]
-          }
-
           let j = 0
           while (timeBeforeCheckin === null && j < result.array.length) {
             if (result.checkinMinutes < result.array[j]) {
@@ -349,20 +341,8 @@ const findClosestCheckinTimes = (
             j += 1
           }
 
-          console.log('timeBeforeCheckin: ' + timeBeforeCheckin)
-          if (timeBeforeCheckin === null || timeBeforeCheckin === undefined) {
-            timeBeforeCheckin = result.array[result.array.length - 1]
-            timeAfterCheckin = result.array[0]
-          }
-
-          console.log('CHECKIN MINUTES: ' + result.checkinMinutes)
-          console.log('NOW MINUTES: ' + result.nowMinutes)
-          console.log('TIME BEFORE NOW: ' + timeBeforeNow)
-          console.log('TIME AFTER NOW: ' + timeAfterNow)
-          console.log('TIME BEFORE CHECKIN: ' + timeBeforeCheckin)
-          console.log('TIME AFTER CHECKIN: ' + timeAfterCheckin)
-
           return {
+            result: result,
             beforeNow: timeBeforeNow,
             afterNow: timeAfterNow,
             beforeCheckin: timeBeforeCheckin,
@@ -372,6 +352,34 @@ const findClosestCheckinTimes = (
         error => {
           var errorMessage = new Error(error.message)
           throw errorMessage
+        }
+      )
+      .then(
+        alertTime => {
+          if (
+            alertTime.timeBeforeNow === null ||
+            alertTime.timeBeforeNow === undefined
+          ) {
+            alertTime.timeBeforeNow =
+              alertTime.result.array[alertTime.result.array.length - 1]
+            alertTime.timeAfterNow = alertTime.result.array[0]
+          }
+
+          if (
+            alertTime.timeBeforeCheckin === null ||
+            alertTime.timeBeforeCheckin === undefined
+          ) {
+            alertTime.timeBeforeCheckin =
+              alertTime.result.array[alertTime.result.array.length - 1]
+            alertTime.timeAfterCheckin = alertTime.result.array[0]
+          }
+
+          return {
+            beforeNow: alertTime.timeBeforeNow,
+            afterNow: alertTime.timeAfterNow,
+            beforeCheckin: alertTime.timeBeforeCheckin,
+            afterCheckin: alertTime.timeAfterCheckin
+          }
         }
       )
       .then(
