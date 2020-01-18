@@ -70,7 +70,7 @@ export const addDocument = (email) => (dispatch, getState) => {
     checkinTime: now,
     isSignedIn: true,
     signinTime: now,
-    snooze: 9 // TODO: Let patient set this.  It must be smaller than the shortest interval.
+    snooze: 9
   }
 
   dispatch(addDocumentRequestedAction())
@@ -283,7 +283,7 @@ export const checkinFulfilledAction = (checkinTime) => (
  */
 const findClosestCheckinTimes = (
   alertMinutes, checkinMinutes, nowMinutes
-) => (dispatch) => {
+) => (dispatch, getState) => {
   dispatch(findClosestCheckinTimesRequestedAction())
 
   if (alertMinutes.length === 1) {
@@ -341,12 +341,29 @@ const findClosestCheckinTimes = (
             j += 1
           }
 
+          let shortestInterval =
+            result.array[0] - result.array[result.array.length - 1] !== 0
+              ? result.array[0] +
+                (86400000 - result.array[result.array.length - 1])
+              : 3600000
+          let k = 1
+          while (k < result.array.length) {
+            const thisInterval = result.array[k] - result.array[k - 1] !== 0
+              ? result.array[k] - result.array[k - 1]
+              : 3600000
+            if (thisInterval < shortestInterval) {
+              shortestInterval = thisInterval
+            }
+            k += 1
+          }
+
           return {
             result: result,
             beforeNow: timeBeforeNow,
             afterNow: timeAfterNow,
             beforeCheckin: timeBeforeCheckin,
-            afterCheckin: timeAfterCheckin
+            afterCheckin: timeAfterCheckin,
+            shortestInterval: shortestInterval
           }
         },
         error => {
@@ -372,6 +389,23 @@ const findClosestCheckinTimes = (
             alertTime.timeBeforeCheckin =
               alertTime.result.array[alertTime.result.array.length - 1]
             alertTime.timeAfterCheckin = alertTime.result.array[0]
+          }
+
+          if (
+            alertTime.shortestInterval <
+              getState().patient.longestSnooze * 60000
+          ) {
+            if (
+              alertTime.shortestInterval < getState().patient.snooze * 60000
+            ) {
+              dispatch(setSnooze(alertTime.shortestInterval / 60000))
+            }
+
+            dispatch(setShortestInterval(alertTime.shortestInterval))
+          } else {
+            dispatch(
+              setShortestInterval(getState().patient.longestSnooze * 60000)
+            )
           }
 
           return {
@@ -1235,6 +1269,62 @@ export const setListenerIntervalRejectedAction = (message) => (
 export const setListenerIntervalFulfilledAction = (interval) => (
   {
     type: ActionTypes.SET_LISTENER_INTERVAL_FULFILLED,
+    payload: interval
+  }
+)
+
+/**
+ * Sets the shortest interval between alerts used to limit snooze.
+ * @param {Integer} interval   Shortest interval between alerts.
+ */
+export const setShortestInterval = (interval) => (dispatch, getState) => {
+  dispatch(setShortestIntervalRequestedAction())
+
+  return db().collection('users').doc(getState().auth.user.email).update(
+    {
+      shortestInterval: interval
+    }
+  )
+    .then(
+      () => {
+        dispatch(setShortestIntervalFulfilledAction(interval))
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(setSnoozeRejectedAction(error.message)))
+}
+
+/**
+ * Initiate an action indicating that setting the shortest interval was
+ * requested.
+ */
+export const setShortestIntervalRequestedAction = () => (
+  {
+    type: ActionTypes.SET_SHORTEST_INTERVAL_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that the shortest interval was not set.
+ * @param  {Error} errorMessage Message describing the interval-setting failure.
+ */
+export const setShortestIntervalRejectedAction = (message) => (
+  {
+    type: ActionTypes.SET_SHORTEST_INTERVAL_REJECTED,
+    payload: message
+  }
+)
+
+/**
+ * Initiate an action indicating that the shortest interval has been set.
+ * @param  {Integer} interval   Shortest interval between alerts.
+ */
+export const setShortestIntervalFulfilledAction = (interval) => (
+  {
+    type: ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED,
     payload: interval
   }
 )

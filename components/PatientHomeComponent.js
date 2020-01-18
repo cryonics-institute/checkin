@@ -89,7 +89,7 @@ class PatientHome extends React.Component {
           </Tooltip>
         </View>
         <Slider
-          maximumValue = { 60 }
+          maximumValue = { this.props.patient.shortestInterval / 60000 }
           minimumValue = { 1 }
           onSlidingComplete = { value => this.props.setSnooze(value) }
           step = { 1 }

@@ -36,7 +36,9 @@ export const Patient = (
     isSignedIn: null,
     lastAlertTime: null,
     listeners: [],
+    longestSnooze: 60,
     registrationToken: null,
+    shortestInterval: 3600000,
     signinTime: null,
     snooze: null
   },
@@ -232,6 +234,24 @@ export const Patient = (
       return {
         ...state,
         interval: action.payload
+      }
+
+    case ActionTypes.SET_SHORTEST_INTERVAL_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.SET_SHORTEST_INTERVAL_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED:
+      return {
+        ...state,
+        shortestInterval: action.payload
       }
 
     case ActionTypes.SET_SNOOZE_REQUESTED:
