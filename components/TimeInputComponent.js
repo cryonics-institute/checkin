@@ -133,7 +133,7 @@ class TimeInput extends React.Component {
           )
         ) {
           this.setState(
-            { invalid: 'Alerts must be at least one hour apart.' }
+            { invalid: 'Alerts must be at least 1 hour apart.' }
           )
           valid = false
         }
