@@ -36,9 +36,9 @@ export const Patient = (
     isSignedIn: null,
     lastAlertTime: null,
     listeners: [],
-    longestSnooze: 60,
+    longestSnooze: 30,
     registrationToken: null,
-    shortestInterval: 3600000,
+    shortestInterval: 1800000,
     signinTime: null,
     snooze: null
   },
