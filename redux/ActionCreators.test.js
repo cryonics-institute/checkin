@@ -50,7 +50,7 @@ jest.useFakeTimers()
 describe(
   'setTimerInterval',
   () => {
-    for (var i = 0; i < 100; i++) {
+    for (const i = 0; i < 100; i++) {
       beforeEach(
         () => { // Runs before each test in the suite
           store.clearActions()
@@ -72,7 +72,7 @@ describe(
       ).toISOString()
       const alertTimes = []
       const length = getRandomIntInclusive(1, 10)
-      for (var j = 0; j < length; j++) {
+      for (const j = 0; j < length; j++) {
         const time = (
           new Date(
             1970,
@@ -216,7 +216,7 @@ describe(
 describe(
   'setListener',
   () => {
-    for (var i = 0; i < 100; i++) {
+    for (const i = 0; i < 100; i++) {
       beforeEach(
         () => { // Runs before each test in the suite
           store.clearActions()
@@ -238,7 +238,7 @@ describe(
       ).toISOString()
       const alertTimes = []
       const length = getRandomIntInclusive(1, 10)
-      for (var j = 0; j < length; j++) {
+      for (const j = 0; j < length; j++) {
         const time = (
           new Date(
             1970,
