@@ -126,14 +126,14 @@ class TimeInput extends React.Component {
       for (const alert of this.props.patient.alertTimes) {
         if (
           moment(isoTime).isBetween(
-            moment(alert.time) - 1800000,
-            moment(alert.time) + 1800000,
+            moment(alert.time) - 3600000,
+            moment(alert.time) + 3600000,
             null,
             '()'
           )
         ) {
           this.setState(
-            { invalid: 'Alerts must be at least thirty minutes apart.' }
+            { invalid: 'Alerts must be at least one hour apart.' }
           )
           valid = false
         }
