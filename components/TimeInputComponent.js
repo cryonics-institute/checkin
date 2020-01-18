@@ -124,7 +124,6 @@ class TimeInput extends React.Component {
 
       let valid = true
       for (const alert of this.props.patient.alertTimes) {
-        console.log('ALERT TIME: ' + alert.time)
         if (
           moment(isoTime).isBetween(
             moment(alert.time) - 1800000,
