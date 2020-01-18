@@ -296,6 +296,8 @@ export const Patient = (
         isSignedIn: null,
         lastAlertTime: null,
         listeners: [],
+        longestSnooze: 60,
+        shortestInterval: 3600000,
         signinTime: null,
         snooze: null
       }
