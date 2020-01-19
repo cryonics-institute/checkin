@@ -975,6 +975,8 @@ export const setLastAlertTimeAction = (lastAlertTime) => (
   }
 )
 
+// TODO: Bring the listener-interval calculation up-to date with the timer-
+// interval calculation.
 /**
  * Set a recurring listener that will check if the patient that the standby-user
  * is following has checked in within the alotted interval plus the snooze or
@@ -1431,8 +1433,6 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
     )
     .then(
       interval => {
-        console.log('TIMEOUT SHOULD SET TO: ' + interval)
-
         if (isTest) {
           return interval
         } else {
@@ -1463,7 +1463,6 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
     )
     .then(
       timer => {
-        console.log('TIMER ID: ' + timer)
         dispatch(setTimerFulfilledAction(timer))
       },
       error => {
@@ -1537,11 +1536,6 @@ export const setTimerInterval = (
         parseInt(now.slice(-7, -5), 10)) * 1000) +
         parseInt(now.slice(-4, -1), 10)
 
-    console.log('LAST CHECK-IN: ' + checkinTime)
-    console.log('NOW: ' + now)
-    console.log('CHECKIN MINUTES: ' + checkinMinutes)
-    console.log('NOW MINUTES: ' + nowMinutes)
-
     dispatch(setTimerIntervalRequestedAction())
 
     return Promise.resolve(
@@ -1549,15 +1543,6 @@ export const setTimerInterval = (
     )
       .then(
         alertTime => {
-          console.log('CHECKIN MINUTES: ' + checkinMinutes)
-          console.log('NOW MINUTES: ' + nowMinutes)
-          console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
-          console.log('TIME AFTER NOW: ' + alertTime.afterNow)
-          console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
-          console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
-          console.log(alertTime.beforeNow === alertTime.beforeCheckin)
-          console.log(alertTime.afterNow === alertTime.afterCheckin)
-
           if ((moment(now) - moment(checkinTime)) > 86400000) {
             dispatch(setTimerIntervalFulfilledAction(0))
             return 0
