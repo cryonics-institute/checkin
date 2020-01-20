@@ -31,10 +31,10 @@
     didFinishLaunchingWithOptions: (NSDictionary *)launchOptions
 {
   [super application: application didFinishLaunchingWithOptions: launchOptions];
-  
+
   [FIRApp configure];
   [FIRMessaging messaging].delegate = self;
-  
+
   if ([UNUserNotificationCenter class] != nil) {
     // iOS 10 or later
     // For iOS 10 display notification (sent via APNS)
@@ -83,10 +83,9 @@
     [NSNotificationCenter defaultCenter]
       postNotificationName: @"FCMToken" object: nil userInfo: dataDict
   ];
-  // TODO: If necessary send token to application server.
   // Note: This callback is fired at each app startup and whenever a new token
   // is generated.
-  
+
   [
     [FIRInstanceID instanceID] instanceIDWithHandler: ^(
       FIRInstanceIDResult * _Nullable result,

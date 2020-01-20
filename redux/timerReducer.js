@@ -28,8 +28,6 @@ export const Timer = (
   state = {
     errMess: null,
     interval: null,
-    maximumInterval: 24000,
-    minimumInterval: 1000,
     timers: []
   },
   action

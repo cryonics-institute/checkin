@@ -56,6 +56,7 @@ class TimeInput extends React.Component {
 
     this.state = {
       identifier: this.props.value,
+      invalid: 'Please enter as HH:MM AM/PM',
       time: null
     }
   }
@@ -78,6 +79,27 @@ class TimeInput extends React.Component {
     }
   }
 
+  convertTo24Hour (time) {
+    const period = time.slice(-2).toUpperCase()
+    const hour = parseInt(time.slice(-8, -6))
+
+    if (period === 'AM') {
+      if (hour === 12) {
+        return '00'
+      } else if (hour < 10) {
+        return '0' + hour
+      } else {
+        return hour.toString()
+      }
+    } else {
+      if (hour === 12) {
+        return hour.toString()
+      } else {
+        return (hour + 12).toString()
+      }
+    }
+  }
+
   mutate (time) {
     const isValid = this.validate(time)
 
@@ -90,18 +112,40 @@ class TimeInput extends React.Component {
 
   validate (time) {
     if (!time) {
+      this.setState({ invalid: 'Please enter as HH:MM AM/PM' })
       return false
     } else if (!/^(0?[1-9]|1[012])(:[0-5]\d) [APap][mM]$/i.test(time)) {
+      this.setState({ invalid: 'Please enter as HH:MM AM/PM' })
       return false
     } else {
-      return true
+      const hours = time.length > 0 ? this.convertTo24Hour(time) : 0
+      const minutes = time.length > 0 ? time.slice(-5, -3) : 0
+      const isoTime = (new Date(1970, 0, 1, hours, minutes)).toISOString()
+
+      let valid = true
+      for (const alert of this.props.patient.alertTimes) {
+        if (
+          moment(isoTime).isBetween(
+            moment(alert.time) - 3600000,
+            moment(alert.time) + 3600000,
+            null,
+            '()'
+          )
+        ) {
+          this.setState(
+            { invalid: 'Alerts must be at least 1 hour apart.' }
+          )
+          valid = false
+        }
+      }
+
+      return valid
     }
   }
 
   render () {
     const length = this.props.patient.alertTimes.length
     const valid = 'VALID'
-    const invalid = 'Please enter as HH:MM AM/PM'
 
     if (
       length > 1 &&
@@ -116,7 +160,7 @@ class TimeInput extends React.Component {
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
-                : invalid
+                : this.state.invalid
             }
             errorStyle = {
               this.props.patient.alertTimes.filter(
@@ -156,7 +200,7 @@ class TimeInput extends React.Component {
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
-                : invalid
+                : this.state.invalid
             }
             errorStyle = {
               this.props.patient.alertTimes.filter(

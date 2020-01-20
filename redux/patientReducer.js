@@ -36,7 +36,9 @@ export const Patient = (
     isSignedIn: null,
     lastAlertTime: null,
     listeners: [],
+    longestSnooze: 30,
     registrationToken: null,
+    shortestInterval: 1800000,
     signinTime: null,
     snooze: null
   },
@@ -234,6 +236,42 @@ export const Patient = (
         interval: action.payload
       }
 
+    case ActionTypes.SET_SHORTEST_INTERVAL_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.SET_SHORTEST_INTERVAL_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED:
+      return {
+        ...state,
+        shortestInterval: action.payload
+      }
+
+    case ActionTypes.SET_SNOOZE_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.SET_SNOOZE_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SET_SNOOZE_FULFILLED:
+      return {
+        ...state,
+        snooze: action.payload
+      }
+
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state
@@ -258,6 +296,8 @@ export const Patient = (
         isSignedIn: null,
         lastAlertTime: null,
         listeners: [],
+        longestSnooze: 60,
+        shortestInterval: 3600000,
         signinTime: null,
         snooze: null
       }
