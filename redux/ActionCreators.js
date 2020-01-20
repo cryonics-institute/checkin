@@ -975,8 +975,6 @@ export const setLastAlertTimeAction = (lastAlertTime) => (
   }
 )
 
-// TODO: Bring the listener-interval calculation up-to date with the timer-
-// interval calculation.
 /**
  * Set a recurring listener that will check if the patient that the standby-user
  * is following has checked in within the alotted interval plus the snooze or
@@ -1006,69 +1004,95 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
 
   dispatch(setListenerRequestedAction())
 
-  return Promise.resolve(
-    dispatch(
-      setListenerInterval(
-        getState().patient.alertTimes,
-        getState().patient.checkinTime,
-        (new Date()).toISOString()
+  if (getState().patient.isSignedIn) {
+    return Promise.resolve(
+      dispatch(
+        setListenerInterval(
+          getState().patient.alertTimes,
+          getState().patient.checkinTime
+        )
       )
     )
-  )
-    .then(
-      interval => {
-        dispatch(removeListeners())
-        return interval
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      interval => {
-        if (getState().patient.isSignedIn) {
-          console.log('TIMEOUT SHOULD SET TO: ' + interval)
-
+      .then(
+        interval => {
+          dispatch(removeListeners())
+          return interval
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        interval => {
           if (isTest) {
             return interval
           } else {
-            if (interval > 0) {
-              const listener = Promise.resolve(
-                setTimeout(
-                  () => {
-                    dispatch(setListener(isTest))
-                  },
-                  interval
+            if (interval !== null) {
+              if (interval > 0) {
+                const listener = Promise.resolve(
+                  setTimeout(
+                    () => {
+                      dispatch(setListener(isTest))
+                    },
+                    interval
+                  )
                 )
-              )
-              return listener
+                return listener
+              } else {
+                noCheckinAlert()
+                return null
+              }
             } else {
-              noCheckinAlert()
               return null
             }
           }
-        } // else {
-        //   // TODO: Add logic for when patient is signed out, such as an
-        //   // indicator on the standby home screen that says so.
-        // }
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      listener => {
-        console.log('LISTENER ID: ' + listener)
-        dispatch(setListenerFulfilledAction(listener))
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .catch(error => dispatch(setListenerRejectedAction(error.message)))
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        listener => {
+          dispatch(setListenerFulfilledAction(listener))
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .catch(error => dispatch(setListenerRejectedAction(error.message)))
+  } else {
+    return Promise.resolve(dispatch(removeListeners()))
+      .then(
+        () => {
+          const listener = Promise.resolve(
+            setTimeout(
+              () => {
+                dispatch(setListener(isTest))
+              },
+              60000
+            )
+          )
+          return listener
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        listener => {
+          dispatch(setListenerFulfilledAction(listener))
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
+  }
 }
 
 /**
@@ -1113,135 +1137,141 @@ export const setListenerFulfilledAction = (listener) => (
 export const setListenerInterval = (
   alertTimes,
   checkinTime,
-  now,
   isTest = false
 ) => (dispatch, getState) => {
-  const checkinMinutes = (((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
-      parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
-      parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
-      parseInt(checkinTime.slice(-4, -1), 10)
-  const nowMinutes = (((((parseInt(now.slice(-13, -11), 10) * 60) +
-      parseInt(now.slice(-10, -8), 10)) * 60) +
-      parseInt(now.slice(-7, -5), 10)) * 1000) +
-      parseInt(now.slice(-4, -1), 10)
+  const alertMinutes = alertTimes.filter(alert => alert.validity).map(
+    alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
+      parseInt(alert.time.slice(-10, -8), 10)) * 60) +
+      parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
+      parseInt(alert.time.slice(-4, -1), 10))
 
-  console.log('LAST CHECK-IN: ' + checkinTime)
-  console.log('NOW: ' + now)
-  console.log('CHECKIN MINUTES: ' + checkinMinutes)
-  console.log('NOW MINUTES: ' + nowMinutes)
+  if (alertMinutes.length !== 0) {
+    const now = (new Date()).toISOString()
+    const checkinMinutes = (((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
+        parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
+        parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
+        parseInt(checkinTime.slice(-4, -1), 10)
+    const nowMinutes = (((((parseInt(now.slice(-13, -11), 10) * 60) +
+        parseInt(now.slice(-10, -8), 10)) * 60) +
+        parseInt(now.slice(-7, -5), 10)) * 1000) +
+        parseInt(now.slice(-4, -1), 10)
 
-  dispatch(setListenerIntervalRequestedAction())
+    dispatch(setListenerIntervalRequestedAction())
 
-  return Promise.resolve(
-    dispatch(findClosestCheckinTimes(alertTimes, checkinMinutes, nowMinutes))
-  )
-    .then(
-      alertTime => {
-        const lastAlertTime = moment(
-          alertTimes.filter(alert => alert.validity).filter(
-            alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-                parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-                parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-                parseInt(alert.time.slice(-4, -1), 10) === alertTime.beforeNow
-          )[0].time
-        )
-        console.log('LAST ALERT TIME: ' + lastAlertTime)
-
-        dispatch(setLastAlertTime(lastAlertTime))
-        return alertTime
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
+    return Promise.resolve(
+      dispatch(findClosestCheckinTimes(alertMinutes, checkinMinutes, nowMinutes))
     )
-    .then(
-      alertTime => {
-        console.log('CHECKIN MINUTES: ' + checkinMinutes)
-        console.log('NOW MINUTES: ' + nowMinutes)
-        console.log('TIME BEFORE NOW: ' + alertTime.beforeNow)
-        console.log('TIME AFTER NOW: ' + alertTime.afterNow)
-        console.log('TIME BEFORE CHECKIN: ' + alertTime.beforeCheckin)
-        console.log('TIME AFTER CHECKIN: ' + alertTime.afterCheckin)
-        console.log(alertTime.beforeNow === alertTime.beforeCheckin)
-        console.log(alertTime.afterNow === alertTime.afterCheckin)
+      .then(
+        alertTime => {
+          const lastAlertTime = moment(
+            alertTimes.filter(alert => alert.validity).filter(
+              alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
+                  parseInt(alert.time.slice(-10, -8), 10)) * 60) +
+                  parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
+                  parseInt(alert.time.slice(-4, -1), 10) === alertTime.beforeNow
+            )[0].time
+          )
+          console.log('LAST ALERT TIME: ' + lastAlertTime)
 
-        // TODO: Fix the following to account for snooze.
-        if ((moment(now) - moment(checkinTime)) > 86400000) {
-          dispatch(setTimerIntervalFulfilledAction(0))
-          return 0
-        } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
-          if (nowMinutes > checkinMinutes) {
-            if (alertTime.afterCheckin > nowMinutes) {
-              const interval = (alertTime.afterCheckin - nowMinutes)
-              dispatch(setListenerIntervalFulfilledAction(interval))
-              return interval
-            } else if (alertTime.afterCheckin > checkinMinutes) {
-              dispatch(setListenerIntervalFulfilledAction(0))
-              return 0
-            } else {
-              const interval = (
-                (alertTime.afterCheckin - nowMinutes)
-              ) + 86400000
-              dispatch(setListenerIntervalFulfilledAction(interval))
-              return interval
-            }
-          } else {
-            if (alertTime.afterCheckin > checkinMinutes) {
-              dispatch(setListenerIntervalFulfilledAction(0))
-              return 0
-            } else if (alertTime.afterCheckin > nowMinutes) {
-              const interval = (alertTime.afterCheckin - nowMinutes)
-              dispatch(setListenerIntervalFulfilledAction(interval))
-              return interval
-            } else {
-              const interval = (
-                (alertTime.afterCheckin - nowMinutes)
-              ) + 86400000
-              dispatch(setListenerIntervalFulfilledAction(interval))
-              return interval
-            }
-          }
-        } else if (alertTime.beforeCheckin < alertTime.afterCheckin) {
-          if (
-            alertTime.beforeCheckin === alertTime.beforeNow &&
-            alertTime.afterCheckin === alertTime.afterNow
-          ) {
-            const interval = (alertTime.afterCheckin - nowMinutes)
-            dispatch(setListenerIntervalFulfilledAction(interval))
-            return interval
-          } else {
-            dispatch(setListenerIntervalFulfilledAction(0))
-            return 0
-          }
-        } else {
-          if (
-            alertTime.beforeCheckin === alertTime.beforeNow &&
-            alertTime.afterCheckin === alertTime.afterNow
-          ) {
-            if (alertTime.afterCheckin > nowMinutes) {
-              const interval = (alertTime.afterCheckin - nowMinutes)
-              dispatch(setListenerIntervalFulfilledAction(interval))
-              return interval
-            } else {
-              const interval = (
-                (alertTime.afterCheckin - nowMinutes)
-              ) + 86400000
-              dispatch(setListenerIntervalFulfilledAction(interval))
-              return interval
-            }
-          } else {
-            dispatch(setListenerIntervalFulfilledAction(0))
-            return 0
-          }
+          dispatch(setLastAlertTime(lastAlertTime))
+          return alertTime
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
         }
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .catch(error => dispatch(setListenerIntervalRejectedAction(error.message)))
+      )
+      .then(
+        alertTime => {
+          // TODO: Fix the following to account for snooze.
+          if ((moment(now) - moment(checkinTime)) > 86400000) {
+            dispatch(setTimerIntervalFulfilledAction(0))
+            return 0
+          } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
+            if (nowMinutes > checkinMinutes) {
+              if (alertTime.afterCheckin > nowMinutes) {
+                const interval = (alertTime.afterCheckin - nowMinutes)
+                dispatch(setListenerIntervalFulfilledAction(interval))
+                return interval
+              } else if (alertTime.afterCheckin > checkinMinutes) {
+                dispatch(setListenerIntervalFulfilledAction(0))
+                return 0
+              } else {
+                const interval = (
+                  (alertTime.afterCheckin - nowMinutes)
+                ) + 86400000
+                dispatch(setListenerIntervalFulfilledAction(interval))
+                return interval
+              }
+            } else {
+              if (alertTime.afterCheckin > checkinMinutes) {
+                dispatch(setListenerIntervalFulfilledAction(0))
+                return 0
+              } else if (alertTime.afterCheckin > nowMinutes) {
+                const interval = (alertTime.afterCheckin - nowMinutes)
+                dispatch(setListenerIntervalFulfilledAction(interval))
+                return interval
+              } else {
+                const interval = (
+                  (alertTime.afterCheckin - nowMinutes)
+                ) + 86400000
+                dispatch(setListenerIntervalFulfilledAction(interval))
+                return interval
+              }
+            }
+          } else if (alertTime.beforeCheckin < alertTime.afterCheckin) {
+            if (
+              alertTime.beforeCheckin === alertTime.beforeNow &&
+              alertTime.afterCheckin === alertTime.afterNow
+            ) {
+              const interval = (alertTime.afterCheckin - nowMinutes)
+              dispatch(setListenerIntervalFulfilledAction(interval))
+              return interval
+            } else {
+              dispatch(setListenerIntervalFulfilledAction(0))
+              return 0
+            }
+          } else {
+            if (
+              alertTime.beforeCheckin === alertTime.beforeNow &&
+              alertTime.afterCheckin === alertTime.afterNow
+            ) {
+              if (alertTime.afterCheckin > nowMinutes) {
+                const interval = (alertTime.afterCheckin - nowMinutes)
+                dispatch(setListenerIntervalFulfilledAction(interval))
+                return interval
+              } else {
+                const interval = (
+                  (alertTime.afterCheckin - nowMinutes)
+                ) + 86400000
+                dispatch(setListenerIntervalFulfilledAction(interval))
+                return interval
+              }
+            } else {
+              dispatch(setListenerIntervalFulfilledAction(0))
+              return 0
+            }
+          }
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .catch(error => dispatch(setListenerIntervalRejectedAction(error.message)))
+  } else {
+    return Promise.resolve()
+      .then(
+        () => {
+          return 60000
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .catch(error => dispatch(setListenerIntervalRejectedAction(error.message)))
+  }
 }
 
 /**
@@ -1521,16 +1551,14 @@ export const setTimerInterval = (
     alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
       parseInt(alert.time.slice(-10, -8), 10)) * 60) +
       parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-      parseInt(alert.time.slice(-4, -1), 10)
-  )
+      parseInt(alert.time.slice(-4, -1), 10))
 
   if (alertMinutes.length !== 0) {
     const now = (new Date()).toISOString()
-    const checkinMinutes = (
-      ((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
+    const checkinMinutes = (((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
         parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
-        parseInt(checkinTime.slice(-7, -5), 10)) * 1000
-    ) + parseInt(checkinTime.slice(-4, -1), 10)
+        parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
+        parseInt(checkinTime.slice(-4, -1), 10)
     const nowMinutes = (((((parseInt(now.slice(-13, -11), 10) * 60) +
         parseInt(now.slice(-10, -8), 10)) * 60) +
         parseInt(now.slice(-7, -5), 10)) * 1000) +
