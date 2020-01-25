@@ -274,194 +274,6 @@ export const checkinFulfilledAction = (checkinTime) => (
 )
 
 /**
- * Find the check-in times immediately before and after the last check-in and
- * immediately before and after now.
- * @param  {Array} alertTimes       Array of times to check in.
- * @param  {Integer} checkinMinutes Minutes from midnight to last check-in.
- * @param  {Integer} nowMinutes     Minutes from midnight to now.
- * @return {Promise}                Times before and after check-in and now.
- */
-const findClosestCheckinTimes = (
-  alertMinutes, checkinMinutes, nowMinutes
-) => (dispatch, getState) => {
-  dispatch(findClosestCheckinTimesRequestedAction())
-
-  if (alertMinutes.length === 1) {
-    return Promise.resolve(
-      {
-        beforeNow: alertMinutes[0],
-        afterNow: alertMinutes[0],
-        beforeCheckin: alertMinutes[0],
-        afterCheckin: alertMinutes[0]
-      }
-    )
-      .then(
-        alertTime => {
-          dispatch(findClosestCheckinTimesFulfilledAction())
-          return alertTime
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .catch(
-        error => dispatch(findClosestCheckinTimesRejectedAction(error.message))
-      )
-  } else {
-    return Promise.resolve(
-      {
-        array: alertMinutes.sort((el1, el2) => el1 - el2),
-        checkinMinutes: checkinMinutes,
-        nowMinutes: nowMinutes
-      }
-    )
-      .then(
-        result => {
-          let timeBeforeNow = null
-          let timeAfterNow = null
-          let timeBeforeCheckin = null
-          let timeAfterCheckin = null
-
-          let i = 0
-          while (timeBeforeNow === null && i < result.array.length) {
-            if (result.nowMinutes < result.array[i]) {
-              timeBeforeNow = result.array[i - 1]
-              timeAfterNow = result.array[i]
-            }
-            i += 1
-          }
-
-          let j = 0
-          while (timeBeforeCheckin === null && j < result.array.length) {
-            if (result.checkinMinutes < result.array[j]) {
-              timeBeforeCheckin = result.array[j - 1]
-              timeAfterCheckin = result.array[j]
-            }
-            j += 1
-          }
-
-          let shortestInterval =
-            result.array[0] - result.array[result.array.length - 1] !== 0
-              ? result.array[0] +
-                (86400000 - result.array[result.array.length - 1])
-              : 3600000
-          let k = 1
-          while (k < result.array.length) {
-            const thisInterval = result.array[k] - result.array[k - 1] !== 0
-              ? result.array[k] - result.array[k - 1]
-              : 3600000
-            if (thisInterval < shortestInterval) {
-              shortestInterval = thisInterval
-            }
-            k += 1
-          }
-
-          return {
-            result: result,
-            beforeNow: timeBeforeNow,
-            afterNow: timeAfterNow,
-            beforeCheckin: timeBeforeCheckin,
-            afterCheckin: timeAfterCheckin,
-            shortestInterval: shortestInterval
-          }
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .then(
-        alertTime => {
-          if (
-            alertTime.timeBeforeNow === null ||
-            alertTime.timeBeforeNow === undefined
-          ) {
-            alertTime.timeBeforeNow =
-              alertTime.result.array[alertTime.result.array.length - 1]
-            alertTime.timeAfterNow = alertTime.result.array[0]
-          }
-
-          if (
-            alertTime.timeBeforeCheckin === null ||
-            alertTime.timeBeforeCheckin === undefined
-          ) {
-            alertTime.timeBeforeCheckin =
-              alertTime.result.array[alertTime.result.array.length - 1]
-            alertTime.timeAfterCheckin = alertTime.result.array[0]
-          }
-
-          if (
-            alertTime.shortestInterval <
-              getState().patient.longestSnooze * 60000
-          ) {
-            if (
-              alertTime.shortestInterval < getState().patient.snooze * 60000
-            ) {
-              dispatch(setSnooze(alertTime.shortestInterval / 60000))
-            }
-
-            dispatch(setShortestInterval(alertTime.shortestInterval))
-          } else {
-            dispatch(
-              setShortestInterval(getState().patient.longestSnooze * 60000)
-            )
-          }
-
-          return {
-            beforeNow: alertTime.timeBeforeNow,
-            afterNow: alertTime.timeAfterNow,
-            beforeCheckin: alertTime.timeBeforeCheckin,
-            afterCheckin: alertTime.timeAfterCheckin
-          }
-        }
-      )
-      .then(
-        alertTime => {
-          dispatch(findClosestCheckinTimesFulfilledAction())
-          return alertTime
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .catch(
-        error => dispatch(findClosestCheckinTimesRejectedAction(error.message))
-      )
-  }
-}
-
-/**
- * Initiate an action to find the closest check-in times.
- */
-export const findClosestCheckinTimesRequestedAction = () => (
-  {
-    type: ActionTypes.FIND_CHECKIN_TIMES_REQUESTED
-  }
-)
-
-/**
- * Initiate an error indicating that the closest check-in times were not found.
- * @param  {Error} errorMessage Message describing the listening failure.
- */
-export const findClosestCheckinTimesRejectedAction = (message) => (
-  {
-    type: ActionTypes.FIND_CHECKIN_TIMES_REJECTED,
-    payload: message
-  }
-)
-
-/**
- * Initiate an action indicating that the closest check-in times were found.
- */
-export const findClosestCheckinTimesFulfilledAction = () => (
-  {
-    type: ActionTypes.FIND_CHECKIN_TIMES_FULFILLED
-  }
-)
-
-/**
  * Update the sign-in and check-in times and the check-in interval in the Redux
  * store using the currently-authorized user's Firebase document.  First, the
  * document is retrieved from Firebase.  After that promise is returned, the
@@ -582,8 +394,6 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
 
   try {
     if (getState().patient.alertTimes !== null) {
-      console.log('TYPE OF INPUTS ARRAY: ' + typeof getState().patient.alertTimes)
-      console.log('LENGTH OF INPUTS ARRAY: ' + getState().patient.alertTimes.length)
       let inputsArray = null
 
       if (index === -1) {
@@ -1139,137 +949,70 @@ export const setListenerInterval = (
   checkinTime,
   isTest = false
 ) => (dispatch, getState) => {
-  const alertMinutes = alertTimes.filter(alert => alert.validity).map(
-    alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-      parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-      parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-      parseInt(alert.time.slice(-4, -1), 10))
+  const now = (new Date()).toISOString()
+  const nowInMs = (((((parseInt(now.slice(-13, -11), 10) * 60) +
+    parseInt(now.slice(-10, -8), 10)) * 60) +
+    parseInt(now.slice(-7, -5), 10)) * 1000) +
+    parseInt(now.slice(-4, -1), 10)
+  const nowToMidnight = 86400000 - nowInMs
 
-  if (alertMinutes.length !== 0) {
-    const now = (new Date()).toISOString()
-    const checkinMinutes = (((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
+  const alertsInMs = alertTimes.filter(alert => alert.validity).map(
+    alert => {
+      return {
+        timeInMs: ((((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
+          parseInt(alert.time.slice(-10, -8), 10)) * 60) +
+          parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
+          parseInt(alert.time.slice(-4, -1), 10) + nowToMidnight) % 86400000,
+        timeInIso: alert.time
+      }
+    }
+  ).sort((el1, el2) => el1.timeInMs - el2.timeInMs)
+
+  if (alertsInMs.length !== 0) {
+    const checkinInMs = ((((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
         parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
         parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
-        parseInt(checkinTime.slice(-4, -1), 10)
-    const nowMinutes = (((((parseInt(now.slice(-13, -11), 10) * 60) +
-        parseInt(now.slice(-10, -8), 10)) * 60) +
-        parseInt(now.slice(-7, -5), 10)) * 1000) +
-        parseInt(now.slice(-4, -1), 10)
+        parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
+    const snoozeInMs = getState().patient.snooze * 60000
 
     dispatch(setListenerIntervalRequestedAction())
 
+    let interval = null
+    if (moment(now) - moment(checkinTime) > 86400000 + snoozeInMs) {
+      interval = 0
+    } else if (alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs) {
+      interval = alertsInMs[0].timeInMs
+    } else if (
+      alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > 86400000
+    ) {
+      interval =
+        alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs - 86400000
+    } else {
+      interval = 0
+    }
+
     return Promise.resolve(
-      dispatch(findClosestCheckinTimes(alertMinutes, checkinMinutes, nowMinutes))
+      dispatch(setListenerIntervalFulfilledAction(interval))
     )
       .then(
-        alertTime => {
+        () => {
           const lastAlertTime = moment(
-            alertTimes.filter(alert => alert.validity).filter(
-              alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-                  parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-                  parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-                  parseInt(alert.time.slice(-4, -1), 10) === alertTime.beforeNow
-            )[0].time
+            alertsInMs[alertsInMs.length - 1].timeInIso
           )
-          console.log('LAST ALERT TIME: ' + lastAlertTime)
 
           dispatch(setLastAlertTime(lastAlertTime))
-          return alertTime
+          return interval
         },
         error => {
           var errorMessage = new Error(error.message)
           throw errorMessage
         }
       )
-      .then(
-        alertTime => {
-          // TODO: Fix the following to account for snooze.
-          if ((moment(now) - moment(checkinTime)) > 86400000) {
-            dispatch(setTimerIntervalFulfilledAction(0))
-            return 0
-          } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
-            if (nowMinutes > checkinMinutes) {
-              if (alertTime.afterCheckin > nowMinutes) {
-                const interval = (alertTime.afterCheckin - nowMinutes)
-                dispatch(setListenerIntervalFulfilledAction(interval))
-                return interval
-              } else if (alertTime.afterCheckin > checkinMinutes) {
-                dispatch(setListenerIntervalFulfilledAction(0))
-                return 0
-              } else {
-                const interval = (
-                  (alertTime.afterCheckin - nowMinutes)
-                ) + 86400000
-                dispatch(setListenerIntervalFulfilledAction(interval))
-                return interval
-              }
-            } else {
-              if (alertTime.afterCheckin > checkinMinutes) {
-                dispatch(setListenerIntervalFulfilledAction(0))
-                return 0
-              } else if (alertTime.afterCheckin > nowMinutes) {
-                const interval = (alertTime.afterCheckin - nowMinutes)
-                dispatch(setListenerIntervalFulfilledAction(interval))
-                return interval
-              } else {
-                const interval = (
-                  (alertTime.afterCheckin - nowMinutes)
-                ) + 86400000
-                dispatch(setListenerIntervalFulfilledAction(interval))
-                return interval
-              }
-            }
-          } else if (alertTime.beforeCheckin < alertTime.afterCheckin) {
-            if (
-              alertTime.beforeCheckin === alertTime.beforeNow &&
-              alertTime.afterCheckin === alertTime.afterNow
-            ) {
-              const interval = (alertTime.afterCheckin - nowMinutes)
-              dispatch(setListenerIntervalFulfilledAction(interval))
-              return interval
-            } else {
-              dispatch(setListenerIntervalFulfilledAction(0))
-              return 0
-            }
-          } else {
-            if (
-              alertTime.beforeCheckin === alertTime.beforeNow &&
-              alertTime.afterCheckin === alertTime.afterNow
-            ) {
-              if (alertTime.afterCheckin > nowMinutes) {
-                const interval = (alertTime.afterCheckin - nowMinutes)
-                dispatch(setListenerIntervalFulfilledAction(interval))
-                return interval
-              } else {
-                const interval = (
-                  (alertTime.afterCheckin - nowMinutes)
-                ) + 86400000
-                dispatch(setListenerIntervalFulfilledAction(interval))
-                return interval
-              }
-            } else {
-              dispatch(setListenerIntervalFulfilledAction(0))
-              return 0
-            }
-          }
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
+      .catch(
+        error => dispatch(setListenerIntervalRejectedAction(error.message))
       )
-      .catch(error => dispatch(setListenerIntervalRejectedAction(error.message)))
   } else {
-    return Promise.resolve()
-      .then(
-        () => {
-          return 60000
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
+    return Promise.resolve(60000)
       .catch(error => dispatch(setListenerIntervalRejectedAction(error.message)))
   }
 }
@@ -1547,106 +1290,47 @@ export const setTimerInterval = (
   checkinTime,
   isTest = false
 ) => (dispatch, getState) => {
-  const alertMinutes = alertTimes.filter(alert => alert.validity).map(
-    alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-      parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-      parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-      parseInt(alert.time.slice(-4, -1), 10))
+  const now = (new Date()).toISOString()
+  const nowInMs = (((((parseInt(now.slice(-13, -11), 10) * 60) +
+    parseInt(now.slice(-10, -8), 10)) * 60) +
+    parseInt(now.slice(-7, -5), 10)) * 1000) +
+    parseInt(now.slice(-4, -1), 10)
+  const nowToMidnight = 86400000 - nowInMs
 
-  if (alertMinutes.length !== 0) {
-    const now = (new Date()).toISOString()
-    const checkinMinutes = (((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
+  const alertsInMs = alertTimes.filter(alert => alert.validity).map(
+    alert => {
+      return {
+        timeInMs: ((((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
+          parseInt(alert.time.slice(-10, -8), 10)) * 60) +
+          parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
+          parseInt(alert.time.slice(-4, -1), 10) + nowToMidnight) % 86400000,
+        timeInIso: alert.time
+      }
+    }
+  ).sort((el1, el2) => el1.timeInMs - el2.timeInMs)
+
+  if (alertsInMs.length !== 0) {
+    const checkinInMs = ((((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
         parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
         parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
-        parseInt(checkinTime.slice(-4, -1), 10)
-    const nowMinutes = (((((parseInt(now.slice(-13, -11), 10) * 60) +
-        parseInt(now.slice(-10, -8), 10)) * 60) +
-        parseInt(now.slice(-7, -5), 10)) * 1000) +
-        parseInt(now.slice(-4, -1), 10)
+        parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
 
     dispatch(setTimerIntervalRequestedAction())
 
+    let interval = null
+    if (moment(now) - moment(checkinTime) > 86400000) {
+      interval = 0
+    } else if (alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs) {
+      interval = alertsInMs[0].timeInMs
+    } else {
+      interval = 0
+    }
+
     return Promise.resolve(
-      dispatch(findClosestCheckinTimes(alertMinutes, checkinMinutes, nowMinutes))
+      dispatch(setTimerIntervalFulfilledAction(interval))
     )
       .then(
-        alertTime => {
-          if ((moment(now) - moment(checkinTime)) > 86400000) {
-            dispatch(setTimerIntervalFulfilledAction(0))
-            return 0
-          } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
-            if (nowMinutes > checkinMinutes) {
-              if (alertTime.afterCheckin > nowMinutes) {
-                const interval = (alertTime.afterCheckin - nowMinutes)
-                dispatch(setTimerIntervalFulfilledAction(interval))
-                return interval
-              } else if (alertTime.afterCheckin > checkinMinutes) {
-                dispatch(setTimerIntervalFulfilledAction(0))
-                return 0
-              } else {
-                const interval = (
-                  (alertTime.afterCheckin - nowMinutes)
-                ) + 86400000
-                dispatch(setTimerIntervalFulfilledAction(interval))
-                return interval
-              }
-            } else {
-              if (alertTime.afterCheckin > checkinMinutes) {
-                dispatch(setTimerIntervalFulfilledAction(0))
-                return 0
-              } else if (alertTime.afterCheckin > nowMinutes) {
-                const interval = (alertTime.afterCheckin - nowMinutes)
-                dispatch(setTimerIntervalFulfilledAction(interval))
-                return interval
-              } else {
-                const interval = (
-                  (alertTime.afterCheckin - nowMinutes)
-                ) + 86400000
-                dispatch(setTimerIntervalFulfilledAction(interval))
-                return interval
-              }
-            }
-          } else if (alertTime.beforeCheckin < alertTime.afterCheckin) {
-            if (
-              alertTime.beforeCheckin === alertTime.beforeNow &&
-              alertTime.afterCheckin === alertTime.afterNow
-            ) {
-              const interval = (alertTime.afterCheckin - nowMinutes)
-              dispatch(setTimerIntervalFulfilledAction(interval))
-              return interval
-            } else {
-              dispatch(setTimerIntervalFulfilledAction(0))
-              return 0
-            }
-          } else {
-            if (
-              alertTime.beforeCheckin === alertTime.beforeNow &&
-              alertTime.afterCheckin === alertTime.afterNow
-            ) {
-              if (alertTime.afterCheckin > nowMinutes) {
-                const interval = (alertTime.afterCheckin - nowMinutes)
-                dispatch(setTimerIntervalFulfilledAction(interval))
-                return interval
-              } else {
-                const interval = (
-                  (alertTime.afterCheckin - nowMinutes)
-                ) + 86400000
-                dispatch(setTimerIntervalFulfilledAction(interval))
-                return interval
-              }
-            } else {
-              dispatch(setTimerIntervalFulfilledAction(0))
-              return 0
-            }
-          }
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .then(
-        interval => {
+        () => {
           if (!isTest) {
             db().collection('users').doc(getState().auth.user.email).update(
               {
@@ -1661,18 +1345,11 @@ export const setTimerInterval = (
           return interval
         }
       )
-      .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
-  } else {
-    return Promise.resolve()
-      .then(
-        () => {
-          return null
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
+      .catch(
+        error => dispatch(setTimerIntervalRejectedAction(error.message))
       )
+  } else {
+    return Promise.resolve(60000)
       .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
   }
 }
