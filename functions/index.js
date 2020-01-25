@@ -160,190 +160,41 @@ const getRegistrationTokenIfNotCheckedIn = data => {
  * @return  {Integer}           Interval to wait before check-in alert.
  */
 const getInterval = (alertTimes, checkinTime) => {
-  const alertMinutes = alertTimes.filter(alert => alert.validity).map(
-    alert => (((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-      parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-      parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-      parseInt(alert.time.slice(-4, -1), 10)
-  )
+  const now = (new Date()).toISOString()
+  const nowInMs = (((((parseInt(now.slice(-13, -11), 10) * 60) +
+    parseInt(now.slice(-10, -8), 10)) * 60) +
+    parseInt(now.slice(-7, -5), 10)) * 1000) +
+    parseInt(now.slice(-4, -1), 10)
+  const nowToMidnight = 86400000 - nowInMs
 
-  if (alertMinutes.length !== 0) {
-    const now = (new Date()).toISOString()
-    const checkinMinutes = (((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
+  const alertsInMs = alertTimes.filter(alert => alert.validity).map(
+    alert => {
+      return {
+        timeInMs: ((((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
+          parseInt(alert.time.slice(-10, -8), 10)) * 60) +
+          parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
+          parseInt(alert.time.slice(-4, -1), 10) + nowToMidnight) % 86400000,
+        timeInIso: alert.time
+      }
+    }
+  ).sort((el1, el2) => el1.timeInMs - el2.timeInMs)
+
+  if (alertsInMs.length !== 0) {
+    const checkinInMs = ((((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
         parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
         parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
-        parseInt(checkinTime.slice(-4, -1), 10)
-    const nowMinutes = (((((parseInt(now.slice(-13, -11), 10) * 60) +
-        parseInt(now.slice(-10, -8), 10)) * 60) +
-        parseInt(now.slice(-7, -5), 10)) * 1000) +
-        parseInt(now.slice(-4, -1), 10)
+        parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
 
-    return Promise.resolve(
-      findClosestCheckinTimes(alertMinutes, checkinMinutes, nowMinutes)
-    )
-      .then(
-        alertTime => {
-          if ((moment(now) - moment(checkinTime)) > 86400000) {
-            return 0
-          } else if (alertTime.beforeCheckin === alertTime.afterCheckin) {
-            if (nowMinutes > checkinMinutes) {
-              if (alertTime.afterCheckin > nowMinutes) {
-                const interval = (alertTime.afterCheckin - nowMinutes)
-                return interval
-              } else if (alertTime.afterCheckin > checkinMinutes) {
-                return 0
-              } else {
-                const interval = (
-                  (alertTime.afterCheckin - nowMinutes)
-                ) + 86400000
-                return interval
-              }
-            } else {
-              if (alertTime.afterCheckin > checkinMinutes) {
-                return 0
-              } else if (alertTime.afterCheckin > nowMinutes) {
-                const interval = (alertTime.afterCheckin - nowMinutes)
-                return interval
-              } else {
-                const interval = (
-                  (alertTime.afterCheckin - nowMinutes)
-                ) + 86400000
-                return interval
-              }
-            }
-          } else if (alertTime.beforeCheckin < alertTime.afterCheckin) {
-            if (
-              alertTime.beforeCheckin === alertTime.beforeNow &&
-              alertTime.afterCheckin === alertTime.afterNow
-            ) {
-              const interval = (alertTime.afterCheckin - nowMinutes)
-              return interval
-            } else {
-              return 0
-            }
-          } else {
-            if (
-              alertTime.beforeCheckin === alertTime.beforeNow &&
-              alertTime.afterCheckin === alertTime.afterNow
-            ) {
-              if (alertTime.afterCheckin > nowMinutes) {
-                const interval = (alertTime.afterCheckin - nowMinutes)
-                return interval
-              } else {
-                const interval = (
-                  (alertTime.afterCheckin - nowMinutes)
-                ) + 86400000
-                return interval
-              }
-            } else {
-              return 0
-            }
-          }
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
+    const interval = moment(now) - moment(checkinTime) > 86400000
+      ? 0
+      : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
+        ? alertsInMs[0].timeInMs
+        : 0
+
+    return Promise.resolve(interval)
       .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
   } else {
-    return Promise.resolve()
-      .then(
-        () => {
-          return 1
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
+    return Promise.resolve(1)
       .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
-  }
-}
-
-/**
- * Find the check-in times immediately before and after the last check-in and
- * immediately before and after now.
- * @param  {Array} alertMinutes     Array of minutes since 1970 to check in.
- * @param  {Integer} checkinMinutes Minutes from midnight to last check-in.
- * @param  {Integer} nowMinutes     Minutes from midnight to now.
- * @return {Promise}                Times before and after check-in and now.
- */
-const findClosestCheckinTimes = (alertMinutes, checkinMinutes, nowMinutes) => {
-  if (alertMinutes.length === 1) {
-    return Promise.resolve(
-      {
-        beforeNow: alertMinutes[0],
-        afterNow: alertMinutes[0],
-        beforeCheckin: alertMinutes[0],
-        afterCheckin: alertMinutes[0]
-      }
-    )
-      .then(
-        alertTime => {
-          return alertTime
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .catch(error => {console.log('FIND CLOSEST TIMES ERROR: ', error)})
-  } else {
-    return Promise.resolve(
-      {
-        array: alertMinutes.sort((el1, el2) => el1 - el2),
-        checkinMinutes: checkinMinutes,
-        nowMinutes: nowMinutes
-      }
-    )
-      .then(
-        result => {
-          let timeBeforeNow = null
-          let timeAfterNow = null
-          let timeBeforeCheckin = null
-          let timeAfterCheckin = null
-
-          let i = 0
-          while (timeBeforeNow === null && i < result.array.length) {
-            if (result.nowMinutes < result.array[i]) {
-              timeBeforeNow = result.array[i - 1]
-              timeAfterNow = result.array[i]
-            }
-            i += 1
-          }
-
-          if (timeBeforeNow === null || timeBeforeNow === undefined) {
-            timeBeforeNow = result.array[result.array.length - 1]
-            timeAfterNow = result.array[0]
-          }
-
-          let j = 0
-          while (timeBeforeCheckin === null && j < result.array.length) {
-            if (result.checkinMinutes < result.array[j]) {
-              timeBeforeCheckin = result.array[j - 1]
-              timeAfterCheckin = result.array[j]
-            }
-            j += 1
-          }
-
-          if (timeBeforeCheckin === null || timeBeforeCheckin === undefined) {
-            timeBeforeCheckin = result.array[result.array.length - 1]
-            timeAfterCheckin = result.array[0]
-          }
-
-          return {
-            beforeNow: timeBeforeNow,
-            afterNow: timeAfterNow,
-            beforeCheckin: timeBeforeCheckin,
-            afterCheckin: timeAfterCheckin
-          }
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .catch(error => {console.log('FIND CLOSEST TIMES ERROR: ', error)})
   }
 }
