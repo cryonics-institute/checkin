@@ -22,7 +22,7 @@ const RenderActiveAlertView = (props) => {
       <Text h1 style = { styles.title }>ALERT</Text>
       <Text style = { styles.paragraph }>
         The member should have checked in at{'\n'}
-        { props.lastAlertTime.format('h:mm A dddd') }.
+        { moment(props.lastAlertTime).format('h:mm A dddd') }.
       </Text>
       <Text h4 style = { styles.title }>Sign-In Time</Text>
       <Text style = { styles.text }>
