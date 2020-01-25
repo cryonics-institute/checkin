@@ -977,31 +977,35 @@ export const setListenerInterval = (
 
     dispatch(setListenerIntervalRequestedAction())
 
-    let interval = null
-    if (moment(now) - moment(checkinTime) > 86400000 + snoozeInMs) {
-      interval = 0
-    } else if (alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs) {
-      interval = alertsInMs[0].timeInMs
-    } else if (
-      alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > 86400000
-    ) {
-      interval =
-        alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs - 86400000
-    } else {
-      interval = 0
-    }
+    const interval = moment(now) - moment(checkinTime) > 86400000 + snoozeInMs
+      ? 0
+      : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
+        ? alertsInMs[0].timeInMs
+        : alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > 86400000
+          ? alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs - 86400000
+          : 0
 
     return Promise.resolve(
-      dispatch(setListenerIntervalFulfilledAction(interval))
+      interval
     )
       .then(
-        () => {
+        result => {
+          dispatch(setListenerIntervalFulfilledAction(result))
+          return result
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        result => {
           const lastAlertTime = moment(
             alertsInMs[alertsInMs.length - 1].timeInIso
           )
 
           dispatch(setLastAlertTime(lastAlertTime))
-          return interval
+          return result
         },
         error => {
           var errorMessage = new Error(error.message)
@@ -1317,24 +1321,31 @@ export const setTimerInterval = (
 
     dispatch(setTimerIntervalRequestedAction())
 
-    let interval = null
-    if (moment(now) - moment(checkinTime) > 86400000) {
-      interval = 0
-    } else if (alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs) {
-      interval = alertsInMs[0].timeInMs
-    } else {
-      interval = 0
-    }
+    const interval = moment(now) - moment(checkinTime) > 86400000
+      ? 0
+      : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
+        ? alertsInMs[0].timeInMs
+        : 0
 
     return Promise.resolve(
-      dispatch(setTimerIntervalFulfilledAction(interval))
+      interval
     )
       .then(
-        () => {
+        result => {
+          dispatch(setTimerIntervalFulfilledAction(result))
+          return result
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        result => {
           if (!isTest) {
             db().collection('users').doc(getState().auth.user.email).update(
               {
-                checkinInterval: interval
+                checkinInterval: result
               }
             )
               .catch(
@@ -1342,7 +1353,11 @@ export const setTimerInterval = (
               )
           }
 
-          return interval
+          return result
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
         }
       )
       .catch(
