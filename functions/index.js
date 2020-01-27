@@ -43,16 +43,24 @@ exports.checkCheckins = functions.pubsub.schedule(
           if (typeof querySnapshot !== 'undefined') {
             console.log('Successfully retrieved document.')
 
-            const registrationTokens = []
+            const registrationTokens = {
+              forPatients: [],
+              forStandbys:[]
+            }
 
             querySnapshot.forEach(
               doc => {
                 // doc.data() is never undefined for query doc snapshots
-                const registrationToken = getRegistrationTokenIfNotCheckedIn(
+                const tokens = getRegistrationTokenIfNotCheckedIn(
                   doc.data()
                 )
-                if (registrationToken !== null) {
-                  registrationTokens.push(registrationToken)
+                if (tokens !== null) {
+                  if (tokens.forStandbys !== null) {
+                    registrationTokens.forPatients.push(tokens.forPatient)
+                    registrationTokens.forStandbys.concat(tokens.forStandbys)
+                  } else {
+                    registrationTokens.forPatients.push(tokens.forPatient)
+                  }
                 }
               }
             )
@@ -65,6 +73,7 @@ exports.checkCheckins = functions.pubsub.schedule(
       )
         .then(
           registrationTokens => {
+            // TODO: account for standby tokens
             if (typeof registrationTokens !== 'undefined') {
               console.log('LENGTH: ' + registrationTokens.length)
 
@@ -130,19 +139,29 @@ exports.checkCheckins = functions.pubsub.schedule(
  */
 const getRegistrationTokenIfNotCheckedIn = data => {
   return Promise.resolve(
-    getInterval(
+    getAlert(
       data.alertTimes,
       data.checkinTime
     )
   )
     .then(
-      interval => {
-        if (interval > 0) {
-          // wait until next check
-          return null
-        } else {
+      alert => {
+        if (alert.shouldFire.forPatient && alert.shouldFire.forStandby) {
+          // return the registrationTokens to be added to the array
+          return {
+            forPatient: data.registrationToken,
+            forStandbys: data.subscribers.flatMap(
+              subscriber => subscriber.registrationTokens
+            )
+          }
+        } else if (alert.shouldFire.forPatient) {
           // return the registrationToken to be added to the array
-          return data.registrationToken
+          return {
+            forPatient: data.registrationToken,
+            forStandbys: null
+          }
+        } else {
+          return null
         }
       },
       error => {
@@ -159,7 +178,7 @@ const getRegistrationTokenIfNotCheckedIn = data => {
  * @param   {Date} checkinTime  Last time patient checked in.\
  * @return  {Integer}           Interval to wait before check-in alert.
  */
-const getInterval = (alertTimes, checkinTime) => {
+const getAlert = (alertTimes, checkinTime) => {
   const now = (new Date()).toISOString()
   const nowInMs = (((((parseInt(now.slice(-13, -11), 10) * 60) +
     parseInt(now.slice(-10, -8), 10)) * 60) +
@@ -184,17 +203,23 @@ const getInterval = (alertTimes, checkinTime) => {
         parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
         parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
         parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
+    const snoozeInMs = getState().patient.snooze * 60000
 
-    const interval = moment(now) - moment(checkinTime) > 86400000
-      ? 0
-      : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
-        ? alertsInMs[0].timeInMs
-        : 0
+    const alert = moment(now) - moment(checkinTime) > 86400000 + snoozeInMs
+      ? { shouldFire: { forPatient: true, forStandby: true } }
+      : moment(now) - moment(checkinTime) > 86400000
+        ? { shouldFire: { forPatient: true, forStandby: false } }
+        : alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > checkinInMs
+            ? { shouldFire: { forPatient: true, forStandby: true } }
+            : alertsInMs[alertsInMs.length - 1].timeInMs > checkinInMs
+              ? { shouldFire: { forPatient: true, forStandby: false } }
+              : { shouldFire: { forPatient: false, forStandby: false } }
 
-    return Promise.resolve(interval)
+    return Promise.resolve(alert)
       .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
   } else {
-    return Promise.resolve(1)
+    const alert = { shouldFire: { forPatient: false, forStandby: false } }
+    return Promise.resolve(alert)
       .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
   }
 }
