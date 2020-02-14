@@ -179,7 +179,6 @@ exports.checkCheckins = functions.pubsub.schedule(
               responses[1].successCount +
               ' messages were sent successfully to standbys.'
             )
-            // TODO: This returns 0.
           } else {
             console.log(
               'The checkCheckins function completed successfully.'
