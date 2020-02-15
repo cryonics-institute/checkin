@@ -220,13 +220,15 @@ const getRegistrationTokenIfNotCheckedIn = data => {
             ).reduce((acc, val) => acc.concat(val), [])
           }
         } else if (alert.shouldFire.forPatient) {
-          // return the registrationToken to be added to the array
           return {
             forPatient: data.registrationToken,
             forStandbys: null
           }
         } else {
-          return null
+          return {
+            forPatient: null,
+            forStandbys: null
+          }
         }
       },
       error => {
