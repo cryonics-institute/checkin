@@ -61,66 +61,40 @@ exports.checkCheckins = functions.pubsub.schedule(
           throw errorMessage
         }
       )
-        .then(
-          registrationTokens => {
-            return {
-              forPatients: registrationTokens.map(
-                token => token.forPatient
-              ),
-              forStandbys: registrationTokens.map(
-                token => token.forStandbys
-              )
-            }
-          },
-          error => {
-            var errorMessage = new Error(error.message)
-            throw errorMessage
-          }
-        )
-        .then(
-          registrationTokens => {
-            console.log('LENGTH: ' + registrationTokens.forPatients.length)
-
-            const patientTokens = []
-            registrationTokens.forPatients.forEach(
-              token => {
-                if (token !== null) {
-                  console.log('Array contains ' + token)
-                  patientTokens.push(token)
-                }
+      .then(
+        registrationTokens => {
+          const patientTokens = []
+          const standbyTokens = []
+          registrationTokens.forEach(
+            token => {
+              if (token.forPatient !== null) {
+                console.log('Array contains ' + token.forPatient)
+                patientTokens.push(token.forPatient)
               }
-            )
-
-            console.log('LENGTH: ' + registrationTokens.forStandbys.length)
-
-            const standbyTokens = []
-            registrationTokens.forStandbys.forEach(
-              tokenArray => {
-                if (tokenArray !== null) {
-                  tokenArray.forEach(
-                    token => {
-                      console.log('Array contains ' + token)
-                      standbyTokens.push(token)
-                    }
-                  )
-                }
+              if (token.forStandbys !== null) {
+                token.forStandbys.forEach(
+                  standbyToken => {
+                    console.log('Array contains ' + standbyToken)
+                    standbyTokens.push(standbyToken)
+                  }
+                )
               }
-            )
-
-            return {
-              forPatients: patientTokens,
-              forStandbys: standbyTokens
             }
-          },
-          error => {
-            var errorMessage = new Error(error.message)
-            throw errorMessage
-          }
-        )
+          )
+
+          return Promise.all(
+            [Promise.all(patientTokens), Promise.all(standbyTokens)]
+          )
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
       .then(
         registrationTokens => {
           const patientMessage = {
-            tokens: registrationTokens.forPatients,
+            tokens: registrationTokens[0],
             notification: {
               title: 'Check In?',
               body: 'Your buddy will be alerted if not.'
@@ -128,7 +102,7 @@ exports.checkCheckins = functions.pubsub.schedule(
           }
 
           const standbyMessage = {
-            tokens: registrationTokens.forStandbys,
+            tokens: registrationTokens[1],
             notification: {
               title: 'Check-In Alert',
               body: 'Your buddy has not checked in.  Please make contact.'
@@ -147,13 +121,13 @@ exports.checkCheckins = functions.pubsub.schedule(
       )
       .then(
         messages => {
-          // Send a message to the device corresponding to the provided
-          // token.
-          const results = [
-            admin.messaging().sendMulticast(messages.forPatients),
-            admin.messaging().sendMulticast(messages.forStandbys)
-          ]
-          return Promise.all(results)
+          // Send a message to the device corresponding to the provided token.
+          return Promise.all(
+            [
+              admin.messaging().sendMulticast(messages.forPatients),
+              admin.messaging().sendMulticast(messages.forStandbys)
+            ]
+          )
         },
         error => {
           var errorMessage = new Error(error.message)
