@@ -40,82 +40,130 @@ exports.checkCheckins = functions.pubsub.schedule(
     return admin.firestore().collection('users').get()
       .then(
         querySnapshot => {
-          if (typeof querySnapshot !== 'undefined') {
-            console.log('Successfully retrieved document.')
+          console.log('Successfully retrieved document.')
 
-            const registrationTokens = []
+          const registrationTokens = []
 
-            querySnapshot.forEach(
-              doc => {
-                // doc.data() is never undefined for query doc snapshots
-                const registrationToken = getRegistrationTokenIfNotCheckedIn(
-                  doc.data()
-                )
-                if (registrationToken !== null) {
-                  registrationTokens.push(registrationToken)
-                }
-              }
-            )
+          querySnapshot.forEach(
+            doc => {
+              // doc.data() is never undefined for query doc snapshots
+              registrationTokens.push(
+                getRegistrationTokenIfNotCheckedIn(doc.data())
+              )
+            }
+          )
 
-            return Promise.all(registrationTokens)
-          } else {
-            throw new Error('The Firestore document was not retrieved.')
-          }
+          return Promise.all(registrationTokens)
+
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
         }
       )
-        .then(
-          registrationTokens => {
-            if (typeof registrationTokens !== 'undefined') {
-              console.log('LENGTH: ' + registrationTokens.length)
-
-              const tokens = []
-              registrationTokens.forEach(
-                token => {
-                  console.log('Array contains ' + token)
-                  if (token !== null) {
-                    tokens.push(token)
-                  }
-                }
-              )
-
-              if (tokens.length > 0) {
-                const message = {
-                  tokens: tokens,
-                  notification: {
-                    title: 'Check In?',
-                    body: 'Your buddy will be alerted if not.'
-                  }
-                }
-
-                // Send a message to the device corresponding to the provided
-                // token.
-                return admin.messaging().sendMulticast(message)
-              } else {
-                return null
-              }
-            } else {
-              throw new Error('The registration-token array was undefined.')
-            }
-          }
-        )
       .then(
-        response => {
-          if (typeof response !== 'undefined') {
-            // Response is a message ID string.
-            if (response !== null) {
-              console.log(
-                response.successCount + ' messages were sent successfully.'
-              )
-            } else {
-              console.log(
-                'The checkCheckins function completed successfully.'
-              )
+        registrationTokens => {
+          const patientTokens = []
+          const standbyTokens = []
+          registrationTokens.forEach(
+            token => {
+              if (token.forPatient !== null) {
+                console.log('Array contains ' + token.forPatient)
+                patientTokens.push(token.forPatient)
+              }
+              if (token.forStandbys !== null) {
+                token.forStandbys.forEach(
+                  standbyToken => {
+                    console.log('Array contains ' + standbyToken)
+                    standbyTokens.push(standbyToken)
+                  }
+                )
+              }
             }
+          )
 
-            return null
-          } else {
-            throw new Error('The multicast-messaging response was undefined.')
+          return Promise.all(
+            [Promise.all(patientTokens), Promise.all(standbyTokens)]
+          )
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        registrationTokens => {
+          const patientMessage = {
+            tokens: registrationTokens[0],
+            notification: {
+              title: 'Check In?',
+              body: 'Your buddy will be alerted if not.'
+            }
           }
+
+          const standbyMessage = {
+            tokens: registrationTokens[1],
+            notification: {
+              title: 'Check-In Alert',
+              body: 'Your buddy has not checked in.  Please make contact.'
+            }
+          }
+
+          return {
+            forPatients: patientMessage,
+            forStandbys: standbyMessage
+          }
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        messages => {
+          // Send a message to the device corresponding to the provided token.
+          return Promise.all(
+            [
+              admin.messaging().sendMulticast(messages.forPatients),
+              admin.messaging().sendMulticast(messages.forStandbys)
+            ]
+          )
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        responses => {
+          // Response is a message ID string.
+          if (responses[0] !== null) {
+            console.log(
+              responses[0].successCount +
+              ' messages were sent successfully to patients.'
+            )
+          } else {
+            console.log(
+              'The checkCheckins function completed successfully.'
+            )
+          }
+
+          if (responses[1] !== null) {
+            console.log(
+              responses[1].successCount +
+              ' messages were sent successfully to standbys.'
+            )
+          } else {
+            console.log(
+              'The checkCheckins function completed successfully.'
+            )
+          }
+
+          return null
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
         }
       )
       .catch(error => {console.log('NOTIFICATION ERROR: ', error)})
@@ -130,19 +178,31 @@ exports.checkCheckins = functions.pubsub.schedule(
  */
 const getRegistrationTokenIfNotCheckedIn = data => {
   return Promise.resolve(
-    getInterval(
+    getAlert(
       data.alertTimes,
-      data.checkinTime
+      data.checkinTime,
+      data.snooze
     )
   )
     .then(
-      interval => {
-        if (interval > 0) {
-          // wait until next check
-          return null
+      alert => {
+        if (alert.shouldFire.forPatient && alert.shouldFire.forStandby) {
+          return {
+            forPatient: data.registrationToken,
+            forStandbys: data.subscribers.map(
+              subscriber => subscriber.registrationTokens
+            ).reduce((acc, val) => acc.concat(val), [])
+          }
+        } else if (alert.shouldFire.forPatient) {
+          return {
+            forPatient: data.registrationToken,
+            forStandbys: null
+          }
         } else {
-          // return the registrationToken to be added to the array
-          return data.registrationToken
+          return {
+            forPatient: null,
+            forStandbys: null
+          }
         }
       },
       error => {
@@ -159,7 +219,7 @@ const getRegistrationTokenIfNotCheckedIn = data => {
  * @param   {Date} checkinTime  Last time patient checked in.\
  * @return  {Integer}           Interval to wait before check-in alert.
  */
-const getInterval = (alertTimes, checkinTime) => {
+const getAlert = (alertTimes, checkinTime, snooze) => {
   const now = (new Date()).toISOString()
   const nowInMs = (((((parseInt(now.slice(-13, -11), 10) * 60) +
     parseInt(now.slice(-10, -8), 10)) * 60) +
@@ -184,17 +244,23 @@ const getInterval = (alertTimes, checkinTime) => {
         parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
         parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
         parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
+    const snoozeInMs = snooze * 60000
 
-    const interval = moment(now) - moment(checkinTime) > 86400000
-      ? 0
-      : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
-        ? alertsInMs[0].timeInMs
-        : 0
+    const alert = moment(now) - moment(checkinTime) > 86400000 + snoozeInMs
+      ? { shouldFire: { forPatient: true, forStandby: true } }
+      : moment(now) - moment(checkinTime) > 86400000
+        ? { shouldFire: { forPatient: true, forStandby: false } }
+        : alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > checkinInMs
+            ? { shouldFire: { forPatient: true, forStandby: true } }
+            : alertsInMs[alertsInMs.length - 1].timeInMs > checkinInMs
+              ? { shouldFire: { forPatient: true, forStandby: false } }
+              : { shouldFire: { forPatient: false, forStandby: false } }
 
-    return Promise.resolve(interval)
+    return Promise.resolve(alert)
       .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
   } else {
-    return Promise.resolve(1)
+    const alert = { shouldFire: { forPatient: false, forStandby: false } }
+    return Promise.resolve(alert)
       .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
   }
 }
