@@ -653,9 +653,7 @@ export const removeListeners = () => (dispatch, getState) => {
   dispatch(removeListenersRequestedAction())
 
   return Promise.all(
-    getState().patient.listeners.forEach(
-      listener => clearTimeout(listener)
-    )
+    [getState().patient.listeners.forEach(listener => clearTimeout(listener))]
   )
     .then(
       () => { dispatch(removeListenersFulfilledAction()) },
@@ -703,7 +701,7 @@ export const removeTimers = () => (dispatch, getState) => {
   dispatch(removeTimersRequestedAction())
 
   return Promise.all(
-    getState().timer.timers.forEach(timer => clearTimeout(timer))
+    [getState().timer.timers.forEach(timer => clearTimeout(timer))]
   )
     .then(
       () => { dispatch(removeTimersFulfilledAction()) },
