@@ -1,4 +1,3 @@
-// TODO: Put all your dispatches in an arrow function ... maybe ... so check it out.
 /**
  * Redux action-creators for the project, Cryonics Check-In.
  *
@@ -234,11 +233,7 @@ export const checkin = () => (dispatch, getState) => {
       }
     )
     .catch(error => dispatch(checkinRejectedAction(error.message)))
-    .finally(
-      () => {
-        dispatch(setTimer())
-      }
-    )
+    .finally(() => { dispatch(setTimer()) })
 }
 
 /**
@@ -486,7 +481,7 @@ export const registerPatient = (creds) => (dispatch) => {
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
-      (userCredential) => {
+      userCredential => {
         dispatch(
           registrationFulfilledAction(
             {
@@ -517,7 +512,7 @@ export const registerStandby = (creds) => (dispatch) => {
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
-      (userCredential) => {
+      userCredential => {
         dispatch(
           registrationFulfilledAction(
             {
@@ -586,14 +581,14 @@ export const removeInput = (id) => (dispatch, getState) => {
     }
   )
     .then(
-      dispatch(removeInputsFulfilledAction(inputsArray))
-    )
-    .catch(error => dispatch(removeInputsRejectedAction(error.message)))
-    .finally(
-      () => {
-        dispatch(setTimer())
+      () => { dispatch(removeInputsFulfilledAction(inputsArray)) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
+    .catch(error => dispatch(removeInputsRejectedAction(error.message)))
+    .finally(() => { dispatch(setTimer()) })
 }
 
 /**
@@ -609,14 +604,14 @@ export const removeInputs = () => (dispatch, getState) => {
     }
   )
     .then(
-      dispatch(removeInputsFulfilledAction([]))
-    )
-    .catch(error => dispatch(removeInputsRejectedAction(error.message)))
-    .finally(
-      () => {
-        dispatch(setTimer())
+      () => { dispatch(removeInputsFulfilledAction([])) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
+    .catch(error => dispatch(removeInputsRejectedAction(error.message)))
+    .finally(() => { dispatch(setTimer()) })
 }
 
 /**
@@ -651,66 +646,53 @@ export const removeInputsFulfilledAction = (inputs) => (
 )
 
 /**
- * Remove a single listener added in the addPatient action from the array of
- * listeners in the Redux store.
- * @param  {Promise} listener A promise to set another listener after a timeout.
- */
-export const removeListener = (listener) => (dispatch, getState) => {
-  clearTimeout(listener)
-
-  const listeners = getState().patient.listeners
-  const index = listeners.indexOf(listener)
-  if (index > -1) {
-    listeners.splice(index, 1)
-  }
-
-  dispatch(removeTimerAction(listeners))
-}
-
-/**
  * Remove all listeners added in the addPatient action from the array of
  * listeners in the Redux store.
  */
 export const removeListeners = () => (dispatch, getState) => {
-  getState().patient.listeners.forEach(
-    listener => clearTimeout(listener)
+  dispatch(removeListenersRequestedAction())
+
+  return Promise.all(
+    getState().patient.listeners.forEach(
+      listener => clearTimeout(listener)
+    )
   )
-  dispatch(removeListenersAction())
+    .then(
+      () => { dispatch(removeListenersFulfilledAction()) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(removeListenersRejectedAction(error.message)))
 }
 
 /**
- * Initiate an action indicating that all listeners have been removed.
+ * Initiate an action to remove listeners.
  */
-export const removeListenersAction = () => (
+export const removeListenersRequestedAction = () => (
   {
-    type: ActionTypes.REMOVE_LISTENERS
+    type: ActionTypes.REMOVE_LISTENERS_REQUESTED
   }
 )
 
 /**
- * Remove a single timer from the array of timers in the Redux store.
- * @param {Integer} timer ID of a time-out object.
+ * Initiate an error indicating that removing listeners has failed.
+ * @param  {Error} errorMessage Message describing the registration failure.
  */
-export const removeTimer = (timer) => (dispatch, getState) => {
-  clearTimeout(timer)
-
-  const timers = getState().timer.timers
-  const index = timers.indexOf(timer)
-  if (index > -1) {
-    timers.splice(index, 1)
+export const removeListenersRejectedAction = (message) => (
+  {
+    type: ActionTypes.REMOVE_LISTENERS_REJECTED,
+    payload: message
   }
-
-  dispatch(removeTimerAction(timers))
-}
+)
 
 /**
- * Initiate an action indicating that the timer has been removed.
- * @param {Array} newTimers Array of IDs of time-out objects
+ * Initiate an action indicating that all listeners have been removed.
  */
-export const removeTimerAction = (newTimers) => (
+export const removeListenersFulfilledAction = () => (
   {
-    type: ActionTypes.REMOVE_TIMER,
-    payload: newTimers
+    type: ActionTypes.REMOVE_LISTENERS_FULFILLED
   }
 )
 
@@ -718,16 +700,47 @@ export const removeTimerAction = (newTimers) => (
  * Remove all timers from the array of timers in the Redux store.
  */
 export const removeTimers = () => (dispatch, getState) => {
-  getState().timer.timers.forEach(timer => clearTimeout(timer))
-  dispatch(removeTimersAction())
+  dispatch(removeTimersRequestedAction())
+
+  return Promise.all(
+    getState().timer.timers.forEach(timer => clearTimeout(timer))
+  )
+    .then(
+      () => { dispatch(removeTimersFulfilledAction()) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(removeTimersRejectedAction(error.message)))
 }
+
+/**
+ * Initiate an action to remove timers.
+ */
+export const removeTimersRequestedAction = () => (
+  {
+    type: ActionTypes.REMOVE_TIMERS_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that removing timers has failed.
+ * @param  {Error} errorMessage Message describing the registration failure.
+ */
+export const removeTimersRejectedAction = (message) => (
+  {
+    type: ActionTypes.REMOVE_TIMERS_REJECTED,
+    payload: message
+  }
+)
 
 /**
  * Initiate an action indicating that all timers have been removed.
  */
-export const removeTimersAction = () => (
+export const removeTimersFulfilledAction = () => (
   {
-    type: ActionTypes.REMOVE_TIMERS
+    type: ActionTypes.REMOVE_TIMERS_FULFILLED
   }
 )
 
@@ -1017,7 +1030,9 @@ export const setListenerInterval = (
       )
   } else {
     return Promise.resolve(60000)
-      .catch(error => dispatch(setListenerIntervalRejectedAction(error.message)))
+      .catch(
+        error => dispatch(setListenerIntervalRejectedAction(error.message))
+      )
   }
 }
 
@@ -1060,9 +1075,7 @@ export const setShortestInterval = (interval) => (dispatch, getState) => {
   dispatch(setShortestIntervalRequestedAction())
 
   return db().collection('users').doc(getState().auth.user.email).update(
-    {
-      shortestInterval: interval
-    }
+    { shortestInterval: interval }
   )
     .then(
       () => {

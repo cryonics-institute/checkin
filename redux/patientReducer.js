@@ -173,12 +173,6 @@ export const Patient = (
         errMess: null
       }
 
-    case ActionTypes.REMOVE_LISTENER:
-      return {
-        ...state,
-        listeners: action.payload
-      }
-
     case ActionTypes.REMOVE_LISTENERS:
       return {
         ...state,
