@@ -706,16 +706,47 @@ export const removeListenersFulfilledAction = () => (
  * Remove all timers from the array of timers in the Redux store.
  */
 export const removeTimers = () => (dispatch, getState) => {
-  getState().timer.timers.forEach(timer => clearTimeout(timer))
-  dispatch(removeTimersAction())
+  dispatch(removeTimersRequestedAction())
+
+  return Promise.all(
+    getState().timer.timers.forEach(timer => clearTimeout(timer))
+  )
+    .then(
+      () => { dispatch(removeTimersFulfilledAction()) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(removeTimersRejectedAction(error.message)))
 }
+
+/**
+ * Initiate an action to remove timers.
+ */
+export const removeTimersRequestedAction = () => (
+  {
+    type: ActionTypes.REMOVE_TIMERS_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that removing timers has failed.
+ * @param  {Error} errorMessage Message describing the registration failure.
+ */
+export const removeTimersRejectedAction = (message) => (
+  {
+    type: ActionTypes.REMOVE_TIMERS_REJECTED,
+    payload: message
+  }
+)
 
 /**
  * Initiate an action indicating that all timers have been removed.
  */
-export const removeTimersAction = () => (
+export const removeTimersFulfilledAction = () => (
   {
-    type: ActionTypes.REMOVE_TIMERS
+    type: ActionTypes.REMOVE_TIMERS_FULFILLED
   }
 )
 

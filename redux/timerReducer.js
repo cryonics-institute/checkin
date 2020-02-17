@@ -72,7 +72,19 @@ export const Timer = (
         interval: action.payload
       }
 
-    case ActionTypes.REMOVE_TIMERS:
+    case ActionTypes.REMOVE_TIMERS_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.REMOVE_TIMERS_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.REMOVE_TIMERS_FULFILLED:
       return {
         ...state,
         timers: []
