@@ -651,23 +651,6 @@ export const removeInputsFulfilledAction = (inputs) => (
 )
 
 /**
- * Remove a single listener added in the addPatient action from the array of
- * listeners in the Redux store.
- * @param  {Promise} listener A promise to set another listener after a timeout.
- */
-export const removeListener = (listener) => (dispatch, getState) => {
-  clearTimeout(listener)
-
-  const listeners = getState().patient.listeners
-  const index = listeners.indexOf(listener)
-  if (index > -1) {
-    listeners.splice(index, 1)
-  }
-
-  dispatch(removeTimerAction(listeners))
-}
-
-/**
  * Remove all listeners added in the addPatient action from the array of
  * listeners in the Redux store.
  */
