@@ -581,7 +581,11 @@ export const removeInput = (id) => (dispatch, getState) => {
     }
   )
     .then(
-      () => { dispatch(removeInputsFulfilledAction(inputsArray)) }
+      () => { dispatch(removeInputsFulfilledAction(inputsArray)) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
     )
     .catch(error => dispatch(removeInputsRejectedAction(error.message)))
     .finally(() => { dispatch(setTimer()) })
