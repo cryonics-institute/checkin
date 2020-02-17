@@ -72,12 +72,6 @@ export const Timer = (
         interval: action.payload
       }
 
-    case ActionTypes.REMOVE_TIMER:
-      return {
-        ...state,
-        timers: action.payload
-      }
-
     case ActionTypes.REMOVE_TIMERS:
       return {
         ...state,

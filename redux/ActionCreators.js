@@ -703,33 +703,6 @@ export const removeListenersFulfilledAction = () => (
 )
 
 /**
- * Remove a single timer from the array of timers in the Redux store.
- * @param {Integer} timer ID of a time-out object.
- */
-export const removeTimer = (timer) => (dispatch, getState) => {
-  clearTimeout(timer)
-
-  const timers = getState().timer.timers
-  const index = timers.indexOf(timer)
-  if (index > -1) {
-    timers.splice(index, 1)
-  }
-
-  dispatch(removeTimerAction(timers))
-}
-
-/**
- * Initiate an action indicating that the timer has been removed.
- * @param {Array} newTimers Array of IDs of time-out objects
- */
-export const removeTimerAction = (newTimers) => (
-  {
-    type: ActionTypes.REMOVE_TIMER,
-    payload: newTimers
-  }
-)
-
-/**
  * Remove all timers from the array of timers in the Redux store.
  */
 export const removeTimers = () => (dispatch, getState) => {
