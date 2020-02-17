@@ -1,4 +1,3 @@
-// TODO: Put all your dispatches in an arrow function ... maybe ... so check it out.
 /**
  * Redux action-creators for the project, Cryonics Check-In.
  *
@@ -234,11 +233,7 @@ export const checkin = () => (dispatch, getState) => {
       }
     )
     .catch(error => dispatch(checkinRejectedAction(error.message)))
-    .finally(
-      () => {
-        dispatch(setTimer())
-      }
-    )
+    .finally(() => { dispatch(setTimer()) })
 }
 
 /**
@@ -486,7 +481,7 @@ export const registerPatient = (creds) => (dispatch) => {
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
-      (userCredential) => {
+      userCredential => {
         dispatch(
           registrationFulfilledAction(
             {
@@ -517,7 +512,7 @@ export const registerStandby = (creds) => (dispatch) => {
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
-      (userCredential) => {
+      userCredential => {
         dispatch(
           registrationFulfilledAction(
             {
@@ -586,14 +581,10 @@ export const removeInput = (id) => (dispatch, getState) => {
     }
   )
     .then(
-      dispatch(removeInputsFulfilledAction(inputsArray))
+      () => { dispatch(removeInputsFulfilledAction(inputsArray)) }
     )
     .catch(error => dispatch(removeInputsRejectedAction(error.message)))
-    .finally(
-      () => {
-        dispatch(setTimer())
-      }
-    )
+    .finally(() => { dispatch(setTimer()) })
 }
 
 /**
@@ -609,14 +600,14 @@ export const removeInputs = () => (dispatch, getState) => {
     }
   )
     .then(
-      dispatch(removeInputsFulfilledAction([]))
-    )
-    .catch(error => dispatch(removeInputsRejectedAction(error.message)))
-    .finally(
-      () => {
-        dispatch(setTimer())
+      () => { dispatch(removeInputsFulfilledAction([])) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
+    .catch(error => dispatch(removeInputsRejectedAction(error.message)))
+    .finally(() => { dispatch(setTimer()) })
 }
 
 /**
@@ -655,7 +646,7 @@ export const removeInputsFulfilledAction = (inputs) => (
  * listeners in the Redux store.
  */
 export const removeListeners = () => (dispatch, getState) => {
-  dispatch(removeListenersRequestedAction)
+  dispatch(removeListenersRequestedAction())
 
   return Promise.all(
     getState().patient.listeners.forEach(
@@ -669,7 +660,7 @@ export const removeListeners = () => (dispatch, getState) => {
         throw errorMessage
       }
     )
-    .catch(error => dispatch(removeInputsRejectedAction(error.message)))
+    .catch(error => dispatch(removeListenersRejectedAction(error.message)))
 }
 
 /**
@@ -694,7 +685,6 @@ export const removeListenersRejectedAction = (message) => (
 
 /**
  * Initiate an action indicating that all listeners have been removed.
- * @param {Array} inputs  Array of input objects.
  */
 export const removeListenersFulfilledAction = () => (
   {
@@ -1036,7 +1026,9 @@ export const setListenerInterval = (
       )
   } else {
     return Promise.resolve(60000)
-      .catch(error => dispatch(setListenerIntervalRejectedAction(error.message)))
+      .catch(
+        error => dispatch(setListenerIntervalRejectedAction(error.message))
+      )
   }
 }
 
@@ -1079,9 +1071,7 @@ export const setShortestInterval = (interval) => (dispatch, getState) => {
   dispatch(setShortestIntervalRequestedAction())
 
   return db().collection('users').doc(getState().auth.user.email).update(
-    {
-      shortestInterval: interval
-    }
+    { shortestInterval: interval }
   )
     .then(
       () => {
