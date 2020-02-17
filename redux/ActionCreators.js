@@ -655,18 +655,50 @@ export const removeInputsFulfilledAction = (inputs) => (
  * listeners in the Redux store.
  */
 export const removeListeners = () => (dispatch, getState) => {
-  getState().patient.listeners.forEach(
-    listener => clearTimeout(listener)
+  dispatch(removeListenersRequestedAction)
+
+  return Promise.all(
+    getState().patient.listeners.forEach(
+      listener => clearTimeout(listener)
+    )
   )
-  dispatch(removeListenersAction())
+    .then(
+      () => { dispatch(removeListenersFulfilledAction()) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(removeInputsRejectedAction(error.message)))
 }
 
 /**
- * Initiate an action indicating that all listeners have been removed.
+ * Initiate an action to remove listeners.
  */
-export const removeListenersAction = () => (
+export const removeListenersRequestedAction = () => (
   {
-    type: ActionTypes.REMOVE_LISTENERS
+    type: ActionTypes.REMOVE_LISTENERS_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that removing listeners has failed.
+ * @param  {Error} errorMessage Message describing the registration failure.
+ */
+export const removeListenersRejectedAction = (message) => (
+  {
+    type: ActionTypes.REMOVE_LISTENERS_REJECTED,
+    payload: message
+  }
+)
+
+/**
+ * Initiate an action indicating that all listeners have been removed.
+ * @param {Array} inputs  Array of input objects.
+ */
+export const removeListenersFulfilledAction = () => (
+  {
+    type: ActionTypes.REMOVE_LISTENERS_FULFILLED
   }
 )
 
