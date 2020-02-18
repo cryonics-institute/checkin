@@ -1,4 +1,3 @@
-// TODO: NOTIFICATION ERROR:  Error: tokens must be a non-empty array
 /**
  * Firebase Cloud Functions for the project, Cryonics Check-In.
  *
@@ -94,19 +93,25 @@ exports.checkCheckins = functions.pubsub.schedule(
       )
       .then(
         registrationTokens => {
-          const patientMessage = {
-            tokens: registrationTokens[0],
-            notification: {
-              title: 'Check In?',
-              body: 'Your buddy will be alerted if not.'
+          let patientMessage = null
+          if (registrationTokens[0].length > 0) {
+            patientMessage = {
+              tokens: registrationTokens[0],
+              notification: {
+                title: 'Check In?',
+                body: 'Your buddy will be alerted if not.'
+              }
             }
           }
 
-          const standbyMessage = {
-            tokens: registrationTokens[1],
-            notification: {
-              title: 'Check-In Alert',
-              body: 'Your buddy has not checked in.  Please make contact.'
+          let standbyMessage = null
+          if (registrationTokens[1].length > 0) {
+            standbyMessage = {
+              tokens: registrationTokens[1],
+              notification: {
+                title: 'Check-In Alert',
+                body: 'Your buddy has not checked in.  Please make contact.'
+              }
             }
           }
 
@@ -125,8 +130,12 @@ exports.checkCheckins = functions.pubsub.schedule(
           // Send a message to the device corresponding to the provided token.
           return Promise.all(
             [
-              admin.messaging().sendMulticast(messages.forPatients),
-              admin.messaging().sendMulticast(messages.forStandbys)
+              messages.forPatients !== null
+                ? admin.messaging().sendMulticast(messages.forPatients)
+                : null,
+              messages.forStandbys !== null
+                ? admin.messaging().sendMulticast(messages.forStandbys)
+                : null
             ]
           )
         },
@@ -188,11 +197,20 @@ const getRegistrationTokenIfNotCheckedIn = data => {
     .then(
       alert => {
         if (alert.shouldFire.forPatient && alert.shouldFire.forStandby) {
-          return {
-            forPatient: data.registrationToken,
-            forStandbys: data.subscribers.map(
-              subscriber => subscriber.registrationTokens
-            ).reduce((acc, val) => acc.concat(val), [])
+          if (
+            typeof data.subscribers !== 'undefined' && data.subscribers !== null
+          ) {
+            return {
+              forPatient: data.registrationToken,
+              forStandbys: data.subscribers.map(
+                subscriber => subscriber.registrationTokens
+              ).reduce((acc, val) => acc.concat(val), [])
+            }
+          } else {
+            return {
+              forPatient: data.registrationToken,
+              forStandbys: null
+            }
           }
         } else if (alert.shouldFire.forPatient) {
           return {
