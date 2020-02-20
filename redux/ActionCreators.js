@@ -80,7 +80,8 @@ export const addDocument = (email) => (dispatch, getState) => {
       checkinTime: patient.checkinTime,
       registrationToken: getState().patient.registrationToken,
       signinTime: patient.signinTime,
-      snooze: patient.snooze
+      snooze: patient.snooze,
+      subscribers: {}
     }
   )
     .then(
@@ -277,6 +278,9 @@ export const checkinFulfilledAction = (checkinTime) => (
  * @param  {String}   email E-mail of the currently-authorized patient.
  * @return {Promise}        A promise to update check-in state parameters.
  */
+// TODO: The standby account does not have permission to modify the patient doc.
+// You changed your database rules on Firebase Firestore web-site.  However, see
+// if you can do better.
 export const getDocument = (email) => (dispatch, getState) => {
   dispatch(getDocumentRequestedAction())
 
@@ -284,19 +288,47 @@ export const getDocument = (email) => (dispatch, getState) => {
     .then(
       doc => {
         if (doc.exists) {
-          const alertTimes = doc.data().alertTimes
-          const checkinInterval = doc.data().checkinInterval
-          const checkinTime = doc.data().checkinTime
-          const signinTime = doc.data().signinTime
-          const snooze = doc.data().snooze
+          console.log('Document exists!')
 
+          const uid = getState().auth.user.uid
+          if (doc.data().subscribers[uid] !== undefined) {
+            console.log('Subscriber defined!')
+            const token = getState().patient.registrationToken
+            const subscriberData =
+              doc.data().subscribers[uid].includes(token)
+                ? doc.data().subscribers[uid]
+                : doc.data().subscribers[uid].concat([token])
+            db().collection('users').doc(email).update(
+              {
+                ['subscribers.' + uid]: subscriberData
+              }
+            )
+          } else {
+            console.log('Subscriber undefined!')
+            const subscriberData = [getState().patient.registrationToken]
+            db().collection('users').doc(email).update(
+              {
+                ['subscribers.' + uid]: subscriberData
+              }
+            )
+          }
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+        }
+        return doc
+      }
+    )
+    .then(
+      doc => {
+        if (doc.exists) {
           return [
             true,
-            alertTimes,
-            checkinInterval,
-            checkinTime,
-            signinTime,
-            snooze
+            doc.data().alertTimes,
+            doc.data().checkinInterval,
+            doc.data().checkinTime,
+            doc.data().signinTime,
+            doc.data().snooze
           ]
         } else {
           // doc.data() will be undefined in this case
