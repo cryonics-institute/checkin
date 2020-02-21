@@ -138,9 +138,7 @@ export const addDocumentFulfilledAction = (patient) => (
 export const addPatient = (email) => (dispatch, getState) => {
   dispatch(addPatientRequestedAction())
 
-  return Promise.resolve(
-    dispatch(getDocument(email))
-  )
+  return Promise.resolve(dispatch(getDocument(email)))
     .then(
       () => {
         dispatch(setListener())
@@ -1028,9 +1026,7 @@ export const setListenerInterval = (
           ? alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs - 86400000
           : 0
 
-    return Promise.resolve(
-      interval
-    )
+    return Promise.resolve(interval)
       .then(
         result => {
           dispatch(setListenerIntervalFulfilledAction(result))
@@ -1370,9 +1366,7 @@ export const setTimerInterval = (
         ? alertsInMs[0].timeInMs
         : 0
 
-    return Promise.resolve(
-      interval
-    )
+    return Promise.resolve(interval)
       .then(
         result => {
           dispatch(setTimerIntervalFulfilledAction(result))
