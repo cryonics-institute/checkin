@@ -74,6 +74,7 @@ export const addDocument = (email) => (dispatch, getState) => {
 
   dispatch(addDocumentRequestedAction())
 
+  // TODO: You will need to store the subscribers and grab them from state or Firestore.
   return db().collection('users').doc(email).set(
     {
       alertTimes: getState().patient.alertTimes,
