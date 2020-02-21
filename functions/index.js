@@ -202,9 +202,7 @@ const getRegistrationTokenIfNotCheckedIn = data => {
           ) {
             return {
               forPatient: data.registrationToken,
-              forStandbys: data.subscribers.map(
-                subscriber => subscriber.registrationTokens
-              ).reduce((acc, val) => acc.concat(val), [])
+              forStandbys: [].concat.apply([], Object.values(data.subscribers))
             }
           } else {
             return {
