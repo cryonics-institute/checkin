@@ -1555,16 +1555,7 @@ export const signinFulfilledAction = (data) => (
 export const signoutPatient = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
-  return db().collection('users').doc(getState().auth.user.email).delete()
-    .then(
-      () => {
-        auth().signOut()
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
+  return auth().signOut()
     .then(
       () => {
         dispatch(removeTimers())
@@ -1613,7 +1604,23 @@ export const signoutStandby = () => (dispatch) => {
     .then(
       () => {
         dispatch(removeListeners())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
         dispatch(signoutFulfilledAction())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
         NavigationService.navigate('StandbyAuth')
       },
       error => {
