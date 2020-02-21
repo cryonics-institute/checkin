@@ -1,3 +1,4 @@
+// TODO: Firebase Cloud Function sends the standby alert too soon.
 /**
  * Firebase Cloud Functions for the project, Cryonics Check-In.
  *
