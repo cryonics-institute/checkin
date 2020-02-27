@@ -201,6 +201,7 @@ const getRegistrationTokenIfNotCheckedIn = data => {
           if (
             typeof data.subscribers !== 'undefined' && data.subscribers !== null
           ) {
+
             return {
               forPatient: data.registrationToken,
               forStandbys: [].concat.apply([], Object.values(data.subscribers))
@@ -268,11 +269,11 @@ const getAlert = (alertTimes, checkinTime, snooze) => {
       ? { shouldFire: { forPatient: true, forStandby: true } }
       : moment(now) - moment(checkinTime) > 86400000
         ? { shouldFire: { forPatient: true, forStandby: false } }
-        : alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > checkinInMs
-            ? { shouldFire: { forPatient: true, forStandby: true } }
-            : alertsInMs[alertsInMs.length - 1].timeInMs > checkinInMs
+        : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
+            ? { shouldFire: { forPatient: false, forStandby: false } }
+            : checkinInMs + snoozeInMs > 86400000
               ? { shouldFire: { forPatient: true, forStandby: false } }
-              : { shouldFire: { forPatient: false, forStandby: false } }
+              : { shouldFire: { forPatient: true, forStandby: true } }
 
     return Promise.resolve(alert)
       .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
