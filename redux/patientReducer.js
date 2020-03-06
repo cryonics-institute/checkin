@@ -41,7 +41,7 @@ export const Patient = (
     shortestInterval: 1800000,
     signinTime: null,
     snooze: null,
-    subscribers: []
+    subscribers: {}
   },
   action
 ) => {
@@ -295,7 +295,7 @@ export const Patient = (
         shortestInterval: 3600000,
         signinTime: null,
         snooze: null,
-        subscribers: []
+        subscribers: {}
       }
 
     default:
