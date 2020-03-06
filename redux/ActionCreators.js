@@ -75,6 +75,7 @@ export const addDocument = (email) => (dispatch, getState) => {
   dispatch(addDocumentRequestedAction())
 
   // TODO: You will need to store the subscribers and grab them from state or Firestore.
+  // Maybe this should be done when the state is saved during hard reset.
   return db().collection('users').doc(email).set(
     {
       alertTimes: getState().patient.alertTimes,
@@ -1540,6 +1541,7 @@ export const signinFulfilledAction = (data) => (
   }
 )
 
+// TODO: Change this to a "remove data" capability in a settings screen.
 /**
  * Sign out a patient on Firebase, which first removes that patient's document
  * on Firebase.  After those promises are returned, an action for sign-out-
