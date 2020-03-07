@@ -244,9 +244,9 @@ const getRegistrationTokenIfNotCheckedIn = data => {
           if (
             typeof data.subscribers !== 'undefined' && data.subscribers !== null
           ) {
-
             return {
               forPatient: data.registrationToken,
+              // TODO: Standby tokens will need to be fetched from a different document or collection.
               forStandbys: [].concat.apply([], Object.values(data.subscribers))
             }
           } else {
