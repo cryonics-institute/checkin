@@ -76,6 +76,9 @@ export const addDocument = (email) => (dispatch, getState) => {
 
   // TODO: You will need to store the subscribers and grab them from state or Firestore.
   // Maybe this should be done when the state is saved during hard reset.
+  // Since the subscribers are added by standbys, how are you going to get their
+  // tokens into the patient's redux store when added to the Firestore by the
+  // standby?  You will need a separate document in the Firestore.
   return db().collection('users').doc(email).set(
     {
       alertTimes: getState().patient.alertTimes,
@@ -83,7 +86,7 @@ export const addDocument = (email) => (dispatch, getState) => {
       registrationToken: getState().patient.registrationToken,
       signinTime: patient.signinTime,
       snooze: patient.snooze,
-      subscribers: {}
+      subscribers: getState().patient.subscribers
     }
   )
     .then(
