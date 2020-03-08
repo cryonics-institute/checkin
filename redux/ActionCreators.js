@@ -74,21 +74,38 @@ export const addDocument = (email) => (dispatch, getState) => {
 
   dispatch(addDocumentRequestedAction())
 
-  // TODO: You will need to store the subscribers and grab them from state or Firestore.
-  // Maybe this should be done when the state is saved during hard reset.
-  // Since the subscribers are added by standbys, how are you going to get their
-  // tokens into the patient's redux store when added to the Firestore by the
-  // standby?  You will need a separate document in the Firestore.
-  return db().collection('users').doc(email).set(
-    {
-      alertTimes: getState().patient.alertTimes,
-      checkinTime: patient.checkinTime,
-      registrationToken: getState().patient.registrationToken,
-      signinTime: patient.signinTime,
-      snooze: patient.snooze,
-      subscribers: getState().patient.subscribers
-    }
-  )
+  return db().collection('users').doc(email).get()
+    .then(
+      doc => {
+        if (doc.exists) {
+          console.log('Document data:', doc.data())
+
+          return db().collection('users').doc(email).set(
+            {
+              alertTimes: getState().patient.alertTimes,
+              checkinTime: patient.checkinTime,
+              registrationToken: getState().patient.registrationToken,
+              signinTime: patient.signinTime,
+              snooze: patient.snooze,
+              subscribers: doc.data().subscribers
+            }
+          )
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+
+          return db().collection('users').doc(email).set(
+            {
+              alertTimes: getState().patient.alertTimes,
+              checkinTime: patient.checkinTime,
+              registrationToken: getState().patient.registrationToken,
+              signinTime: patient.signinTime,
+              snooze: patient.snooze
+            }
+          )
+        }
+      }
+    )
     .then(
       () => {
         dispatch(addDocumentFulfilledAction(patient))
