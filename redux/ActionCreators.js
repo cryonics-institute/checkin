@@ -281,9 +281,8 @@ export const checkinFulfilledAction = (checkinTime) => (
  * @param  {String}   email E-mail of the currently-authorized patient.
  * @return {Promise}        A promise to update check-in state parameters.
  */
-// TODO: The standby account does not have permission to modify the patient doc.
-// You changed your database rules on Firebase Firestore web-site.  However, see
-// if you can do better.
+// TODO: Can do better with the database rules for Firestore?
+// https://firebase.google.com/docs/firestore/security/overview
 export const getDocument = (email) => (dispatch, getState) => {
   dispatch(getDocumentRequestedAction())
 
@@ -293,8 +292,29 @@ export const getDocument = (email) => (dispatch, getState) => {
         if (doc.exists) {
           console.log('Document exists!')
 
+          if (doc.data().subscribers !== undefined) {
+            console.log('Subscriber defined!')
+          } else {
+            console.log('Subscriber undefined!')
+            db().collection('users').doc(email).update({ subscribers: {} })
+          }
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+        }
+        return doc
+      }
+    )
+    .then(
+      doc => {
+        if (doc.exists) {
+          console.log('Document exists!')
+
           const uid = getState().auth.user.uid
-          if (doc.data().subscribers[uid] !== undefined) {
+          if (
+            doc.data().subscribers !== undefined &&
+            doc.data().subscribers[uid] !== undefined
+          ) {
             console.log('Subscriber defined!')
             const token = getState().patient.registrationToken
             const subscriberData =
