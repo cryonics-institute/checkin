@@ -244,7 +244,6 @@ const getRegistrationTokenIfNotCheckedIn = data => {
           if (
             typeof data.subscribers !== 'undefined' && data.subscribers !== null
           ) {
-
             return {
               forPatient: data.registrationToken,
               forStandbys: [].concat.apply([], Object.values(data.subscribers))
@@ -278,7 +277,7 @@ const getRegistrationTokenIfNotCheckedIn = data => {
 /**
  * Get the interval for the getRegistrationTokenIfNotCheckedIn function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
- * @param   {Date} checkinTime  Last time patient checked in.\
+ * @param   {Date} checkinTime  Last time patient checked in.
  * @return  {Integer}           Interval to wait before check-in alert.
  */
 const getAlert = (alertTimes, checkinTime, snooze) => {
