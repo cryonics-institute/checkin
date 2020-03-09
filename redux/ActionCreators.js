@@ -74,15 +74,38 @@ export const addDocument = (email) => (dispatch, getState) => {
 
   dispatch(addDocumentRequestedAction())
 
-  return db().collection('users').doc(email).set(
-    {
-      alertTimes: getState().patient.alertTimes,
-      checkinTime: patient.checkinTime,
-      registrationToken: getState().patient.registrationToken,
-      signinTime: patient.signinTime,
-      snooze: patient.snooze
-    }
-  )
+  return db().collection('users').doc(email).get()
+    .then(
+      doc => {
+        if (doc.exists) {
+          console.log('Document data:', doc.data())
+
+          return db().collection('users').doc(email).set(
+            {
+              alertTimes: getState().patient.alertTimes,
+              checkinTime: patient.checkinTime,
+              registrationToken: getState().patient.registrationToken,
+              signinTime: patient.signinTime,
+              snooze: patient.snooze,
+              subscribers: doc.data().subscribers
+            }
+          )
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+
+          return db().collection('users').doc(email).set(
+            {
+              alertTimes: getState().patient.alertTimes,
+              checkinTime: patient.checkinTime,
+              registrationToken: getState().patient.registrationToken,
+              signinTime: patient.signinTime,
+              snooze: patient.snooze
+            }
+          )
+        }
+      }
+    )
     .then(
       () => {
         dispatch(addDocumentFulfilledAction(patient))
@@ -137,9 +160,7 @@ export const addDocumentFulfilledAction = (patient) => (
 export const addPatient = (email) => (dispatch, getState) => {
   dispatch(addPatientRequestedAction())
 
-  return Promise.resolve(
-    dispatch(getDocument(email))
-  )
+  return Promise.resolve(dispatch(getDocument(email)))
     .then(
       () => {
         dispatch(setListener())
@@ -277,6 +298,8 @@ export const checkinFulfilledAction = (checkinTime) => (
  * @param  {String}   email E-mail of the currently-authorized patient.
  * @return {Promise}        A promise to update check-in state parameters.
  */
+// TODO: Can do better with the database rules for Firestore?
+// https://firebase.google.com/docs/firestore/security/overview
 export const getDocument = (email) => (dispatch, getState) => {
   dispatch(getDocumentRequestedAction())
 
@@ -284,19 +307,68 @@ export const getDocument = (email) => (dispatch, getState) => {
     .then(
       doc => {
         if (doc.exists) {
-          const alertTimes = doc.data().alertTimes
-          const checkinInterval = doc.data().checkinInterval
-          const checkinTime = doc.data().checkinTime
-          const signinTime = doc.data().signinTime
-          const snooze = doc.data().snooze
+          console.log('Document exists!')
 
+          if (doc.data().subscribers !== undefined) {
+            console.log('Subscriber defined!')
+          } else {
+            console.log('Subscriber undefined!')
+            db().collection('users').doc(email).update({ subscribers: {} })
+          }
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+        }
+        return doc
+      }
+    )
+    .then(
+      doc => {
+        if (doc.exists) {
+          console.log('Document exists!')
+
+          const uid = getState().auth.user.uid
+          if (
+            doc.data().subscribers !== undefined &&
+            doc.data().subscribers[uid] !== undefined
+          ) {
+            console.log('Subscriber defined!')
+            const token = getState().patient.registrationToken
+            const subscriberData =
+              doc.data().subscribers[uid].includes(token)
+                ? doc.data().subscribers[uid]
+                : doc.data().subscribers[uid].concat([token])
+            db().collection('users').doc(email).update(
+              {
+                ['subscribers.' + uid]: subscriberData
+              }
+            )
+          } else {
+            console.log('Subscriber undefined!')
+            const subscriberData = [getState().patient.registrationToken]
+            db().collection('users').doc(email).update(
+              {
+                ['subscribers.' + uid]: subscriberData
+              }
+            )
+          }
+        } else {
+          // doc.data() will be undefined in this case
+          console.log('No such document!')
+        }
+        return doc
+      }
+    )
+    .then(
+      doc => {
+        if (doc.exists) {
           return [
             true,
-            alertTimes,
-            checkinInterval,
-            checkinTime,
-            signinTime,
-            snooze
+            doc.data().alertTimes,
+            doc.data().checkinInterval,
+            doc.data().checkinTime,
+            doc.data().signinTime,
+            doc.data().snooze
           ]
         } else {
           // doc.data() will be undefined in this case
@@ -996,9 +1068,7 @@ export const setListenerInterval = (
           ? alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs - 86400000
           : 0
 
-    return Promise.resolve(
-      interval
-    )
+    return Promise.resolve(interval)
       .then(
         result => {
           dispatch(setListenerIntervalFulfilledAction(result))
@@ -1338,9 +1408,7 @@ export const setTimerInterval = (
         ? alertsInMs[0].timeInMs
         : 0
 
-    return Promise.resolve(
-      interval
-    )
+    return Promise.resolve(interval)
       .then(
         result => {
           dispatch(setTimerIntervalFulfilledAction(result))
@@ -1513,6 +1581,7 @@ export const signinFulfilledAction = (data) => (
   }
 )
 
+// TODO: Change this to a "remove data" capability in a settings screen.
 /**
  * Sign out a patient on Firebase, which first removes that patient's document
  * on Firebase.  After those promises are returned, an action for sign-out-
@@ -1523,16 +1592,7 @@ export const signinFulfilledAction = (data) => (
 export const signoutPatient = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
-  return db().collection('users').doc(getState().auth.user.email).delete()
-    .then(
-      () => {
-        auth().signOut()
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
+  return auth().signOut()
     .then(
       () => {
         dispatch(removeTimers())
@@ -1581,7 +1641,23 @@ export const signoutStandby = () => (dispatch) => {
     .then(
       () => {
         dispatch(removeListeners())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
         dispatch(signoutFulfilledAction())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => {
         NavigationService.navigate('StandbyAuth')
       },
       error => {
