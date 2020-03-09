@@ -496,7 +496,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
   - React-jsinspector (0.61.5)
-  - react-native-sensitive-info (5.5.4):
+  - react-native-sensitive-info (5.5.5):
     - React
   - React-RCTActionSheet (0.61.5):
     - React-Core/RCTActionSheetHeaders (= 0.61.5)
@@ -533,26 +533,26 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/jscallinvoker (= 0.61.5)
-  - RNCAsyncStorage (1.7.1):
+  - RNCAsyncStorage (1.8.1):
     - React
-  - RNFBAnalytics (6.2.0):
+  - RNFBAnalytics (6.3.4):
     - Firebase/Core (~> 6.13.0)
     - React
     - RNFBApp
-  - RNFBApp (6.2.0):
+  - RNFBApp (6.3.4):
     - Firebase/Core (~> 6.13.0)
     - React
-  - RNFBAuth (6.2.0):
+  - RNFBAuth (6.3.4):
     - Firebase/Auth (~> 6.13.0)
     - Firebase/Core (~> 6.13.0)
     - React
     - RNFBApp
-  - RNFBFirestore (6.2.0):
+  - RNFBFirestore (6.3.4):
     - Firebase/Core (~> 6.13.0)
     - Firebase/Firestore (~> 6.13.0)
     - React
     - RNFBApp
-  - RNFBMessaging (6.2.0):
+  - RNFBMessaging (6.3.4):
     - Firebase/Messaging (~> 6.13.0)
     - React
     - RNFBApp
@@ -860,7 +860,7 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-  react-native-sensitive-info: b6461ab07c45e7fe534f113f537fabaa367c3ece
+  react-native-sensitive-info: 4629b223484a08225c3eb088ff3f91b03097b5e5
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
   React-RCTBlob: d89293cc0236d9cb0933d85e430b0bbe81ad1d72
@@ -871,12 +871,12 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  RNCAsyncStorage: 44395cb9c7c1523104c2b499eb426ef7aff82bca
-  RNFBAnalytics: 57dc0bfad4e40f68779757653676699072651218
-  RNFBApp: 5b215aacc09105a1761de31b9a0eb2abcce06253
-  RNFBAuth: 61673c0d38ce225c315e7be13a1b494904baedd2
-  RNFBFirestore: 5de4ae898df51a3ecc16a45db15019836c5cec87
-  RNFBMessaging: be0b936394416ec5503add603f2c0a641c353063
+  RNCAsyncStorage: e0dd7c8a36543b4ef84969acd9f8aceba3a92dc2
+  RNFBAnalytics: b8bad44e6653af73219b1a7af24bf3452cb02c1b
+  RNFBApp: 7d4006751de8bb5cafa2e8d2e7d94ee250df81db
+  RNFBAuth: ed8b865db45f7ded9dbf535e390cba2ba672aede
+  RNFBFirestore: 04c1eb90463c208ee072988d463c74bec09d08c1
+  RNFBMessaging: 51cc7f6beaf4c4feac6f18ea941bba5854e3d9c6
   RNGestureHandler: 02905abe54e1f6e59c081a10b4bd689721e17aa6
   RNReanimated: b2ab0b693dddd2339bd2f300e770f6302d2e960c
   RNScreens: f28b48b8345f2f5f39ed6195518291515032a788
