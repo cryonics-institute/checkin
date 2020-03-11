@@ -3,6 +3,11 @@ package com.checkin;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.messaging.ReactNativeFirebaseMessagingPackage;
+import io.invertase.firebase.firestore.ReactNativeFirebaseFirestorePackage;
+import io.invertase.firebase.auth.ReactNativeFirebaseAuthPackage;
+import io.invertase.firebase.app.ReactNativeFirebaseAppPackage;
+import io.invertase.firebase.analytics.ReactNativeFirebaseAnalyticsPackage;
 import br.com.classapp.RNSensitiveInfo.RNSensitiveInfoPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
 import com.facebook.react.ReactNativeHost;
@@ -42,6 +47,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeFirebaseMessagingPackage(),
+            new ReactNativeFirebaseFirestorePackage(),
+            new ReactNativeFirebaseAuthPackage(),
+            new ReactNativeFirebaseAppPackage(),
+            new ReactNativeFirebaseAnalyticsPackage(),
           new AsyncStoragePackage(),
           new ModuleRegistryAdapter(mModuleRegistryProvider),
           new ReanimatedPackage(),
