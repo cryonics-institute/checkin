@@ -128,7 +128,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.checkin"
+        applicationId "com.michaelgill1969.checkin"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -136,6 +136,7 @@ android {
         aaptOptions{
             noCompress "tflite","model"
         }
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -184,6 +185,7 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation 'com.google.firebase:firebase-analytics:17.2.2'
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

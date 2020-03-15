@@ -1,4 +1,4 @@
-package com.checkin;
+package com.michaelgill1969.checkin;
 
 import com.facebook.react.ReactActivity;
 

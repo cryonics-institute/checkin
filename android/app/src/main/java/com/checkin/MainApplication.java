@@ -1,4 +1,4 @@
-package com.checkin;
+package com.michaelgill1969.checkin;
 
 import android.app.Application;
 import android.content.Context;

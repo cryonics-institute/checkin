@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.checkin">
+  package="com.michaelgill1969.checkin">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
