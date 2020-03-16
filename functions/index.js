@@ -280,6 +280,7 @@ const getRegistrationTokenIfNotCheckedIn = data => {
  * @param   {Date} checkinTime  Last time patient checked in.
  * @return  {Integer}           Interval to wait before check-in alert.
  */
+// TODO: Does not adjust for daylight savings time.
 const getAlert = (alertTimes, checkinTime, snooze) => {
   const now = (new Date()).toISOString()
   const nowInMs = (((((parseInt(now.slice(-13, -11), 10) * 60) +
