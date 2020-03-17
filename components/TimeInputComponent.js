@@ -26,9 +26,8 @@
 import * as React from 'react'
 import moment from 'moment'
 import { View } from 'react-native'
-import { Input } from 'react-native-elements'
+import { Icon, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { MaterialIcons } from '@expo/vector-icons'
 import * as Shortid from 'shortid'
 import { mutateInput, removeInput } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
@@ -177,13 +176,14 @@ class TimeInput extends React.Component {
             }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
-              <MaterialIcons
+              <Icon
                 color = { colors.dark }
                 name = 'remove-circle'
                 onPress = {
                   () => this.props.removeInput(this.state.identifier)
                 }
                 size = { 30 }
+                type = 'material'
               />
             }
             value = { this.state.time }
@@ -217,13 +217,14 @@ class TimeInput extends React.Component {
             }
             placeholder = 'HH:MM AM/PM'
             rightIcon = {
-              <MaterialIcons
+              <Icon
                 color = { colors.dark }
                 name = 'add-circle'
                 onPress = {
                   () => this.props.mutateInput(Shortid.generate(), '', false)
                 }
                 size = { 30 }
+                type = 'material'
               />
             }
             value = { this.state.time }
