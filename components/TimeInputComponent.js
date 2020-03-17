@@ -68,11 +68,17 @@ class TimeInput extends React.Component {
     ) {
       this.setState(
         {
-          time: moment(
-            this.props.patient.alertTimes.filter(
-              alert => alert.id === this.state.identifier
-            )[0].time
-          ).format('h:mm A')
+          time: moment().isDST()
+            ? moment(
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
+              )[0].time
+            ).add(1, 'hours').format('h:mm A')
+            : moment(
+              this.props.patient.alertTimes.filter(
+                alert => alert.id === this.state.identifier
+              )[0].time
+            ).format('h:mm A')
         }
       )
     }

@@ -445,22 +445,23 @@ export const initializeStoreAction = (registrationToken) => (
  * @param  {Boolean}  validity  Is the time valid?
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
-  dispatch(mutateInputRequestedAction())
-
-  const hours = time.length > 0 ? convertTo24Hour(time) : 0
-  const minutes = time.length > 0 ? time.slice(-5, -3) : 0
-
-  const input = {
-    id: id,
-    time: (new Date(1970, 0, 1, hours, minutes)).toISOString(),
-    validity: validity
-  }
-  const index = getState().patient.alertTimes.findIndex(
-    input => input.id === id
-  )
-
   try {
     if (getState().patient.alertTimes !== null) {
+      dispatch(mutateInputRequestedAction())
+
+      const hours = time.length > 0
+        ? moment().isDST() ? convertTo24Hour(time) - 1 : convertTo24Hour(time)
+        : 0
+      const minutes = time.length > 0 ? time.slice(-5, -3) : 0
+
+      const input = {
+        id: id,
+        time: (new Date(1970, 0, 1, hours, minutes)).toISOString(),
+        validity: validity
+      }
+      const index = getState().patient.alertTimes.findIndex(
+        input => input.id === id
+      )
       let inputsArray = null
 
       if (index === -1) {
