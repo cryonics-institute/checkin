@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Check-In</string>
+	<string>checkin</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -37,33 +37,8 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Allow Check-In to access your calendar</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Allow Check-In to use the camera</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Allow Check-In experiences to access your contacts</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Allow Check-In to use your location</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Allow Check-In to use your location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Allow Check-In to use your location</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Allow Check-In to access your microphone</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Allow Check-In to access your device's accelerometer</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Give Check-In periences permission to save photos</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give Check-In periences permission to access your photos</string>
-	<key>NSRemindersUsageDescription</key>
-	<string>Allow Check-In to access your reminders</string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
-		<string>remote-notification</string>
-	</array>
+	<string></string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIRequiredDeviceCapabilities</key>
