@@ -38,9 +38,8 @@ target 'checkin' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
-  
-  use_native_modules!
-  use_unimodules!
+
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
   target 'checkinTests' do
     inherit! :search_paths
@@ -48,4 +47,5 @@ target 'checkin' do
   end
 
   use_native_modules!
+  use_unimodules!
 end
