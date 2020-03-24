@@ -22,7 +22,7 @@ import Main from './components/MainComponent'
 //    3) import the package here in your JavaScript code: `import '@react-native-firebase/auth';`
 //    4) The Firebase Auth service is now available to use here: `firebase.auth().currentUser`
 
-YellowBox.ignoreWarnings(['Setting a timer'])
+YellowBox.ignoreWarnings(['Setting a timer', 'color was given a value of '])
 const _console = _.clone(console)
 console.warn = message => {
   if (message.indexOf('Setting a timer') <= -1) {

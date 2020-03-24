@@ -119,7 +119,8 @@ const PatientAppStack = createStackNavigator(
       screen: PatientHomeScreen,
       navigationOptions: () => (
         {
-          headerRight: <PatientSignOut/>,
+          // eslint-disable-next-line react/display-name
+          headerRight: () => <PatientSignOut/>,
           headerStyle: styles.header,
           headerTintColor: colors.light
         }
@@ -134,7 +135,8 @@ const StandbyAppStack = createStackNavigator(
       screen: StandbyHomeScreen,
       navigationOptions: () => (
         {
-          headerRight: <StandbySignOut/>,
+          // eslint-disable-next-line react/display-name
+          headerRight: () => <StandbySignOut/>,
           headerStyle: styles.header,
           headerTintColor: colors.light
         }
@@ -144,7 +146,8 @@ const StandbyAppStack = createStackNavigator(
       screen: StandbyPatientSelectionScreen,
       navigationOptions: () => (
         {
-          headerRight: <StandbySignOut/>,
+          // eslint-disable-next-line react/display-name
+          headerRight: () => <StandbySignOut/>,
           headerStyle: styles.header,
           headerTintColor: colors.light
         }

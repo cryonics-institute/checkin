@@ -5,11 +5,17 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <React/RCTBridgeDelegate.h>
 #import <UIKit/UIKit.h>
+#import <UMReactNativeAdapter/UMModuleRegistryAdapter.h>
+#import <React/RCTBridgeDelegate.h>
+#import <UMCore/UMAppDelegateWrapper.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate, RCTBridgeDelegate>
+@import Firebase;
 
+@interface AppDelegate:
+  UMAppDelegateWrapper <RCTBridgeDelegate, FIRMessagingDelegate>
+
+@property (nonatomic, strong) UMModuleRegistryAdapter *moduleRegistryAdapter;
 @property (nonatomic, strong) UIWindow *window;
 
 @end
