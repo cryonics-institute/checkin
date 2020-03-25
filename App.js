@@ -7,7 +7,8 @@
  */
 
 import React from 'react'
-import { YellowBox } from 'react-native'
+import { NativeModules, Platform, YellowBox } from 'react-native'
+import { getInstanceId } from 'react-native-device-info'
 import { Provider } from 'react-redux'
 import _ from 'lodash'
 import { initializeStore } from './redux/ActionCreators'
@@ -15,7 +16,7 @@ import { ConfigureStore } from './redux/configureStore'
 import { PersistGate } from 'redux-persist/integration/react'
 import Main from './components/MainComponent'
 
-// TODO(you): import any additional firebase services that you require for your app, e.g for auth:
+// TODO: import any additional firebase services that you require for your app, e.g for auth:
 //    1) install the npm package: `yarn add @react-native-firebase/auth@alpha` - you do not need to
 //       run linking commands - this happens automatically at build time now
 //    2) rebuild your app via `yarn run run:android` or `yarn run run:ios`
@@ -34,7 +35,14 @@ const { persistor, store } = ConfigureStore()
 
 class App extends React.Component {
   componentDidMount () {
+    // TODO: Modify Toast Example to import Android device token.
+    NativeModules.ToastExample.show('Awesome', NativeModules.ToastExample.SHORT)
     store.dispatch(initializeStore(this.props.FCMToken))
+    // Platform.OS === 'ios'
+    //   ? store.dispatch(initializeStore(this.props.FCMToken))
+    //   : getInstanceId().then(
+    //     instanceId => { store.dispatch(initializeStore(instanceId)) }
+    //   )
   }
 
   // TODO: Add a loading component.
