@@ -34,14 +34,12 @@ const { persistor, store } = ConfigureStore()
 
 class App extends React.Component {
   componentDidMount () {
-    // TODO: Modify Toast Example to import Android device token.
-    NativeModules.ToastExample.show('Awesome', NativeModules.ToastExample.SHORT)
     Platform.OS === 'ios'
       ? store.dispatch(initializeStore(this.props.FCMToken))
-      : store.dispatch(initializeStore(this.props.FCMToken))
-      // getInstanceId().then(
-      //   instanceId => { store.dispatch(initializeStore(instanceId)) }
-      // )
+      : Promise.resolve(NativeModules.FCM.getToken())
+        .then(
+          FCMToken => { store.dispatch(initializeStore(FCMToken)) }
+        )
   }
 
   // TODO: Add a loading component.
