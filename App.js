@@ -8,7 +8,6 @@
 
 import React from 'react'
 import { NativeModules, Platform, YellowBox } from 'react-native'
-import { getInstanceId } from 'react-native-device-info'
 import { Provider } from 'react-redux'
 import _ from 'lodash'
 import { initializeStore } from './redux/ActionCreators'
@@ -37,12 +36,12 @@ class App extends React.Component {
   componentDidMount () {
     // TODO: Modify Toast Example to import Android device token.
     NativeModules.ToastExample.show('Awesome', NativeModules.ToastExample.SHORT)
-    store.dispatch(initializeStore(this.props.FCMToken))
-    // Platform.OS === 'ios'
-    //   ? store.dispatch(initializeStore(this.props.FCMToken))
-    //   : getInstanceId().then(
-    //     instanceId => { store.dispatch(initializeStore(instanceId)) }
-    //   )
+    Platform.OS === 'ios'
+      ? store.dispatch(initializeStore(this.props.FCMToken))
+      : store.dispatch(initializeStore(this.props.FCMToken))
+      // getInstanceId().then(
+      //   instanceId => { store.dispatch(initializeStore(instanceId)) }
+      // )
   }
 
   // TODO: Add a loading component.
