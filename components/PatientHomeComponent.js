@@ -1,3 +1,4 @@
+// TODO: App should not reset snooze back to 9 minutes when relaunching.
 /**
  * Main component for the project, Dynamic Text-Input for React Native, that
  * presents the view inside of which the text-input components are presented.
