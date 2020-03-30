@@ -27,7 +27,6 @@ import { persistStore, persistReducer } from 'redux-persist'
 import createSensitiveStorage from 'redux-persist-sensitive-storage'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
-import { composeWithDevTools } from 'remote-redux-devtools' // TODO: Remove before compiling to production.
 import { Auth } from './authReducer'
 import { Patient } from './patientReducer'
 import { Timer } from './timerReducer'
@@ -72,7 +71,7 @@ const rootReducer = combineReducers(
 export const ConfigureStore = () => {
   const store = createStore(
     rootReducer,
-    composeWithDevTools(applyMiddleware(thunk, logger))
+    applyMiddleware(thunk, logger)
   )
   const persistor = persistStore(store)
 

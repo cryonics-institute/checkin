@@ -53,8 +53,7 @@
     "jest": "^24.9.0",
     "metro-react-native-babel-preset": "^0.56.0",
     "patch-package": "^6.1.4",
-    "react-test-renderer": "16.9.0",
-    "remote-redux-devtools": "^0.5.16"
+    "react-test-renderer": "16.9.0"
   },
   "jest": {
     "preset": "react-native"
