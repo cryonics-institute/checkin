@@ -22,7 +22,7 @@ const RenderActiveAlertView = (props) => {
       <Text h1 style = { styles.title }>ALERT</Text>
       <Text style = { styles.paragraph }>
         The member should have checked in at{'\n'}
-        { moment(props.lastAlertTime).format('h:mm A dddd') }.
+        { moment(props.lastAlertTime).format('h:mm A dddd') }
       </Text>
       <Text h4 style = { styles.title }>Sign-In Time</Text>
       <Text style = { styles.text }>
@@ -91,6 +91,21 @@ const RenderSignedOutPatientView = (props) => {
 
 // TODO: What happens if the network is down?
 class StandbyHome extends React.Component {
+  getLastAlertTime () {
+    const lastAlertTime = moment(this.props.lastAlertTime).toISOString()
+    const lastAlertTimeInMs =
+      ((((((parseInt(lastAlertTime.slice(-13, -11), 10) * 60) +
+        parseInt(lastAlertTime.slice(-10, -8), 10)) * 60) +
+        parseInt(lastAlertTime.slice(-7, -5), 10)) * 1000) +
+        parseInt(lastAlertTime.slice(-4, -1), 10))
+    const lastAlertTimeMoment = moment()
+      .startOf('date')
+      .add(lastAlertTimeInMs, 'milliseconds')
+      .add(moment().utcOffset(), 'minutes')
+
+    return lastAlertTimeMoment
+  }
+
   render () {
     if (this.props.patientSignedIn == null) {
       return (
@@ -107,7 +122,7 @@ class StandbyHome extends React.Component {
       return (
         <RenderActiveAlertView
           checkinTime = { this.props.checkinTime }
-          lastAlertTime = { this.props.lastAlertTime }
+          lastAlertTime = { this.getLastAlertTime() }
           signinTime = { this.props.signinTime }
         />
       )
