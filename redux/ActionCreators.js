@@ -309,7 +309,7 @@ export const getDocument = (email) => (dispatch, getState) => {
         if (doc.exists) {
           console.log('Document exists!')
 
-          if (doc.data().subscribers !== undefined) {
+          if (typeof doc.data().subscribers !== 'undefined') {
             console.log('Subscriber defined!')
           } else {
             console.log('Subscriber undefined!')
