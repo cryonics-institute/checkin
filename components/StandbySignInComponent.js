@@ -132,8 +132,13 @@ class StandbySignIn extends React.Component {
         .then(
           () => {
             this.handleSignin()
+          },
+          error => {
+            var errorMessage = new Error(error.message)
+            throw errorMessage
           }
         )
+        .catch(error => console.log(error.message))
     }
   }
 

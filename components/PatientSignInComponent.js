@@ -144,8 +144,13 @@ class PatientSignIn extends React.Component {
               },
               true
             )
+          },
+          error => {
+            var errorMessage = new Error(error.message)
+            throw errorMessage
           }
         )
+        .catch(error => console.log(error.message))
     }
   }
 

@@ -31,8 +31,13 @@ class App extends React.Component {
       ? store.dispatch(initializeStore(this.props.FCMToken))
       : Promise.resolve(NativeModules.FCM.getToken())
         .then(
-          FCMToken => { store.dispatch(initializeStore(FCMToken)) }
+          FCMToken => { store.dispatch(initializeStore(FCMToken)) },
+          error => {
+            var errorMessage = new Error(error.message)
+            throw errorMessage
+          }
         )
+        .catch(error => console.log(error.message))
   }
 
   // TODO: Add a loading component.
