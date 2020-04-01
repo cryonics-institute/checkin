@@ -104,6 +104,10 @@ export const addDocument = (email) => (dispatch, getState) => {
             }
           )
         }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
