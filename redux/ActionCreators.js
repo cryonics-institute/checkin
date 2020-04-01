@@ -69,7 +69,7 @@ export const addDocument = (email) => (dispatch, getState) => {
     checkinTime: now,
     isSignedIn: true,
     signinTime: now,
-    snooze: 9
+    snooze: 9 // TODO: This should be changed so snooze is not reset on login.
   }
 
   dispatch(addDocumentRequestedAction())
