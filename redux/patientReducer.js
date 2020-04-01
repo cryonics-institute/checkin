@@ -1,3 +1,6 @@
+// TODO: Maybe this should be a user reducer because both the patient and the
+// standby use it.
+// TODO: Maybe listeners should be spun out into their own reducer.
 /**
  * Redux reducer for the project, Cryonics Check-In, that stores the state for
  * Patient objects.
