@@ -1,3 +1,5 @@
+// TODO: The alert calculation for standbys is not correct.  It does not account
+// for the snooze interval.
 /**
  * Firebase Cloud Functions for the project, Cryonics Check-In.
  *
@@ -43,12 +45,12 @@ exports.checkCheckins = functions.pubsub.schedule(
         querySnapshot => {
           console.log('Successfully retrieved document.')
 
-          const registrationTokens = []
+          let registrationTokens = new Set()
 
           querySnapshot.forEach(
             doc => {
               // doc.data() is never undefined for query doc snapshots
-              registrationTokens.push(
+              registrationTokens.add(
                 getRegistrationTokenIfNotCheckedIn(doc.data())
               )
             }
@@ -67,16 +69,24 @@ exports.checkCheckins = functions.pubsub.schedule(
           const patientTokens = []
           const standbyTokens = []
           registrationTokens.forEach(
-            token => {
-              if (token.forPatient !== null) {
-                console.log('Array contains ' + token.forPatient)
-                patientTokens.push(token.forPatient)
+            tokenSet => {
+              if (tokenSet.forPatient !== null) {
+                tokenSet.forPatient.forEach(
+                  patientToken => {
+                    if (!patientTokens.includes(patientToken)) {
+                      console.log('Patient array contains ' + patientToken)
+                      patientTokens.push(patientToken)
+                    }
+                  }
+                )
               }
-              if (token.forStandbys !== null) {
-                token.forStandbys.forEach(
+              if (tokenSet.forStandbys !== null) {
+                tokenSet.forStandbys.forEach(
                   standbyToken => {
-                    console.log('Array contains ' + standbyToken)
-                    standbyTokens.push(standbyToken)
+                    if (!standbyTokens.includes(standbyToken)) {
+                      console.log('Standby array contains ' + standbyToken)
+                      standbyTokens.push(standbyToken)
+                    }
                   }
                 )
               }
@@ -245,18 +255,18 @@ const getRegistrationTokenIfNotCheckedIn = data => {
             typeof data.subscribers !== 'undefined' && data.subscribers !== null
           ) {
             return {
-              forPatient: data.registrationToken,
+              forPatient: [data.registrationToken], // TODO: Change after fixing frontend.
               forStandbys: [].concat.apply([], Object.values(data.subscribers))
             }
           } else {
             return {
-              forPatient: data.registrationToken,
+              forPatient: [data.registrationToken], // TODO: Change after fixing frontend.
               forStandbys: null
             }
           }
         } else if (alert.shouldFire.forPatient) {
           return {
-            forPatient: data.registrationToken,
+            forPatient: [data.registrationToken],
             forStandbys: null
           }
         } else {
