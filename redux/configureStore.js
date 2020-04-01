@@ -28,6 +28,7 @@ import createSensitiveStorage from 'redux-persist-sensitive-storage'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import { Auth } from './authReducer'
+import { Device } from './deviceReducer'
 import { Patient } from './patientReducer'
 import { Timer } from './timerReducer'
 import { Token } from './tokenReducer'
@@ -41,6 +42,11 @@ const sensitiveStorage = createSensitiveStorage(
 
 const authPersistConfig = {
   key: 'auth',
+  storage: AsyncStorage
+}
+
+const devicePersistConfig = {
+  key: 'device',
   storage: AsyncStorage
 }
 
@@ -62,6 +68,7 @@ const tokenPersistConfig = {
 const rootReducer = combineReducers(
   {
     auth: persistReducer(authPersistConfig, Auth),
+    device: persistReducer(devicePersistConfig, Device),
     patient: persistReducer(patientPersistConfig, Patient),
     timer: persistReducer(timerPersistConfig, Timer),
     token: persistReducer(tokenPersistConfig, Token)
