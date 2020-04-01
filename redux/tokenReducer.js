@@ -1,6 +1,6 @@
 /**
  * Redux reducer for the project, Cryonics Check-In, that securely persists
- * signin info for auto-signin when the app is closed.
+ * signin information for auto-signin when the app is closed.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
