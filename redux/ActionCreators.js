@@ -324,6 +324,10 @@ export const getDocument = (email) => (dispatch, getState) => {
           console.log('No such document!')
         }
         return doc
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
