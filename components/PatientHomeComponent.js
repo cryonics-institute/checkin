@@ -34,8 +34,7 @@ import TimeInput from './TimeInputComponent'
 
 const mapStateToProps = state => {
   return {
-    patient: state.patient,
-    timer: state.timer
+    patient: state.patient
   }
 }
 
