@@ -40,7 +40,6 @@ export const Patient = (
     lastAlertTime: null,
     listeners: [],
     longestSnooze: 30,
-    registrationTokens: null,
     shortestInterval: 1800000,
     signinTime: null,
     snooze: null
@@ -130,12 +129,6 @@ export const Patient = (
         isSignedIn: action.payload[0],
         signinTime: action.payload[4],
         snooze: action.payload[5]
-      }
-
-    case ActionTypes.INITIALIZE_STORE:
-      return {
-        ...state,
-        registrationTokens: action.payload
       }
 
     case ActionTypes.MUTATE_INPUTS_REQUESTED:

@@ -80,16 +80,36 @@ export const addDocument = (email) => (dispatch, getState) => {
         if (doc.exists) {
           console.log('Document data:', doc.data())
 
-          return db().collection('users').doc(email).set(
-            {
-              alertTimes: getState().patient.alertTimes,
-              checkinTime: patient.checkinTime,
-              registrationToken: getState().patient.registrationToken,
-              signinTime: patient.signinTime,
-              snooze: patient.snooze,
-              subscribers: doc.data().subscribers
-            }
-          )
+          const deviceToken = getState().device.token
+          let deviceTokens = doc.data().deviceTokens
+          if (typeof deviceTokens === 'undefined' || deviceTokens === null) {
+            deviceTokens = [deviceToken]
+          } else if (!deviceTokens.includes(deviceToken)) {
+            deviceTokens.push(deviceToken)
+          }
+
+          if (typeof doc.data().subscribers !== 'undefined') {
+            return db().collection('users').doc(email).set(
+              {
+                alertTimes: getState().patient.alertTimes,
+                checkinTime: patient.checkinTime,
+                deviceTokens: deviceTokens,
+                signinTime: patient.signinTime,
+                snooze: patient.snooze,
+                subscribers: doc.data().subscribers
+              }
+            )
+          } else {
+            return db().collection('users').doc(email).set(
+              {
+                alertTimes: getState().patient.alertTimes,
+                checkinTime: patient.checkinTime,
+                deviceTokens: deviceTokens,
+                signinTime: patient.signinTime,
+                snooze: patient.snooze
+              }
+            )
+          }
         } else {
           // doc.data() will be undefined in this case
           console.log('No such document!')
@@ -98,7 +118,7 @@ export const addDocument = (email) => (dispatch, getState) => {
             {
               alertTimes: getState().patient.alertTimes,
               checkinTime: patient.checkinTime,
-              registrationToken: getState().patient.registrationToken,
+              deviceTokens: [getState().device.token],
               signinTime: patient.signinTime,
               snooze: patient.snooze
             }
@@ -337,11 +357,11 @@ export const getDocument = (email) => (dispatch, getState) => {
 
           const uid = getState().auth.user.uid
           if (
-            doc.data().subscribers !== undefined &&
-            doc.data().subscribers[uid] !== undefined
+            typeof doc.data().subscribers !== 'undefined' &&
+            typeof doc.data().subscribers[uid] !== 'undefined'
           ) {
             console.log('Subscriber defined!')
-            const token = getState().patient.registrationToken
+            const token = getState().device.token
             const subscriberData =
               doc.data().subscribers[uid].includes(token)
                 ? doc.data().subscribers[uid]
@@ -353,7 +373,7 @@ export const getDocument = (email) => (dispatch, getState) => {
             )
           } else {
             console.log('Subscriber undefined!')
-            const subscriberData = [getState().patient.registrationToken]
+            const subscriberData = [getState().device.token]
             db().collection('users').doc(email).update(
               {
                 ['subscribers.' + uid]: subscriberData
@@ -437,15 +457,49 @@ export const getDocumentFulfilledAction = (data) => (
     payload: data
   }
 )
+/**
+ * Initialize the device reducer in the Redux store with the device token.
+ * @param {String} deviceToken  An array of values for the patient reducer.
+ */
 
-export const initializeStore = (registrationToken) => (dispatch, getState) => {
-  dispatch(initializeStoreAction(registrationToken))
+export const initializeStore = (deviceToken) => (dispatch, getState) => {
+  dispatch(initializeStoreRequestedAction())
+
+  try {
+    dispatch(initializeStoreFulfilledAction(deviceToken))
+  } catch (error) {
+    dispatch(initializeStoreRejectedAction(error))
+  }
 }
 
-export const initializeStoreAction = (registrationToken) => (
+/**
+ * Initiate an action to save the device token in the Redux store.
+ */
+export const initializeStoreRequestedAction = () => (
   {
-    type: ActionTypes.INITIALIZE_STORE,
-    payload: registrationToken
+    type: ActionTypes.INITIALIZE_STORE_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that saving the device token has failed.
+ * @param  {Error} errorMessage Message describing the check-in failure.
+ */
+export const initializeStoreRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.INITIALIZE_STORE_REJECTED,
+    payload: errorMessage
+  }
+)
+
+/**
+ * Initiate an action indicating that saving the device token has completed.
+ * @param {Array} data  An array of values for the patient reducer.
+ */
+export const initializeStoreFulfilledAction = (deviceToken) => (
+  {
+    type: ActionTypes.INITIALIZE_STORE_FULFILLED,
+    payload: deviceToken
   }
 )
 
@@ -519,7 +573,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
       )
     }
   } catch (error) {
-    dispatch(mutateInputRejectedAction(error.message))
+    dispatch(mutateInputRejectedAction(error))
   }
 }
 

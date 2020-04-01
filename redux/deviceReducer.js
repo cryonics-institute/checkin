@@ -26,15 +26,29 @@ import * as ActionTypes from './ActionTypes'
 
 export const Device = (
   state = {
-    registrationToken: null
+    errMess: null,
+    token: null
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.INITIALIZE_STORE:
+    case ActionTypes.INITIALIZE_STORE_REQUESTED:
       return {
         ...state,
-        registrationToken: action.payload
+        errMess: null
+      }
+
+    case ActionTypes.INITIALIZE_STORE_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.INITIALIZE_STORE_FULFILLED:
+      return {
+        ...state,
+        errMess: null,
+        token: action.payload
       }
 
     default:
