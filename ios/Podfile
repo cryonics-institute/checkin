@@ -41,10 +41,10 @@ target 'checkin' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-  target 'checkinTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
+  # target 'checkinTests' do
+  #   inherit! :search_paths
+  #   # Pods for testing
+  # end
 
   use_native_modules!
   use_unimodules!
