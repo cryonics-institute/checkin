@@ -45,18 +45,18 @@ exports.checkCheckins = functions.pubsub.schedule(
         querySnapshot => {
           console.log('Successfully retrieved document.')
 
-          let registrationTokens = new Set()
+          let deviceTokens = new Set()
 
           querySnapshot.forEach(
             doc => {
               // doc.data() is never undefined for query doc snapshots
-              registrationTokens.add(
-                getRegistrationTokenIfNotCheckedIn(doc.data())
+              deviceTokens.add(
+                getDeviceTokensIfNotCheckedIn(doc.data())
               )
             }
           )
 
-          return Promise.all(registrationTokens)
+          return Promise.all(deviceTokens)
 
         },
         error => {
@@ -65,10 +65,12 @@ exports.checkCheckins = functions.pubsub.schedule(
         }
       )
       .then(
-        registrationTokens => {
+        deviceTokens => {
+          console.log('Successfully retrieved device tokens.')
+
           const patientTokens = []
           const standbyTokens = []
-          registrationTokens.forEach(
+          deviceTokens.forEach(
             tokenSet => {
               if (tokenSet.forPatient !== null) {
                 tokenSet.forPatient.forEach(
@@ -103,11 +105,13 @@ exports.checkCheckins = functions.pubsub.schedule(
         }
       )
       .then(
-        registrationTokens => {
+        deviceTokens => {
+          console.log('Successfully transformed device tokens.')
+
           let patientMessage = null
-          if (registrationTokens[0].length > 0) {
+          if (deviceTokens[0].length > 0) {
             patientMessage = {
-              tokens: registrationTokens[0],
+              tokens: deviceTokens[0],
               notification: {
                 title: 'Check In?',
                 body: 'Your buddy will be alerted if not.'
@@ -116,9 +120,9 @@ exports.checkCheckins = functions.pubsub.schedule(
           }
 
           let standbyMessage = null
-          if (registrationTokens[1].length > 0) {
+          if (deviceTokens[1].length > 0) {
             standbyMessage = {
-              tokens: registrationTokens[1],
+              tokens: deviceTokens[1],
               notification: {
                 title: 'Check-In Alert',
                 body: 'Your buddy has not checked in.  Please make contact.'
@@ -138,6 +142,8 @@ exports.checkCheckins = functions.pubsub.schedule(
       )
       .then(
         messages => {
+          console.log('Successfully created messages.')
+
           // Send a message to the device corresponding to the provided token.
           return Promise.all(
             [
@@ -240,7 +246,7 @@ exports.checkCheckins = functions.pubsub.schedule(
  * @param  {Boolean} isTest     Whether called by unit test (optional).
  * @return {Promise}            Promise to set a timer.
  */
-const getRegistrationTokenIfNotCheckedIn = data => {
+const getDeviceTokensIfNotCheckedIn = data => {
   return Promise.resolve(
     getAlert(
       data.alertTimes,
@@ -255,18 +261,18 @@ const getRegistrationTokenIfNotCheckedIn = data => {
             typeof data.subscribers !== 'undefined' && data.subscribers !== null
           ) {
             return {
-              forPatient: [data.registrationToken], // TODO: Change after fixing frontend.
+              forPatient: data.deviceTokens,
               forStandbys: [].concat.apply([], Object.values(data.subscribers))
             }
           } else {
             return {
-              forPatient: [data.registrationToken], // TODO: Change after fixing frontend.
+              forPatient: data.deviceTokens,
               forStandbys: null
             }
           }
         } else if (alert.shouldFire.forPatient) {
           return {
-            forPatient: [data.registrationToken],
+            forPatient: data.deviceTokens,
             forStandbys: null
           }
         } else {
@@ -285,7 +291,7 @@ const getRegistrationTokenIfNotCheckedIn = data => {
 }
 
 /**
- * Get the interval for the getRegistrationTokenIfNotCheckedIn function.
+ * Get the interval for the getDeviceTokensIfNotCheckedIn function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
  * @param   {Date} checkinTime  Last time patient checked in.
  * @return  {Integer}           Interval to wait before check-in alert.
@@ -322,7 +328,7 @@ const getAlert = (alertTimes, checkinTime, snooze) => {
       : moment(now) - moment(checkinTime) > 86400000
         ? { shouldFire: { forPatient: true, forStandby: false } }
         : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
-            ? { shouldFire: { forPatient: false, forStandby: false } }
+            ? { shouldFire: { forPatient: false, forStandby: false } } // TODO: The problem is here.
             : checkinInMs + snoozeInMs > 86400000
               ? { shouldFire: { forPatient: true, forStandby: false } }
               : { shouldFire: { forPatient: true, forStandby: true } }
