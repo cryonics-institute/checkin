@@ -1,5 +1,3 @@
-// TODO: The alert calculation for standbys is not correct.  It does not account
-// for the snooze interval.
 /**
  * Firebase Cloud Functions for the project, Cryonics Check-In.
  *
@@ -140,59 +138,59 @@ exports.checkCheckins = functions.pubsub.schedule(
           throw errorMessage
         }
       )
-      .then(
-        messages => {
-          console.log('Successfully created messages.')
-
-          // Send a message to the device corresponding to the provided token.
-          return Promise.all(
-            [
-              messages.forPatients !== null
-                ? admin.messaging().sendMulticast(messages.forPatients)
-                : null,
-              messages.forStandbys !== null
-                ? admin.messaging().sendMulticast(messages.forStandbys)
-                : null
-            ]
-          )
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .then(
-        responses => {
-          // Response is a message ID string.
-          if (responses[0] !== null) {
-            console.log(
-              responses[0].successCount +
-              ' messages were sent successfully to patients.'
-            )
-          } else {
-            console.log(
-              'The checkCheckins function completed successfully.'
-            )
-          }
-
-          if (responses[1] !== null) {
-            console.log(
-              responses[1].successCount +
-              ' messages were sent successfully to standbys.'
-            )
-          } else {
-            console.log(
-              'The checkCheckins function completed successfully.'
-            )
-          }
-
-          return null
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
+      // .then(
+      //   messages => {
+      //     console.log('Successfully created messages.')
+      //
+      //     // Send a message to the device corresponding to the provided token.
+      //     return Promise.all(
+      //       [
+      //         messages.forPatients !== null
+      //           ? admin.messaging().sendMulticast(messages.forPatients)
+      //           : null,
+      //         messages.forStandbys !== null
+      //           ? admin.messaging().sendMulticast(messages.forStandbys)
+      //           : null
+      //       ]
+      //     )
+      //   },
+      //   error => {
+      //     var errorMessage = new Error(error.message)
+      //     throw errorMessage
+      //   }
+      // )
+      // .then(
+      //   responses => {
+      //     // Response is a message ID string.
+      //     if (responses[0] !== null) {
+      //       console.log(
+      //         responses[0].successCount +
+      //         ' messages were sent successfully to patients.'
+      //       )
+      //     } else {
+      //       console.log(
+      //         'The checkCheckins function completed successfully.'
+      //       )
+      //     }
+      //
+      //     if (responses[1] !== null) {
+      //       console.log(
+      //         responses[1].successCount +
+      //         ' messages were sent successfully to standbys.'
+      //       )
+      //     } else {
+      //       console.log(
+      //         'The checkCheckins function completed successfully.'
+      //       )
+      //     }
+      //
+      //     return null
+      //   },
+      //   error => {
+      //     var errorMessage = new Error(error.message)
+      //     throw errorMessage
+      //   }
+      // )
       // TODO: Adapt the following code to send e-mail alerts using SendGrid.
       // You will need to decide who adds e-mails - patient, standbys, or both -
       // and add a field to the Firestore that includes those e-mails and a
@@ -243,8 +241,8 @@ exports.checkCheckins = functions.pubsub.schedule(
 /**
  * Set a timer that will issue an alert for the currently authorized patient to
  * check-in after an interval of time.
- * @param  {Boolean} isTest     Whether called by unit test (optional).
- * @return {Promise}            Promise to set a timer.
+ * @param  {Object} data  Data from patient document.
+ * @return {Promise}      Object containing arrays of device tokens.
  */
 const getDeviceTokensIfNotCheckedIn = data => {
   return Promise.resolve(
@@ -294,6 +292,7 @@ const getDeviceTokensIfNotCheckedIn = data => {
  * Get the interval for the getDeviceTokensIfNotCheckedIn function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
  * @param   {Date} checkinTime  Last time patient checked in.
+ * @param   {Integer} snooze    Interval to wait before firing standby alert.
  * @return  {Integer}           Interval to wait before check-in alert.
  */
 const getAlert = (alertTimes, checkinTime, snooze) => {
@@ -306,30 +305,27 @@ const getAlert = (alertTimes, checkinTime, snooze) => {
 
   const alertsInMs = alertTimes.filter(alert => alert.validity).map(
     alert => {
-      return {
-        timeInMs: ((((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-          parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-          parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-          parseInt(alert.time.slice(-4, -1), 10) + nowToMidnight) % 86400000,
-        timeInIso: alert.time
-      }
+      return ((((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
+        parseInt(alert.time.slice(-10, -8), 10)) * 60) +
+        parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
+        parseInt(alert.time.slice(-4, -1), 10) + nowToMidnight) % 86400000
     }
-  ).sort((el1, el2) => el1.timeInMs - el2.timeInMs)
+  ).sort((el1, el2) => el1 - el2)
 
   if (alertsInMs.length !== 0) {
     const checkinInMs = ((((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
-        parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
-        parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
-        parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
+      parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
+      parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
+      parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
     const snoozeInMs = snooze * 60000
 
     const alert = moment(now) - moment(checkinTime) > 86400000 + snoozeInMs
       ? { shouldFire: { forPatient: true, forStandby: true } }
       : moment(now) - moment(checkinTime) > 86400000
         ? { shouldFire: { forPatient: true, forStandby: false } }
-        : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
-            ? { shouldFire: { forPatient: false, forStandby: false } } // TODO: The problem is here.
-            : checkinInMs + snoozeInMs > 86400000
+        : alertsInMs[alertsInMs.length - 1] < checkinInMs
+            ? { shouldFire: { forPatient: false, forStandby: false } }
+            : 86400000 < alertsInMs[alertsInMs.length - 1] + snoozeInMs
               ? { shouldFire: { forPatient: true, forStandby: false } }
               : { shouldFire: { forPatient: true, forStandby: true } }
 
