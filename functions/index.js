@@ -138,59 +138,59 @@ exports.checkCheckins = functions.pubsub.schedule(
           throw errorMessage
         }
       )
-      // .then(
-      //   messages => {
-      //     console.log('Successfully created messages.')
-      //
-      //     // Send a message to the device corresponding to the provided token.
-      //     return Promise.all(
-      //       [
-      //         messages.forPatients !== null
-      //           ? admin.messaging().sendMulticast(messages.forPatients)
-      //           : null,
-      //         messages.forStandbys !== null
-      //           ? admin.messaging().sendMulticast(messages.forStandbys)
-      //           : null
-      //       ]
-      //     )
-      //   },
-      //   error => {
-      //     var errorMessage = new Error(error.message)
-      //     throw errorMessage
-      //   }
-      // )
-      // .then(
-      //   responses => {
-      //     // Response is a message ID string.
-      //     if (responses[0] !== null) {
-      //       console.log(
-      //         responses[0].successCount +
-      //         ' messages were sent successfully to patients.'
-      //       )
-      //     } else {
-      //       console.log(
-      //         'The checkCheckins function completed successfully.'
-      //       )
-      //     }
-      //
-      //     if (responses[1] !== null) {
-      //       console.log(
-      //         responses[1].successCount +
-      //         ' messages were sent successfully to standbys.'
-      //       )
-      //     } else {
-      //       console.log(
-      //         'The checkCheckins function completed successfully.'
-      //       )
-      //     }
-      //
-      //     return null
-      //   },
-      //   error => {
-      //     var errorMessage = new Error(error.message)
-      //     throw errorMessage
-      //   }
-      // )
+      .then(
+        messages => {
+          console.log('Successfully created messages.')
+
+          // Send a message to the device corresponding to the provided token.
+          return Promise.all(
+            [
+              messages.forPatients !== null
+                ? admin.messaging().sendMulticast(messages.forPatients)
+                : null,
+              messages.forStandbys !== null
+                ? admin.messaging().sendMulticast(messages.forStandbys)
+                : null
+            ]
+          )
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
+      .then(
+        responses => {
+          // Response is a message ID string.
+          if (responses[0] !== null) {
+            console.log(
+              responses[0].successCount +
+              ' messages were sent successfully to patients.'
+            )
+          } else {
+            console.log(
+              'The checkCheckins function completed successfully.'
+            )
+          }
+
+          if (responses[1] !== null) {
+            console.log(
+              responses[1].successCount +
+              ' messages were sent successfully to standbys.'
+            )
+          } else {
+            console.log(
+              'The checkCheckins function completed successfully.'
+            )
+          }
+
+          return null
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
       // TODO: Adapt the following code to send e-mail alerts using SendGrid.
       // You will need to decide who adds e-mails - patient, standbys, or both -
       // and add a field to the Firestore that includes those e-mails and a
