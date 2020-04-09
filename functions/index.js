@@ -43,18 +43,18 @@ exports.checkCheckins = functions.pubsub.schedule(
         querySnapshot => {
           console.log('Successfully retrieved document.')
 
-          const registrationTokens = []
+          let deviceTokens = new Set()
 
           querySnapshot.forEach(
             doc => {
               // doc.data() is never undefined for query doc snapshots
-              registrationTokens.push(
-                getRegistrationTokenIfNotCheckedIn(doc.data())
+              deviceTokens.add(
+                getDeviceTokensIfNotCheckedIn(doc.data())
               )
             }
           )
 
-          return Promise.all(registrationTokens)
+          return Promise.all(deviceTokens)
 
         },
         error => {
@@ -63,20 +63,30 @@ exports.checkCheckins = functions.pubsub.schedule(
         }
       )
       .then(
-        registrationTokens => {
+        deviceTokens => {
+          console.log('Successfully retrieved device tokens.')
+
           const patientTokens = []
           const standbyTokens = []
-          registrationTokens.forEach(
-            token => {
-              if (token.forPatient !== null) {
-                console.log('Array contains ' + token.forPatient)
-                patientTokens.push(token.forPatient)
+          deviceTokens.forEach(
+            tokenSet => {
+              if (tokenSet.forPatient !== null) {
+                tokenSet.forPatient.forEach(
+                  patientToken => {
+                    if (!patientTokens.includes(patientToken)) {
+                      console.log('Patient array contains ' + patientToken)
+                      patientTokens.push(patientToken)
+                    }
+                  }
+                )
               }
-              if (token.forStandbys !== null) {
-                token.forStandbys.forEach(
+              if (tokenSet.forStandbys !== null) {
+                tokenSet.forStandbys.forEach(
                   standbyToken => {
-                    console.log('Array contains ' + standbyToken)
-                    standbyTokens.push(standbyToken)
+                    if (!standbyTokens.includes(standbyToken)) {
+                      console.log('Standby array contains ' + standbyToken)
+                      standbyTokens.push(standbyToken)
+                    }
                   }
                 )
               }
@@ -93,11 +103,13 @@ exports.checkCheckins = functions.pubsub.schedule(
         }
       )
       .then(
-        registrationTokens => {
+        deviceTokens => {
+          console.log('Successfully transformed device tokens.')
+
           let patientMessage = null
-          if (registrationTokens[0].length > 0) {
+          if (deviceTokens[0].length > 0) {
             patientMessage = {
-              tokens: registrationTokens[0],
+              tokens: deviceTokens[0],
               notification: {
                 title: 'Check In?',
                 body: 'Your buddy will be alerted if not.'
@@ -106,9 +118,9 @@ exports.checkCheckins = functions.pubsub.schedule(
           }
 
           let standbyMessage = null
-          if (registrationTokens[1].length > 0) {
+          if (deviceTokens[1].length > 0) {
             standbyMessage = {
-              tokens: registrationTokens[1],
+              tokens: deviceTokens[1],
               notification: {
                 title: 'Check-In Alert',
                 body: 'Your buddy has not checked in.  Please make contact.'
@@ -128,6 +140,8 @@ exports.checkCheckins = functions.pubsub.schedule(
       )
       .then(
         messages => {
+          console.log('Successfully created messages.')
+
           // Send a message to the device corresponding to the provided token.
           return Promise.all(
             [
@@ -227,10 +241,10 @@ exports.checkCheckins = functions.pubsub.schedule(
 /**
  * Set a timer that will issue an alert for the currently authorized patient to
  * check-in after an interval of time.
- * @param  {Boolean} isTest     Whether called by unit test (optional).
- * @return {Promise}            Promise to set a timer.
+ * @param  {Object} data  Data from patient document.
+ * @return {Promise}      Object containing arrays of device tokens.
  */
-const getRegistrationTokenIfNotCheckedIn = data => {
+const getDeviceTokensIfNotCheckedIn = data => {
   return Promise.resolve(
     getAlert(
       data.alertTimes,
@@ -245,18 +259,18 @@ const getRegistrationTokenIfNotCheckedIn = data => {
             typeof data.subscribers !== 'undefined' && data.subscribers !== null
           ) {
             return {
-              forPatient: data.registrationToken,
+              forPatient: data.deviceTokens,
               forStandbys: [].concat.apply([], Object.values(data.subscribers))
             }
           } else {
             return {
-              forPatient: data.registrationToken,
+              forPatient: data.deviceTokens,
               forStandbys: null
             }
           }
         } else if (alert.shouldFire.forPatient) {
           return {
-            forPatient: data.registrationToken,
+            forPatient: data.deviceTokens,
             forStandbys: null
           }
         } else {
@@ -275,9 +289,10 @@ const getRegistrationTokenIfNotCheckedIn = data => {
 }
 
 /**
- * Get the interval for the getRegistrationTokenIfNotCheckedIn function.
+ * Get the interval for the getDeviceTokensIfNotCheckedIn function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
  * @param   {Date} checkinTime  Last time patient checked in.
+ * @param   {Integer} snooze    Interval to wait before firing standby alert.
  * @return  {Integer}           Interval to wait before check-in alert.
  */
 const getAlert = (alertTimes, checkinTime, snooze) => {
@@ -290,30 +305,27 @@ const getAlert = (alertTimes, checkinTime, snooze) => {
 
   const alertsInMs = alertTimes.filter(alert => alert.validity).map(
     alert => {
-      return {
-        timeInMs: ((((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
-          parseInt(alert.time.slice(-10, -8), 10)) * 60) +
-          parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
-          parseInt(alert.time.slice(-4, -1), 10) + nowToMidnight) % 86400000,
-        timeInIso: alert.time
-      }
+      return ((((((parseInt(alert.time.slice(-13, -11), 10) * 60) +
+        parseInt(alert.time.slice(-10, -8), 10)) * 60) +
+        parseInt(alert.time.slice(-7, -5), 10)) * 1000) +
+        parseInt(alert.time.slice(-4, -1), 10) + nowToMidnight) % 86400000
     }
-  ).sort((el1, el2) => el1.timeInMs - el2.timeInMs)
+  ).sort((el1, el2) => el1 - el2)
 
   if (alertsInMs.length !== 0) {
     const checkinInMs = ((((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
-        parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
-        parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
-        parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
+      parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
+      parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
+      parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
     const snoozeInMs = snooze * 60000
 
     const alert = moment(now) - moment(checkinTime) > 86400000 + snoozeInMs
       ? { shouldFire: { forPatient: true, forStandby: true } }
       : moment(now) - moment(checkinTime) > 86400000
         ? { shouldFire: { forPatient: true, forStandby: false } }
-        : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
+        : alertsInMs[alertsInMs.length - 1] < checkinInMs
             ? { shouldFire: { forPatient: false, forStandby: false } }
-            : checkinInMs + snoozeInMs > 86400000
+            : 86400000 < alertsInMs[alertsInMs.length - 1] + snoozeInMs
               ? { shouldFire: { forPatient: true, forStandby: false } }
               : { shouldFire: { forPatient: true, forStandby: true } }
 
