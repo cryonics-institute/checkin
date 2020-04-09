@@ -48,9 +48,24 @@ exports.checkCheckins = functions.pubsub.schedule(
           querySnapshot.forEach(
             doc => {
               // doc.data() is never undefined for query doc snapshots
-              deviceTokens.add(
-                getDeviceTokensIfNotCheckedIn(doc.data())
-              )
+              if (typeof doc.data().wasCheckedForAlerts === 'undefined') {
+                deviceTokens.add(
+                  getDeviceTokensIfNotCheckedIn(doc.data())
+                )
+
+                admin.firestore().collection('users').doc(doc.id).set(
+                  { wasCheckedForAlerts: true },
+                  { merge: true }
+                )
+              } else if (!doc.data().wasCheckedForAlerts) {
+                deviceTokens.add(
+                  getDeviceTokensIfNotCheckedIn(doc.data())
+                )
+
+                admin.firestore().collection('users').doc(doc.id).update(
+                  { wasCheckedForAlerts: true }
+                )
+              }
             }
           )
 
