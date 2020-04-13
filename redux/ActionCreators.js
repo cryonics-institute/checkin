@@ -1127,11 +1127,24 @@ export const setListenerInterval = (
 
     dispatch(setListenerIntervalRequestedAction())
 
+    console.log(moment(now) - moment(checkinTime) > 86400000 + snoozeInMs)
+    console.log(moment(now) - moment(checkinTime) > 86400000)
+    console.log(alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs)
+    console.log(alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > 86400000)
+    alertsInMs.forEach(alert => { console.log(alert.timeInIso) })
+    console.log(alertsInMs[alertsInMs.length - 1])
+    console.log(checkinInMs)
+    console.log(checkinInMs - nowToMidnight)
+    console.log(snoozeInMs)
+    console.log(nowInMs)
+
     const interval = moment(now) - moment(checkinTime) > 86400000 + snoozeInMs
       ? 0
+      // : moment(now) - moment(checkinTime) > 86400000
+      //   ? { shouldFire: { forPatient: true, forStandby: false } }
       : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
-        ? alertsInMs[0].timeInMs
-        : alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > 86400000
+        ? checkinInMs - alertsInMs[alertsInMs.length - 1].timeInMs
+        : alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > 86400000 // TODO: This comparison might not be correct.
           ? alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs - 86400000
           : 0
 
