@@ -342,7 +342,7 @@ const getAlert = (alertTimes, checkinTime, snooze) => {
         ? { shouldFire: { forPatient: true, forStandby: false } }
         : alertsInMs[alertsInMs.length - 1] < checkinInMs
           ? { shouldFire: { forPatient: false, forStandby: false } }
-          : 86400000 < alertsInMs[alertsInMs.length - 1] + snoozeInMs
+          : alertsInMs[alertsInMs.length - 1] + snoozeInMs > 86400000
             ? { shouldFire: { forPatient: true, forStandby: false } }
             : { shouldFire: { forPatient: true, forStandby: true } }
 
