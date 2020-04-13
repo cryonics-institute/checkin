@@ -339,10 +339,10 @@ const getAlert = (alertTimes, checkinTime, snooze) => {
       : moment(now) - moment(checkinTime) > 86400000
         ? { shouldFire: { forPatient: true, forStandby: false } }
         : alertsInMs[alertsInMs.length - 1] < checkinInMs
-            ? { shouldFire: { forPatient: false, forStandby: false } }
-            : 86400000 < alertsInMs[alertsInMs.length - 1] + snoozeInMs
-              ? { shouldFire: { forPatient: true, forStandby: false } }
-              : { shouldFire: { forPatient: true, forStandby: true } }
+          ? { shouldFire: { forPatient: false, forStandby: false } }
+          : 86400000 < alertsInMs[alertsInMs.length - 1] + snoozeInMs
+            ? { shouldFire: { forPatient: true, forStandby: false } }
+            : { shouldFire: { forPatient: true, forStandby: true } }
 
     return Promise.resolve(alert)
       .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
