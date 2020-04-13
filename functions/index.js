@@ -48,6 +48,8 @@ exports.checkCheckins = functions.pubsub.schedule(
           querySnapshot.forEach(
             doc => {
               // doc.data() is never undefined for query doc snapshots
+              // TODO: This won't work because you will need to check for alerts
+              // after snooze as well.
               if (typeof doc.data().wasCheckedForAlerts === 'undefined') {
                 deviceTokens.add(
                   getDeviceTokensIfNotCheckedIn(doc.data())
