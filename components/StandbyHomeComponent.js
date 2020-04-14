@@ -21,15 +21,8 @@ const RenderActiveAlertView = (props) => {
     <View style = { styles.containerCentered }>
       <Text h1 style = { styles.title }>ALERT</Text>
       <Text style = { styles.paragraph }>
-        The member should have checked in at{'\n'}
-        { moment(props.lastAlertTime).format('h:mm A dddd') }
-      </Text>
-      <Text h4 style = { styles.title }>Sign-In Time</Text>
-      <Text style = { styles.text }>
-        {
-          moment(props.signinTime)
-            .format('dddd, MMMM D, YYYY, h:mm A')
-        }
+        The member should have {'\n'}
+        checked in at { moment(props.lastAlertTime).format('h:mm A') }.
       </Text>
       <Text h4 style = { styles.title }>Check-In Time</Text>
       <Text style = { styles.text }>
@@ -115,7 +108,6 @@ class StandbyHome extends React.Component {
       return (
         <RenderSignedInPatientView
           checkinTime = { this.props.checkinTime }
-          signinTime = { this.props.signinTime }
         />
       )
     } else if (this.props.patientSignedIn && this.props.patientAlertActive) {
@@ -123,7 +115,6 @@ class StandbyHome extends React.Component {
         <RenderActiveAlertView
           checkinTime = { this.props.checkinTime }
           lastAlertTime = { this.getLastAlertTime() }
-          signinTime = { this.props.signinTime }
         />
       )
     } else {
