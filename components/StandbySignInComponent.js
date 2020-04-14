@@ -118,6 +118,7 @@ class StandbySignIn extends React.Component {
   }
 
   componentDidMount () {
+    // TODO: Maybe you should ask for the password every once in a while.
     if (
       this.props.token.username !== null && this.props.token.password !== null
     ) {
