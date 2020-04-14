@@ -7,7 +7,7 @@ import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    // Nothing in state is relevant here.
+    email: state.patient.email
   }
 }
 
@@ -29,6 +29,20 @@ class StandbyPatientSelection extends React.Component {
 
     this.handleSignin = this.handleSignin.bind(this)
     this.validateEmail = this.validateEmail.bind(this)
+  }
+
+  componentDidMount () {
+    if (this.props.email !== null) {
+      Promise.resolve(this.setState({ email: this.props.email }))
+        .then(
+          () => { this.handleSignin() },
+          error => {
+            var errorMessage = new Error(error.message)
+            throw errorMessage
+          }
+        )
+        .catch(error => console.log(error.message))
+    }
   }
 
   handleSignin () {
