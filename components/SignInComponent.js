@@ -3,7 +3,7 @@ import React from 'react'
 import { KeyboardAvoidingView, View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signIn, registerPatient } from '../redux/ActionCreators'
+import { signIn, register } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -17,11 +17,11 @@ const mapDispatchToProps = (dispatch) => (
     signIn: (creds, isAutomatic) => dispatch(
       signIn(creds, isAutomatic)
     ),
-    registerPatient: (creds) => dispatch(registerPatient(creds))
+    register: (creds) => dispatch(register(creds))
   }
 )
 
-const RendersignInView = (props) => {
+const RenderSignInView = (props) => {
   return (
     <KeyboardAvoidingView
       behavior = 'padding'
@@ -61,7 +61,7 @@ const RendersignInView = (props) => {
   )
 }
 
-const RenderRegisterPatientView = (props) => {
+const RenderRegistrationView = (props) => {
   return (
     <KeyboardAvoidingView
       behavior = 'padding'
@@ -101,7 +101,7 @@ const RenderRegisterPatientView = (props) => {
   )
 }
 
-class PatientSignIn extends React.Component {
+class SignIn extends React.Component {
   constructor (props) {
     super(props)
 
@@ -123,37 +123,6 @@ class PatientSignIn extends React.Component {
     this.validatePassword = this.validatePassword.bind(this)
   }
 
-  componentDidMount () {
-    if (
-      this.props.token.username !== null && this.props.token.password !== null
-    ) {
-      Promise.resolve(
-        this.setState(
-          {
-            username: this.props.token.username,
-            password: this.props.token.password
-          }
-        )
-      )
-        .then(
-          () => {
-            this.props.signIn(
-              {
-                username: this.state.username,
-                password: this.state.password
-              },
-              true
-            )
-          },
-          error => {
-            var errorMessage = new Error(error.message)
-            throw errorMessage
-          }
-        )
-        .catch(error => console.log(error.message))
-    }
-  }
-
   handleSignin () {
     this.props.signIn(
       {
@@ -164,7 +133,7 @@ class PatientSignIn extends React.Component {
   }
 
   handleRegistration () {
-    this.props.registerPatient(
+    this.props.register(
       {
         username: this.state.username,
         password: this.state.password
@@ -229,7 +198,7 @@ class PatientSignIn extends React.Component {
   render () {
     return (
       this.state.isRegistered
-        ? <RendersignInView
+        ? <RenderSignInView
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }
@@ -242,7 +211,7 @@ class PatientSignIn extends React.Component {
           validateEmail = { username => this.validateEmail(username) }
           validatePassword = { password => this.validatePassword(password) }
         />
-        : <RenderRegisterPatientView
+        : <RenderRegistrationView
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }
@@ -259,4 +228,4 @@ class PatientSignIn extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PatientSignIn)
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn)

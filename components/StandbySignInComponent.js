@@ -3,7 +3,7 @@ import React from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signIn, registerStandby } from '../redux/ActionCreators'
+import { signIn, register } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -15,7 +15,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = (dispatch) => (
   {
     signIn: (creds) => dispatch(signIn(creds)),
-    registerStandby: (creds) => dispatch(registerStandby(creds))
+    register: (creds) => dispatch(register(creds))
   }
 )
 
@@ -57,7 +57,7 @@ const RendersignInView = (props) => {
   )
 }
 
-const RenderRegisterStandbyView = (props) => {
+const RenderRegistrationView = (props) => {
   return (
     <KeyboardAvoidingView
       behavior = 'padding'
@@ -95,7 +95,7 @@ const RenderRegisterStandbyView = (props) => {
   )
 }
 
-class StandbySignIn extends React.Component {
+class SignIn extends React.Component {
   constructor (props) {
     super(props)
 
@@ -153,7 +153,7 @@ class StandbySignIn extends React.Component {
   }
 
   handleRegistration () {
-    this.props.registerStandby(
+    this.props.register(
       {
         username: this.state.username,
         password: this.state.password
@@ -231,7 +231,7 @@ class StandbySignIn extends React.Component {
           validateEmail = { username => this.validateEmail(username) }
           validatePassword = { password => this.validatePassword(password) }
         />
-        : <RenderRegisterStandbyView
+        : <RenderRegistrationView
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }
@@ -248,4 +248,4 @@ class StandbySignIn extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StandbySignIn)
+export default connect(mapStateToProps, mapDispatchToProps)(SignIn)

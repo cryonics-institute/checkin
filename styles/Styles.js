@@ -103,6 +103,9 @@ export const styles = StyleSheet.create(
       flexDirection: 'row',
       margin: 5
     },
+    topTab: {
+      backgroundColor: colors.medium
+    },
     transparent: {
       color: colors.transparent,
       fontSize: 12

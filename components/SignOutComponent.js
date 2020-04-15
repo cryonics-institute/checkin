@@ -16,7 +16,7 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
-class PatientSignOut extends React.Component {
+class SignOut extends React.Component {
   render () {
     return (
       <Button
@@ -29,4 +29,4 @@ class PatientSignOut extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PatientSignOut)
+export default connect(mapStateToProps, mapDispatchToProps)(SignOut)

@@ -17,7 +17,7 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
-class StandbyPatientSelection extends React.Component {
+class PatientSelection extends React.Component {
   constructor (props) {
     super(props)
 
@@ -88,4 +88,4 @@ class StandbyPatientSelection extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StandbyPatientSelection)
+export default connect(mapStateToProps, mapDispatchToProps)(PatientSelection)

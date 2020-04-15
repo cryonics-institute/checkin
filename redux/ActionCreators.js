@@ -26,7 +26,6 @@ import moment from 'moment'
 import * as ActionTypes from './ActionTypes'
 import auth from '@react-native-firebase/auth'
 import db from '@react-native-firebase/firestore'
-import NavigationService from '../services/NavigationService'
 
 /**
  * Take a string representing a time in AM/PM format from a Time-Input component
@@ -59,8 +58,7 @@ const convertTo24Hour = (time) => {
  * Add a new document to Firebase for the currently authorized user.  The
  * document includes the sign-in and check-in times, both set to the current
  * time, and the check-in interval.  After Firebase returns a promise that the
- * document has been created, an action for document-fulfillment is initiated
- * and the navigation service is told to navigate to the patient's app-stack.
+ * document has been created, an action for document-fulfillment is initiated.
  * @return {Promise}  A promise to create a new Firebase document.
  */
 export const addDocument = (email) => (dispatch, getState) => {
@@ -131,10 +129,7 @@ export const addDocument = (email) => (dispatch, getState) => {
       }
     )
     .then(
-      () => {
-        dispatch(addDocumentFulfilledAction(patient))
-        NavigationService.navigate('PatientApp')
-      },
+      () => { dispatch(addDocumentFulfilledAction(patient)) },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -176,8 +171,7 @@ export const addDocumentFulfilledAction = (patient) => (
 /**
  * Add a patient to be be tracked by the current standby user.  First, a
  * setListener action creator is called with the patient's e-mail.  After that
- * promise is returned, an action for add-patient-fulfillment is initiated and
- * the navigation service is told to navigate to the standby's app-stack.
+ * promise is returned, an action for add-patient-fulfillment is initiated.
  * @param  {String}   email E-mail of the patient to be added.
  * @return {Promise}        A promise to add a patient to be tracked by standby.
  */
@@ -195,10 +189,7 @@ export const addPatient = (email) => (dispatch, getState) => {
       }
     )
     .then(
-      () => {
-        dispatch(addPatientFulfilledAction(email))
-        NavigationService.navigate('StandbyHome')
-      },
+      () => { dispatch(addPatientFulfilledAction(email)) },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -609,13 +600,13 @@ export const mutateInputFulfilledAction = (inputs) => (
 )
 
 /**
- * Register a new account for a patient on Firebase.  After that promise is
- * returned, an action for registration-fulfillment is initiated and a
- * request to add a document for that patient in initiated.
- * @param  {String}   creds Username and password for the patient.
- * @return {Promise}        A promise to create a new patient-user.
+ * Register a new account for a user on Firebase.  After that promise is
+ * returned, an action for registration-fulfillment is initiated and a request
+ * to add a document for that user is initiated.
+ * @param  {String}   creds Username and password for the user.
+ * @return {Promise}        A promise to create a new user.
  */
-export const registerPatient = (creds) => (dispatch) => {
+export const register = (creds) => (dispatch, getState) => {
   dispatch(registrationRequestedAction())
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
@@ -623,44 +614,10 @@ export const registerPatient = (creds) => (dispatch) => {
       userCredential => {
         dispatch(
           registrationFulfilledAction(
-            {
-              user: userCredential.user,
-              creds: creds
-            }
+            { user: userCredential.user, creds: creds }
           )
         )
         dispatch(addDocument(userCredential.user.email))
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .catch(error => dispatch(registrationRejectedAction(error.message)))
-}
-
-/**
- * Register a new account for a standby-user on Firebase.  After that promise is
- * returned, an action for registration-fulfillment is initiated and the
- * navigation service is told to navigate to the standby's app-stack.
- * @param  {String}   creds Username and password for the standby-user.
- * @return {Promise}        A promise to create a new standby-user.
- */
-export const registerStandby = (creds) => (dispatch) => {
-  dispatch(registrationRequestedAction())
-
-  return auth().createUserWithEmailAndPassword(creds.username, creds.password)
-    .then(
-      userCredential => {
-        dispatch(
-          registrationFulfilledAction(
-            {
-              user: userCredential.user,
-              creds: creds
-            }
-          )
-        )
-        NavigationService.navigate('StandbyApp')
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1562,18 +1519,9 @@ export const signIn = (creds, isAutomatic = false) => (dispatch, getState) => {
     .then(
       userCredential => {
         dispatch(
-          signinFulfilledAction(
-            {
-              user: userCredential.user,
-              creds: creds
-            }
-          )
+          signinFulfilledAction({ user: userCredential.user, creds: creds })
         )
-        if (getState().auth.isPatient) {
-          dispatch(addDocument(userCredential.user.email))
-        } else {
-          NavigationService.navigate('StandbyApp')
-        }
+        dispatch(addDocument(userCredential.user.email))
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1627,8 +1575,7 @@ export const signinFulfilledAction = (data) => (
 /**
  * Sign out user on Firebase, which first removes that user's document on
  * Firebase.  After those promises are returned, an action for sign-out-
- * fulfillment is initiated, a request to remove timers is initiated, and the
- * navigation service is told to navigate to the authorization stack.
+ * fulfillment is initiated, a request to remove timers is initiated.
  * @return {Promise}  A promise to sign-out a user.
  */
 export const signOut = () => (dispatch, getState) => {
@@ -1651,19 +1598,6 @@ export const signOut = () => (dispatch, getState) => {
     .then(
       () => {
         dispatch(signoutFulfilledAction())
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      () => {
-        if (getState().auth.isPatient) {
-          NavigationService.navigate('PatientAuth')
-        } else {
-          NavigationService.navigate('StandbyAuth')
-        }
       },
       error => {
         var errorMessage = new Error(error.message)

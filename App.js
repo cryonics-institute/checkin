@@ -1,11 +1,4 @@
-/**
- * Sample React Native App with Firebase
- * https://github.com/invertase/react-native-firebase
- *
- * @format
- * @flow
- */
-
+import 'react-native-gesture-handler'
 import React from 'react'
 import { NativeModules, Platform, YellowBox } from 'react-native'
 import { Provider } from 'react-redux'

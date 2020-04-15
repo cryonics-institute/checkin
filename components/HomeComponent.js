@@ -47,7 +47,7 @@ const mapDispatchToProps = (dispatch) => (
   }
 )
 
-class PatientHome extends React.Component {
+class Home extends React.Component {
   componentDidMount () {
     if (this.props.patient.alertTimes.length === 0) {
       this.props.mutateInput(Shortid.generate(), '', false)
@@ -108,4 +108,4 @@ class PatientHome extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PatientHome)
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
