@@ -3,7 +3,7 @@ import React from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signinStandby, registerStandby } from '../redux/ActionCreators'
+import { signIn, registerStandby } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -14,12 +14,12 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signinStandby: (creds) => dispatch(signinStandby(creds)),
+    signIn: (creds) => dispatch(signIn(creds)),
     registerStandby: (creds) => dispatch(registerStandby(creds))
   }
 )
 
-const RenderSignInStandbyView = (props) => {
+const RendersignInView = (props) => {
   return (
     <KeyboardAvoidingView
       behavior = 'padding'
@@ -144,7 +144,7 @@ class StandbySignIn extends React.Component {
   }
 
   handleSignin () {
-    this.props.signinStandby(
+    this.props.signIn(
       {
         username: this.state.username,
         password: this.state.password
@@ -218,7 +218,7 @@ class StandbySignIn extends React.Component {
   render () {
     return (
       this.state.isRegistered
-        ? <RenderSignInStandbyView
+        ? <RendersignInView
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }

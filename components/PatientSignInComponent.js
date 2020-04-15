@@ -3,7 +3,7 @@ import React from 'react'
 import { KeyboardAvoidingView, View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signinPatient, registerPatient } from '../redux/ActionCreators'
+import { signIn, registerPatient } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -14,14 +14,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signinPatient: (creds, isAutomatic) => dispatch(
-      signinPatient(creds, isAutomatic)
+    signIn: (creds, isAutomatic) => dispatch(
+      signIn(creds, isAutomatic)
     ),
     registerPatient: (creds) => dispatch(registerPatient(creds))
   }
 )
 
-const RenderSignInPatientView = (props) => {
+const RendersignInView = (props) => {
   return (
     <KeyboardAvoidingView
       behavior = 'padding'
@@ -137,7 +137,7 @@ class PatientSignIn extends React.Component {
       )
         .then(
           () => {
-            this.props.signinPatient(
+            this.props.signIn(
               {
                 username: this.state.username,
                 password: this.state.password
@@ -155,7 +155,7 @@ class PatientSignIn extends React.Component {
   }
 
   handleSignin () {
-    this.props.signinPatient(
+    this.props.signIn(
       {
         username: this.state.username,
         password: this.state.password
@@ -229,7 +229,7 @@ class PatientSignIn extends React.Component {
   render () {
     return (
       this.state.isRegistered
-        ? <RenderSignInPatientView
+        ? <RendersignInView
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }

@@ -1549,13 +1549,13 @@ export const setTimerIntervalFulfilledAction = (interval) => (
 )
 
 /**
- * Sign in a patient on Firebase.  After that promise is returned, an action for
+ * Sign in a user on Firebase.  After that promise is returned, an action for
  * sign-in-fulfillment is initiated and a request to add a document for that
- * patient in initiated.
- * @param  {String}   creds Username and password for the patient.
- * @return {Promise}        A promise to sign-in a patient-user.
+ * user in initiated.
+ * @param  {String}   creds Username and password for the user.
+ * @return {Promise}        A promise to sign-in a user.
  */
-export const signinPatient = (creds, isAutomatic = false) => (dispatch) => {
+export const signIn = (creds, isAutomatic = false) => (dispatch, getState) => {
   dispatch(signinRequestedAction(creds))
 
   return auth().signInWithEmailAndPassword(creds.username, creds.password)
@@ -1569,7 +1569,11 @@ export const signinPatient = (creds, isAutomatic = false) => (dispatch) => {
             }
           )
         )
-        dispatch(addDocument(userCredential.user.email))
+        if (getState().auth.isPatient) {
+          dispatch(addDocument(userCredential.user.email))
+        } else {
+          NavigationService.navigate('StandbyApp')
+        }
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1578,37 +1582,6 @@ export const signinPatient = (creds, isAutomatic = false) => (dispatch) => {
     )
     .then(
       () => { if (isAutomatic) { dispatch(checkin()) } },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .catch(error => dispatch(signinRejectedAction(error.message)))
-}
-
-/**
- * Sign in a standby-user on Firebase.  After that promise is returned, an
- * action for sign-in-fulfillment is initiated and a request to add a document
- * for that patient in initiated.
- * @param  {String}   creds Username and password for the standby-user.
- * @return {Promise}        A promise to sign-in a standby-user.
- */
-export const signinStandby = (creds) => (dispatch) => {
-  dispatch(signinRequestedAction(creds))
-
-  return auth().signInWithEmailAndPassword(creds.username, creds.password)
-    .then(
-      userCredential => {
-        dispatch(
-          signinFulfilledAction(
-            {
-              user: userCredential.user,
-              creds: creds
-            }
-          )
-        )
-        NavigationService.navigate('StandbyApp')
-      },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1652,19 +1625,23 @@ export const signinFulfilledAction = (data) => (
 
 // TODO: Change this to a "remove data" capability in a settings screen.
 /**
- * Sign out a patient on Firebase, which first removes that patient's document
- * on Firebase.  After those promises are returned, an action for sign-out-
+ * Sign out user on Firebase, which first removes that user's document on
+ * Firebase.  After those promises are returned, an action for sign-out-
  * fulfillment is initiated, a request to remove timers is initiated, and the
  * navigation service is told to navigate to the authorization stack.
- * @return {Promise}  A promise to sign-out a patient-user.
+ * @return {Promise}  A promise to sign-out a user.
  */
-export const signoutPatient = () => (dispatch, getState) => {
+export const signOut = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
   return auth().signOut()
     .then(
       () => {
-        dispatch(removeTimers())
+        if (getState().auth.isPatient) {
+          dispatch(removeTimers())
+        } else {
+          dispatch(removeListeners())
+        }
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1682,52 +1659,11 @@ export const signoutPatient = () => (dispatch, getState) => {
     )
     .then(
       () => {
-        NavigationService.navigate('PatientAuth')
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .catch(
-      (error) => {
-        signoutRejectedAction(error.message)
-      }
-    )
-}
-
-/**
- * Sign out a standby-user on Firebase.  After those promises are returned, an
- * action for sign-out-fulfillment is initiated, a request to remove listeners
- * is initiated, and the navigation service is told to navigate to the
- * authorization stack.
- * @return {Promise}  A promise to sign-out a standby-user.
- */
-export const signoutStandby = () => (dispatch) => {
-  dispatch(signoutRequestedAction())
-
-  return auth().signOut()
-    .then(
-      () => {
-        dispatch(removeListeners())
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      () => {
-        dispatch(signoutFulfilledAction())
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      () => {
-        NavigationService.navigate('StandbyAuth')
+        if (getState().auth.isPatient) {
+          NavigationService.navigate('PatientAuth')
+        } else {
+          NavigationService.navigate('StandbyAuth')
+        }
       },
       error => {
         var errorMessage = new Error(error.message)

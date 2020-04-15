@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signoutStandby } from '../redux/ActionCreators'
+import { signOut } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -12,7 +12,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signoutStandby: () => dispatch(signoutStandby())
+    signOut: () => dispatch(signOut())
   }
 )
 
@@ -20,7 +20,7 @@ class StandbySignOut extends React.Component {
   render () {
     return (
       <Button
-        onPress = { () => this.props.signoutStandby() }
+        onPress = { () => this.props.signOut() }
         title = 'Sign Out'
         titleStyle = { styles.buttonTitleColorLight }
         type = 'clear'
