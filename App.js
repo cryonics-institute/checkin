@@ -14,6 +14,7 @@ import { initializeStore } from './redux/ActionCreators'
 import { ConfigureStore } from './redux/configureStore'
 import { PersistGate } from 'redux-persist/integration/react'
 import Main from './components/MainComponent'
+import Welcome from './components/WelcomeComponent'
 
 YellowBox.ignoreWarnings(['Setting a timer', 'color was given a value of '])
 const _console = _.clone(console)
@@ -40,20 +41,10 @@ class App extends React.Component {
         .catch(error => console.log(error.message))
   }
 
-  // TODO: Add a loading component.
-  // render () {
-  //   return (
-  //     <Provider store = { store }>
-  //       <PersistGate loading = { <Loading /> } persistor = { persistor }>
-  //         <Main />
-  //       </PersistGate>
-  //     </Provider>
-  //   )
-  // }
   render () {
     return (
       <Provider store = { store }>
-        <PersistGate loading = { null } persistor = { persistor }>
+        <PersistGate loading = { <Welcome /> } persistor = { persistor }>
           <Main />
         </PersistGate>
       </Provider>
