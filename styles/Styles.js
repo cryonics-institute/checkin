@@ -77,6 +77,9 @@ export const styles = StyleSheet.create(
       margin: 5,
       width: '75%'
     },
+    tab: {
+      backgroundColor: colors.medium
+    },
     text: {
       margin: 5
     },
@@ -102,9 +105,6 @@ export const styles = StyleSheet.create(
       alignItems: 'center',
       flexDirection: 'row',
       margin: 5
-    },
-    topTab: {
-      backgroundColor: colors.medium
     },
     transparent: {
       color: colors.transparent,

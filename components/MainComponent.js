@@ -1,6 +1,6 @@
 import React from 'react'
-import { createMaterialTopTabNavigator }
-  from '@react-navigation/material-top-tabs'
+import { Icon } from 'react-native-elements'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
@@ -23,21 +23,53 @@ const mapDispatchToProps = dispatch => (
   { signIn: (creds, isAutomatic) => dispatch(signIn(creds, isAutomatic)) }
 )
 
-const RenderTopTabs = () => {
-  const Tab = createMaterialTopTabNavigator()
+const RenderTabs = () => {
+  const Tab = createBottomTabNavigator()
 
   return (
     <Tab.Navigator
-      initialRouteName = 'Times'
-      tabBarOptions = { { style: styles.topTab } }
+      initialRouteName = 'Home'
+      backBehavior = 'history'
+      tabBarOptions = {
+        {
+          activeBackgroundColor: colors.dark,
+          activeTintColor: colors.light,
+          keyboardHidesTabBar: true,
+          style: styles.tab
+        }
+      }
     >
       <Tab.Screen
-        name = 'Times'
+        name = 'Home'
         component = { HomeScreen }
+        options = {
+          {
+            tabBarLabel: 'Check In',
+            // eslint-disable-next-line react/display-name
+            tabBarIcon: ({ color, size }) => <Icon
+              name = 'check'
+              type = 'material'
+              color = { color }
+              size = { size }
+            />
+          }
+        }
       />
       <Tab.Screen
-        name = 'Buddies'
+        name = 'Patient'
         component = { PatientSelectionScreen }
+        options = {
+          {
+            tabBarLabel: 'Buddies',
+            // eslint-disable-next-line react/display-name
+            tabBarIcon: ({ color, size }) => <Icon
+              name = 'people'
+              type = 'material'
+              color = { color }
+              size = { size }
+            />
+          }
+        }
       />
     </Tab.Navigator>
   )
@@ -73,8 +105,8 @@ class Main extends React.Component {
         >
           { this.props.isSignedIn
             ? <Stack.Screen
-              name = 'TopTabs'
-              component = { RenderTopTabs }
+              name = 'Tabs'
+              component = { RenderTabs }
               options = {
                 {
                   // eslint-disable-next-line react/display-name
