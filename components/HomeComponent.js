@@ -48,6 +48,7 @@ const mapDispatchToProps = (dispatch) => (
 )
 
 class Home extends React.Component {
+  // TODO: Move the tip stuff into Redux so it only needs to be dismissed once.
   constructor (props) {
     super(props)
 
