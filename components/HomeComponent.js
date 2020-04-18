@@ -25,7 +25,7 @@
 
 import React from 'react'
 import { ScrollView, View } from 'react-native'
-import { Icon, Slider, Text, Tooltip } from 'react-native-elements'
+import { Icon, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import * as Shortid from 'shortid'
 import { mutateInput, setSnooze } from '../redux/ActionCreators'
@@ -48,16 +48,29 @@ const mapDispatchToProps = (dispatch) => (
 )
 
 class Home extends React.Component {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      showTip: true
+    }
+
+    this.closeTip = this.closeTip.bind(this)
+  }
+
   componentDidMount () {
     if (this.props.patient.alertTimes.length === 0) {
       this.props.mutateInput(Shortid.generate(), '', false)
     }
   }
 
+  closeTip () {
+    this.setState({ showTip: false })
+  }
+
   render () {
     return (
       <ScrollView contentContainerStyle = { styles.containerCentered }>
-        <Text h4 style = { styles.title }>Time Inputs</Text>
         {
           this.props.patient.alertTimes.map(
             alert => <TimeInput
@@ -66,46 +79,88 @@ class Home extends React.Component {
             />
           )
         }
-        <View style = { styles.tooltip }>
-          <Text h4 style = { styles.title }>
-            Snooze Interval
-          </Text>
-          <Tooltip
-            height = { 80 }
-            backgroundColor = { colors.medium }
-            popover = {
-              <Text>
-                How long would you like to wait before your buddy is contacted
-                if you miss a check-in?
-              </Text>
-            }
-            width = { 222 }
-          >
+        {
+          this.state.showTip &&
+          <View style = { styles.containerRounded }>
             <Icon
               color = { colors.dark }
-              name = 'info'
+              containerStyle = { styles.buttonTopRight }
+              name = 'cancel'
+              onPress = { () => this.closeTip() }
               type = 'material'
             />
-          </Tooltip>
-        </View>
-        <Slider
-          maximumValue = { this.props.patient.shortestInterval / 60000 }
-          minimumValue = { 1 }
-          onSlidingComplete = { value => this.props.setSnooze(value) }
-          step = { 1 }
-          style = { styles.slider }
-          value = { this.props.patient.snooze }
-        />
-        <Text style = { styles.text }>
-          {
-            this.props.patient.snooze === 1
-              ? this.props.patient.snooze + ' Minute'
-              : this.props.patient.snooze + ' Minutes'
-          }
-        </Text>
+            <Text style = { styles.textTip }>
+              <Text style = { { fontWeight: 'bold' } }>TIP:</Text> To check in,
+              enter a time using the form above.  If you want to add another
+              time, just press the plus-sign for a new row. You can delete any
+              check-in by pressing a minus-sign.
+            </Text>
+          </View>
+        }
       </ScrollView>
     )
   }
 }
+
+// class Home extends React.Component {
+//   componentDidMount () {
+//     if (this.props.patient.alertTimes.length === 0) {
+//       this.props.mutateInput(Shortid.generate(), '', false)
+//     }
+//   }
+//
+//   render () {
+//     return (
+//       <ScrollView contentContainerStyle = { styles.containerCentered }>
+//         <Text h4 style = { styles.title }>Check-In Times</Text>
+//         {
+//           this.props.patient.alertTimes.map(
+//             alert => <TimeInput
+//               key = { alert.id.toString() }
+//               value = { alert.id }
+//             />
+//           )
+//         }
+//         <View style = { styles.tooltip }>
+//           <Text h4 style = { styles.title }>
+//             Snooze Interval
+//           </Text>
+//           <Tooltip
+//             height = { 80 }
+//             backgroundColor = { colors.medium }
+//             popover = {
+//               <Text>
+//                 How long would you like to wait before your buddy is contacted
+//                 if you miss a check-in?
+//               </Text>
+//             }
+//             width = { 222 }
+//           >
+//             <Icon
+//               color = { colors.dark }
+//               name = 'info'
+//               type = 'material'
+//             />
+//           </Tooltip>
+//         </View>
+//         <Slider
+//           maximumValue = { this.props.patient.shortestInterval / 60000 }
+//           minimumValue = { 1 }
+//           onSlidingComplete = { value => this.props.setSnooze(value) }
+//           step = { 1 }
+//           style = { styles.slider }
+//           value = { this.props.patient.snooze }
+//         />
+//         <Text style = { styles.text }>
+//           {
+//             this.props.patient.snooze === 1
+//               ? this.props.patient.snooze + ' Minute'
+//               : this.props.patient.snooze + ' Minutes'
+//           }
+//         </Text>
+//       </ScrollView>
+//     )
+//   }
+// }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

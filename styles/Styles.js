@@ -43,11 +43,27 @@ export const styles = StyleSheet.create(
     buttonTitleColorLight: {
       color: colors.light
     },
+    buttonTopRight: {
+      position: 'absolute',
+      alignSelf: 'flex-end',
+      paddingRight: 5,
+      paddingTop: 5
+    },
     containerCentered: {
       alignItems: 'center',
       backgroundColor: colors.light,
       flex: 1,
       justifyContent: 'center'
+    },
+    containerRounded: {
+      alignSelf: 'center',
+      borderWidth: 2,
+      borderColor: colors.dark,
+      borderRadius: 10,
+      backgroundColor: colors.medium,
+      margin: '5%',
+      padding: '5%',
+      width: '90%'
     },
     containerSpaced: {
       alignItems: 'center',
@@ -91,6 +107,10 @@ export const styles = StyleSheet.create(
     textStrikeThrough: {
       color: colors.medium,
       textDecorationLine: 'line-through'
+    },
+    textTip: {
+      color: colors.dark,
+      fontSize: 18
     },
     timeRow: {
       alignItems: 'center',
