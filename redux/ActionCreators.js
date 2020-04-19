@@ -1123,7 +1123,7 @@ export const setListenerInterval = (
       .catch(
         error => dispatch(setListenerIntervalRejectedAction(error.message))
       )
-  } else {
+  } else { // TODO: Consider not setting a default interval of one minute.
     return Promise.resolve(60000)
       .catch(
         error => dispatch(setListenerIntervalRejectedAction(error.message))
@@ -1469,7 +1469,7 @@ export const setTimerInterval = (
       .catch(
         error => dispatch(setTimerIntervalRejectedAction(error.message))
       )
-  } else {
+  } else { // TODO: Consider not setting a default interval of one minute.
     return Promise.resolve(60000)
       .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
   }
