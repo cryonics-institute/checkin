@@ -1,6 +1,6 @@
 // TODO: Handle rejected sign-ins!
 import React from 'react'
-import { KeyboardAvoidingView, View } from 'react-native'
+import { KeyboardAvoidingView } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { signIn, register } from '../redux/ActionCreators'
@@ -14,9 +14,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = (dispatch) => (
   {
-    signIn: (creds, isAutomatic) => dispatch(
-      signIn(creds, isAutomatic)
-    ),
+    signIn: (creds, isAutomatic) => dispatch(signIn(creds, isAutomatic)),
     register: (creds) => dispatch(register(creds))
   }
 )
@@ -43,20 +41,18 @@ const RenderSignInView = (props) => {
       <Text style={ styles.textError }>
         { props.isPasswordValid ? '' : props.passwordError }
       </Text>
-      <View>
-        <Button
-          buttonStyle = { styles.button }
-          disabled = { props.toggleButtonDisabled() }
-          onPress = { () => props.handleSignin() }
-          title = 'Sign In'
-        />
-        <Button
-          onPress = { () => props.toggleRegistration() }
-          title = 'Create Account'
-          titleStyle = { styles.buttonTitleColorDark }
-          type = 'clear'
-        />
-      </View>
+      <Button
+        buttonStyle = { styles.button }
+        disabled = { props.toggleButtonDisabled() }
+        onPress = { () => props.handleSignin() }
+        title = 'Sign In'
+      />
+      <Button
+        onPress = { () => props.toggleRegistration() }
+        title = 'Create Account'
+        titleStyle = { styles.buttonTitleColorDark }
+        type = 'clear'
+      />
     </KeyboardAvoidingView>
   )
 }
@@ -83,20 +79,18 @@ const RenderRegistrationView = (props) => {
       <Text style={ styles.textError }>
         { props.isPasswordValid ? '' : props.passwordError }
       </Text>
-      <View>
-        <Button
-          buttonStyle = { styles.button }
-          disabled = { props.toggleButtonDisabled() }
-          onPress = { () => props.handleRegistration() }
-          title = 'Create Account'
-        />
-        <Button
-          onPress = { () => props.toggleRegistration() }
-          title = 'Sign In'
-          titleStyle = { styles.buttonTitleColorDark }
-          type = 'clear'
-        />
-      </View>
+      <Button
+        buttonStyle = { styles.button }
+        disabled = { props.toggleButtonDisabled() }
+        onPress = { () => props.handleRegistration() }
+        title = 'Create Account'
+      />
+      <Button
+        onPress = { () => props.toggleRegistration() }
+        title = 'Sign In'
+        titleStyle = { styles.buttonTitleColorDark }
+        type = 'clear'
+      />
     </KeyboardAvoidingView>
   )
 }
