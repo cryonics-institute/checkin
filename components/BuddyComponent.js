@@ -7,12 +7,10 @@ import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    checkinTime: state.patient.checkinTime,
-    lastAlertTime: state.patient.lastAlertTime,
-    patientEmail: state.patient.email,
-    patientAlertActive: state.patient.isAlertActive,
-    patientSignedIn: state.patient.isSignedIn,
-    signinTime: state.patient.signinTime
+    checkinTime: state.buddy.checkinTime,
+    lastAlertTime: state.buddy.lastAlertTime,
+    buddyEmail: state.buddy.email,
+    buddySignedIn: state.buddy.isSignedIn
   }
 }
 
@@ -26,20 +24,17 @@ const RenderActiveAlertView = (props) => {
       </Text>
       <Text h4 style = { styles.title }>Check-In Time</Text>
       <Text style = { styles.text }>
-        {
-          moment(props.checkinTime)
-            .format('dddd, MMMM D, YYYY, h:mm A')
-        }
+        { moment(props.checkinTime).format('dddd, MMMM D, YYYY, h:mm A') }
       </Text>
     </View>
   )
 }
 
-const RenderNullPatientStatusView = (props) => {
+const RenderNullBuddyStatusView = (props) => {
   return (
     <View style = { styles.containerCentered }>
       <Text h4 style = { styles.title }>
-        Retrieving Patient Data
+        Retrieving Buddy Data
       </Text>
       <ActivityIndicator />
       <StatusBar barStyle='default' />
@@ -47,34 +42,24 @@ const RenderNullPatientStatusView = (props) => {
   )
 }
 
-const RenderSignedInPatientView = (props) => {
+const RenderSignedInBuddyView = (props) => {
   return (
     <View style = { styles.containerCentered }>
-      <Text h4 style = { styles.title }>Sign-In Time</Text>
-      <Text style = { styles.text }>
-        {
-          moment(props.signinTime)
-            .format('dddd, MMMM Do YYYY, h:mm:ss a')
-        }
-      </Text>
       <Text h4 style = { styles.title }>Check-In Time</Text>
       <Text style = { styles.text }>
-        {
-          moment(props.checkinTime)
-            .format('dddd, MMMM Do YYYY, h:mm:ss a')
-        }
+        { moment(props.checkinTime).format('dddd, MMMM D, YYYY, h:mm A') }
       </Text>
     </View>
   )
 }
 
-const RenderSignedOutPatientView = (props) => {
+const RenderSignedOutBuddyView = (props) => {
   return (
     <View style = { styles.containerCentered }>
       <Text h4 style = { styles.paragraph }>
-        The patient with e-mail
+        The buddy with e-mail
         {'\n'}
-        { props.patientEmail }
+        { props.buddyEmail }
         {'\n'}
         is not signed in.
       </Text>
@@ -83,7 +68,7 @@ const RenderSignedOutPatientView = (props) => {
 }
 
 // TODO: What happens if the network is down?
-class StandbyHome extends React.Component {
+class Buddy extends React.Component {
   getLastAlertTime () {
     const lastAlertTime = moment(this.props.lastAlertTime).toISOString()
     const lastAlertTimeInMs =
@@ -100,17 +85,17 @@ class StandbyHome extends React.Component {
   }
 
   render () {
-    if (this.props.patientSignedIn == null) {
+    if (this.props.buddySignedIn == null) {
       return (
-        <RenderNullPatientStatusView/>
+        <RenderNullBuddyStatusView/>
       )
-    } else if (this.props.patientSignedIn && !this.props.patientAlertActive) {
+    } else if (this.props.buddySignedIn && !this.props.buddyAlertActive) {
       return (
-        <RenderSignedInPatientView
+        <RenderSignedInBuddyView
           checkinTime = { this.props.checkinTime }
         />
       )
-    } else if (this.props.patientSignedIn && this.props.patientAlertActive) {
+    } else if (this.props.buddySignedIn && this.props.buddyAlertActive) {
       return (
         <RenderActiveAlertView
           checkinTime = { this.props.checkinTime }
@@ -119,12 +104,12 @@ class StandbyHome extends React.Component {
       )
     } else {
       return (
-        <RenderSignedOutPatientView
-          patientEmail = { this.props.patientEmail }
+        <RenderSignedOutBuddyView
+          buddyEmail = { this.props.buddyEmail }
         />
       )
     }
   }
 }
 
-export default connect(mapStateToProps)(StandbyHome)
+export default connect(mapStateToProps)(Buddy)

@@ -1,6 +1,6 @@
 /**
  * Redux reducer for the project, Cryonics Check-In, that stores the state for
- * Firebase authorization.
+ * buddy objects.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -24,66 +24,65 @@
 
 import * as ActionTypes from './ActionTypes'
 
-export const Auth = (
+export const Buddy = (
   state = {
+    alertTimes: [],
+    checkinTime: null,
+    email: null,
     errMess: null,
-    user: null
+    isSignedIn: null,
+    lastAlertTime: null,
+    snooze: null
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.REGISTRATION_REQUESTED:
+    case ActionTypes.ADD_BUDDY_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
-    case ActionTypes.REGISTRATION_REJECTED:
+    case ActionTypes.ADD_BUDDY_REJECTED:
       return {
         ...state,
         errMess: action.payload
       }
 
-    case ActionTypes.REGISTRATION_FULFILLED:
+    case ActionTypes.ADD_BUDDY_FULFILLED:
       return {
         ...state,
+        email: action.payload
+      }
+
+    case ActionTypes.GET_DOCUMENT_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
+    case ActionTypes.GET_DOCUMENT_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload,
+        isSignedIn: null
+      }
+
+    case ActionTypes.GET_DOCUMENT_FULFILLED:
+      return {
+        ...state,
+        alertTimes: action.payload[1],
+        checkinInterval: action.payload[2],
+        checkinTime: action.payload[3],
         errMess: null,
-        user: action.payload.user
+        isSignedIn: action.payload[0],
+        snooze: action.payload[4]
       }
 
-    case ActionTypes.SIGNIN_REQUESTED:
-      return {
-        ...state
-      }
-
-    case ActionTypes.SIGNIN_REJECTED:
+    case ActionTypes.SET_LAST_ALERT_TIME:
       return {
         ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.SIGNIN_FULFILLED:
-      return {
-        ...state,
-        errMess: null,
-        user: action.payload.user
-      }
-
-    case ActionTypes.SIGNOUT_REQUESTED:
-      return {
-        ...state
-      }
-
-    case ActionTypes.SIGNOUT_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.SIGNOUT_FULFILLED:
-      return {
-        ...state,
-        errMess: null,
-        user: null
+        lastAlertTime: action.payload
       }
 
     default:

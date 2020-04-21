@@ -1,4 +1,3 @@
-// TODO: It's adding listeners every minute.
 /**
  * Redux action-creators for the project, Cryonics Check-In.
  *
@@ -56,6 +55,67 @@ const convertTo24Hour = (time) => {
 }
 
 /**
+ * Add a buddy to be be tracked by the current user.  First, a setListener
+ * action creator is called with the buddy's e-mail.  After that promise is
+ * returned, an action for add-buddy-fulfillment is initiated.
+ * @param  {String}   email E-mail of the buddy to be added.
+ * @return {Promise}        A promise to add a buddy to be tracked by standby.
+ */
+export const addBuddy = (email) => (dispatch, getState) => {
+  dispatch(addBuddyRequestedAction())
+
+  return Promise.resolve(dispatch(getDocument(email)))
+    .then(
+      () => {
+        dispatch(setListener())
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => { dispatch(addBuddyFulfilledAction(email)) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(addBuddyRejectedAction(error.message)))
+}
+
+/**
+ * Initiate an action to add a buddy to be be tracked by the current user.
+ */
+export const addBuddyRequestedAction = () => (
+  {
+    type: ActionTypes.ADD_BUDDY_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that adding a buddy to be be tracked failed.
+ * @param  {Error} errorMessage Message describing the add-buddy failure.
+ */
+export const addBuddyRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.ADD_BUDDY_REJECTED,
+    payload: errorMessage
+  }
+)
+
+/**
+ * Initiate an action indicating that a buddy to be be tracked has been added.
+ * @param  {String}   email E-mail of the buddy to be added.
+ */
+export const addBuddyFulfilledAction = (email) => (
+  {
+    type: ActionTypes.ADD_BUDDY_FULFILLED,
+    payload: email
+  }
+)
+
+/**
  * Add a new document to Firebase for the currently authorized user.  The
  * document includes the sign-in and check-in times, both set to the current
  * time, and the check-in interval.  After Firebase returns a promise that the
@@ -64,10 +124,9 @@ const convertTo24Hour = (time) => {
  */
 export const addDocument = (email) => (dispatch, getState) => {
   const now = (new Date()).toISOString()
-  const patient = {
+  const user = {
     checkinTime: now,
     isSignedIn: true,
-    signinTime: now,
     snooze: 9 // TODO: This should be changed so snooze is not reset on login.
   }
 
@@ -90,22 +149,20 @@ export const addDocument = (email) => (dispatch, getState) => {
           if (typeof doc.data().subscribers !== 'undefined') {
             return db().collection('users').doc(email).set(
               {
-                alertTimes: getState().patient.alertTimes,
-                checkinTime: patient.checkinTime,
+                alertTimes: getState().user.alertTimes,
+                checkinTime: user.checkinTime,
                 deviceTokens: deviceTokens,
-                signinTime: patient.signinTime,
-                snooze: patient.snooze,
+                snooze: user.snooze,
                 subscribers: doc.data().subscribers
               }
             )
           } else {
             return db().collection('users').doc(email).set(
               {
-                alertTimes: getState().patient.alertTimes,
-                checkinTime: patient.checkinTime,
+                alertTimes: getState().user.alertTimes,
+                checkinTime: user.checkinTime,
                 deviceTokens: deviceTokens,
-                signinTime: patient.signinTime,
-                snooze: patient.snooze
+                snooze: user.snooze
               }
             )
           }
@@ -115,11 +172,10 @@ export const addDocument = (email) => (dispatch, getState) => {
 
           return db().collection('users').doc(email).set(
             {
-              alertTimes: getState().patient.alertTimes,
-              checkinTime: patient.checkinTime,
+              alertTimes: getState().user.alertTimes,
+              checkinTime: user.checkinTime,
               deviceTokens: [getState().device.token],
-              signinTime: patient.signinTime,
-              snooze: patient.snooze
+              snooze: user.snooze
             }
           )
         }
@@ -130,7 +186,7 @@ export const addDocument = (email) => (dispatch, getState) => {
       }
     )
     .then(
-      () => { dispatch(addDocumentFulfilledAction(patient)) },
+      () => { dispatch(addDocumentFulfilledAction(user)) },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -162,71 +218,10 @@ export const addDocumentRejectedAction = (errorMessage) => (
 /**
  * Initiate an action indicating that a new Firebase document has been created.
  */
-export const addDocumentFulfilledAction = (patient) => (
+export const addDocumentFulfilledAction = (user) => (
   {
     type: ActionTypes.ADD_DOCUMENT_FULFILLED,
-    payload: patient
-  }
-)
-
-/**
- * Add a patient to be be tracked by the current standby user.  First, a
- * setListener action creator is called with the patient's e-mail.  After that
- * promise is returned, an action for add-patient-fulfillment is initiated.
- * @param  {String}   email E-mail of the patient to be added.
- * @return {Promise}        A promise to add a patient to be tracked by standby.
- */
-export const addPatient = (email) => (dispatch, getState) => {
-  dispatch(addPatientRequestedAction())
-
-  return Promise.resolve(dispatch(getDocument(email)))
-    .then(
-      () => {
-        dispatch(setListener())
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      () => { dispatch(addPatientFulfilledAction(email)) },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .catch(error => dispatch(addPatientRejectedAction(error.message)))
-}
-
-/**
- * Initiate an action to add a patient to be be tracked by the current standby.
- */
-export const addPatientRequestedAction = () => (
-  {
-    type: ActionTypes.ADD_PATIENT_REQUESTED
-  }
-)
-
-/**
- * Initiate an error indicating that adding a patient to be be tracked failed.
- * @param  {Error} errorMessage Message describing the add-patient failure.
- */
-export const addPatientRejectedAction = (errorMessage) => (
-  {
-    type: ActionTypes.ADD_PATIENT_REJECTED,
-    payload: errorMessage
-  }
-)
-
-/**
- * Initiate an action indicating that a patient to be be tracked has been added.
- * @param  {String}   email E-mail of the patient to be added.
- */
-export const addPatientFulfilledAction = (email) => (
-  {
-    type: ActionTypes.ADD_PATIENT_FULFILLED,
-    payload: email
+    payload: user
   }
 )
 
@@ -240,15 +235,13 @@ export const addPatientFulfilledAction = (email) => (
  */
 export const checkin = () => (dispatch, getState) => {
   const now = (new Date()).toISOString()
-  const patient = {
-    checkinTime: now
-  }
+  const user = { checkinTime: now }
 
   dispatch(checkinRequestedAction())
 
   return db().collection('users').doc(getState().auth.user.email).update(
     {
-      checkinTime: patient.checkinTime
+      checkinTime: user.checkinTime
     }
   )
     .then(
@@ -262,7 +255,7 @@ export const checkin = () => (dispatch, getState) => {
     )
     .then(
       () => {
-        dispatch(checkinFulfilledAction(patient.checkinTime))
+        dispatch(checkinFulfilledAction(user.checkinTime))
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -274,7 +267,7 @@ export const checkin = () => (dispatch, getState) => {
 }
 
 /**
- * Initiate an action to update a patient's check-in time and interval.
+ * Initiate an action to update a user's check-in time and interval.
  */
 export const checkinRequestedAction = () => (
   {
@@ -283,7 +276,7 @@ export const checkinRequestedAction = () => (
 )
 
 /**
- * Initiate an error indicating that updating a patient's check-in time and
+ * Initiate an error indicating that updating a user's check-in time and
  * interval failed.
  * @param  {Error} errorMessage Message describing the check-in failure.
  */
@@ -295,7 +288,7 @@ export const checkinRejectedAction = (errorMessage) => (
 )
 
 /**
- * Initiate an action indicating that a patient's check-in time and interval has
+ * Initiate an action indicating that a user's check-in time and interval has
  * been added.
  */
 export const checkinFulfilledAction = (checkinTime) => (
@@ -306,12 +299,12 @@ export const checkinFulfilledAction = (checkinTime) => (
 )
 
 /**
- * Update the sign-in and check-in times and the check-in interval in the Redux
- * store using the currently-authorized user's Firebase document.  First, the
- * document is retrieved from Firebase.  After that promise is returned, the
- * appropriate state parameters are updated.  Finally, an action for get-
- * document-fulfillment is initiated.
- * @param  {String}   email E-mail of the currently-authorized patient.
+ * Get the sign-in and check-in times and the check-in interval in the Redux
+ * store using a buddy's Firebase document.  First, the document is retrieved
+ * from Firebase.  After that promise is returned, the appropriate state
+ * parameters are updated.  Finally, an action for get-document-fulfillment is
+ * initiated.
+ * @param  {String}   email A buddy's e-mail.
  * @return {Promise}        A promise to update check-in state parameters.
  */
 // TODO: Can do better with the database rules for Firestore?
@@ -391,7 +384,6 @@ export const getDocument = (email) => (dispatch, getState) => {
             doc.data().alertTimes,
             doc.data().checkinInterval,
             doc.data().checkinTime,
-            doc.data().signinTime,
             doc.data().snooze
           ]
         } else {
@@ -441,7 +433,7 @@ export const getDocumentRejectedAction = (errorMessage) => (
 
 /**
  * Initiate an action indicating that updating the Redux store has completed.
- * @param {Array} data  An array of values for the patient reducer.
+ * @param {Array} data  An array of values for the buddy reducer.
  */
 export const getDocumentFulfilledAction = (data) => (
   {
@@ -451,7 +443,7 @@ export const getDocumentFulfilledAction = (data) => (
 )
 /**
  * Initialize the device reducer in the Redux store with the device token.
- * @param {String} deviceToken  An array of values for the patient reducer.
+ * @param {String} deviceToken  A user's device token.
  */
 
 export const initializeStore = (deviceToken) => (dispatch, getState) => {
@@ -486,7 +478,7 @@ export const initializeStoreRejectedAction = (errorMessage) => (
 
 /**
  * Initiate an action indicating that saving the device token has completed.
- * @param {Array} data  An array of values for the patient reducer.
+ * @param {Array} data  A user's device token.
  */
 export const initializeStoreFulfilledAction = (deviceToken) => (
   {
@@ -504,7 +496,7 @@ export const initializeStoreFulfilledAction = (deviceToken) => (
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
   try {
-    if (getState().patient.alertTimes !== null) {
+    if (getState().user.alertTimes !== null) {
       dispatch(mutateInputRequestedAction())
 
       const hours = time.length > 0
@@ -517,21 +509,21 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
         time: (new Date(1970, 0, 1, hours, minutes)).toISOString(),
         validity: validity
       }
-      const index = getState().patient.alertTimes.findIndex(
+      const index = getState().user.alertTimes.findIndex(
         input => input.id === id
       )
       let inputsArray = null
 
       if (index === -1) {
         inputsArray = [
-          ...getState().patient.alertTimes.filter(input => input.id !== id),
+          ...getState().user.alertTimes.filter(input => input.id !== id),
           input
         ]
       } else {
         inputsArray = [
-          ...getState().patient.alertTimes.slice(0, index),
+          ...getState().user.alertTimes.slice(0, index),
           input,
-          ...getState().patient.alertTimes.slice(index + 1)
+          ...getState().user.alertTimes.slice(index + 1)
         ]
       }
 
@@ -557,7 +549,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
             }
           }
         )
-    } else if (getState().patient.alertTimes == null) {
+    } else if (getState().user.alertTimes == null) {
       throw new Error('Input array is null or undefined.')
     } else {
       throw new Error(
@@ -668,7 +660,7 @@ export const registrationFulfilledAction = (data) => (
 export const removeInput = (id) => (dispatch, getState) => {
   dispatch(removeInputsRequestedAction())
 
-  const inputsArray = getState().patient.alertTimes.filter(
+  const inputsArray = getState().user.alertTimes.filter(
     input => input.id !== id
   )
 
@@ -743,14 +735,14 @@ export const removeInputsFulfilledAction = (inputs) => (
 )
 
 /**
- * Remove all listeners added in the addPatient action from the array of
+ * Remove all listeners added in the addBuddy action from the array of
  * listeners in the Redux store.
  */
 export const removeListeners = () => (dispatch, getState) => {
   dispatch(removeListenersRequestedAction())
 
   return Promise.all(
-    [getState().patient.listeners.forEach(listener => clearTimeout(listener))]
+    [getState().listener.listeners.forEach(listener => clearTimeout(listener))]
   )
     .then(
       () => { dispatch(removeListenersFulfilledAction()) },
@@ -840,51 +832,16 @@ export const removeTimersFulfilledAction = () => (
 )
 
 /**
- * Set the status of the currently-authorized user as patient or standby.
- * @param {Boolean} isPatient Whether user is a patient or standby.
- */
-export const selectStatus = (isPatient) => (dispatch) => {
-  dispatch(selectStatusAction(isPatient))
-}
-
-/**
- * Initiate an action indicating that the user's status has been set.
- * @param {Boolean} isPatient Whether user is a patient or standby.
- */
-export const selectStatusAction = (isPatient) => (
-  {
-    type: ActionTypes.SELECT_STATUS,
-    payload: isPatient
-  }
-)
-
-/**
- * Set the status of the patient's alert-indicator to active.
- */
-export const setAlertActive = () => (dispatch) => {
-  dispatch(setAlertActiveAction())
-}
-
-/**
- * Initiate an action indicating that the patient has missed a check-in.
- */
-export const setAlertActiveAction = () => (
-  {
-    type: ActionTypes.SET_ALERT_ACTIVE
-  }
-)
-
-/**
- * Set the last time the patient should have checked in.
- * @param {String} lastAlertTime  Time patient should have checked in.
+ * Set the last time the buddy should have checked in.
+ * @param {String} lastAlertTime  Time buddy should have checked in.
  */
 export const setLastAlertTime = (lastAlertTime) => (dispatch) => {
   dispatch(setLastAlertTimeAction(lastAlertTime))
 }
 
 /**
- * Initiate an action setting the last time the patient should checked in.
- * @param {String} lastAlertTime  Time patient should have checked in.
+ * Initiate an action setting the last time the buddy should checked in.
+ * @param {String} lastAlertTime  Time buddy should have checked in.
  */
 export const setLastAlertTimeAction = (lastAlertTime) => (
   {
@@ -894,16 +851,16 @@ export const setLastAlertTimeAction = (lastAlertTime) => (
 )
 
 /**
- * Set a recurring listener that will check if the patient that the standby-user
- * is following has checked in within the alotted interval plus the snooze or
- * else alert standby that the user has not checked in.
+ * Set a recurring listener that will check if a buddy that the user is
+ * following has checked in within the alotted interval plus the snooze or else
+ * alert standby that the buddy has not checked in.
  * @param  {Boolean} isTest     Whether called by unit test (optional).
  * @return {Promise}            Promise to create listener after interval.
  */
 export const setListener = (isTest = false) => (dispatch, getState) => {
   const noCheckinAlert = () => {
     Alert.alert(
-      'Cryonics-Patient Alert',
+      'Check-In Alert',
       'Your buddy has not checked in.\nMake contact immediately!',
       [
         {
@@ -911,7 +868,6 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
           onPress: () => {
             console.log('Dismiss Pressed')
             dispatch(removeListeners())
-            dispatch(setAlertActive())
           },
           style: 'cancel'
         }
@@ -922,12 +878,12 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
 
   dispatch(setListenerRequestedAction())
 
-  if (getState().patient.isSignedIn) {
+  if (getState().buddy.isSignedIn) {
     return Promise.resolve(
       dispatch(
         setListenerInterval(
-          getState().patient.alertTimes,
-          getState().patient.checkinTime
+          getState().buddy.alertTimes,
+          getState().buddy.checkinTime
         )
       )
     )
@@ -1014,7 +970,7 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
 }
 
 /**
- * Initiate an action to set a listener for patient check-ins.
+ * Initiate an action to set a listener for buddy check-ins.
  */
 export const setListenerRequestedAction = () => (
   {
@@ -1047,7 +1003,7 @@ export const setListenerFulfilledAction = (listener) => (
 /**
  * Set the interval for the setListener function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
- * @param   {Date} checkinTime  Last time patient checked in.
+ * @param   {Date} checkinTime  Last time buddy checked in.
  * @param   {Array} now         Now as a JS Date object.
  * @param   {Boolean} isTest    Whether called by unit test (optional).
  * @return  {Integer} The interval between alerts.
@@ -1081,7 +1037,7 @@ export const setListenerInterval = (
         parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
         parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
         parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
-    const snoozeInMs = getState().patient.snooze * 60000
+    const snoozeInMs = getState().buddy.snooze * 60000
 
     dispatch(setListenerIntervalRequestedAction())
 
@@ -1132,7 +1088,7 @@ export const setListenerInterval = (
 }
 
 /**
- * Initiate an action to set a timer-interval for patient check-in alerts.
+ * Initiate an action to set a timer-interval for buddy check-in alerts.
  */
 export const setListenerIntervalRequestedAction = () => (
   {
@@ -1181,7 +1137,7 @@ export const setShortestInterval = (interval) => (dispatch, getState) => {
         throw errorMessage
       }
     )
-    .catch(error => dispatch(setSnoozeRejectedAction(error.message)))
+    .catch(error => dispatch(setShortestIntervalRejectedAction(error.message)))
 }
 
 /**
@@ -1217,10 +1173,10 @@ export const setShortestIntervalFulfilledAction = (interval) => (
 )
 
 /**
- * Set the patient's snooze interval, which indicates the delay between when the
- * patient is alerted to check in and when the standby is alerted that the
- * patient has failed to check in.
- * @param {Integer} interval  Delay between patient and standby alerts.
+ * Set the user's snooze interval, which indicates the delay between when the
+ * user is alerted to check in and when the standby is alerted that the user
+ * has failed to check in.
+ * @param {Integer} interval  Delay between user and standby alerts.
  */
 export const setSnooze = (snooze) => (dispatch, getState) => {
   dispatch(setSnoozeRequestedAction())
@@ -1241,7 +1197,7 @@ export const setSnooze = (snooze) => (dispatch, getState) => {
 }
 
 /**
- * Initiate an action to set a snooze for patient check-in alerts.
+ * Initiate an action to set a snooze for user check-in alerts.
  */
 export const setSnoozeRequestedAction = () => (
   {
@@ -1272,7 +1228,7 @@ export const setSnoozeFulfilledAction = (snooze) => (
 )
 
 /**
- * Set a timer that will issue an alert for the currently authorized patient to
+ * Set a timer that will issue an alert for the currently authorized user to
  * check-in after an interval of time.
  * @param  {Boolean} isTest     Whether called by unit test (optional).
  * @return {Promise}            Promise to set a timer.
@@ -1301,8 +1257,8 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
   return Promise.resolve(
     dispatch(
       setTimerInterval(
-        getState().patient.alertTimes,
-        getState().patient.checkinTime
+        getState().user.alertTimes,
+        getState().user.checkinTime
       )
     )
   )
@@ -1359,7 +1315,7 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
 }
 
 /**
- * Initiate an action to set a timer for patient check-in alerts.
+ * Initiate an action to set a timer for user check-in alerts.
  */
 export const setTimerRequestedAction = () => (
   {
@@ -1392,7 +1348,7 @@ export const setTimerFulfilledAction = (timer) => (
 /**
  * Set the interval for the setTimer function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
- * @param   {Date} checkinTime  Last time patient checked in.
+ * @param   {Date} checkinTime  Last time user checked in.
  * @param   {Array} now         Now as a JS Date object.
  * @param   {Boolean} isTest    Whether called by unit test (optional).
  * @return  {Integer}           Interval to wait before check-in alert.
@@ -1476,7 +1432,7 @@ export const setTimerInterval = (
 }
 
 /**
- * Initiate an action to set a timer-interval for patient check-in alerts.
+ * Initiate an action to set a timer-interval for user check-in alerts.
  */
 export const setTimerIntervalRequestedAction = () => (
   {
@@ -1585,11 +1541,8 @@ export const signOut = () => (dispatch, getState) => {
   return auth().signOut()
     .then(
       () => {
-        if (getState().auth.isPatient) {
-          dispatch(removeTimers())
-        } else {
-          dispatch(removeListeners())
-        }
+        dispatch(removeTimers())
+        dispatch(removeListeners())
       },
       error => {
         var errorMessage = new Error(error.message)

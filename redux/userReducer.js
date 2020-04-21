@@ -1,9 +1,6 @@
-// TODO: Maybe this should be a user reducer because both the patient and the
-// standby use it.
-// TODO: Maybe listeners should be spun out into their own reducer.
 /**
  * Redux reducer for the project, Cryonics Check-In, that stores the state for
- * Patient objects.
+ * user objects.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -27,21 +24,16 @@
 
 import * as ActionTypes from './ActionTypes'
 
-export const Patient = (
+export const User = (
   state = {
     alertTimes: [],
     checkinInterval: null,
     checkinTime: null,
-    email: null,
     errMess: null,
-    interval: null,
-    isAlertActive: false,
     isSignedIn: null,
     lastAlertTime: null,
-    listeners: [],
-    longestSnooze: 30,
+    longestSnooze: 60,
     shortestInterval: 1800000,
-    signinTime: null,
     snooze: null
   },
   action
@@ -65,26 +57,7 @@ export const Patient = (
         checkinTime: action.payload.checkinTime,
         errMess: null,
         isSignedIn: action.payload.isSignedIn,
-        signinTime: action.payload.signinTime,
         snooze: action.payload.snooze
-      }
-
-    case ActionTypes.ADD_PATIENT_REQUESTED:
-      return {
-        ...state,
-        errMess: null
-      }
-
-    case ActionTypes.ADD_PATIENT_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.ADD_PATIENT_FULFILLED:
-      return {
-        ...state,
-        email: action.payload
       }
 
     case ActionTypes.CHECKIN_REQUESTED:
@@ -104,31 +77,6 @@ export const Patient = (
         ...state,
         checkinTime: action.payload,
         errMess: null
-      }
-
-    case ActionTypes.GET_DOCUMENT_REQUESTED:
-      return {
-        ...state,
-        errMess: null
-      }
-
-    case ActionTypes.GET_DOCUMENT_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload,
-        isSignedIn: null
-      }
-
-    case ActionTypes.GET_DOCUMENT_FULFILLED:
-      return {
-        ...state,
-        alertTimes: action.payload[1],
-        checkinInterval: action.payload[2],
-        checkinTime: action.payload[3],
-        errMess: null,
-        isSignedIn: action.payload[0],
-        signinTime: action.payload[4],
-        snooze: action.payload[5]
       }
 
     case ActionTypes.MUTATE_INPUTS_REQUESTED:
@@ -169,61 +117,10 @@ export const Patient = (
         errMess: null
       }
 
-    case ActionTypes.REMOVE_LISTENERS:
-      return {
-        ...state,
-        listeners: []
-      }
-
-    case ActionTypes.SET_ALERT_ACTIVE:
-      return {
-        ...state,
-        isAlertActive: true
-      }
-
     case ActionTypes.SET_LAST_ALERT_TIME:
       return {
         ...state,
         lastAlertTime: action.payload
-      }
-
-    case ActionTypes.SET_LISTENER_REQUESTED:
-      return {
-        ...state,
-        errMess: null
-      }
-
-    case ActionTypes.SET_LISTENER_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.SET_LISTENER_FULFILLED:
-      return {
-        ...state,
-        errMess: null,
-        listeners: action.payload
-          ? state.listeners.concat(action.payload)
-          : state.listeners
-      }
-
-    case ActionTypes.SET_LISTENER_INTERVAL_REQUESTED:
-      return {
-        ...state,
-        errMess: null
-      }
-
-    case ActionTypes.SET_LISTENER_INTERVAL_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.SET_LISTENER_INTERVAL_FULFILLED:
-      return {
-        ...state,
-        interval: action.payload
       }
 
     case ActionTypes.SET_SHORTEST_INTERVAL_REQUESTED:
@@ -279,16 +176,11 @@ export const Patient = (
         alertTimes: [],
         checkinInterval: null,
         checkinTime: null,
-        email: null,
         errMess: null,
-        interval: null,
-        isAlertActive: false,
         isSignedIn: null,
         lastAlertTime: null,
-        listeners: [],
         longestSnooze: 60,
         shortestInterval: 3600000,
-        signinTime: null,
         snooze: null
       }
 

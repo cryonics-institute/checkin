@@ -1,20 +1,17 @@
 import React from 'react'
-import { Icon } from 'react-native-elements'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { connect } from 'react-redux'
 import { signIn } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
-import HomeScreen from './HomeComponent'
 import SignInScreen from './SignInComponent'
 import SignOutScreen from './SignOutComponent'
-import PatientSelectionScreen from './PatientSelectionComponent'
+import Tabs from './TabsComponent'
 
 const mapStateToProps = state => {
   return {
-    isSignedIn: state.patient.isSignedIn,
     password: state.token.password,
+    userIsSignedIn: state.user.isSignedIn,
     username: state.token.username
   }
 }
@@ -23,57 +20,58 @@ const mapDispatchToProps = dispatch => (
   { signIn: (creds, isAutomatic) => dispatch(signIn(creds, isAutomatic)) }
 )
 
-const RenderTabs = () => {
-  const Tab = createBottomTabNavigator()
-
-  return (
-    <Tab.Navigator
-      initialRouteName = 'Home'
-      backBehavior = 'history'
-      tabBarOptions = {
-        {
-          activeBackgroundColor: colors.dark,
-          activeTintColor: colors.light,
-          keyboardHidesTabBar: true,
-          style: styles.tab
-        }
-      }
-    >
-      <Tab.Screen
-        name = 'Home'
-        component = { HomeScreen }
-        options = {
-          {
-            tabBarLabel: 'Check In',
-            // eslint-disable-next-line react/display-name
-            tabBarIcon: ({ color, size }) => <Icon
-              name = 'check'
-              type = 'material'
-              color = { color }
-              size = { size }
-            />
-          }
-        }
-      />
-      <Tab.Screen
-        name = 'Patient'
-        component = { PatientSelectionScreen }
-        options = {
-          {
-            tabBarLabel: 'Buddies',
-            // eslint-disable-next-line react/display-name
-            tabBarIcon: ({ color, size }) => <Icon
-              name = 'people'
-              type = 'material'
-              color = { color }
-              size = { size }
-            />
-          }
-        }
-      />
-    </Tab.Navigator>
-  )
-}
+// const RenderTabs = () => {
+//   const Tab = createBottomTabNavigator()
+//
+//   // TODO: Buddy screen will need a conditional state parameter in redux that switches to standby home when user is added.
+//   return (
+//     <Tab.Navigator
+//       initialRouteName = 'Home'
+//       backBehavior = 'history'
+//       tabBarOptions = {
+//         {
+//           activeBackgroundColor: colors.dark,
+//           activeTintColor: colors.light,
+//           keyboardHidesTabBar: true,
+//           style: styles.tab
+//         }
+//       }
+//     >
+//       <Tab.Screen
+//         name = 'Home'
+//         component = { HomeScreen }
+//         options = {
+//           {
+//             tabBarLabel: 'Check In',
+//             // eslint-disable-next-line react/display-name
+//             tabBarIcon: ({ color, size }) => <Icon
+//               name = 'check'
+//               type = 'material'
+//               color = { color }
+//               size = { size }
+//             />
+//           }
+//         }
+//       />
+//       <Tab.Screen
+//         name = 'Buddy'
+//         component = { BuddySelectionScreen }
+//         options = {
+//           {
+//             tabBarLabel: 'Buddies',
+//             // eslint-disable-next-line react/display-name
+//             tabBarIcon: ({ color, size }) => <Icon
+//               name = 'people'
+//               type = 'material'
+//               color = { color }
+//               size = { size }
+//             />
+//           }
+//         }
+//       />
+//     </Tab.Navigator>
+//   )
+// }
 
 // Setup Main Component
 class Main extends React.Component {
@@ -103,10 +101,10 @@ class Main extends React.Component {
             }
           }
         >
-          { this.props.isSignedIn
+          { this.props.userIsSignedIn
             ? <Stack.Screen
               name = 'Tabs'
-              component = { RenderTabs }
+              component = { Tabs }
               options = {
                 {
                   // eslint-disable-next-line react/display-name

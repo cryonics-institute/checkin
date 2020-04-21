@@ -34,7 +34,7 @@ import { colors, styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    patient: state.patient
+    user: state.user
   }
 }
 
@@ -62,7 +62,7 @@ class TimeInput extends React.Component {
 
   componentDidMount () {
     if (
-      this.props.patient.alertTimes.filter(
+      this.props.user.alertTimes.filter(
         alert => alert.id === this.state.identifier
       )[0].validity
     ) {
@@ -70,12 +70,12 @@ class TimeInput extends React.Component {
         {
           time: moment().isDST()
             ? moment(
-              this.props.patient.alertTimes.filter(
+              this.props.user.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].time
             ).add(1, 'hours').format('h:mm A')
             : moment(
-              this.props.patient.alertTimes.filter(
+              this.props.user.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].time
             ).format('h:mm A')
@@ -128,7 +128,7 @@ class TimeInput extends React.Component {
       const isoTime = (new Date(1970, 0, 1, hours, minutes)).toISOString()
 
       let valid = true
-      for (const alert of this.props.patient.alertTimes) {
+      for (const alert of this.props.user.alertTimes) {
         if (
           moment(isoTime).isBetween(
             moment(alert.time) - 3600000,
@@ -149,26 +149,26 @@ class TimeInput extends React.Component {
   }
 
   render () {
-    const length = this.props.patient.alertTimes.length
+    const length = this.props.user.alertTimes.length
     const valid = 'VALID'
 
     if (
       length > 1 &&
-      this.props.patient.alertTimes[length - 1].id !== this.state.identifier
+      this.props.user.alertTimes[length - 1].id !== this.state.identifier
     ) {
       return (
         <View key = { this.state.identifier } style = { styles.row }>
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.patient.alertTimes.filter(
+              this.props.user.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : this.state.invalid
             }
             errorStyle = {
-              this.props.patient.alertTimes.filter(
+              this.props.user.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? styles.transparent
@@ -202,14 +202,14 @@ class TimeInput extends React.Component {
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.patient.alertTimes.filter(
+              this.props.user.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : this.state.invalid
             }
             errorStyle = {
-              this.props.patient.alertTimes.filter(
+              this.props.user.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? styles.transparent

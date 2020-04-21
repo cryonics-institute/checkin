@@ -34,7 +34,7 @@ import TimeInput from './TimeInputComponent'
 
 const mapStateToProps = state => {
   return {
-    patient: state.patient
+    user: state.user
   }
 }
 
@@ -60,7 +60,7 @@ class Home extends React.Component {
   }
 
   componentDidMount () {
-    if (this.props.patient.alertTimes.length === 0) {
+    if (this.props.user.alertTimes.length === 0) {
       this.props.mutateInput(Shortid.generate(), '', false)
     }
   }
@@ -73,7 +73,7 @@ class Home extends React.Component {
     return (
       <ScrollView contentContainerStyle = { styles.containerCentered }>
         {
-          this.props.patient.alertTimes.map(
+          this.props.user.alertTimes.map(
             alert => <TimeInput
               key = { alert.id.toString() }
               value = { alert.id }
@@ -105,7 +105,7 @@ class Home extends React.Component {
 
 // class Home extends React.Component {
 //   componentDidMount () {
-//     if (this.props.patient.alertTimes.length === 0) {
+//     if (this.props.user.alertTimes.length === 0) {
 //       this.props.mutateInput(Shortid.generate(), '', false)
 //     }
 //   }
@@ -115,7 +115,7 @@ class Home extends React.Component {
 //       <ScrollView contentContainerStyle = { styles.containerCentered }>
 //         <Text h4 style = { styles.title }>Check-In Times</Text>
 //         {
-//           this.props.patient.alertTimes.map(
+//           this.props.user.alertTimes.map(
 //             alert => <TimeInput
 //               key = { alert.id.toString() }
 //               value = { alert.id }
@@ -145,18 +145,18 @@ class Home extends React.Component {
 //           </Tooltip>
 //         </View>
 //         <Slider
-//           maximumValue = { this.props.patient.shortestInterval / 60000 }
+//           maximumValue = { this.props.user.shortestInterval / 60000 }
 //           minimumValue = { 1 }
 //           onSlidingComplete = { value => this.props.setSnooze(value) }
 //           step = { 1 }
 //           style = { styles.slider }
-//           value = { this.props.patient.snooze }
+//           value = { this.props.user.snooze }
 //         />
 //         <Text style = { styles.text }>
 //           {
-//             this.props.patient.snooze === 1
-//               ? this.props.patient.snooze + ' Minute'
-//               : this.props.patient.snooze + ' Minutes'
+//             this.props.user.snooze === 1
+//               ? this.props.user.snooze + ' Minute'
+//               : this.props.user.snooze + ' Minutes'
 //           }
 //         </Text>
 //       </ScrollView>

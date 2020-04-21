@@ -2,22 +2,22 @@ import React from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { addPatient } from '../redux/ActionCreators'
+import { addBuddy } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    email: state.patient.email
+    email: state.user.email
   }
 }
 
 const mapDispatchToProps = (dispatch) => (
   {
-    addPatient: (email) => dispatch(addPatient(email))
+    addBuddy: (email) => dispatch(addBuddy(email))
   }
 )
 
-class PatientSelection extends React.Component {
+class BuddySelection extends React.Component {
   constructor (props) {
     super(props)
 
@@ -46,7 +46,7 @@ class PatientSelection extends React.Component {
   }
 
   handleSignin () {
-    this.props.addPatient(this.state.email.toLowerCase())
+    this.props.addBuddy(this.state.email.toLowerCase())
   }
 
   validateEmail (value) {
@@ -70,7 +70,7 @@ class PatientSelection extends React.Component {
         style = { styles.containerCentered }
       >
         <Input
-          placeholder = 'Patient&#39;s E-Mail Address'
+          placeholder = 'Buddy&#39;s E-Mail Address'
           onChangeText = { (email) => this.validateEmail(email) }
           value = { this.state.email }
         />
@@ -88,4 +88,4 @@ class PatientSelection extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PatientSelection)
+export default connect(mapStateToProps, mapDispatchToProps)(BuddySelection)

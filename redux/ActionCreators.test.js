@@ -93,17 +93,15 @@ describe(
       }
       const store = mockStore(
         {
-          patient: {
+          user: {
             alertTimes: alertTimes,
             checkinInterval: 5000,
             checkinTime: checkinTime,
             email: 'a@a.aa',
             errMess: null,
-            isAlertActive: false,
             isSignedIn: true,
             lastAlertTime: null,
             listeners: [],
-            signinTime: '2019-10-31T22:45:35.794Z',
             snooze: 9
           }
         }
@@ -115,7 +113,7 @@ describe(
           await store.dispatch(
             Actions.setTimerInterval(
               alertTimes,
-              store.getState().patient.checkinTime,
+              store.getState().user.checkinTime,
               now,
               true
             )
@@ -136,7 +134,7 @@ describe(
           await store.dispatch(
             Actions.setTimerInterval(
               alertTimes,
-              store.getState().patient.checkinTime,
+              store.getState().user.checkinTime,
               now,
               true
             )
@@ -156,7 +154,7 @@ describe(
           await store.dispatch(
             Actions.setTimerInterval(
               alertTimes,
-              store.getState().patient.checkinTime,
+              store.getState().user.checkinTime,
               now,
               true
             )
@@ -176,7 +174,7 @@ describe(
           await store.dispatch(
             Actions.setTimerInterval(
               alertTimes,
-              store.getState().patient.checkinTime,
+              store.getState().user.checkinTime,
               now,
               true
             )
@@ -196,7 +194,7 @@ describe(
           await store.dispatch(
             Actions.setTimerInterval(
               alertTimes,
-              store.getState().patient.checkinTime,
+              store.getState().user.checkinTime,
               now,
               true
             )
@@ -259,17 +257,15 @@ describe(
       }
       const store = mockStore(
         {
-          patient: {
+          user: {
             alertTimes: alertTimes,
             checkinInterval: 5000,
             checkinTime: checkinTime,
             email: 'a@a.aa',
             errMess: null,
-            isAlertActive: false,
             isSignedIn: true,
             lastAlertTime: null,
             listeners: [],
-            signinTime: '2019-10-31T22:45:35.794Z',
             snooze: 9
           }
         }
@@ -280,12 +276,12 @@ describe(
         async () => {
           await store.dispatch(
             Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
+              store.getState().user.alertTimes,
+              store.getState().user.checkinTime,
+              store.getState().user.email,
+              store.getState().user.isSignedIn,
               now,
-              store.getState().patient.snooze,
+              store.getState().user.snooze,
               true
             )
           )
@@ -302,12 +298,12 @@ describe(
         async () => {
           await store.dispatch(
             Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
+              store.getState().user.alertTimes,
+              store.getState().user.checkinTime,
+              store.getState().user.email,
+              store.getState().user.isSignedIn,
               now,
-              store.getState().patient.snooze,
+              store.getState().user.snooze,
               true
             )
           )
@@ -325,12 +321,12 @@ describe(
         async () => {
           await store.dispatch(
             Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
+              store.getState().user.alertTimes,
+              store.getState().user.checkinTime,
+              store.getState().user.email,
+              store.getState().user.isSignedIn,
               now,
-              store.getState().patient.snooze,
+              store.getState().user.snooze,
               true
             )
           )
@@ -348,12 +344,12 @@ describe(
         async () => {
           await store.dispatch(
             Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
+              store.getState().user.alertTimes,
+              store.getState().user.checkinTime,
+              store.getState().user.email,
+              store.getState().user.isSignedIn,
               now,
-              store.getState().patient.snooze,
+              store.getState().user.snooze,
               true
             )
           )
@@ -371,12 +367,12 @@ describe(
         async () => {
           await store.dispatch(
             Actions.setListener(
-              store.getState().patient.alertTimes,
-              store.getState().patient.checkinTime,
-              store.getState().patient.email,
-              store.getState().patient.isSignedIn,
+              store.getState().user.alertTimes,
+              store.getState().user.checkinTime,
+              store.getState().user.email,
+              store.getState().user.isSignedIn,
               now,
-              store.getState().patient.snooze,
+              store.getState().user.snooze,
               true
             )
           )
