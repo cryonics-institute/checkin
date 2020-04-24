@@ -64,16 +64,7 @@ const convertTo24Hour = (time) => {
 export const addBuddy = (email) => (dispatch, getState) => {
   dispatch(addBuddyRequestedAction())
 
-  return Promise.resolve(dispatch(getDocument(email)))
-    .then(
-      () => {
-        dispatch(setListener())
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
+  return Promise.resolve(dispatch(setListener(email)))
     .then(
       () => { dispatch(addBuddyFulfilledAction(email)) },
       error => {
@@ -854,10 +845,11 @@ export const setLastAlertTimeAction = (lastAlertTime) => (
  * Set a recurring listener that will check if a buddy that the user is
  * following has checked in within the alotted interval plus the snooze or else
  * alert standby that the buddy has not checked in.
- * @param  {Boolean} isTest     Whether called by unit test (optional).
- * @return {Promise}            Promise to create listener after interval.
+ * @param  {String} email   E-mail of the buddy to be added.
+ * @param  {Boolean} isTest Whether called by unit test (optional).
+ * @return {Promise}        Promise to create listener after interval.
  */
-export const setListener = (isTest = false) => (dispatch, getState) => {
+export const setListener = (email, isTest = false) => (dispatch, getState) => {
   const noCheckinAlert = () => {
     Alert.alert(
       'Check-In Alert',
@@ -878,95 +870,74 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
 
   dispatch(setListenerRequestedAction())
 
-  if (getState().buddy.isSignedIn) {
-    return Promise.resolve(
-      dispatch(
-        setListenerInterval(
-          getState().buddy.alertTimes,
-          getState().buddy.checkinTime
-        )
-      )
-    )
-      .then(
-        interval => {
-          dispatch(removeListeners())
-          return interval
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .then(
-        interval => {
-          if (isTest) {
-            return interval
-          } else {
-            if (interval !== null) {
-              if (interval > 0) {
-                const listener = Promise.resolve(
-                  setTimeout(
-                    () => {
-                      dispatch(setListener(isTest))
-                    },
-                    interval
-                  )
-                )
-                return listener
-              } else {
-                noCheckinAlert()
-                return null
-              }
-            } else {
-              return null
-            }
-          }
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .then(
-        listener => {
-          dispatch(setListenerFulfilledAction(listener))
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .catch(error => dispatch(setListenerRejectedAction(error.message)))
-  } else {
-    return Promise.resolve(dispatch(removeListeners()))
-      .then(
-        () => {
-          const listener = Promise.resolve(
-            setTimeout(
-              () => {
-                dispatch(setListener(isTest))
-              },
-              60000
+  return Promise.resolve(
+    dispatch(getDocument(email))
+  )
+    .then(
+      () => {
+        if (getState().buddy.isSignedIn) {
+          dispatch(
+            setListenerInterval(
+              getState().buddy.alertTimes,
+              getState().buddy.checkinTime
             )
           )
-          return listener
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
+        } else {
+          return 60000
         }
-      )
-      .then(
-        listener => {
-          dispatch(setListenerFulfilledAction(listener))
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
+      }
+    )
+    .then(
+      interval => {
+        // TODO: You will need to remove correct listener when more are added.
+        dispatch(removeListeners())
+        return interval
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      interval => {
+        if (isTest) {
+          return interval
+        } else {
+          if (interval !== null) {
+            if (interval > 0) {
+              const listener = Promise.resolve(
+                setTimeout(
+                  () => {
+                    dispatch(setListener(email, isTest))
+                  },
+                  interval
+                )
+              )
+              return listener
+            } else {
+              noCheckinAlert()
+              return null
+            }
+          } else {
+            return null
+          }
         }
-      )
-      .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
-  }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      listener => {
+        dispatch(setListenerFulfilledAction(listener))
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(setListenerRejectedAction(error.message)))
 }
 
 /**
@@ -1004,7 +975,6 @@ export const setListenerFulfilledAction = (listener) => (
  * Set the interval for the setListener function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
  * @param   {Date} checkinTime  Last time buddy checked in.
- * @param   {Array} now         Now as a JS Date object.
  * @param   {Boolean} isTest    Whether called by unit test (optional).
  * @return  {Integer} The interval between alerts.
  */

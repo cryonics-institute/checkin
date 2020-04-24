@@ -65,7 +65,7 @@ export const Buddy = (
       return {
         ...state,
         errMess: action.payload,
-        isSignedIn: null
+        isSignedIn: false
       }
 
     case ActionTypes.GET_DOCUMENT_FULFILLED:
