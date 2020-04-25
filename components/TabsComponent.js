@@ -13,6 +13,7 @@ const mapStateToProps = state => {
   }
 }
 
+// TODO: Goes back to home screen after adding listener.
 class Tabs extends React.Component {
   render () {
     const Tab = createBottomTabNavigator()
