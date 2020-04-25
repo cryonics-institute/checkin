@@ -15,22 +15,9 @@ const mapStateToProps = state => {
 
 // Setup Main Component
 class Tabs extends React.Component {
-  // componentDidMount () {
-  //   if (
-  //     this.props.username !== null && this.props.password !== null
-  //   ) {
-  //     this.props.signIn(
-  //       { username: this.props.username, password: this.props.password },
-  //       true
-  //     )
-  //       .catch(error => console.log(error.message))
-  //   }
-  // }
-
   render () {
     const Tab = createBottomTabNavigator()
 
-    // TODO: Buddy screen will need a conditional state parameter in redux that switches to standby home when user is added.
     return (
       <Tab.Navigator
         initialRouteName = 'Home'
