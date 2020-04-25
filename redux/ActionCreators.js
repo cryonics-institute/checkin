@@ -876,7 +876,7 @@ export const setListener = (email, isTest = false) => (dispatch, getState) => {
     .then(
       () => {
         if (getState().buddy.isSignedIn) {
-          dispatch(
+          return dispatch(
             setListenerInterval(
               getState().buddy.alertTimes,
               getState().buddy.checkinTime
@@ -1002,14 +1002,14 @@ export const setListenerInterval = (
     }
   ).sort((el1, el2) => el1.timeInMs - el2.timeInMs)
 
+  dispatch(setListenerIntervalRequestedAction())
+
   if (alertsInMs.length !== 0) {
     const checkinInMs = ((((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
         parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
         parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
         parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
     const snoozeInMs = getState().buddy.snooze * 60000
-
-    dispatch(setListenerIntervalRequestedAction())
 
     const interval = moment(now) - moment(checkinTime) > 86400000 + snoozeInMs
       ? 0
@@ -1051,6 +1051,16 @@ export const setListenerInterval = (
       )
   } else {
     return Promise.resolve(60000)
+      .then(
+        interval => {
+          dispatch(setListenerIntervalFulfilledAction(interval))
+          return interval
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
       .catch(
         error => dispatch(setListenerIntervalRejectedAction(error.message))
       )
@@ -1520,19 +1530,13 @@ export const signOut = () => (dispatch, getState) => {
       }
     )
     .then(
-      () => {
-        dispatch(signoutFulfilledAction())
-      },
+      () => { dispatch(signoutFulfilledAction()) },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
-    .catch(
-      (error) => {
-        signoutRejectedAction(error.message)
-      }
-    )
+    .catch(error => { dispatch(signoutRejectedAction(error.message)) })
 }
 
 /**
