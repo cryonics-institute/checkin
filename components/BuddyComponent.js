@@ -3,6 +3,7 @@ import { ActivityIndicator, StatusBar, View } from 'react-native'
 import { Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import moment from 'moment'
+import { setListener } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -13,6 +14,10 @@ const mapStateToProps = state => {
     buddySignedIn: state.buddy.isSignedIn
   }
 }
+
+const mapDispatchToProps = dispatch => (
+  { setListener: (email) => dispatch(setListener(email)) }
+)
 
 const RenderActiveAlertView = (props) => {
   return (
@@ -69,6 +74,12 @@ const RenderSignedOutBuddyView = (props) => {
 
 // TODO: What happens if the network is down?
 class Buddy extends React.Component {
+  componentDidMount () {
+    if (this.props.buddyEmail !== null) {
+      this.props.setListener(this.props.buddyEmail)
+    }
+  }
+
   getLastAlertTime () {
     const lastAlertTime = moment(this.props.lastAlertTime).toISOString()
     const lastAlertTimeInMs =
@@ -112,4 +123,4 @@ class Buddy extends React.Component {
   }
 }
 
-export default connect(mapStateToProps)(Buddy)
+export default connect(mapStateToProps, mapDispatchToProps)(Buddy)
