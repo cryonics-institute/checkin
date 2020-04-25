@@ -13,7 +13,6 @@ const mapStateToProps = state => {
   }
 }
 
-// Setup Main Component
 class Tabs extends React.Component {
   render () {
     const Tab = createBottomTabNavigator()
