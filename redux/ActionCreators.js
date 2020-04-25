@@ -1406,7 +1406,7 @@ export const setTimerInterval = (
       .catch(
         error => dispatch(setTimerIntervalRejectedAction(error.message))
       )
-  } else { // TODO: Consider not setting a default interval of one minute.
+  } else {
     return Promise.resolve(60000)
       .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
   }
