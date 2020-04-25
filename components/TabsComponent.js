@@ -64,7 +64,7 @@ class Tabs extends React.Component {
             }
           />
           : <Tab.Screen
-            name = 'Buddy'
+            name = 'BuddySelection'
             component = { BuddySelectionScreen }
             options = {
               {
