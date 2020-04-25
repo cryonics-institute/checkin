@@ -20,59 +20,6 @@ const mapDispatchToProps = dispatch => (
   { signIn: (creds, isAutomatic) => dispatch(signIn(creds, isAutomatic)) }
 )
 
-// const RenderTabs = () => {
-//   const Tab = createBottomTabNavigator()
-//
-//   // TODO: Buddy screen will need a conditional state parameter in redux that switches to standby home when user is added.
-//   return (
-//     <Tab.Navigator
-//       initialRouteName = 'Home'
-//       backBehavior = 'history'
-//       tabBarOptions = {
-//         {
-//           activeBackgroundColor: colors.dark,
-//           activeTintColor: colors.light,
-//           keyboardHidesTabBar: true,
-//           style: styles.tab
-//         }
-//       }
-//     >
-//       <Tab.Screen
-//         name = 'Home'
-//         component = { HomeScreen }
-//         options = {
-//           {
-//             tabBarLabel: 'Check In',
-//             // eslint-disable-next-line react/display-name
-//             tabBarIcon: ({ color, size }) => <Icon
-//               name = 'check'
-//               type = 'material'
-//               color = { color }
-//               size = { size }
-//             />
-//           }
-//         }
-//       />
-//       <Tab.Screen
-//         name = 'Buddy'
-//         component = { BuddySelectionScreen }
-//         options = {
-//           {
-//             tabBarLabel: 'Buddies',
-//             // eslint-disable-next-line react/display-name
-//             tabBarIcon: ({ color, size }) => <Icon
-//               name = 'people'
-//               type = 'material'
-//               color = { color }
-//               size = { size }
-//             />
-//           }
-//         }
-//       />
-//     </Tab.Navigator>
-//   )
-// }
-
 // Setup Main Component
 class Main extends React.Component {
   componentDidMount () {
