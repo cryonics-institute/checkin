@@ -1,3 +1,4 @@
+// TODO: Fix the keyboard on Android.
 import React from 'react'
 import { KeyboardAvoidingView } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'

@@ -1,3 +1,4 @@
+// TODO: Fix the keyboard on Android.
 // TODO: Handle rejected sign-ins!
 import React from 'react'
 import { KeyboardAvoidingView } from 'react-native'
