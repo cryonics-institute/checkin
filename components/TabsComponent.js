@@ -1,7 +1,7 @@
 import React from 'react'
 import { Icon } from 'react-native-elements'
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { connect } from 'react-redux'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { colors, styles } from '../styles/Styles'
 import HomeScreen from './HomeComponent'
 import BuddyScreen from './BuddyComponent'

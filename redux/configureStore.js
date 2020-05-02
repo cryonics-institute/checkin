@@ -21,12 +21,12 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import AsyncStorage from '@react-native-community/async-storage'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
 import createSensitiveStorage from 'redux-persist-sensitive-storage'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
+import AsyncStorage from '@react-native-community/async-storage'
 import { Auth } from './authReducer'
 import { Buddy } from './buddyReducer'
 import { Device } from './deviceReducer'
