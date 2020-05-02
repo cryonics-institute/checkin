@@ -23,9 +23,9 @@
 
 import { Alert } from 'react-native'
 import moment from 'moment'
-import * as ActionTypes from './ActionTypes'
 import auth from '@react-native-firebase/auth'
 import db from '@react-native-firebase/firestore'
+import * as ActionTypes from './ActionTypes'
 
 /**
  * Take a string representing a time in AM/PM format from a Time-Input component
@@ -432,6 +432,49 @@ export const getDocumentFulfilledAction = (data) => (
     payload: data
   }
 )
+
+/**
+ * Hide the tip on the user's home screen.
+ */
+export const hideTip = () => (dispatch) => {
+  dispatch(hideTipRequestedAction())
+
+  try {
+    dispatch(hideTipFulfilledAction())
+  } catch (error) {
+    dispatch(hideTipRejectedAction(error))
+  }
+}
+
+/**
+ * Initiate an action to hide the tip in the Redux store.
+ */
+export const hideTipRequestedAction = () => (
+  {
+    type: ActionTypes.HIDE_TIP_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that hiding the tip has failed.
+ * @param  {Error} errorMessage Message describing the check-in failure.
+ */
+export const hideTipRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.HIDE_TIP_REJECTED,
+    payload: errorMessage
+  }
+)
+
+/**
+ * Initiate an action indicating that hiding the tip has completed.
+ */
+export const hideTipFulfilledAction = () => (
+  {
+    type: ActionTypes.HIDE_TIP_FULFILLED
+  }
+)
+
 /**
  * Initialize the device reducer in the Redux store with the device token.
  * @param {String} deviceToken  A user's device token.
