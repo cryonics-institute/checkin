@@ -1,7 +1,9 @@
+// TODO: Support safe areas for iPhoneX
+// https://reactnavigation.org/docs/handling-safe-area
 import React from 'react'
+import { connect } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
-import { connect } from 'react-redux'
 import { signIn } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 import SignInScreen from './SignInComponent'
