@@ -24,22 +24,26 @@
  */
 
 import React from 'react'
-import { ScrollView, View } from 'react-native'
+import { Dimensions, KeyboardAvoidingView, Platform, ScrollView, View }
+  from 'react-native'
 import { Icon, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import * as Shortid from 'shortid'
-import { mutateInput, setSnooze } from '../redux/ActionCreators'
+import { HeaderHeightContext } from '@react-navigation/stack'
+import { hideTip, mutateInput, setSnooze } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
 
 const mapStateToProps = state => {
   return {
-    user: state.user
+    alertTimes: state.user.alertTimes,
+    showTip: state.user.showTip
   }
 }
 
 const mapDispatchToProps = (dispatch) => (
   {
+    hideTip: () => dispatch(hideTip()),
     mutateInput: (identifier, text, validity) => dispatch(
       mutateInput(identifier, text, validity)
     ),
@@ -52,60 +56,108 @@ class Home extends React.Component {
   constructor (props) {
     super(props)
 
-    this.state = {
-      showTip: true
-    }
-
     this.closeTip = this.closeTip.bind(this)
   }
 
   componentDidMount () {
-    if (this.props.user.alertTimes.length === 0) {
+    if (this.props.alertTimes.length === 0) {
       this.props.mutateInput(Shortid.generate(), '', false)
     }
   }
 
   closeTip () {
-    this.setState({ showTip: false })
+    this.props.hideTip()
+  }
+
+  // TODO: Fix this so it calculates a good space.
+  calculateHeight (length) {
+    return 4 - length > 1
+      ? Dimensions.get('window').height / (4 - length)
+      : 0
   }
 
   render () {
     return (
-      <ScrollView contentContainerStyle = { styles.containerCentered }>
+      <HeaderHeightContext.Consumer>
         {
-          this.props.user.alertTimes.map(
-            alert => <TimeInput
-              key = { alert.id.toString() }
-              value = { alert.id }
-            />
+          headerHeight => (
+            <View
+              style = {
+                {
+                  backgroundColor: colors.light,
+                  height: Dimensions.get('window').height - (headerHeight * 2),
+                  width: Dimensions.get('window').width
+                }
+              }
+            >
+              <KeyboardAvoidingView
+                behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+                keyboardVerticalOffset = { headerHeight * 2 }
+                style = { styles.containerAvoiding }
+              >
+                <ScrollView
+                  contentContainerStyle = { styles.containerContent }
+                  style = { styles.containerScrolling }
+                >
+                  {
+                    this.props.alertTimes.map(
+                      (alert, i) => i === 0
+                        ? <View key = { i }>
+                          <View
+                            style = {
+                              {
+                                height: this.calculateHeight(
+                                  this.props.alertTimes.length
+                                )
+                              }
+                            }
+                          >
+                          </View>
+                          <TimeInput
+                            key = { alert.id.toString() }
+                            value = { alert.id }
+                          />
+                        </View>
+                        : <View key = { i }>
+                          <TimeInput
+                            key = { alert.id.toString() }
+                            value = { alert.id }
+                          />
+                        </View>
+                    )
+                  }
+                  {
+                    this.props.showTip &&
+                    <View style = { styles.containerRounded }>
+                      <Icon
+                        color = { colors.dark }
+                        containerStyle = { styles.buttonTopRight }
+                        name = 'cancel'
+                        onPress = { () => this.closeTip() }
+                        type = 'material'
+                      />
+                      <Text style = { styles.textTip }>
+                        <Text style = { { fontWeight: 'bold' } }>TIP:</Text> To
+                        check in, enter a time using the form above.  If you
+                        want to add another time, just press the plus-sign for a
+                        new row. You can delete any check-in by pressing a
+                        minus-sign.
+                      </Text>
+                    </View>
+                  }
+                </ScrollView>
+              </KeyboardAvoidingView>
+            </View>
           )
         }
-        {
-          this.state.showTip &&
-          <View style = { styles.containerRounded }>
-            <Icon
-              color = { colors.dark }
-              containerStyle = { styles.buttonTopRight }
-              name = 'cancel'
-              onPress = { () => this.closeTip() }
-              type = 'material'
-            />
-            <Text style = { styles.textTip }>
-              <Text style = { { fontWeight: 'bold' } }>TIP:</Text> To check in,
-              enter a time using the form above.  If you want to add another
-              time, just press the plus-sign for a new row. You can delete any
-              check-in by pressing a minus-sign.
-            </Text>
-          </View>
-        }
-      </ScrollView>
+      </HeaderHeightContext.Consumer>
     )
   }
 }
 
 // class Home extends React.Component {
 //   componentDidMount () {
-//     if (this.props.user.alertTimes.length === 0) {
+//     if (this.props.alertTimes.length === 0) {
 //       this.props.mutateInput(Shortid.generate(), '', false)
 //     }
 //   }
@@ -115,7 +167,7 @@ class Home extends React.Component {
 //       <ScrollView contentContainerStyle = { styles.containerCentered }>
 //         <Text h4 style = { styles.title }>Check-In Times</Text>
 //         {
-//           this.props.user.alertTimes.map(
+//           this.props.alertTimes.map(
 //             alert => <TimeInput
 //               key = { alert.id.toString() }
 //               value = { alert.id }

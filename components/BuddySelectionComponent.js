@@ -1,10 +1,10 @@
-// TODO: Fix the keyboard on Android.
 import React from 'react'
-import { KeyboardAvoidingView } from 'react-native'
+import { Dimensions, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
+import { HeaderHeightContext } from '@react-navigation/stack'
 import { addBuddy } from '../redux/ActionCreators'
-import { styles } from '../styles/Styles'
+import { colors, styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
@@ -66,25 +66,47 @@ class BuddySelection extends React.Component {
 
   render () {
     return (
-      <KeyboardAvoidingView
-        behavior = 'padding'
-        style = { styles.containerCentered }
-      >
-        <Input
-          placeholder = 'Buddy&#39;s E-Mail Address'
-          onChangeText = { (email) => this.validateEmail(email) }
-          value = { this.state.email }
-        />
-        <Text style = { styles.textError }>
-          { this.state.isEmailValid ? '' : this.state.emailError }
-        </Text>
-        <Button
-          buttonStyle = { styles.button }
-          disabled = { !this.state.isEmailValid }
-          onPress = { () => this.handleSignin() }
-          title = 'Submit'
-        />
-      </KeyboardAvoidingView>
+      <HeaderHeightContext.Consumer>
+        {
+          headerHeight => (
+            <View
+              style = {
+                {
+                  backgroundColor: colors.light,
+                  height: Dimensions.get('window').height - (headerHeight * 2),
+                  width: Dimensions.get('window').width
+                }
+              }
+            >
+              <KeyboardAvoidingView
+                behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+                style = { styles.containerAvoiding }
+              >
+                <View
+                  style = { { height: Dimensions.get('window').height / 4 } }
+                >
+                </View>
+                <View style = { styles.containerContent }>
+                  <Input
+                    placeholder = 'Buddy&#39;s E-Mail Address'
+                    onChangeText = { (email) => this.validateEmail(email) }
+                    value = { this.state.email }
+                  />
+                  <Text style = { styles.textError }>
+                    { this.state.isEmailValid ? '' : this.state.emailError }
+                  </Text>
+                  <Button
+                    buttonStyle = { styles.button }
+                    disabled = { !this.state.isEmailValid }
+                    onPress = { () => this.handleSignin() }
+                    title = 'Submit'
+                  />
+                </View>
+              </KeyboardAvoidingView>
+            </View>
+          )
+        }
+      </HeaderHeightContext.Consumer>
     )
   }
 }

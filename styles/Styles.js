@@ -21,7 +21,7 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Dimensions, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 
 export const colors = {
   dark: 'steelblue',
@@ -49,11 +49,18 @@ export const styles = StyleSheet.create(
       paddingRight: 5,
       paddingTop: 5
     },
+    containerAvoiding: {
+      backgroundColor: colors.light
+    },
     containerCentered: {
       alignItems: 'center',
       backgroundColor: colors.light,
       flex: 1,
       justifyContent: 'center'
+    },
+    containerContent: {
+      alignItems: 'center',
+      backgroundColor: colors.light
     },
     containerRounded: {
       alignSelf: 'center',
@@ -62,8 +69,10 @@ export const styles = StyleSheet.create(
       borderRadius: 10,
       backgroundColor: colors.medium,
       margin: '5%',
-      padding: '5%',
-      width: '90%'
+      padding: '5%'
+    },
+    containerScrolling: {
+      backgroundColor: colors.light
     },
     containerSpaced: {
       alignItems: 'center',
@@ -74,11 +83,6 @@ export const styles = StyleSheet.create(
     header: {
       backgroundColor: colors.dark,
       color: colors.light
-    },
-    image: {
-      height: Dimensions.get('window').width * 0.8,
-      margin: 5,
-      width: Dimensions.get('window').width * 0.8
     },
     paragraph: {
       margin: 5,

@@ -1,15 +1,15 @@
-// TODO: Fix the keyboard on Android.
 // TODO: Handle rejected sign-ins!
 import React from 'react'
-import { KeyboardAvoidingView } from 'react-native'
+import { Dimensions, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
+import { HeaderHeightContext } from '@react-navigation/stack'
 import { signIn, register } from '../redux/ActionCreators'
-import { styles } from '../styles/Styles'
+import { colors, styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    token: state.token
+    // Nothing in state is relevant here.
   }
 }
 
@@ -22,76 +22,100 @@ const mapDispatchToProps = (dispatch) => (
 
 const RenderSignInView = (props) => {
   return (
-    <KeyboardAvoidingView
-      behavior = 'padding'
-      style = { styles.containerCentered }
-    >
-      <Input
-        placeholder = 'E-Mail Address'
-        onChangeText = { username => props.validateEmail(username) }
-        value = { props.username }
-      />
-      <Text style = { styles.textError }>
-        { props.isUsernameValid ? '' : props.usernameError }
-      </Text>
-      <Input
-        placeholder = 'Password'
-        onChangeText = { password => props.validatePassword(password) }
-        value = { props.password }
-      />
-      <Text style={ styles.textError }>
-        { props.isPasswordValid ? '' : props.passwordError }
-      </Text>
-      <Button
-        buttonStyle = { styles.button }
-        disabled = { props.toggleButtonDisabled() }
-        onPress = { () => props.handleSignin() }
-        title = 'Sign In'
-      />
-      <Button
-        onPress = { () => props.toggleRegistration() }
-        title = 'Create Account'
-        titleStyle = { styles.buttonTitleColorDark }
-        type = 'clear'
-      />
-    </KeyboardAvoidingView>
+    <HeaderHeightContext.Consumer>
+      {
+        headerHeight => (
+          <View
+            style = {
+              {
+                backgroundColor: colors.light,
+                height: Dimensions.get('window').height - headerHeight,
+                width: Dimensions.get('window').width
+              }
+            }
+          >
+            <KeyboardAvoidingView
+              behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+              style = { styles.containerAvoiding }
+            >
+              <View
+                style = { { height: Dimensions.get('window').height / 4 } }
+              >
+              </View>
+              <View style = { styles.containerContent }>
+                <Input
+                  placeholder = 'E-Mail Address'
+                  onChangeText = { username => props.validateEmail(username) }
+                  value = { props.username }
+                />
+                <Text style = { styles.textError }>
+                  { props.isUsernameValid ? '' : props.usernameError }
+                </Text>
+                <Input
+                  placeholder = 'Password'
+                  onChangeText = { password => props.validatePassword(password) }
+                  value = { props.password }
+                />
+                <Text style={ styles.textError }>
+                  { props.isPasswordValid ? '' : props.passwordError }
+                </Text>
+                <Button
+                  buttonStyle = { styles.button }
+                  disabled = { props.toggleButtonDisabled() }
+                  onPress = { () => props.handleSignin() }
+                  title = 'Sign In'
+                />
+                <Button
+                  onPress = { () => props.toggleRegistration() }
+                  title = 'Create Account'
+                  titleStyle = { styles.buttonTitleColorDark }
+                  type = 'clear'
+                />
+              </View>
+            </KeyboardAvoidingView>
+          </View>
+        )
+      }
+    </HeaderHeightContext.Consumer>
   )
 }
 
 const RenderRegistrationView = (props) => {
   return (
     <KeyboardAvoidingView
-      behavior = 'padding'
-      style = { styles.containerCentered }
+      behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+      style = { styles.containerAvoiding }
     >
-      <Input
-        placeholder = 'E-Mail Address'
-        onChangeText = { (username) => props.validateEmail(username) }
-        value = { props.username }
-      />
-      <Text style={ styles.textError }>
-        { props.isUsernameValid ? '' : props.usernameError }
-      </Text>
-      <Input
-        placeholder = 'Password'
-        onChangeText = { (password) => props.validatePassword(password) }
-        value = { props.password }
-      />
-      <Text style={ styles.textError }>
-        { props.isPasswordValid ? '' : props.passwordError }
-      </Text>
-      <Button
-        buttonStyle = { styles.button }
-        disabled = { props.toggleButtonDisabled() }
-        onPress = { () => props.handleRegistration() }
-        title = 'Create Account'
-      />
-      <Button
-        onPress = { () => props.toggleRegistration() }
-        title = 'Sign In'
-        titleStyle = { styles.buttonTitleColorDark }
-        type = 'clear'
-      />
+      <View style = { styles.containerCentered }>
+        <Input
+          placeholder = 'E-Mail Address'
+          onChangeText = { (username) => props.validateEmail(username) }
+          value = { props.username }
+        />
+        <Text style={ styles.textError }>
+          { props.isUsernameValid ? '' : props.usernameError }
+        </Text>
+        <Input
+          placeholder = 'Password'
+          onChangeText = { (password) => props.validatePassword(password) }
+          value = { props.password }
+        />
+        <Text style={ styles.textError }>
+          { props.isPasswordValid ? '' : props.passwordError }
+        </Text>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { props.toggleButtonDisabled() }
+          onPress = { () => props.handleRegistration() }
+          title = 'Create Account'
+        />
+        <Button
+          onPress = { () => props.toggleRegistration() }
+          title = 'Sign In'
+          titleStyle = { styles.buttonTitleColorDark }
+          type = 'clear'
+        />
+      </View>
     </KeyboardAvoidingView>
   )
 }
