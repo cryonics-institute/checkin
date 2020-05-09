@@ -480,7 +480,7 @@ export const hideTipFulfilledAction = () => (
  * @param {String} deviceToken  A user's device token.
  */
 
-export const initializeStore = (deviceToken) => (dispatch, getState) => {
+export const initializeStore = (deviceToken) => dispatch => {
   dispatch(initializeStoreRequestedAction())
 
   try {
@@ -873,10 +873,53 @@ export const removeTimersFulfilledAction = () => (
 )
 
 /**
+ * Remove all timers from the array of timers in the Redux store.
+ */
+export const setInputParameters = (height) => dispatch => {
+  dispatch(setInputParametersRequestedAction())
+
+  try {
+    dispatch(setInputParametersFulfilledAction(height))
+  } catch (error) {
+    dispatch(setInputParametersRejectedAction(error))
+  }
+}
+
+/**
+ * Initiate an action to remove timers.
+ */
+export const setInputParametersRequestedAction = () => (
+  {
+    type: ActionTypes.SET_INPUT_PARAMETERS_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that removing timers has failed.
+ * @param  {Error} errorMessage Message describing the registration failure.
+ */
+export const setInputParametersRejectedAction = (message) => (
+  {
+    type: ActionTypes.SET_INPUT_PARAMETERS_REJECTED,
+    payload: message
+  }
+)
+
+/**
+ * Initiate an action indicating that all timers have been removed.
+ */
+export const setInputParametersFulfilledAction = (height) => (
+  {
+    type: ActionTypes.SET_INPUT_PARAMETERS_FULFILLED,
+    payload: height
+  }
+)
+
+/**
  * Set the last time the buddy should have checked in.
  * @param {String} lastAlertTime  Time buddy should have checked in.
  */
-export const setLastAlertTime = (lastAlertTime) => (dispatch) => {
+export const setLastAlertTime = (lastAlertTime) => dispatch => {
   dispatch(setLastAlertTimeAction(lastAlertTime))
 }
 

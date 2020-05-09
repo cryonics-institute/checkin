@@ -29,7 +29,8 @@ import { View } from 'react-native'
 import { Icon, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import * as Shortid from 'shortid'
-import { mutateInput, removeInput } from '../redux/ActionCreators'
+import { mutateInput, removeInput, setInputParameters }
+  from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
@@ -38,14 +39,13 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => (
+const mapDispatchToProps = dispatch => (
   {
     mutateInput: (identifier, time, validity) => dispatch(
       mutateInput(identifier, time, validity)
     ),
-    removeInput: (identifier) => dispatch(
-      removeInput(identifier)
-    )
+    removeInput: (identifier) => dispatch(removeInput(identifier)),
+    setInputParameters: (height) => dispatch(setInputParameters(height))
   }
 )
 
@@ -157,7 +157,15 @@ class TimeInput extends React.Component {
       this.props.user.alertTimes[length - 1].id !== this.state.identifier
     ) {
       return (
-        <View key = { this.state.identifier } style = { styles.row }>
+        <View
+          key = { this.state.identifier }
+          style = { styles.row }
+          onLayout = {
+            (event) => {
+              this.props.setInputParameters(event.nativeEvent.layout.height)
+            }
+          }
+        >
           <Input
             autoCorrect = { false }
             errorMessage = {
@@ -198,7 +206,15 @@ class TimeInput extends React.Component {
       )
     } else {
       return (
-        <View key = { this.state.identifier } style = { styles.row }>
+        <View
+          key = { this.state.identifier }
+          style = { styles.row }
+          onLayout = {
+            (event) => {
+              this.props.setInputParameters(event.nativeEvent.layout.height)
+            }
+          }
+        >
           <Input
             autoCorrect = { false }
             errorMessage = {

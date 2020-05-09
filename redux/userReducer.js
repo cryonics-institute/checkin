@@ -34,7 +34,6 @@ export const User = (
     lastAlertTime: null,
     longestSnooze: 60,
     shortestInterval: 1800000,
-    showTip: true,
     snooze: null
   },
   action
@@ -77,30 +76,6 @@ export const User = (
       return {
         ...state,
         checkinTime: action.payload,
-        errMess: null
-      }
-
-    case ActionTypes.HIDE_TIP_REQUESTED:
-      return {
-        ...state,
-        errMess: null
-      }
-
-    case ActionTypes.HIDE_TIP_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.HIDE_TIP_FULFILLED:
-      return {
-        ...state,
-        showTip: false
-      }
-
-    case ActionTypes.MUTATE_INPUTS_REQUESTED:
-      return {
-        ...state,
         errMess: null
       }
 

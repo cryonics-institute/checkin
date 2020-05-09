@@ -30,6 +30,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { Auth } from './authReducer'
 import { Buddy } from './buddyReducer'
 import { Device } from './deviceReducer'
+import { Inputs } from './inputsReducer'
 import { Listener } from './listenerReducer'
 import { Timer } from './timerReducer'
 import { Token } from './tokenReducer'
@@ -54,6 +55,11 @@ const buddyPersistConfig = {
 
 const devicePersistConfig = {
   key: 'device',
+  storage: AsyncStorage
+}
+
+const inputsPersistConfig = {
+  key: 'inputs',
   storage: AsyncStorage
 }
 
@@ -82,6 +88,7 @@ const rootReducer = combineReducers(
     auth: persistReducer(authPersistConfig, Auth),
     buddy: persistReducer(buddyPersistConfig, Buddy),
     device: persistReducer(devicePersistConfig, Device),
+    inputs: persistReducer(inputsPersistConfig, Inputs),
     listener: persistReducer(listenerPersistConfig, Listener),
     timer: persistReducer(timerPersistConfig, Timer),
     token: persistReducer(tokenPersistConfig, Token),
