@@ -12,7 +12,7 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => (
+const mapDispatchToProps = dispatch => (
   {
     addBuddy: (email) => dispatch(addBuddy(email))
   }

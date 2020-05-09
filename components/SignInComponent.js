@@ -13,7 +13,7 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => (
+const mapDispatchToProps = dispatch => (
   {
     signIn: (creds, isAutomatic) => dispatch(signIn(creds, isAutomatic)),
     register: (creds) => dispatch(register(creds))

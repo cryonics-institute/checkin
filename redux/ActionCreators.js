@@ -436,7 +436,7 @@ export const getDocumentFulfilledAction = (data) => (
 /**
  * Hide the tip on the user's home screen.
  */
-export const hideTip = () => (dispatch) => {
+export const hideTip = () => dispatch => {
   dispatch(hideTipRequestedAction())
 
   try {
