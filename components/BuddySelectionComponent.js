@@ -1,3 +1,4 @@
+// TODO: Replace Dimensions with useWindowDimensions.
 import React from 'react'
 import { Dimensions, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'

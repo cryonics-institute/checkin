@@ -1,3 +1,4 @@
+// TODO: Replace Dimensions with useWindowDimensions.
 // TODO: Handle rejected sign-ins!
 import React from 'react'
 import { Dimensions, KeyboardAvoidingView, Platform, View } from 'react-native'

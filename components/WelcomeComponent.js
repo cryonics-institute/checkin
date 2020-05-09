@@ -1,3 +1,4 @@
+// TODO: Replace Dimensions with useWindowDimensions.
 import React from 'react'
 import { ActivityIndicator, Dimensions, View } from 'react-native'
 import { Image } from 'react-native-elements'
