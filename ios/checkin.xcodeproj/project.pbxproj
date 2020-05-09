@@ -351,6 +351,7 @@
 				DEVELOPMENT_TEAM = 652N6ZC9E8;
 				INFOPLIST_FILE = checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.4.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -372,6 +373,7 @@
 				DEVELOPMENT_TEAM = 652N6ZC9E8;
 				INFOPLIST_FILE = checkin/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.4.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
