@@ -179,7 +179,7 @@ class TimeInput extends React.Component {
               this.props.user.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
-                ? styles.transparent
+                ? styles.textTransparent
                 : styles.textError
             }
             onChangeText = {
@@ -228,7 +228,7 @@ class TimeInput extends React.Component {
               this.props.user.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
-                ? styles.transparent
+                ? styles.textTransparent
                 : styles.textError
             }
             onChangeText = {

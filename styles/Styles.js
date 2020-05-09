@@ -112,15 +112,14 @@ export const styles = StyleSheet.create(
       color: colors.medium,
       textDecorationLine: 'line-through'
     },
+    textTransparent: {
+      color: colors.transparent,
+      fontSize: 12,
+      margin: 5
+    },
     textTip: {
       color: colors.dark,
       fontSize: 18
-    },
-    timeRow: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      margin: 5,
-      width: '80%'
     },
     title: {
       margin: 5
@@ -129,10 +128,6 @@ export const styles = StyleSheet.create(
       alignItems: 'center',
       flexDirection: 'row',
       margin: 5
-    },
-    transparent: {
-      color: colors.transparent,
-      fontSize: 12
     }
   }
 )
