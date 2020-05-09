@@ -651,6 +651,13 @@ export const register = (creds) => (dispatch, getState) => {
         throw errorMessage
       }
     )
+    .then(
+      () => { dispatch(checkin()) },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
     .catch(error => dispatch(registrationRejectedAction(error.message)))
 }
 
