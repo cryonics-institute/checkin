@@ -25,9 +25,7 @@ const mapDispatchToProps = dispatch => (
 // Setup Main Component
 class Main extends React.Component {
   componentDidMount () {
-    if (
-      this.props.username !== null && this.props.password !== null
-    ) {
+    if (this.props.username !== null && this.props.password !== null) {
       this.props.signIn(
         { username: this.props.username, password: this.props.password },
         true
