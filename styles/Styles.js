@@ -49,18 +49,11 @@ export const styles = StyleSheet.create(
       paddingRight: 5,
       paddingTop: 5
     },
-    containerAvoiding: {
-      backgroundColor: colors.light
-    },
     containerCentered: {
       alignItems: 'center',
       backgroundColor: colors.light,
       flex: 1,
       justifyContent: 'center'
-    },
-    containerContent: {
-      alignItems: 'center',
-      backgroundColor: colors.light
     },
     containerRounded: {
       alignSelf: 'center',
