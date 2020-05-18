@@ -1,3 +1,4 @@
+// TODO: Replace sign-out button in right of header with a drawer component.
 // TODO: Support safe areas for iPhoneX
 // https://reactnavigation.org/docs/handling-safe-area
 import React from 'react'
@@ -7,7 +8,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { signIn } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 import SignInScreen from './SignInComponent'
-import SignOutScreen from './SignOutComponent'
+// import SignOutScreen from './SignOutComponent'
 import Tabs from './TabsComponent'
 
 const mapStateToProps = state => {
@@ -52,12 +53,6 @@ class Main extends React.Component {
             ? <Stack.Screen
               name = 'Tabs'
               component = { Tabs }
-              options = {
-                {
-                  // eslint-disable-next-line react/display-name
-                  headerRight: () => <SignOutScreen/>
-                }
-              }
             />
             : <Stack.Screen
               name = 'SignIn'
@@ -69,6 +64,42 @@ class Main extends React.Component {
       </NavigationContainer>
     )
   }
+
+  // render () {
+  //   const Stack = createStackNavigator()
+  //
+  //   return (
+  //     <NavigationContainer>
+  //       <Stack.Navigator
+  //         screenOptions = {
+  //           {
+  //             headerStyle: styles.header,
+  //             headerTintColor: colors.light,
+  //             title: 'Check-In'
+  //           }
+  //         }
+  //       >
+  //         { this.props.userIsSignedIn
+  //           ? <Stack.Screen
+  //             name = 'Tabs'
+  //             component = { Tabs }
+  //             options = {
+  //               {
+  //                 // eslint-disable-next-line react/display-name
+  //                 headerRight: () => <SignOutScreen/>
+  //               }
+  //             }
+  //           />
+  //           : <Stack.Screen
+  //             name = 'SignIn'
+  //             component = { SignInScreen }
+  //             options = { { title: 'Sign-In' } }
+  //           />
+  //         }
+  //       </Stack.Navigator>
+  //     </NavigationContainer>
+  //   )
+  // }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)
