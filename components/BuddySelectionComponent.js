@@ -1,3 +1,4 @@
+// TODO: Navigate to buddy tab when buddy is added.
 // TODO: Move loading buddy from memory up the stack to at least the main view
 // if not App.js.
 import React from 'react'
