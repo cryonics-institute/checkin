@@ -1,6 +1,8 @@
-// TODO: Replace Dimensions with useWindowDimensions.
+// TODO: Move loading buddy from memory up the stack to at least the main view
+// if not App.js.
 import React from 'react'
-import { Dimensions, KeyboardAvoidingView, Platform, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
+  from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { HeaderHeightContext } from '@react-navigation/stack'
@@ -19,6 +21,47 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
+function BuddySelectionView (props) {
+  const windowHeight = useWindowDimensions().height
+
+  return (
+    <HeaderHeightContext.Consumer>
+      {
+        headerHeight => (
+          <View
+            style = {
+              {
+                backgroundColor: colors.light,
+                height: windowHeight - (headerHeight * 2)
+              }
+            }
+          >
+            <KeyboardAvoidingView
+              behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+              style = { styles.containerCentered }
+            >
+              <Input
+                placeholder = 'Buddy&#39;s E-Mail Address'
+                onChangeText = { email => props.validateEmail(email) }
+                value = { props.email }
+              />
+              <Text style = { styles.textError }>
+                { props.isEmailValid ? '' : props.emailError }
+              </Text>
+              <Button
+                buttonStyle = { styles.button }
+                disabled = { !props.isEmailValid }
+                onPress = { () => props.handlePress() }
+                title = 'Submit'
+              />
+            </KeyboardAvoidingView>
+          </View>
+        )
+      }
+    </HeaderHeightContext.Consumer>
+  )
+}
+
 class BuddySelection extends React.Component {
   constructor (props) {
     super(props)
@@ -28,16 +71,13 @@ class BuddySelection extends React.Component {
       isEmailValid: false,
       emailError: ''
     }
-
-    this.handleSignin = this.handleSignin.bind(this)
-    this.validateEmail = this.validateEmail.bind(this)
   }
 
   componentDidMount () {
     if (this.props.email !== null) {
       Promise.resolve(this.setState({ email: this.props.email }))
         .then(
-          () => { this.handleSignin() },
+          () => { this.props.addBuddy(this.state.email.toLowerCase()) },
           error => {
             var errorMessage = new Error(error.message)
             throw errorMessage
@@ -47,7 +87,7 @@ class BuddySelection extends React.Component {
     }
   }
 
-  handleSignin () {
+  handlePress () {
     this.props.addBuddy(this.state.email.toLowerCase())
   }
 
@@ -67,47 +107,13 @@ class BuddySelection extends React.Component {
 
   render () {
     return (
-      <HeaderHeightContext.Consumer>
-        {
-          headerHeight => (
-            <View
-              style = {
-                {
-                  backgroundColor: colors.light,
-                  height: Dimensions.get('window').height - (headerHeight * 2),
-                  width: Dimensions.get('window').width
-                }
-              }
-            >
-              <KeyboardAvoidingView
-                behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-                style = { styles.containerAvoiding }
-              >
-                <View
-                  style = { { height: Dimensions.get('window').height / 4 } }
-                >
-                </View>
-                <View style = { styles.containerContent }>
-                  <Input
-                    placeholder = 'Buddy&#39;s E-Mail Address'
-                    onChangeText = { (email) => this.validateEmail(email) }
-                    value = { this.state.email }
-                  />
-                  <Text style = { styles.textError }>
-                    { this.state.isEmailValid ? '' : this.state.emailError }
-                  </Text>
-                  <Button
-                    buttonStyle = { styles.button }
-                    disabled = { !this.state.isEmailValid }
-                    onPress = { () => this.handleSignin() }
-                    title = 'Submit'
-                  />
-                </View>
-              </KeyboardAvoidingView>
-            </View>
-          )
-        }
-      </HeaderHeightContext.Consumer>
+      <BuddySelectionView
+        email = { this.state.email }
+        isEmailValid = { this.state.isEmailValid }
+        emailError = { this.state.emailError }
+        handlePress = { () => this.handlePress() }
+        validateEmail = { username => this.validateEmail(username) }
+      />
     )
   }
 }

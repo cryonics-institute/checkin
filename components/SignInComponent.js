@@ -1,7 +1,7 @@
-// TODO: Replace Dimensions with useWindowDimensions.
 // TODO: Handle rejected sign-ins!
 import React from 'react'
-import { Dimensions, KeyboardAvoidingView, Platform, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
+  from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { HeaderHeightContext } from '@react-navigation/stack'
@@ -21,7 +21,9 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-const RenderSignInView = (props) => {
+function SignInView (props) {
+  const windowHeight = useWindowDimensions().height
+
   return (
     <HeaderHeightContext.Consumer>
       {
@@ -30,49 +32,42 @@ const RenderSignInView = (props) => {
             style = {
               {
                 backgroundColor: colors.light,
-                height: Dimensions.get('window').height - headerHeight,
-                width: Dimensions.get('window').width
+                height: windowHeight - headerHeight
               }
             }
           >
             <KeyboardAvoidingView
               behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-              style = { styles.containerAvoiding }
+              style = { styles.containerCentered }
             >
-              <View
-                style = { { height: Dimensions.get('window').height / 4 } }
-              >
-              </View>
-              <View style = { styles.containerContent }>
-                <Input
-                  placeholder = 'E-Mail Address'
-                  onChangeText = { username => props.validateEmail(username) }
-                  value = { props.username }
-                />
-                <Text style = { styles.textError }>
-                  { props.isUsernameValid ? '' : props.usernameError }
-                </Text>
-                <Input
-                  placeholder = 'Password'
-                  onChangeText = { password => props.validatePassword(password) }
-                  value = { props.password }
-                />
-                <Text style={ styles.textError }>
-                  { props.isPasswordValid ? '' : props.passwordError }
-                </Text>
-                <Button
-                  buttonStyle = { styles.button }
-                  disabled = { props.toggleButtonDisabled() }
-                  onPress = { () => props.handleSignin() }
-                  title = 'Sign In'
-                />
-                <Button
-                  onPress = { () => props.toggleRegistration() }
-                  title = 'Create Account'
-                  titleStyle = { styles.buttonTitleColorDark }
-                  type = 'clear'
-                />
-              </View>
+              <Input
+                placeholder = 'E-Mail Address'
+                onChangeText = { username => props.validateEmail(username) }
+                value = { props.username }
+              />
+              <Text style = { styles.textError }>
+                { props.isUsernameValid ? '' : props.usernameError }
+              </Text>
+              <Input
+                placeholder = 'Password'
+                onChangeText = { password => props.validatePassword(password) }
+                value = { props.password }
+              />
+              <Text style={ styles.textError }>
+                { props.isPasswordValid ? '' : props.passwordError }
+              </Text>
+              <Button
+                buttonStyle = { styles.button }
+                disabled = { props.toggleButtonDisabled() }
+                onPress = { () => props.handleSignin() }
+                title = 'Sign In'
+              />
+              <Button
+                onPress = { () => props.toggleRegistration() }
+                title = 'Create Account'
+                titleStyle = { styles.buttonTitleColorDark }
+                type = 'clear'
+              />
             </KeyboardAvoidingView>
           </View>
         )
@@ -81,7 +76,9 @@ const RenderSignInView = (props) => {
   )
 }
 
-const RenderRegistrationView = (props) => {
+function RegistrationView (props) {
+  const windowHeight = useWindowDimensions().height
+
   return (
     <HeaderHeightContext.Consumer>
       {
@@ -90,49 +87,42 @@ const RenderRegistrationView = (props) => {
             style = {
               {
                 backgroundColor: colors.light,
-                height: Dimensions.get('window').height - headerHeight,
-                width: Dimensions.get('window').width
+                height: windowHeight - headerHeight
               }
             }
           >
             <KeyboardAvoidingView
               behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-              style = { styles.containerAvoiding }
+              style = { styles.containerCentered }
             >
-              <View
-                style = { { height: Dimensions.get('window').height / 4 } }
-              >
-              </View>
-              <View style = { styles.containerContent }>
-                <Input
-                  placeholder = 'E-Mail Address'
-                  onChangeText = { (username) => props.validateEmail(username) }
-                  value = { props.username }
-                />
-                <Text style={ styles.textError }>
-                  { props.isUsernameValid ? '' : props.usernameError }
-                </Text>
-                <Input
-                  placeholder = 'Password'
-                  onChangeText = { (password) => props.validatePassword(password) }
-                  value = { props.password }
-                />
-                <Text style={ styles.textError }>
-                  { props.isPasswordValid ? '' : props.passwordError }
-                </Text>
-                <Button
-                  buttonStyle = { styles.button }
-                  disabled = { props.toggleButtonDisabled() }
-                  onPress = { () => props.handleRegistration() }
-                  title = 'Create Account'
-                />
-                <Button
-                  onPress = { () => props.toggleRegistration() }
-                  title = 'Sign In'
-                  titleStyle = { styles.buttonTitleColorDark }
-                  type = 'clear'
-                />
-              </View>
+              <Input
+                placeholder = 'E-Mail Address'
+                onChangeText = { (username) => props.validateEmail(username) }
+                value = { props.username }
+              />
+              <Text style={ styles.textError }>
+                { props.isUsernameValid ? '' : props.usernameError }
+              </Text>
+              <Input
+                placeholder = 'Password'
+                onChangeText = { (password) => props.validatePassword(password) }
+                value = { props.password }
+              />
+              <Text style={ styles.textError }>
+                { props.isPasswordValid ? '' : props.passwordError }
+              </Text>
+              <Button
+                buttonStyle = { styles.button }
+                disabled = { props.toggleButtonDisabled() }
+                onPress = { () => props.handleRegistration() }
+                title = 'Create Account'
+              />
+              <Button
+                onPress = { () => props.toggleRegistration() }
+                title = 'Sign In'
+                titleStyle = { styles.buttonTitleColorDark }
+                type = 'clear'
+              />
             </KeyboardAvoidingView>
           </View>
         )
@@ -238,7 +228,7 @@ class SignIn extends React.Component {
   render () {
     return (
       this.state.isRegistered
-        ? <RenderSignInView
+        ? <SignInView
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }
@@ -251,7 +241,7 @@ class SignIn extends React.Component {
           validateEmail = { username => this.validateEmail(username) }
           validatePassword = { password => this.validatePassword(password) }
         />
-        : <RenderRegistrationView
+        : <RegistrationView
           username = { this.state.username }
           password = { this.state.password }
           isUsernameValid = { this.state.isUsernameValid }

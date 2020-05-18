@@ -98,7 +98,7 @@ function TimeInputs (props) {
           >
             <ScrollView
               ref = { scrollView => { setScrollViewRef(scrollView) } }
-              contentContainerStyle = { styles.containerContent }
+              contentContainerStyle = { styles.containerCentered }
               style = { styles.containerScrolling }
               onContentSizeChange = {
                 (event) => {
