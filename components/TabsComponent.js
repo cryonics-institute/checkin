@@ -21,7 +21,7 @@ class Tabs extends React.Component {
 
     return (
       <Tab.Navigator
-        initialRouteName = 'Home'
+        initialRouteName = { this.props.buddyIsSignedIn ? 'Buddy' : 'Home' }
         backBehavior = 'history'
         tabBarOptions = {
           {
