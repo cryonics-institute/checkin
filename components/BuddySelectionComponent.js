@@ -1,4 +1,5 @@
-// TODO: Navigate to buddy tab when buddy is added.
+// TODO: Navigate to buddy tab only first time after buddy is added.  Add toggle
+// to settings panel to set initial route.
 // TODO: Move loading buddy from memory up the stack to at least the main view
 // if not App.js.
 import React from 'react'
