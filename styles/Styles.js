@@ -65,7 +65,13 @@ export const styles = StyleSheet.create(
       padding: '5%'
     },
     containerScrolling: {
-      backgroundColor: colors.light
+      backgroundColor: colors.light,
+      flex: 1
+    },
+    containerScrollingContent: {
+      alignItems: 'center',
+      flexGrow: 1,
+      justifyContent: 'center'
     },
     containerSpaced: {
       alignItems: 'center',

@@ -24,11 +24,10 @@
  */
 
 import React from 'react'
-import { ScrollView, View, useWindowDimensions } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { Icon, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import * as Shortid from 'shortid'
-import { HeaderHeightContext } from '@react-navigation/stack'
 import { hideTip, mutateInput, setSnooze } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
@@ -53,126 +52,121 @@ const mapDispatchToProps = dispatch => (
 
 function TimeInputs (props) {
   const [scrollViewRef, setScrollViewRef] = React.useState(null)
-  const [tipHeight, setTipHeight] = React.useState(null)
-  const windowHeight = useWindowDimensions().height
-
-  const calculateHeight = (
-    showTip,
-    numberOfInputs,
-    headerHeight,
-    inputHeight,
-    tipHeight,
-    windowHeight
-  ) => {
-    if (showTip) {
-      return inputHeight * numberOfInputs > windowHeight
-        ? 0
-        : (
-          windowHeight -
-          (inputHeight * numberOfInputs) -
-          (headerHeight * 2) -
-          tipHeight
-        ) / 2
-    } else {
-      return inputHeight * numberOfInputs > windowHeight
-        ? 0
-        : (
-          windowHeight -
-          (inputHeight * numberOfInputs) -
-          (headerHeight * 2)
-        ) / 2
-    }
-  }
 
   return (
-    <HeaderHeightContext.Consumer>
+    <ScrollView
+      ref = { scrollView => { setScrollViewRef(scrollView) } }
+      contentContainerStyle = { styles.containerScrollingContent }
+      style = { styles.containerScrolling }
+      onContentSizeChange = {
+        (event) => {
+          scrollViewRef.scrollToEnd({ animated: true })
+        }
+      }
+    >
       {
-        headerHeight => (
-          <View
-            style = {
-              {
-                backgroundColor: colors.dark,
-                flex: 1
-              }
-            }
-          >
-            <ScrollView
-              ref = { scrollView => { setScrollViewRef(scrollView) } }
-              contentContainerStyle = { styles.containerCentered }
-              style = { styles.containerScrolling }
-              onContentSizeChange = {
-                (event) => {
-                  scrollViewRef.scrollToEnd({ animated: true })
-                }
-              }
-            >
-              {
-                props.alertTimes.map(
-                  (alert, i) => i === 0
-                    ? <View key = { i }>
-                      <View
-                        style = {
-                          {
-                            height: calculateHeight(
-                              props.showTip,
-                              props.alertTimes.length,
-                              headerHeight,
-                              props.inputHeight,
-                              tipHeight,
-                              windowHeight
-                            )
-                          }
-                        }
-                      >
-                      </View>
-                      <TimeInput
-                        key = { alert.id.toString() }
-                        value = { alert.id }
-                      />
-                    </View>
-                    : <View key = { i }>
-                      <TimeInput
-                        key = { alert.id.toString() }
-                        value = { alert.id }
-                      />
-                    </View>
-                )
-              }
-              {
-                props.showTip &&
-                <View
-                  style = { styles.containerRounded }
-                  onLayout = {
-                    (event) => {
-                      setTipHeight(
-                        event.nativeEvent.layout.height
-                      )
-                    }
-                  }
-                >
-                  <Icon
-                    color = { colors.dark }
-                    containerStyle = { styles.buttonTopRight }
-                    name = 'cancel'
-                    onPress = { props.closeTip() }
-                    type = 'material'
-                  />
-                  <Text style = { styles.textTip }>
-                    <Text style = { { fontWeight: 'bold' } }>TIP:</Text> To
-                    check in, enter a time using the form above.  If you
-                    want to add another time, just press the plus-sign for a
-                    new row. You can delete any check-in by pressing a
-                    minus-sign.
-                  </Text>
-                </View>
-              }
-            </ScrollView>
-          </View>
+        props.alertTimes.map(
+          alert => <TimeInput
+            key = { alert.id.toString() }
+            value = { alert.id }
+          />
         )
       }
-    </HeaderHeightContext.Consumer>
+      {
+        props.showTip &&
+        <View
+          style = { styles.containerRounded }
+        >
+          <Icon
+            color = { colors.dark }
+            containerStyle = { styles.buttonTopRight }
+            name = 'cancel'
+            onPress = { props.closeTip() }
+            type = 'material'
+          />
+          <Text style = { styles.textTip }>
+            <Text style = { { fontWeight: 'bold' } }>TIP:</Text> To
+            check in, enter a time using the form above.  If you
+            want to add another time, just press the plus-sign for a
+            new row. You can delete any check-in by pressing a
+            minus-sign.
+          </Text>
+        </View>
+      }
+    </ScrollView>
   )
 }
+
+// function TimeInputs (props) {
+//   const [scrollViewRef, setScrollViewRef] = React.useState(null)
+//   const [tipHeight, setTipHeight] = React.useState(null)
+//   const windowHeight = useWindowDimensions().height
+//
+//   return (
+//     <HeaderHeightContext.Consumer>
+//       {
+//         headerHeight => (
+//           <View
+//             style = {
+//               {
+//                 backgroundColor: colors.dark,
+//                 flex: 1
+//               }
+//             }
+//           >
+//             <ScrollView
+//               ref = { scrollView => { setScrollViewRef(scrollView) } }
+//               contentContainerStyle = { styles.containerScrollingContent }
+//               style = { styles.containerScrolling }
+//               onContentSizeChange = {
+//                 (event) => {
+//                   scrollViewRef.scrollToEnd({ animated: true })
+//                 }
+//               }
+//             >
+//               {
+//                 props.alertTimes.map(
+//                   alert => <TimeInput
+//                     key = { alert.id.toString() }
+//                     value = { alert.id }
+//                   />
+//                 )
+//               }
+//               {
+//                 props.showTip &&
+//                 <View
+//                   style = { styles.containerRounded }
+//                   onLayout = {
+//                     (event) => {
+//                       setTipHeight(
+//                         event.nativeEvent.layout.height
+//                       )
+//                     }
+//                   }
+//                 >
+//                   <Icon
+//                     color = { colors.dark }
+//                     containerStyle = { styles.buttonTopRight }
+//                     name = 'cancel'
+//                     onPress = { props.closeTip() }
+//                     type = 'material'
+//                   />
+//                   <Text style = { styles.textTip }>
+//                     <Text style = { { fontWeight: 'bold' } }>TIP:</Text> To
+//                     check in, enter a time using the form above.  If you
+//                     want to add another time, just press the plus-sign for a
+//                     new row. You can delete any check-in by pressing a
+//                     minus-sign.
+//                   </Text>
+//                 </View>
+//               }
+//             </ScrollView>
+//           </View>
+//         )
+//       }
+//     </HeaderHeightContext.Consumer>
+//   )
+// }
 
 class Home extends React.Component {
   constructor (props) {
