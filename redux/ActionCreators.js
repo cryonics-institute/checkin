@@ -968,7 +968,7 @@ export const setListener = (email, isTest = false) => (dispatch, getState) => {
   )
     .then(
       () => {
-        if (getState().buddy.isSignedIn) {
+        if (getState().buddy.isAdded) {
           return dispatch(
             setListenerInterval(
               getState().buddy.alertTimes,

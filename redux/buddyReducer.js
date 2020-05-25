@@ -30,7 +30,7 @@ export const Buddy = (
     checkinTime: null,
     email: null,
     errMess: null,
-    isSignedIn: null,
+    isAdded: null,
     lastAlertTime: null,
     snooze: null
   },
@@ -65,7 +65,7 @@ export const Buddy = (
       return {
         ...state,
         errMess: action.payload,
-        isSignedIn: false
+        isAdded: false
       }
 
     case ActionTypes.GET_DOCUMENT_FULFILLED:
@@ -75,7 +75,7 @@ export const Buddy = (
         checkinInterval: action.payload[2],
         checkinTime: action.payload[3],
         errMess: null,
-        isSignedIn: action.payload[0],
+        isAdded: action.payload[0],
         snooze: action.payload[4]
       }
 

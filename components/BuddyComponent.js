@@ -11,7 +11,7 @@ const mapStateToProps = state => {
     checkinTime: state.buddy.checkinTime,
     lastAlertTime: state.buddy.lastAlertTime,
     buddyEmail: state.buddy.email,
-    buddySignedIn: state.buddy.isSignedIn
+    buddyIsAdded: state.buddy.isAdded
   }
 }
 
@@ -96,17 +96,17 @@ class Buddy extends React.Component {
   }
 
   render () {
-    if (this.props.buddySignedIn == null) {
+    if (this.props.buddyIsAdded == null) {
       return (
         <RenderNullBuddyStatusView/>
       )
-    } else if (this.props.buddySignedIn && !this.props.buddyAlertActive) {
+    } else if (this.props.buddyIsAdded && !this.props.buddyAlertActive) {
       return (
         <RenderSignedInBuddyView
           checkinTime = { this.props.checkinTime }
         />
       )
-    } else if (this.props.buddySignedIn && this.props.buddyAlertActive) {
+    } else if (this.props.buddyIsAdded && this.props.buddyAlertActive) {
       return (
         <RenderActiveAlertView
           checkinTime = { this.props.checkinTime }

@@ -7,11 +7,11 @@ import HomeScreen from './HomeComponent'
 import BuddyScreen from './BuddyComponent'
 import BuddySelectionScreen from './BuddySelectionComponent'
 
-const mapStateToProps = state => {
-  return {
-    buddyIsSignedIn: state.buddy.isSignedIn
-  }
-}
+// const mapStateToProps = state => {
+//   return {
+//     buddyIsAdded: state.buddy.isAdded
+//   }
+// }
 
 // TODO: Goes back to home screen after adding listener.
 // TODO: Needs something in Redux that knows which screen it's on.
