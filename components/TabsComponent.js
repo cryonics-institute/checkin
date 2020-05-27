@@ -13,7 +13,6 @@ const mapStateToProps = state => {
   }
 }
 
-// TODO: Goes back to home screen after adding listener.
 // TODO: Needs something in Redux that knows which screen it's on.
 class Tabs extends React.Component {
   render () {
