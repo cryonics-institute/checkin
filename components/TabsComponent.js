@@ -13,14 +13,12 @@ const mapStateToProps = state => {
   }
 }
 
-// TODO: Needs something in Redux that knows which screen it's on.
 class Tabs extends React.Component {
   render () {
     const Tab = createBottomTabNavigator()
 
     return (
       <Tab.Navigator
-        initialRouteName = { this.props.buddyIsAdded ? 'Buddy' : 'Home' }
         backBehavior = 'history'
         tabBarOptions = {
           {
