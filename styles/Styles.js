@@ -44,10 +44,10 @@ export const styles = StyleSheet.create(
       color: colors.light
     },
     buttonTopRight: {
-      position: 'absolute',
       alignSelf: 'flex-end',
       paddingRight: 5,
-      paddingTop: 5
+      paddingTop: 5,
+      position: 'absolute'
     },
     containerCentered: {
       alignItems: 'center',
@@ -57,10 +57,10 @@ export const styles = StyleSheet.create(
     },
     containerRounded: {
       alignSelf: 'center',
-      borderWidth: 2,
+      backgroundColor: colors.medium,
       borderColor: colors.dark,
       borderRadius: 10,
-      backgroundColor: colors.medium,
+      borderWidth: 2,
       margin: '5%',
       padding: '5%'
     },
@@ -114,14 +114,14 @@ export const styles = StyleSheet.create(
       color: colors.medium,
       textDecorationLine: 'line-through'
     },
+    textTip: {
+      color: colors.dark,
+      fontSize: 18
+    },
     textTransparent: {
       color: colors.transparent,
       fontSize: 12,
       margin: 5
-    },
-    textTip: {
-      color: colors.dark,
-      fontSize: 18
     },
     title: {
       margin: 5
