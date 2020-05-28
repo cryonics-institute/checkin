@@ -98,7 +98,7 @@ function TimeInputs (props) {
   )
 }
 TimeInputs.propTypes = {
-  alertTimes: PropTypes.arrayOf(PropTypes.element),
+  alertTimes: PropTypes.arrayOf(PropTypes.object),
   closeTip: PropTypes.func,
   showTip: PropTypes.bool
 }
@@ -132,7 +132,7 @@ class Home extends React.Component {
   }
 }
 Home.propTypes = {
-  alertTimes: PropTypes.arrayOf(PropTypes.element),
+  alertTimes: PropTypes.arrayOf(PropTypes.object),
   hideTip: PropTypes.func,
   inputHeight: PropTypes.number,
   mutateInput: PropTypes.func,

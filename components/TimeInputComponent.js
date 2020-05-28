@@ -258,7 +258,7 @@ class TimeInput extends React.Component {
   }
 }
 TimeInput.propTypes = {
-  alertTimes: PropTypes.arrayOf(PropTypes.element),
+  alertTimes: PropTypes.arrayOf(PropTypes.object),
   mutateInput: PropTypes.func,
   removeInput: PropTypes.func,
   setInputParameters: PropTypes.func,
