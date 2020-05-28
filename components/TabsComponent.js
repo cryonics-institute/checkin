@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import { Icon } from 'react-native-elements'
 import { connect } from 'react-redux'
@@ -82,6 +83,9 @@ class Tabs extends React.Component {
       </Tab.Navigator>
     )
   }
+}
+Tabs.propTypes = {
+  buddyIsAdded: PropTypes.bool
 }
 
 export default connect(mapStateToProps)(Tabs)

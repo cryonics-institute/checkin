@@ -1,6 +1,7 @@
 // TODO: Replace sign-out button in right of header with a drawer component.
 // TODO: Support safe areas for iPhoneX
 // https://reactnavigation.org/docs/handling-safe-area
+import PropTypes from 'prop-types'
 import React from 'react'
 import { connect } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native'
@@ -64,42 +65,12 @@ class Main extends React.Component {
       </NavigationContainer>
     )
   }
-
-  // render () {
-  //   const Stack = createStackNavigator()
-  //
-  //   return (
-  //     <NavigationContainer>
-  //       <Stack.Navigator
-  //         screenOptions = {
-  //           {
-  //             headerStyle: styles.header,
-  //             headerTintColor: colors.light,
-  //             title: 'Check-In'
-  //           }
-  //         }
-  //       >
-  //         { this.props.userIsSignedIn
-  //           ? <Stack.Screen
-  //             name = 'Tabs'
-  //             component = { Tabs }
-  //             options = {
-  //               {
-  //                 // eslint-disable-next-line react/display-name
-  //                 headerRight: () => <SignOutScreen/>
-  //               }
-  //             }
-  //           />
-  //           : <Stack.Screen
-  //             name = 'SignIn'
-  //             component = { SignInScreen }
-  //             options = { { title: 'Sign-In' } }
-  //           />
-  //         }
-  //       </Stack.Navigator>
-  //     </NavigationContainer>
-  //   )
-  // }
+}
+Main.propTypes = {
+  password: PropTypes.string,
+  signIn: PropTypes.func,
+  userIsSignedIn: PropTypes.bool,
+  username: PropTypes.string
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Main)

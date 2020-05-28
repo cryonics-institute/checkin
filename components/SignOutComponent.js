@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
@@ -27,6 +28,9 @@ class SignOut extends React.Component {
       />
     )
   }
+}
+SignOut.propTypes = {
+  signOut: PropTypes.func
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignOut)

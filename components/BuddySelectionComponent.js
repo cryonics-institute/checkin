@@ -1,5 +1,6 @@
 // TODO: Move loading buddy from memory up the stack to at least the main view
 // if not App.js.
+import PropTypes from 'prop-types'
 import React from 'react'
 import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
   from 'react-native'
@@ -61,6 +62,13 @@ function BuddySelectionView (props) {
     </HeaderHeightContext.Consumer>
   )
 }
+BuddySelectionView.propTypes = {
+  email: PropTypes.string,
+  emailError: PropTypes.string,
+  handlePress: PropTypes.func,
+  isEmailValid: PropTypes.bool,
+  validateEmail: PropTypes.func
+}
 
 class BuddySelection extends React.Component {
   constructor (props) {
@@ -77,7 +85,7 @@ class BuddySelection extends React.Component {
     if (this.props.email !== null) {
       Promise.resolve(this.setState({ email: this.props.email }))
         .then(
-          () => { this.props.addBuddy(this.state.email.toLowerCase()) },
+          () => this.props.addBuddy(this.state.email.toLowerCase()),
           error => {
             var errorMessage = new Error(error.message)
             throw errorMessage
@@ -90,9 +98,7 @@ class BuddySelection extends React.Component {
   handlePress () {
     this.props.addBuddy(this.state.email.toLowerCase())
       .then(
-        () => {
-          this.props.navigation.navigate('Buddy')
-        }
+        () => this.props.navigation.navigate('Buddy')
       )
       .catch(error => console.log(error.message))
   }
@@ -122,6 +128,13 @@ class BuddySelection extends React.Component {
       />
     )
   }
+}
+BuddySelection.propTypes = {
+  addBuddy: PropTypes.func,
+  email: PropTypes.string,
+  navigation: PropTypes.shape(
+    { navigate: PropTypes.func.isRequired }
+  ).isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BuddySelection)

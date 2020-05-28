@@ -23,6 +23,7 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import PropTypes from 'prop-types'
 import * as React from 'react'
 import moment from 'moment'
 import { View } from 'react-native'
@@ -35,7 +36,7 @@ import { colors, styles } from '../styles/Styles'
 
 const mapStateToProps = state => {
   return {
-    user: state.user
+    alertTimes: state.user.alertTimes
   }
 }
 
@@ -62,7 +63,7 @@ class TimeInput extends React.Component {
 
   componentDidMount () {
     if (
-      this.props.user.alertTimes.filter(
+      this.props.alertTimes.filter(
         alert => alert.id === this.state.identifier
       )[0].validity
     ) {
@@ -70,12 +71,12 @@ class TimeInput extends React.Component {
         {
           time: moment().isDST()
             ? moment(
-              this.props.user.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].time
             ).add(1, 'hours').format('h:mm A')
             : moment(
-              this.props.user.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].time
             ).format('h:mm A')
@@ -128,7 +129,7 @@ class TimeInput extends React.Component {
       const isoTime = (new Date(1970, 0, 1, hours, minutes)).toISOString()
 
       let valid = true
-      for (const alert of this.props.user.alertTimes) {
+      for (const alert of this.props.alertTimes) {
         if (
           moment(isoTime).isBetween(
             moment(alert.time) - 3600000,
@@ -149,12 +150,12 @@ class TimeInput extends React.Component {
   }
 
   render () {
-    const length = this.props.user.alertTimes.length
+    const length = this.props.alertTimes.length
     const valid = 'VALID'
 
     if (
       length > 1 &&
-      this.props.user.alertTimes[length - 1].id !== this.state.identifier
+      this.props.alertTimes[length - 1].id !== this.state.identifier
     ) {
       return (
         <View
@@ -169,14 +170,14 @@ class TimeInput extends React.Component {
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.user.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : this.state.invalid
             }
             errorStyle = {
-              this.props.user.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? styles.textTransparent
@@ -218,14 +219,14 @@ class TimeInput extends React.Component {
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.user.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : this.state.invalid
             }
             errorStyle = {
-              this.props.user.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? styles.textTransparent
@@ -255,6 +256,13 @@ class TimeInput extends React.Component {
       )
     }
   }
+}
+TimeInput.propTypes = {
+  alertTimes: PropTypes.arrayOf(PropTypes.element),
+  mutateInput: PropTypes.func,
+  removeInput: PropTypes.func,
+  setInputParameters: PropTypes.func,
+  value: PropTypes.string
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimeInput)

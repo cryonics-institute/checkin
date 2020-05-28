@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import { ActivityIndicator, StatusBar, View } from 'react-native'
 import { Text } from 'react-native-elements'
@@ -34,6 +35,10 @@ const RenderActiveAlertView = (props) => {
     </View>
   )
 }
+RenderActiveAlertView.propTypes = {
+  checkinTime: PropTypes.string,
+  lastAlertTime: PropTypes.string
+}
 
 const RenderNullBuddyStatusView = (props) => {
   return (
@@ -57,6 +62,9 @@ const RenderSignedInBuddyView = (props) => {
     </View>
   )
 }
+RenderSignedInBuddyView.propTypes = {
+  checkinTime: PropTypes.string
+}
 
 const RenderSignedOutBuddyView = (props) => {
   return (
@@ -70,6 +78,9 @@ const RenderSignedOutBuddyView = (props) => {
       </Text>
     </View>
   )
+}
+RenderSignedOutBuddyView.propTypes = {
+  buddyEmail: PropTypes.string
 }
 
 // TODO: What happens if the network is down?
@@ -121,6 +132,14 @@ class Buddy extends React.Component {
       )
     }
   }
+}
+Buddy.propTypes = {
+  buddyAlertActive: PropTypes.bool,
+  buddyEmail: PropTypes.string,
+  buddyIsAdded: PropTypes.bool,
+  checkinTime: PropTypes.string,
+  lastAlertTime: PropTypes.string,
+  setListener: PropTypes.func
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Buddy)

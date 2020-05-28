@@ -23,6 +23,7 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import PropTypes from 'prop-types'
 import React from 'react'
 import { ScrollView, View } from 'react-native'
 import { Icon, Text } from 'react-native-elements'
@@ -85,7 +86,7 @@ function TimeInputs (props) {
             type = 'material'
           />
           <Text style = { styles.textTip }>
-            <Text style = { { fontWeight: 'bold' } }>TIP:</Text> To
+            <Text style = { styles.textBold }>TIP:</Text> To
             check in, enter a time using the form above.  If you
             want to add another time, just press the plus-sign for a
             new row. You can delete any check-in by pressing a
@@ -96,77 +97,11 @@ function TimeInputs (props) {
     </ScrollView>
   )
 }
-
-// function TimeInputs (props) {
-//   const [scrollViewRef, setScrollViewRef] = React.useState(null)
-//   const [tipHeight, setTipHeight] = React.useState(null)
-//   const windowHeight = useWindowDimensions().height
-//
-//   return (
-//     <HeaderHeightContext.Consumer>
-//       {
-//         headerHeight => (
-//           <View
-//             style = {
-//               {
-//                 backgroundColor: colors.dark,
-//                 flex: 1
-//               }
-//             }
-//           >
-//             <ScrollView
-//               ref = { scrollView => { setScrollViewRef(scrollView) } }
-//               contentContainerStyle = { styles.containerScrollingContent }
-//               style = { styles.containerScrolling }
-//               onContentSizeChange = {
-//                 (event) => {
-//                   scrollViewRef.scrollToEnd({ animated: true })
-//                 }
-//               }
-//             >
-//               {
-//                 props.alertTimes.map(
-//                   alert => <TimeInput
-//                     key = { alert.id.toString() }
-//                     value = { alert.id }
-//                   />
-//                 )
-//               }
-//               {
-//                 props.showTip &&
-//                 <View
-//                   style = { styles.containerRounded }
-//                   onLayout = {
-//                     (event) => {
-//                       setTipHeight(
-//                         event.nativeEvent.layout.height
-//                       )
-//                     }
-//                   }
-//                 >
-//                   <Icon
-//                     color = { colors.dark }
-//                     containerStyle = { styles.buttonTopRight }
-//                     name = 'cancel'
-//                     onPress = { props.closeTip() }
-//                     type = 'material'
-//                   />
-//                   <Text style = { styles.textTip }>
-//                     <Text style = { { fontWeight: 'bold' } }>TIP:</Text> To
-//                     check in, enter a time using the form above.  If you
-//                     want to add another time, just press the plus-sign for a
-//                     new row. You can delete any check-in by pressing a
-//                     minus-sign.
-//                   </Text>
-//                 </View>
-//               }
-//             </ScrollView>
-//           </View>
-//         )
-//       }
-//     </HeaderHeightContext.Consumer>
-//   )
-// }
+TimeInputs.propTypes = {
+  alertTimes: PropTypes.arrayOf(PropTypes.element),
+  closeTip: PropTypes.func,
+  showTip: PropTypes.bool
+}
 
 class Home extends React.Component {
   constructor (props) {
@@ -196,66 +131,12 @@ class Home extends React.Component {
     )
   }
 }
-
-// class Home extends React.Component {
-//   componentDidMount () {
-//     if (this.props.alertTimes.length === 0) {
-//       this.props.mutateInput(Shortid.generate(), '', false)
-//     }
-//   }
-//
-//   render () {
-//     return (
-//       <ScrollView contentContainerStyle = { styles.containerCentered }>
-//         <Text h4 style = { styles.title }>Check-In Times</Text>
-//         {
-//           this.props.alertTimes.map(
-//             alert => <TimeInput
-//               key = { alert.id.toString() }
-//               value = { alert.id }
-//             />
-//           )
-//         }
-//         <View style = { styles.tooltip }>
-//           <Text h4 style = { styles.title }>
-//             Snooze Interval
-//           </Text>
-//           <Tooltip
-//             height = { 80 }
-//             backgroundColor = { colors.medium }
-//             popover = {
-//               <Text>
-//                 How long would you like to wait before your buddy is contacted
-//                 if you miss a check-in?
-//               </Text>
-//             }
-//             width = { 222 }
-//           >
-//             <Icon
-//               color = { colors.dark }
-//               name = 'info'
-//               type = 'material'
-//             />
-//           </Tooltip>
-//         </View>
-//         <Slider
-//           maximumValue = { this.props.user.shortestInterval / 60000 }
-//           minimumValue = { 1 }
-//           onSlidingComplete = { value => this.props.setSnooze(value) }
-//           step = { 1 }
-//           style = { styles.slider }
-//           value = { this.props.user.snooze }
-//         />
-//         <Text style = { styles.text }>
-//           {
-//             this.props.user.snooze === 1
-//               ? this.props.user.snooze + ' Minute'
-//               : this.props.user.snooze + ' Minutes'
-//           }
-//         </Text>
-//       </ScrollView>
-//     )
-//   }
-// }
+Home.propTypes = {
+  alertTimes: PropTypes.arrayOf(PropTypes.element),
+  hideTip: PropTypes.func,
+  inputHeight: PropTypes.number,
+  mutateInput: PropTypes.func,
+  showTip: PropTypes.bool
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

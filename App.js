@@ -1,4 +1,5 @@
 import 'react-native-gesture-handler'
+import PropTypes from 'prop-types'
 import React from 'react'
 import { NativeModules, Platform, YellowBox } from 'react-native'
 import { Provider } from 'react-redux'
@@ -25,7 +26,7 @@ class App extends React.Component {
       ? store.dispatch(initializeStore(this.props.FCMToken))
       : Promise.resolve(NativeModules.FCM.getToken())
         .then(
-          FCMToken => { store.dispatch(initializeStore(FCMToken)) },
+          FCMToken => store.dispatch(initializeStore(FCMToken)),
           error => {
             var errorMessage = new Error(error.message)
             throw errorMessage
@@ -43,6 +44,10 @@ class App extends React.Component {
       </Provider>
     )
   }
+}
+
+App.propTypes = {
+  FCMToken: PropTypes.string
 }
 
 export default App

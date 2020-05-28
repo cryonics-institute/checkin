@@ -1,4 +1,5 @@
 // TODO: Handle rejected sign-ins!
+import PropTypes from 'prop-types'
 import React from 'react'
 import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
   from 'react-native'
@@ -75,6 +76,19 @@ function SignInView (props) {
     </HeaderHeightContext.Consumer>
   )
 }
+SignInView.propTypes = {
+  handleSignin: PropTypes.func,
+  isPasswordValid: PropTypes.bool,
+  isUsernameValid: PropTypes.bool,
+  password: PropTypes.string,
+  passwordError: PropTypes.string,
+  toggleButtonDisabled: PropTypes.func,
+  toggleRegistration: PropTypes.func,
+  username: PropTypes.string,
+  usernameError: PropTypes.string,
+  validateEmail: PropTypes.func,
+  validatePassword: PropTypes.func
+}
 
 function RegistrationView (props) {
   const windowHeight = useWindowDimensions().height
@@ -129,6 +143,19 @@ function RegistrationView (props) {
       }
     </HeaderHeightContext.Consumer>
   )
+}
+RegistrationView.propTypes = {
+  handleRegistration: PropTypes.func,
+  isPasswordValid: PropTypes.bool,
+  isUsernameValid: PropTypes.bool,
+  password: PropTypes.string,
+  passwordError: PropTypes.string,
+  toggleButtonDisabled: PropTypes.func,
+  toggleRegistration: PropTypes.func,
+  username: PropTypes.string,
+  usernameError: PropTypes.string,
+  validateEmail: PropTypes.func,
+  validatePassword: PropTypes.func
 }
 
 class SignIn extends React.Component {
@@ -256,6 +283,10 @@ class SignIn extends React.Component {
         />
     )
   }
+}
+SignIn.propTypes = {
+  register: PropTypes.func,
+  signIn: PropTypes.func
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignIn)
