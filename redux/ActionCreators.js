@@ -66,7 +66,7 @@ export const addBuddy = (email) => (dispatch, getState) => {
 
   return Promise.resolve(dispatch(setListener(email)))
     .then(
-      () => { dispatch(addBuddyFulfilledAction(email)) },
+      () => dispatch(addBuddyFulfilledAction(email)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -177,7 +177,7 @@ export const addDocument = (email) => (dispatch, getState) => {
       }
     )
     .then(
-      () => { dispatch(addDocumentFulfilledAction(user)) },
+      () => dispatch(addDocumentFulfilledAction(user)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -236,18 +236,23 @@ export const checkin = () => (dispatch, getState) => {
     }
   )
     .then(
-      () => {
-        dispatch(removeTimers())
-      },
+      () => db().collection('users').doc(getState().auth.user.email).update(
+        { wasCheckedForAlerts: false }
+      ),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      () => {
-        dispatch(checkinFulfilledAction(user.checkinTime))
-      },
+      () => dispatch(removeTimers()),
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => dispatch(checkinFulfilledAction(user.checkinTime)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -390,9 +395,7 @@ export const getDocument = (email) => (dispatch, getState) => {
       }
     )
     .then(
-      data => {
-        dispatch(getDocumentFulfilledAction(data))
-      },
+      data => dispatch(getDocumentFulfilledAction(data)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -567,9 +570,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
         }
       )
         .then(
-          () => {
-            dispatch(mutateInputFulfilledAction(inputsArray))
-          },
+          () => dispatch(mutateInputFulfilledAction(inputsArray)),
           error => {
             var errorMessage = new Error(error.message)
             throw errorMessage
@@ -638,21 +639,25 @@ export const register = (creds) => (dispatch, getState) => {
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
-      userCredential => {
-        dispatch(
-          registrationFulfilledAction(
-            { user: userCredential.user, creds: creds }
-          )
-        )
-        dispatch(addDocument(userCredential.user.email))
-      },
+      userCredential => dispatch(addDocument(userCredential.user.email)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      () => { dispatch(checkin()) },
+      () => dispatch(checkin()),
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      userCredential => dispatch(
+        registrationFulfilledAction(
+          { user: userCredential.user, creds: creds }
+        )
+      ),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -711,7 +716,7 @@ export const removeInput = (id) => (dispatch, getState) => {
     }
   )
     .then(
-      () => { dispatch(removeInputsFulfilledAction(inputsArray)) },
+      () => dispatch(removeInputsFulfilledAction(inputsArray)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -734,7 +739,7 @@ export const removeInputs = () => (dispatch, getState) => {
     }
   )
     .then(
-      () => { dispatch(removeInputsFulfilledAction([])) },
+      () => dispatch(removeInputsFulfilledAction([])),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -786,7 +791,7 @@ export const removeListeners = () => (dispatch, getState) => {
     [getState().listener.listeners.forEach(listener => clearTimeout(listener))]
   )
     .then(
-      () => { dispatch(removeListenersFulfilledAction()) },
+      () => dispatch(removeListenersFulfilledAction()),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -834,7 +839,7 @@ export const removeTimers = () => (dispatch, getState) => {
     [getState().timer.timers.forEach(timer => clearTimeout(timer))]
   )
     .then(
-      () => { dispatch(removeTimersFulfilledAction()) },
+      () => dispatch(removeTimersFulfilledAction()),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1022,9 +1027,7 @@ export const setListener = (email, isTest = false) => (dispatch, getState) => {
       }
     )
     .then(
-      listener => {
-        dispatch(setListenerFulfilledAction(listener))
-      },
+      listener => dispatch(setListenerFulfilledAction(listener)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1202,9 +1205,7 @@ export const setShortestInterval = (interval) => (dispatch, getState) => {
     { shortestInterval: interval }
   )
     .then(
-      () => {
-        dispatch(setShortestIntervalFulfilledAction(interval))
-      },
+      () => dispatch(setShortestIntervalFulfilledAction(interval)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1258,9 +1259,7 @@ export const setSnooze = (snooze) => (dispatch, getState) => {
     { snooze: snooze }
   )
     .then(
-      () => {
-        dispatch(setSnoozeFulfilledAction(snooze))
-      },
+      () => dispatch(setSnoozeFulfilledAction(snooze)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1376,9 +1375,7 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
       }
     )
     .then(
-      timer => {
-        dispatch(setTimerFulfilledAction(timer))
-      },
+      timer => dispatch(setTimerFulfilledAction(timer)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1478,14 +1475,7 @@ export const setTimerInterval = (
       .then(
         result => {
           if (!isTest) {
-            db().collection('users').doc(getState().auth.user.email).update(
-              {
-                checkinInterval: result
-              }
-            )
-              .catch(
-                error => dispatch(setTimerIntervalRejectedAction(error.message))
-              )
+            updateCheckinInterval(result)
           }
 
           return result
@@ -1548,10 +1538,8 @@ export const signIn = (creds, isAutomatic = false) => (dispatch, getState) => {
   return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
-        dispatch(
-          signinFulfilledAction({ user: userCredential.user, creds: creds })
-        )
         dispatch(addDocument(userCredential.user.email))
+        return userCredential
       },
       error => {
         var errorMessage = new Error(error.message)
@@ -1559,7 +1547,23 @@ export const signIn = (creds, isAutomatic = false) => (dispatch, getState) => {
       }
     )
     .then(
-      () => { if (isAutomatic) { dispatch(checkin()) } },
+      userCredential => {
+        if (isAutomatic) {
+          dispatch(checkin())
+          return userCredential
+        } else {
+          return userCredential
+        }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      userCredential => dispatch(
+        signinFulfilledAction({ user: userCredential.user, creds: creds })
+      ),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1613,17 +1617,21 @@ export const signOut = () => (dispatch, getState) => {
 
   return auth().signOut()
     .then(
-      () => {
-        dispatch(removeTimers())
-        dispatch(removeListeners())
-      },
+      () => dispatch(removeTimers()),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      () => { dispatch(signoutFulfilledAction()) },
+      () => dispatch(removeListeners()),
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => dispatch(signoutFulfilledAction()),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1660,3 +1668,20 @@ export const signoutFulfilledAction = () => (
     type: ActionTypes.SIGNOUT_FULFILLED
   }
 )
+
+/**
+ * Updates the check-in interval on the Firestore for the currently-authorized
+ * user.
+ * @param {Integer} interval  Milliseconds until next check-in.
+ * @return {Promise}  A promise to update the check-in interval.
+ */
+export const updateCheckinInterval = (interval) => (getState) => {
+  return db().collection('users').doc(getState().auth.user.email).update(
+    {
+      checkinInterval: interval
+    }
+  )
+    .catch(
+      error => console.log(error)
+    )
+}
