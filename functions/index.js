@@ -24,7 +24,7 @@
 const admin = require('firebase-admin')
 const functions = require('firebase-functions')
 const moment = require('moment')
-const nodemailer = require('nodemailer')
+// const nodemailer = require('nodemailer')
 
 admin.initializeApp(functions.config().firebase)
 
@@ -43,7 +43,7 @@ exports.checkCheckins = functions.pubsub.schedule(
         querySnapshot => {
           console.log('Successfully retrieved document.')
 
-          let deviceTokens = new Set()
+          const deviceTokens = new Set()
 
           querySnapshot.forEach(
             doc => {
@@ -64,6 +64,7 @@ exports.checkCheckins = functions.pubsub.schedule(
                   getDeviceTokensIfNotCheckedIn(doc.data())
                 )
 
+                // TODO: This should be moved down so it changes only if message is sent.
                 admin.firestore().collection('users').doc(doc.id).update(
                   { wasCheckedForAlerts: true }
                 )
@@ -72,7 +73,6 @@ exports.checkCheckins = functions.pubsub.schedule(
           )
 
           return Promise.all(deviceTokens)
-
         },
         error => {
           var errorMessage = new Error(error.message)
@@ -251,7 +251,7 @@ exports.checkCheckins = functions.pubsub.schedule(
       //     return null
       //   }
       // )
-      .catch(error => {console.log('NOTIFICATION ERROR: ', error)})
+      .catch(error => { console.log('NOTIFICATION ERROR: ', error) })
   }
 )
 
@@ -302,7 +302,7 @@ const getDeviceTokensIfNotCheckedIn = data => {
         throw errorMessage
       }
     )
-    .catch(error => {console.log('NOTIFICATION ERROR: ', error)})
+    .catch(error => { console.log('NOTIFICATION ERROR: ', error) })
 }
 
 /**
@@ -347,10 +347,10 @@ const getAlert = (alertTimes, checkinTime, snooze) => {
             : { shouldFire: { forPatient: true, forStandby: true } }
 
     return Promise.resolve(alert)
-      .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
+      .catch(error => { console.log('INTERVAL CALCULATION ERROR: ', error) })
   } else {
     const alert = { shouldFire: { forPatient: false, forStandby: false } }
     return Promise.resolve(alert)
-      .catch(error => {console.log('INTERVAL CALCULATION ERROR: ', error)})
+      .catch(error => { console.log('INTERVAL CALCULATION ERROR: ', error) })
   }
 }
