@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "firebase-admin": "^8.12.1",
-    "firebase-functions": "^3.6.1",
+    "firebase-functions": "^3.6.2",
     "moment": "^2.26.0",
-    "nodemailer": "^6.4.6"
+    "nodemailer": "^6.4.8"
   },
   "devDependencies": {
     "eslint": "^6.8.0",
