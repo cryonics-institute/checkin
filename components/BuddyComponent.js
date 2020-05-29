@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types'
+// @flow
 import React from 'react'
 import { ActivityIndicator, StatusBar, View } from 'react-native'
 import { Text } from 'react-native-elements'
@@ -20,7 +20,16 @@ const mapDispatchToProps = dispatch => (
   { setListener: (email) => dispatch(setListener(email)) }
 )
 
-const RenderActiveAlertView = (props) => {
+type Props = {
+  buddyAlertActive: boolean,
+  buddyEmail: string,
+  buddyIsAdded: boolean,
+  checkinTime: string,
+  lastAlertTime: string,
+  setListener: func
+}
+
+const RenderActiveAlertView = (props: Props) => {
   return (
     <View style = { styles.containerCentered }>
       <Text h1 style = { styles.title }>ALERT</Text>
@@ -35,12 +44,8 @@ const RenderActiveAlertView = (props) => {
     </View>
   )
 }
-RenderActiveAlertView.propTypes = {
-  checkinTime: PropTypes.string,
-  lastAlertTime: PropTypes.string
-}
 
-const RenderNullBuddyStatusView = (props) => {
+const RenderNullBuddyStatusView = () => {
   return (
     <View style = { styles.containerCentered }>
       <Text h4 style = { styles.title }>
@@ -52,7 +57,7 @@ const RenderNullBuddyStatusView = (props) => {
   )
 }
 
-const RenderSignedInBuddyView = (props) => {
+const RenderSignedInBuddyView = (props: Props) => {
   return (
     <View style = { styles.containerCentered }>
       <Text h4 style = { styles.title }>Check-In Time</Text>
@@ -62,11 +67,8 @@ const RenderSignedInBuddyView = (props) => {
     </View>
   )
 }
-RenderSignedInBuddyView.propTypes = {
-  checkinTime: PropTypes.string
-}
 
-const RenderSignedOutBuddyView = (props) => {
+const RenderSignedOutBuddyView = (props: Props) => {
   return (
     <View style = { styles.containerCentered }>
       <Text h4 style = { styles.paragraph }>
@@ -79,12 +81,9 @@ const RenderSignedOutBuddyView = (props) => {
     </View>
   )
 }
-RenderSignedOutBuddyView.propTypes = {
-  buddyEmail: PropTypes.string
-}
 
 // TODO: What happens if the network is down?
-class Buddy extends React.Component {
+class Buddy extends React.Component<Props> {
   componentDidMount () {
     if (this.props.buddyEmail !== null) {
       this.props.setListener(this.props.buddyEmail)
@@ -132,14 +131,6 @@ class Buddy extends React.Component {
       )
     }
   }
-}
-Buddy.propTypes = {
-  buddyAlertActive: PropTypes.bool,
-  buddyEmail: PropTypes.string,
-  buddyIsAdded: PropTypes.bool,
-  checkinTime: PropTypes.string,
-  lastAlertTime: PropTypes.string,
-  setListener: PropTypes.func
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Buddy)

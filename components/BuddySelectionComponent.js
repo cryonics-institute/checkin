@@ -1,6 +1,6 @@
 // TODO: Move loading buddy from memory up the stack to at least the main view
 // if not App.js.
-import PropTypes from 'prop-types'
+// @flow
 import React from 'react'
 import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
   from 'react-native'
@@ -9,6 +9,16 @@ import { connect } from 'react-redux'
 import { HeaderHeightContext } from '@react-navigation/stack'
 import { addBuddy } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
+
+type Props = {
+  addBuddy: func,
+  email: string,
+  emailError: string,
+  handlePress: func,
+  isEmailValid: boolean,
+  navigation: { navigate: func },
+  validateEmail: func
+}
 
 const mapStateToProps = state => {
   return {
@@ -22,7 +32,7 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-function BuddySelectionView (props) {
+function BuddySelectionView (props: Props) {
   const windowHeight = useWindowDimensions().height
 
   return (
@@ -62,15 +72,8 @@ function BuddySelectionView (props) {
     </HeaderHeightContext.Consumer>
   )
 }
-BuddySelectionView.propTypes = {
-  email: PropTypes.string,
-  emailError: PropTypes.string,
-  handlePress: PropTypes.func,
-  isEmailValid: PropTypes.bool,
-  validateEmail: PropTypes.func
-}
 
-class BuddySelection extends React.Component {
+class BuddySelection extends React.Component<Props> {
   constructor (props) {
     super(props)
 
@@ -128,13 +131,6 @@ class BuddySelection extends React.Component {
       />
     )
   }
-}
-BuddySelection.propTypes = {
-  addBuddy: PropTypes.func,
-  email: PropTypes.string,
-  navigation: PropTypes.shape(
-    { navigate: PropTypes.func.isRequired }
-  ).isRequired
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BuddySelection)
