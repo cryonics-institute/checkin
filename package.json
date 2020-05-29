@@ -3,12 +3,13 @@
   "version": "0.4.0",
   "private": true,
   "scripts": {
-    "start": "react-native start",
+    "build:apk": "cd android && ./gradlew assembleRelease",
+    "flow": "flow",
+    "prepare": "patch-package",
     "run:android": "react-native run-android",
     "run:ios": "react-native run-ios --simulator=\"iPhone 8\"",
-    "build:apk": "cd android && ./gradlew assembleRelease",
-    "test": "jest",
-    "prepare": "patch-package"
+    "start": "react-native start",
+    "test": "jest"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.11.0",
@@ -54,6 +55,7 @@
     "eslint-plugin-react-hooks": "^4.0.4",
     "eslint-plugin-react-native": "^3.8.1",
     "eslint-plugin-standard": "^4.0.1",
+    "flow-bin": "^0.125.1",
     "jest": "^26.0.1",
     "metro-react-native-babel-preset": "^0.59.0",
     "patch-package": "^6.2.2",
