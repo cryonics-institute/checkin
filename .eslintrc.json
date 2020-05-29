@@ -6,6 +6,7 @@
     },
     "extends": [
         "eslint:recommended",
+        "plugin:flowtype/recommended",
         "plugin:promise/recommended",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
@@ -16,6 +17,7 @@
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
     },
+    "parser": "babel-eslint",
     "parserOptions": {
         "ecmaFeatures": {
             "jsx": true
@@ -24,6 +26,7 @@
         "sourceType": "module"
     },
     "plugins": [
+        "flowtype",
         "promise",
         "react",
         "react-native"
