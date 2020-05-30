@@ -23,7 +23,7 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import PropTypes from 'prop-types'
+// @flow
 import * as React from 'react'
 import moment from 'moment'
 import { View } from 'react-native'
@@ -33,6 +33,14 @@ import * as Shortid from 'shortid'
 import { mutateInput, removeInput, setInputParameters }
   from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
+
+type Props = {
+  alertTimes: Array<object>,
+  mutateInput: func,
+  removeInput: func,
+  setInputParameters: func,
+  value: string
+}
 
 const mapStateToProps = state => {
   return {
@@ -50,7 +58,7 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-class TimeInput extends React.Component {
+class TimeInput extends React.Component<Props> {
   constructor (props) {
     super(props)
 
@@ -256,13 +264,6 @@ class TimeInput extends React.Component {
       )
     }
   }
-}
-TimeInput.propTypes = {
-  alertTimes: PropTypes.arrayOf(PropTypes.object),
-  mutateInput: PropTypes.func,
-  removeInput: PropTypes.func,
-  setInputParameters: PropTypes.func,
-  value: PropTypes.string
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimeInput)

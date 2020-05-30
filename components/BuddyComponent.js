@@ -7,6 +7,15 @@ import moment from 'moment'
 import { setListener } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
+type Props = {
+  buddyAlertActive: boolean,
+  buddyEmail: string,
+  buddyIsAdded: boolean,
+  checkinTime: string,
+  lastAlertTime: string,
+  setListener: func
+}
+
 const mapStateToProps = state => {
   return {
     checkinTime: state.buddy.checkinTime,
@@ -19,15 +28,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => (
   { setListener: (email) => dispatch(setListener(email)) }
 )
-
-type Props = {
-  buddyAlertActive: boolean,
-  buddyEmail: string,
-  buddyIsAdded: boolean,
-  checkinTime: string,
-  lastAlertTime: string,
-  setListener: func
-}
 
 const RenderActiveAlertView = (props: Props) => {
   return (

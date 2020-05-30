@@ -1,4 +1,5 @@
 // TODO: App should not reset snooze back to 9 minutes when relaunching.
+// @flow
 /**
  * Main component for the project, Dynamic Text-Input for React Native, that
  * presents the view inside of which the text-input components are presented.
@@ -23,7 +24,6 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import PropTypes from 'prop-types'
 import React from 'react'
 import { ScrollView, View } from 'react-native'
 import { Icon, Text } from 'react-native-elements'
@@ -32,6 +32,15 @@ import * as Shortid from 'shortid'
 import { hideTip, mutateInput, setSnooze } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
+
+type Props = {
+  alertTimes: Array<object>,
+  closeTip: func,
+  hideTip: func,
+  inputHeight: number,
+  mutateInput: func,
+  showTip: boolean
+}
 
 const mapStateToProps = state => {
   return {
@@ -51,7 +60,7 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-function TimeInputs (props) {
+function TimeInputs (props: Props) {
   const [scrollViewRef, setScrollViewRef] = React.useState(null)
 
   return (
@@ -97,13 +106,8 @@ function TimeInputs (props) {
     </ScrollView>
   )
 }
-TimeInputs.propTypes = {
-  alertTimes: PropTypes.arrayOf(PropTypes.object),
-  closeTip: PropTypes.func,
-  showTip: PropTypes.bool
-}
 
-class Home extends React.Component {
+class Home extends React.Component<Props> {
   constructor (props) {
     super(props)
 
@@ -130,13 +134,6 @@ class Home extends React.Component {
       />
     )
   }
-}
-Home.propTypes = {
-  alertTimes: PropTypes.arrayOf(PropTypes.object),
-  hideTip: PropTypes.func,
-  inputHeight: PropTypes.number,
-  mutateInput: PropTypes.func,
-  showTip: PropTypes.bool
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)

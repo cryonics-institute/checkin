@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types'
+// @flow
 import React from 'react'
 import { Icon } from 'react-native-elements'
 import { connect } from 'react-redux'
@@ -8,13 +8,17 @@ import HomeScreen from './HomeComponent'
 import BuddyScreen from './BuddyComponent'
 import BuddySelectionScreen from './BuddySelectionComponent'
 
+type Props = {
+  buddyIsAdded: boolean
+}
+
 const mapStateToProps = state => {
   return {
     buddyIsAdded: state.buddy.isAdded
   }
 }
 
-class Tabs extends React.Component {
+class Tabs extends React.Component<Props> {
   render () {
     const Tab = createBottomTabNavigator()
 
@@ -83,9 +87,6 @@ class Tabs extends React.Component {
       </Tab.Navigator>
     )
   }
-}
-Tabs.propTypes = {
-  buddyIsAdded: PropTypes.bool
 }
 
 export default connect(mapStateToProps)(Tabs)

@@ -1,9 +1,13 @@
-import PropTypes from 'prop-types'
+// @flow
 import React from 'react'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { signOut } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
+
+type Props = {
+  signOut: func
+}
 
 const mapStateToProps = state => {
   return {
@@ -17,7 +21,7 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-class SignOut extends React.Component {
+class SignOut extends React.Component<Props> {
   render () {
     return (
       <Button
@@ -28,9 +32,6 @@ class SignOut extends React.Component {
       />
     )
   }
-}
-SignOut.propTypes = {
-  signOut: PropTypes.func
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SignOut)

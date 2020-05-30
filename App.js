@@ -1,5 +1,5 @@
+// @flow
 import 'react-native-gesture-handler'
-import PropTypes from 'prop-types'
 import React from 'react'
 import { NativeModules, Platform, YellowBox } from 'react-native'
 import { Provider } from 'react-redux'
@@ -18,9 +18,13 @@ console.warn = message => {
   }
 }
 
+type Props = {
+  FCMToken: string
+}
+
 const { persistor, store } = ConfigureStore()
 
-class App extends React.Component {
+class App extends React.Component<Props> {
   componentDidMount () {
     Platform.OS === 'ios'
       ? store.dispatch(initializeStore(this.props.FCMToken))
@@ -44,10 +48,6 @@ class App extends React.Component {
       </Provider>
     )
   }
-}
-
-App.propTypes = {
-  FCMToken: PropTypes.string
 }
 
 export default App
