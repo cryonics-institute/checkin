@@ -1,6 +1,6 @@
 /**
- * Redux reducer for the project, Cryonics Check-In, that stores the state for
- * Firebase authorization.
+ * Redux reducer for the project, Cryonics Check-In, that stores in state all
+ * JavaScript listeners used throughout the app.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -24,66 +24,70 @@
 
 import * as ActionTypes from './ActionTypes'
 
-export const Auth = (
+export const Listener = (
   state = {
     errMess: null,
-    user: null
+    listeners: []
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.REGISTRATION_REQUESTED:
+    case ActionTypes.REMOVE_LISTENERS_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
-    case ActionTypes.REGISTRATION_REJECTED:
+    case ActionTypes.REMOVE_LISTENERS_REJECTED:
       return {
         ...state,
         errMess: action.payload
       }
 
-    case ActionTypes.REGISTRATION_FULFILLED:
+    case ActionTypes.REMOVE_LISTENERS_FULFILLED:
       return {
         ...state,
         errMess: null,
-        user: action.payload.user
+        listeners: []
       }
 
-    case ActionTypes.SIGNIN_REQUESTED:
+    case ActionTypes.SET_LISTENER_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
-    case ActionTypes.SIGNIN_REJECTED:
+    case ActionTypes.SET_LISTENER_REJECTED:
       return {
         ...state,
         errMess: action.payload
       }
 
-    case ActionTypes.SIGNIN_FULFILLED:
+    case ActionTypes.SET_LISTENER_FULFILLED:
       return {
         ...state,
         errMess: null,
-        user: action.payload.user
+        listeners: action.payload
+          ? state.listeners.concat(action.payload)
+          : state.listeners
       }
 
-    case ActionTypes.SIGNOUT_REQUESTED:
+    case ActionTypes.SET_LISTENER_INTERVAL_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
-    case ActionTypes.SIGNOUT_REJECTED:
+    case ActionTypes.SET_LISTENER_INTERVAL_REJECTED:
       return {
         ...state,
         errMess: action.payload
       }
 
-    case ActionTypes.SIGNOUT_FULFILLED:
+    case ActionTypes.SET_LISTENER_INTERVAL_FULFILLED:
       return {
         ...state,
-        errMess: null,
-        user: null
+        errMess: null
       }
 
     default:

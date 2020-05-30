@@ -1,6 +1,6 @@
 /**
- * Redux reducer for the project, Cryonics Check-In, that stores the state for
- * Firebase authorization.
+ * Redux reducer for the project, Cryonics Check-In, that stores the device
+ * information.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -24,66 +24,31 @@
 
 import * as ActionTypes from './ActionTypes'
 
-export const Auth = (
+export const Device = (
   state = {
     errMess: null,
-    user: null
+    token: null
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.REGISTRATION_REQUESTED:
+    case ActionTypes.INITIALIZE_STORE_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
-    case ActionTypes.REGISTRATION_REJECTED:
+    case ActionTypes.INITIALIZE_STORE_REJECTED:
       return {
         ...state,
         errMess: action.payload
       }
 
-    case ActionTypes.REGISTRATION_FULFILLED:
+    case ActionTypes.INITIALIZE_STORE_FULFILLED:
       return {
         ...state,
         errMess: null,
-        user: action.payload.user
-      }
-
-    case ActionTypes.SIGNIN_REQUESTED:
-      return {
-        ...state
-      }
-
-    case ActionTypes.SIGNIN_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.SIGNIN_FULFILLED:
-      return {
-        ...state,
-        errMess: null,
-        user: action.payload.user
-      }
-
-    case ActionTypes.SIGNOUT_REQUESTED:
-      return {
-        ...state
-      }
-
-    case ActionTypes.SIGNOUT_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.SIGNOUT_FULFILLED:
-      return {
-        ...state,
-        errMess: null,
-        user: null
+        token: action.payload
       }
 
     default:

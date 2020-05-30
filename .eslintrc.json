@@ -1,29 +1,55 @@
 {
-  "env": {
-    "browser": true,
-    "es6": true,
-    "jest": true
-  },
-  "extends": [
-    "standard",
-    "eslint:recommended",
-    "plugin:react/recommended"
-  ],
-  "globals": {
-    "Atomics": "readonly",
-    "SharedArrayBuffer": "readonly"
-  },
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
+    "env": {
+        "browser": true,
+        "es6": true,
+        "react-native/react-native": true
     },
-    "ecmaVersion": 2018,
-    "sourceType": "module"
-  },
-  "plugins": [
-    "react"
-  ],
-  "rules": {
-    "react/prop-types": [0]
-  }
+    "extends": [
+        "eslint:recommended",
+        "plugin:flowtype/recommended",
+        "plugin:promise/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "plugin:react-native/all",
+        "standard"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parser": "babel-eslint",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 11,
+        "sourceType": "module"
+    },
+    "plugins": [
+        "flowtype",
+        "promise",
+        "react",
+        "react-native"
+    ],
+    "rules": {
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error"
+    },
+    "settings": {
+        "react": {
+            "createClass": "createReactClass",
+            "pragma": "React",
+            "version": "detect",
+            "flowVersion": "0.53"
+        },
+        "propWrapperFunctions": [
+            "forbidExtraProps",
+            {"property": "freeze", "object": "Object"},
+            {"property": "myFavoriteWrapper"}
+        ],
+        "linkComponents": [
+            "Hyperlink",
+            {"name": "Link", "linkAttribute": "to"}
+        ]
+    }
 }

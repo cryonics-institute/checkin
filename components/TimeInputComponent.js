@@ -23,33 +23,42 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as React from 'react'
 import moment from 'moment'
 import { View } from 'react-native'
 import { Icon, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import * as Shortid from 'shortid'
-import { mutateInput, removeInput } from '../redux/ActionCreators'
+import { mutateInput, removeInput, setInputParameters }
+  from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
+
+type Props = {
+  alertTimes: Array<object>,
+  mutateInput: func,
+  removeInput: func,
+  setInputParameters: func,
+  value: string
+}
 
 const mapStateToProps = state => {
   return {
-    patient: state.patient
+    alertTimes: state.user.alertTimes
   }
 }
 
-const mapDispatchToProps = (dispatch) => (
+const mapDispatchToProps = dispatch => (
   {
     mutateInput: (identifier, time, validity) => dispatch(
       mutateInput(identifier, time, validity)
     ),
-    removeInput: (identifier) => dispatch(
-      removeInput(identifier)
-    )
+    removeInput: (identifier) => dispatch(removeInput(identifier)),
+    setInputParameters: (height) => dispatch(setInputParameters(height))
   }
 )
 
-class TimeInput extends React.Component {
+class TimeInput extends React.Component<Props> {
   constructor (props) {
     super(props)
 
@@ -62,7 +71,7 @@ class TimeInput extends React.Component {
 
   componentDidMount () {
     if (
-      this.props.patient.alertTimes.filter(
+      this.props.alertTimes.filter(
         alert => alert.id === this.state.identifier
       )[0].validity
     ) {
@@ -70,12 +79,12 @@ class TimeInput extends React.Component {
         {
           time: moment().isDST()
             ? moment(
-              this.props.patient.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].time
             ).add(1, 'hours').format('h:mm A')
             : moment(
-              this.props.patient.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].time
             ).format('h:mm A')
@@ -128,7 +137,7 @@ class TimeInput extends React.Component {
       const isoTime = (new Date(1970, 0, 1, hours, minutes)).toISOString()
 
       let valid = true
-      for (const alert of this.props.patient.alertTimes) {
+      for (const alert of this.props.alertTimes) {
         if (
           moment(isoTime).isBetween(
             moment(alert.time) - 3600000,
@@ -149,29 +158,37 @@ class TimeInput extends React.Component {
   }
 
   render () {
-    const length = this.props.patient.alertTimes.length
+    const length = this.props.alertTimes.length
     const valid = 'VALID'
 
     if (
       length > 1 &&
-      this.props.patient.alertTimes[length - 1].id !== this.state.identifier
+      this.props.alertTimes[length - 1].id !== this.state.identifier
     ) {
       return (
-        <View key = { this.state.identifier } style = { styles.row }>
+        <View
+          key = { this.state.identifier }
+          style = { styles.row }
+          onLayout = {
+            (event) => {
+              this.props.setInputParameters(event.nativeEvent.layout.height)
+            }
+          }
+        >
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.patient.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : this.state.invalid
             }
             errorStyle = {
-              this.props.patient.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
-                ? styles.transparent
+                ? styles.textTransparent
                 : styles.textError
             }
             onChangeText = {
@@ -198,21 +215,29 @@ class TimeInput extends React.Component {
       )
     } else {
       return (
-        <View key = { this.state.identifier } style = { styles.row }>
+        <View
+          key = { this.state.identifier }
+          style = { styles.row }
+          onLayout = {
+            (event) => {
+              this.props.setInputParameters(event.nativeEvent.layout.height)
+            }
+          }
+        >
           <Input
             autoCorrect = { false }
             errorMessage = {
-              this.props.patient.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
                 ? valid
                 : this.state.invalid
             }
             errorStyle = {
-              this.props.patient.alertTimes.filter(
+              this.props.alertTimes.filter(
                 alert => alert.id === this.state.identifier
               )[0].validity
-                ? styles.transparent
+                ? styles.textTransparent
                 : styles.textError
             }
             onChangeText = {

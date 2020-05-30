@@ -1,199 +1,77 @@
+// TODO: Replace sign-out button in right of header with a drawer component.
+// TODO: Support safe areas for iPhoneX
+// https://reactnavigation.org/docs/handling-safe-area
+// @flow
 import React from 'react'
-import { createAppContainer, createSwitchNavigator } from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack'
 import { connect } from 'react-redux'
-import NavigationService from '../services/NavigationService'
+import { NavigationContainer } from '@react-navigation/native'
+import { createStackNavigator } from '@react-navigation/stack'
+import { signIn } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
-import AuthLoading from './AuthLoadingComponent'
-import PatientHome from './PatientHomeComponent'
-import PatientSignIn from './PatientSignInComponent'
-import PatientSignOut from './PatientSignOutComponent'
-import StandbyHome from './StandbyHomeComponent'
-import StandbyPatientSelection from './StandbyPatientSelectionComponent'
-import StandbySignIn from './StandbySignInComponent'
-import StandbySignOut from './StandbySignOutComponent'
-import Welcome from './WelcomeComponent'
+import SignInScreen from './SignInComponent'
+// import SignOutScreen from './SignOutComponent'
+import Tabs from './TabsComponent'
 
-// Setup Redux
+type Props = {
+  password: string,
+  signIn: func,
+  userIsSignedIn: boolean,
+  username: string
+}
+
 const mapStateToProps = state => {
   return {
-    // Nothing in state is relevant here.
+    password: state.token.password,
+    userIsSignedIn: state.user.isSignedIn,
+    username: state.token.username
   }
 }
 
-// Setup Navigation Components
-class AuthLoadingScreen extends React.Component {
-  render () {
-    return (
-      <AuthLoading navigation = {this.props.navigation}/>
-    )
-  }
-}
-
-class PatientHomeScreen extends React.Component {
-  render () {
-    return (
-      <PatientHome navigation = {this.props.navigation}/>
-    )
-  }
-}
-
-class PatientSignInScreen extends React.Component {
-  render () {
-    return (
-      <PatientSignIn navigation = {this.props.navigation}/>
-    )
-  }
-}
-
-class StandbyHomeScreen extends React.Component {
-  render () {
-    return (
-      <StandbyHome navigation = {this.props.navigation}/>
-    )
-  }
-}
-
-class StandbyPatientSelectionScreen extends React.Component {
-  render () {
-    return (
-      <StandbyPatientSelection navigation = {this.props.navigation}/>
-    )
-  }
-}
-
-class StandbySignInScreen extends React.Component {
-  render () {
-    return (
-      <StandbySignIn navigation = {this.props.navigation}/>
-    )
-  }
-}
-
-class WelcomeScreen extends React.Component {
-  render () {
-    return (
-      <Welcome navigation = {this.props.navigation}/>
-    )
-  }
-}
-
-const AuthStack = createStackNavigator(
-  {
-    PatientAuth: {
-      screen: PatientSignInScreen,
-      navigationOptions: () => (
-        {
-          headerStyle: styles.header,
-          headerTintColor: colors.light
-        }
-      )
-    },
-    StandbyAuth: {
-      screen: StandbySignInScreen,
-      navigationOptions: () => (
-        {
-          headerStyle: styles.header,
-          headerTintColor: colors.light
-        }
-      )
-    },
-    Welcome: {
-      screen: WelcomeScreen,
-      navigationOptions: () => (
-        {
-          headerStyle: styles.header,
-          headerTintColor: colors.light
-        }
-      )
-    }
-  },
-  {
-    initialRouteName: 'Welcome'
-  }
-)
-
-const PatientAppStack = createStackNavigator(
-  {
-    PatientHome: {
-      screen: PatientHomeScreen,
-      navigationOptions: () => (
-        {
-          // eslint-disable-next-line react/display-name
-          headerRight: () => <PatientSignOut/>,
-          headerStyle: styles.header,
-          headerTintColor: colors.light
-        }
-      )
-    }
-  }
-)
-
-const StandbyAppStack = createStackNavigator(
-  {
-    StandbyHome: {
-      screen: StandbyHomeScreen,
-      navigationOptions: () => (
-        {
-          // eslint-disable-next-line react/display-name
-          headerRight: () => <StandbySignOut/>,
-          headerStyle: styles.header,
-          headerTintColor: colors.light
-        }
-      )
-    },
-    StandbyPatientSelection: {
-      screen: StandbyPatientSelectionScreen,
-      navigationOptions: () => (
-        {
-          // eslint-disable-next-line react/display-name
-          headerRight: () => <StandbySignOut/>,
-          headerStyle: styles.header,
-          headerTintColor: colors.light
-        }
-      )
-    }
-  },
-  {
-    initialRouteName: 'StandbyPatientSelection'
-  }
-)
-
-const AppContainer = createAppContainer(
-  createSwitchNavigator(
-    {
-      AuthLoading: {
-        screen: AuthLoadingScreen,
-        navigationOptions: () => (
-          {
-            headerStyle: styles.header,
-            headerTintColor: colors.light
-          }
-        )
-      },
-      PatientApp: PatientAppStack,
-      StandbyApp: StandbyAppStack,
-      Auth: AuthStack
-    },
-    {
-      initialRouteName: 'AuthLoading'
-    }
-  )
+const mapDispatchToProps = dispatch => (
+  { signIn: (creds, isAutomatic) => dispatch(signIn(creds, isAutomatic)) }
 )
 
 // Setup Main Component
-class Main extends React.Component {
+class Main extends React.Component<Props> {
+  componentDidMount () {
+    if (this.props.username !== null && this.props.password !== null) {
+      this.props.signIn(
+        { username: this.props.username, password: this.props.password },
+        true
+      )
+        .catch(error => console.log(error.message))
+    }
+  }
+
   render () {
+    const Stack = createStackNavigator()
+
     return (
-      <AppContainer
-        ref = {
-          navigatorRef => {
-            NavigationService.setTopLevelNavigator(navigatorRef)
+      <NavigationContainer>
+        <Stack.Navigator
+          screenOptions = {
+            {
+              headerStyle: styles.header,
+              headerTintColor: colors.light,
+              title: 'Check-In'
+            }
           }
-        }
-      />
+        >
+          { this.props.userIsSignedIn
+            ? <Stack.Screen
+              name = 'Tabs'
+              component = { Tabs }
+            />
+            : <Stack.Screen
+              name = 'SignIn'
+              component = { SignInScreen }
+              options = { { title: 'Sign-In' } }
+            />
+          }
+        </Stack.Navigator>
+      </NavigationContainer>
     )
   }
 }
 
-export default connect(mapStateToProps)(Main)
+export default connect(mapStateToProps, mapDispatchToProps)(Main)

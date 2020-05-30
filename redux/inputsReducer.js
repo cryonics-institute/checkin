@@ -1,6 +1,6 @@
 /**
- * Redux reducer for the project, Cryonics Check-In, that stores the state for
- * Firebase authorization.
+ * Redux reducer for the project, Cryonics Check-In, that stores information for
+ * time inputs on the users home screen.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -24,66 +24,56 @@
 
 import * as ActionTypes from './ActionTypes'
 
-export const Auth = (
+export const Inputs = (
   state = {
     errMess: null,
-    user: null
+    height: null,
+    showTip: true
   },
   action
 ) => {
   switch (action.type) {
-    case ActionTypes.REGISTRATION_REQUESTED:
+    case ActionTypes.HIDE_TIP_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
-    case ActionTypes.REGISTRATION_REJECTED:
+    case ActionTypes.HIDE_TIP_REJECTED:
       return {
         ...state,
         errMess: action.payload
       }
 
-    case ActionTypes.REGISTRATION_FULFILLED:
+    case ActionTypes.HIDE_TIP_FULFILLED:
       return {
         ...state,
-        errMess: null,
-        user: action.payload.user
+        showTip: false
       }
 
-    case ActionTypes.SIGNIN_REQUESTED:
-      return {
-        ...state
-      }
-
-    case ActionTypes.SIGNIN_REJECTED:
+    case ActionTypes.MUTATE_INPUTS_REQUESTED:
       return {
         ...state,
-        errMess: action.payload
+        errMess: null
       }
 
-    case ActionTypes.SIGNIN_FULFILLED:
+    case ActionTypes.SET_INPUT_PARAMETERS_REQUESTED:
       return {
         ...state,
-        errMess: null,
-        user: action.payload.user
+        errMess: null
       }
 
-    case ActionTypes.SIGNOUT_REQUESTED:
-      return {
-        ...state
-      }
-
-    case ActionTypes.SIGNOUT_REJECTED:
+    case ActionTypes.SET_INPUT_PARAMETERS_REJECTED:
       return {
         ...state,
         errMess: action.payload
       }
 
-    case ActionTypes.SIGNOUT_FULFILLED:
+    case ActionTypes.SET_INPUT_PARAMETERS_FULFILLED:
       return {
         ...state,
         errMess: null,
-        user: null
+        height: action.payload
       }
 
     default:

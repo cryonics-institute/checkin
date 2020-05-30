@@ -23,10 +23,9 @@
 
 import { Alert } from 'react-native'
 import moment from 'moment'
-import * as ActionTypes from './ActionTypes'
 import auth from '@react-native-firebase/auth'
 import db from '@react-native-firebase/firestore'
-import NavigationService from '../services/NavigationService'
+import * as ActionTypes from './ActionTypes'
 
 /**
  * Take a string representing a time in AM/PM format from a Time-Input component
@@ -56,20 +55,70 @@ const convertTo24Hour = (time) => {
 }
 
 /**
+ * Add a buddy to be be tracked by the current user.  First, a setListener
+ * action creator is called with the buddy's e-mail.  After that promise is
+ * returned, an action for add-buddy-fulfillment is initiated.
+ * @param  {String}   email E-mail of the buddy to be added.
+ * @return {Promise}        A promise to add a buddy to be tracked by standby.
+ */
+export const addBuddy = (email) => (dispatch, getState) => {
+  dispatch(addBuddyRequestedAction())
+
+  return Promise.resolve(dispatch(setListener(email)))
+    .then(
+      () => dispatch(addBuddyFulfilledAction(email)),
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(addBuddyRejectedAction(error.message)))
+}
+
+/**
+ * Initiate an action to add a buddy to be be tracked by the current user.
+ */
+export const addBuddyRequestedAction = () => (
+  {
+    type: ActionTypes.ADD_BUDDY_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that adding a buddy to be be tracked failed.
+ * @param  {Error} errorMessage Message describing the add-buddy failure.
+ */
+export const addBuddyRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.ADD_BUDDY_REJECTED,
+    payload: errorMessage
+  }
+)
+
+/**
+ * Initiate an action indicating that a buddy to be be tracked has been added.
+ * @param  {String}   email E-mail of the buddy to be added.
+ */
+export const addBuddyFulfilledAction = (email) => (
+  {
+    type: ActionTypes.ADD_BUDDY_FULFILLED,
+    payload: email
+  }
+)
+
+/**
  * Add a new document to Firebase for the currently authorized user.  The
  * document includes the sign-in and check-in times, both set to the current
  * time, and the check-in interval.  After Firebase returns a promise that the
- * document has been created, an action for document-fulfillment is initiated
- * and the navigation service is told to navigate to the patient's app-stack.
+ * document has been created, an action for document-fulfillment is initiated.
  * @return {Promise}  A promise to create a new Firebase document.
  */
 export const addDocument = (email) => (dispatch, getState) => {
   const now = (new Date()).toISOString()
-  const patient = {
+  const user = {
     checkinTime: now,
     isSignedIn: true,
-    signinTime: now,
-    snooze: 9
+    snooze: 9 // TODO: This should be changed so snooze is not reset on login.
   }
 
   dispatch(addDocumentRequestedAction())
@@ -80,37 +129,55 @@ export const addDocument = (email) => (dispatch, getState) => {
         if (doc.exists) {
           console.log('Document data:', doc.data())
 
-          return db().collection('users').doc(email).set(
-            {
-              alertTimes: getState().patient.alertTimes,
-              checkinTime: patient.checkinTime,
-              registrationToken: getState().patient.registrationToken,
-              signinTime: patient.signinTime,
-              snooze: patient.snooze,
-              subscribers: doc.data().subscribers
-            }
-          )
+          const deviceToken = getState().device.token
+          let deviceTokens = doc.data().deviceTokens
+          if (typeof deviceTokens === 'undefined' || deviceTokens === null) {
+            deviceTokens = [deviceToken]
+          } else if (!deviceTokens.includes(deviceToken)) {
+            deviceTokens.push(deviceToken)
+          }
+
+          if (typeof doc.data().subscribers !== 'undefined') {
+            return db().collection('users').doc(email).set(
+              {
+                alertTimes: getState().user.alertTimes,
+                checkinTime: user.checkinTime,
+                deviceTokens: deviceTokens,
+                snooze: user.snooze,
+                subscribers: doc.data().subscribers
+              }
+            )
+          } else {
+            return db().collection('users').doc(email).set(
+              {
+                alertTimes: getState().user.alertTimes,
+                checkinTime: user.checkinTime,
+                deviceTokens: deviceTokens,
+                snooze: user.snooze
+              }
+            )
+          }
         } else {
           // doc.data() will be undefined in this case
           console.log('No such document!')
 
           return db().collection('users').doc(email).set(
             {
-              alertTimes: getState().patient.alertTimes,
-              checkinTime: patient.checkinTime,
-              registrationToken: getState().patient.registrationToken,
-              signinTime: patient.signinTime,
-              snooze: patient.snooze
+              alertTimes: getState().user.alertTimes,
+              checkinTime: user.checkinTime,
+              deviceTokens: [getState().device.token],
+              snooze: user.snooze
             }
           )
         }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
-      () => {
-        dispatch(addDocumentFulfilledAction(patient))
-        NavigationService.navigate('PatientApp')
-      },
+      () => dispatch(addDocumentFulfilledAction(user)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -142,75 +209,10 @@ export const addDocumentRejectedAction = (errorMessage) => (
 /**
  * Initiate an action indicating that a new Firebase document has been created.
  */
-export const addDocumentFulfilledAction = (patient) => (
+export const addDocumentFulfilledAction = (user) => (
   {
     type: ActionTypes.ADD_DOCUMENT_FULFILLED,
-    payload: patient
-  }
-)
-
-/**
- * Add a patient to be be tracked by the current standby user.  First, a
- * setListener action creator is called with the patient's e-mail.  After that
- * promise is returned, an action for add-patient-fulfillment is initiated and
- * the navigation service is told to navigate to the standby's app-stack.
- * @param  {String}   email E-mail of the patient to be added.
- * @return {Promise}        A promise to add a patient to be tracked by standby.
- */
-export const addPatient = (email) => (dispatch, getState) => {
-  dispatch(addPatientRequestedAction())
-
-  return Promise.resolve(dispatch(getDocument(email)))
-    .then(
-      () => {
-        dispatch(setListener())
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      () => {
-        dispatch(addPatientFulfilledAction(email))
-        NavigationService.navigate('StandbyHome')
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .catch(error => dispatch(addPatientRejectedAction(error.message)))
-}
-
-/**
- * Initiate an action to add a patient to be be tracked by the current standby.
- */
-export const addPatientRequestedAction = () => (
-  {
-    type: ActionTypes.ADD_PATIENT_REQUESTED
-  }
-)
-
-/**
- * Initiate an error indicating that adding a patient to be be tracked failed.
- * @param  {Error} errorMessage Message describing the add-patient failure.
- */
-export const addPatientRejectedAction = (errorMessage) => (
-  {
-    type: ActionTypes.ADD_PATIENT_REJECTED,
-    payload: errorMessage
-  }
-)
-
-/**
- * Initiate an action indicating that a patient to be be tracked has been added.
- * @param  {String}   email E-mail of the patient to be added.
- */
-export const addPatientFulfilledAction = (email) => (
-  {
-    type: ActionTypes.ADD_PATIENT_FULFILLED,
-    payload: email
+    payload: user
   }
 )
 
@@ -224,30 +226,33 @@ export const addPatientFulfilledAction = (email) => (
  */
 export const checkin = () => (dispatch, getState) => {
   const now = (new Date()).toISOString()
-  const patient = {
-    checkinTime: now
-  }
+  const user = { checkinTime: now }
 
   dispatch(checkinRequestedAction())
 
   return db().collection('users').doc(getState().auth.user.email).update(
     {
-      checkinTime: patient.checkinTime
+      checkinTime: user.checkinTime
     }
   )
     .then(
-      () => {
-        dispatch(removeTimers())
-      },
+      () => db().collection('users').doc(getState().auth.user.email).update(
+        { wasCheckedForAlerts: false }
+      ),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      () => {
-        dispatch(checkinFulfilledAction(patient.checkinTime))
-      },
+      () => dispatch(removeTimers()),
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      () => dispatch(checkinFulfilledAction(user.checkinTime)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -258,7 +263,7 @@ export const checkin = () => (dispatch, getState) => {
 }
 
 /**
- * Initiate an action to update a patient's check-in time and interval.
+ * Initiate an action to update a user's check-in time and interval.
  */
 export const checkinRequestedAction = () => (
   {
@@ -267,7 +272,7 @@ export const checkinRequestedAction = () => (
 )
 
 /**
- * Initiate an error indicating that updating a patient's check-in time and
+ * Initiate an error indicating that updating a user's check-in time and
  * interval failed.
  * @param  {Error} errorMessage Message describing the check-in failure.
  */
@@ -279,7 +284,7 @@ export const checkinRejectedAction = (errorMessage) => (
 )
 
 /**
- * Initiate an action indicating that a patient's check-in time and interval has
+ * Initiate an action indicating that a user's check-in time and interval has
  * been added.
  */
 export const checkinFulfilledAction = (checkinTime) => (
@@ -290,12 +295,12 @@ export const checkinFulfilledAction = (checkinTime) => (
 )
 
 /**
- * Update the sign-in and check-in times and the check-in interval in the Redux
- * store using the currently-authorized user's Firebase document.  First, the
- * document is retrieved from Firebase.  After that promise is returned, the
- * appropriate state parameters are updated.  Finally, an action for get-
- * document-fulfillment is initiated.
- * @param  {String}   email E-mail of the currently-authorized patient.
+ * Get the sign-in and check-in times and the check-in interval in the Redux
+ * store using a buddy's Firebase document.  First, the document is retrieved
+ * from Firebase.  After that promise is returned, the appropriate state
+ * parameters are updated.  Finally, an action for get-document-fulfillment is
+ * initiated.
+ * @param  {String}   email A buddy's e-mail.
  * @return {Promise}        A promise to update check-in state parameters.
  */
 // TODO: Can do better with the database rules for Firestore?
@@ -309,7 +314,7 @@ export const getDocument = (email) => (dispatch, getState) => {
         if (doc.exists) {
           console.log('Document exists!')
 
-          if (doc.data().subscribers !== undefined) {
+          if (typeof doc.data().subscribers !== 'undefined') {
             console.log('Subscriber defined!')
           } else {
             console.log('Subscriber undefined!')
@@ -320,6 +325,10 @@ export const getDocument = (email) => (dispatch, getState) => {
           console.log('No such document!')
         }
         return doc
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
@@ -329,11 +338,11 @@ export const getDocument = (email) => (dispatch, getState) => {
 
           const uid = getState().auth.user.uid
           if (
-            doc.data().subscribers !== undefined &&
-            doc.data().subscribers[uid] !== undefined
+            typeof doc.data().subscribers !== 'undefined' &&
+            typeof doc.data().subscribers[uid] !== 'undefined'
           ) {
             console.log('Subscriber defined!')
-            const token = getState().patient.registrationToken
+            const token = getState().device.token
             const subscriberData =
               doc.data().subscribers[uid].includes(token)
                 ? doc.data().subscribers[uid]
@@ -345,7 +354,7 @@ export const getDocument = (email) => (dispatch, getState) => {
             )
           } else {
             console.log('Subscriber undefined!')
-            const subscriberData = [getState().patient.registrationToken]
+            const subscriberData = [getState().device.token]
             db().collection('users').doc(email).update(
               {
                 ['subscribers.' + uid]: subscriberData
@@ -357,6 +366,10 @@ export const getDocument = (email) => (dispatch, getState) => {
           console.log('No such document!')
         }
         return doc
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
       }
     )
     .then(
@@ -367,7 +380,6 @@ export const getDocument = (email) => (dispatch, getState) => {
             doc.data().alertTimes,
             doc.data().checkinInterval,
             doc.data().checkinTime,
-            doc.data().signinTime,
             doc.data().snooze
           ]
         } else {
@@ -383,9 +395,7 @@ export const getDocument = (email) => (dispatch, getState) => {
       }
     )
     .then(
-      data => {
-        dispatch(getDocumentFulfilledAction(data))
-      },
+      data => dispatch(getDocumentFulfilledAction(data)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -417,7 +427,7 @@ export const getDocumentRejectedAction = (errorMessage) => (
 
 /**
  * Initiate an action indicating that updating the Redux store has completed.
- * @param {Array} data  An array of values for the patient reducer.
+ * @param {Array} data  An array of values for the buddy reducer.
  */
 export const getDocumentFulfilledAction = (data) => (
   {
@@ -426,14 +436,91 @@ export const getDocumentFulfilledAction = (data) => (
   }
 )
 
-export const initializeStore = (registrationToken) => (dispatch, getState) => {
-  dispatch(initializeStoreAction(registrationToken))
+/**
+ * Hide the tip on the user's home screen.
+ */
+export const hideTip = () => dispatch => {
+  dispatch(hideTipRequestedAction())
+
+  try {
+    dispatch(hideTipFulfilledAction())
+  } catch (error) {
+    dispatch(hideTipRejectedAction(error))
+  }
 }
 
-export const initializeStoreAction = (registrationToken) => (
+/**
+ * Initiate an action to hide the tip in the Redux store.
+ */
+export const hideTipRequestedAction = () => (
   {
-    type: ActionTypes.INITIALIZE_STORE,
-    payload: registrationToken
+    type: ActionTypes.HIDE_TIP_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that hiding the tip has failed.
+ * @param  {Error} errorMessage Message describing the check-in failure.
+ */
+export const hideTipRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.HIDE_TIP_REJECTED,
+    payload: errorMessage
+  }
+)
+
+/**
+ * Initiate an action indicating that hiding the tip has completed.
+ */
+export const hideTipFulfilledAction = () => (
+  {
+    type: ActionTypes.HIDE_TIP_FULFILLED
+  }
+)
+
+/**
+ * Initialize the device reducer in the Redux store with the device token.
+ * @param {String} deviceToken  A user's device token.
+ */
+
+export const initializeStore = (deviceToken) => dispatch => {
+  dispatch(initializeStoreRequestedAction())
+
+  try {
+    dispatch(initializeStoreFulfilledAction(deviceToken))
+  } catch (error) {
+    dispatch(initializeStoreRejectedAction(error))
+  }
+}
+
+/**
+ * Initiate an action to save the device token in the Redux store.
+ */
+export const initializeStoreRequestedAction = () => (
+  {
+    type: ActionTypes.INITIALIZE_STORE_REQUESTED
+  }
+)
+
+/**
+ * Initiate an error indicating that saving the device token has failed.
+ * @param  {Error} errorMessage Message describing the check-in failure.
+ */
+export const initializeStoreRejectedAction = (errorMessage) => (
+  {
+    type: ActionTypes.INITIALIZE_STORE_REJECTED,
+    payload: errorMessage
+  }
+)
+
+/**
+ * Initiate an action indicating that saving the device token has completed.
+ * @param {Array} data  A user's device token.
+ */
+export const initializeStoreFulfilledAction = (deviceToken) => (
+  {
+    type: ActionTypes.INITIALIZE_STORE_FULFILLED,
+    payload: deviceToken
   }
 )
 
@@ -446,7 +533,7 @@ export const initializeStoreAction = (registrationToken) => (
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
   try {
-    if (getState().patient.alertTimes !== null) {
+    if (getState().user.alertTimes !== null) {
       dispatch(mutateInputRequestedAction())
 
       const hours = time.length > 0
@@ -459,21 +546,21 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
         time: (new Date(1970, 0, 1, hours, minutes)).toISOString(),
         validity: validity
       }
-      const index = getState().patient.alertTimes.findIndex(
+      const index = getState().user.alertTimes.findIndex(
         input => input.id === id
       )
       let inputsArray = null
 
       if (index === -1) {
         inputsArray = [
-          ...getState().patient.alertTimes.filter(input => input.id !== id),
+          ...getState().user.alertTimes.filter(input => input.id !== id),
           input
         ]
       } else {
         inputsArray = [
-          ...getState().patient.alertTimes.slice(0, index),
+          ...getState().user.alertTimes.slice(0, index),
           input,
-          ...getState().patient.alertTimes.slice(index + 1)
+          ...getState().user.alertTimes.slice(index + 1)
         ]
       }
 
@@ -483,9 +570,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
         }
       )
         .then(
-          () => {
-            dispatch(mutateInputFulfilledAction(inputsArray))
-          },
+          () => dispatch(mutateInputFulfilledAction(inputsArray)),
           error => {
             var errorMessage = new Error(error.message)
             throw errorMessage
@@ -499,7 +584,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
             }
           }
         )
-    } else if (getState().patient.alertTimes == null) {
+    } else if (getState().user.alertTimes == null) {
       throw new Error('Input array is null or undefined.')
     } else {
       throw new Error(
@@ -507,7 +592,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
       )
     }
   } catch (error) {
-    dispatch(mutateInputRejectedAction(error.message))
+    dispatch(mutateInputRejectedAction(error))
   }
 }
 
@@ -543,59 +628,36 @@ export const mutateInputFulfilledAction = (inputs) => (
 )
 
 /**
- * Register a new account for a patient on Firebase.  After that promise is
- * returned, an action for registration-fulfillment is initiated and a
- * request to add a document for that patient in initiated.
- * @param  {String}   creds Username and password for the patient.
- * @return {Promise}        A promise to create a new patient-user.
+ * Register a new account for a user on Firebase.  After that promise is
+ * returned, an action for registration-fulfillment is initiated and a request
+ * to add a document for that user is initiated.
+ * @param  {String}   creds Username and password for the user.
+ * @return {Promise}        A promise to create a new user.
  */
-export const registerPatient = (creds) => (dispatch) => {
+export const register = (creds) => (dispatch, getState) => {
   dispatch(registrationRequestedAction())
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
-      userCredential => {
-        dispatch(
-          registrationFulfilledAction(
-            {
-              user: userCredential.user,
-              creds: creds
-            }
-          )
-        )
-        dispatch(addDocument(userCredential.user.email))
-      },
+      userCredential => dispatch(addDocument(userCredential.user.email)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
-    .catch(error => dispatch(registrationRejectedAction(error.message)))
-}
-
-/**
- * Register a new account for a standby-user on Firebase.  After that promise is
- * returned, an action for registration-fulfillment is initiated and the
- * navigation service is told to navigate to the standby's app-stack.
- * @param  {String}   creds Username and password for the standby-user.
- * @return {Promise}        A promise to create a new standby-user.
- */
-export const registerStandby = (creds) => (dispatch) => {
-  dispatch(registrationRequestedAction())
-
-  return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
-      userCredential => {
-        dispatch(
-          registrationFulfilledAction(
-            {
-              user: userCredential.user,
-              creds: creds
-            }
-          )
+      () => dispatch(checkin()),
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      userCredential => dispatch(
+        registrationFulfilledAction(
+          { user: userCredential.user, creds: creds }
         )
-        NavigationService.navigate('StandbyApp')
-      },
+      ),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -644,7 +706,7 @@ export const registrationFulfilledAction = (data) => (
 export const removeInput = (id) => (dispatch, getState) => {
   dispatch(removeInputsRequestedAction())
 
-  const inputsArray = getState().patient.alertTimes.filter(
+  const inputsArray = getState().user.alertTimes.filter(
     input => input.id !== id
   )
 
@@ -654,7 +716,7 @@ export const removeInput = (id) => (dispatch, getState) => {
     }
   )
     .then(
-      () => { dispatch(removeInputsFulfilledAction(inputsArray)) },
+      () => dispatch(removeInputsFulfilledAction(inputsArray)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -677,7 +739,7 @@ export const removeInputs = () => (dispatch, getState) => {
     }
   )
     .then(
-      () => { dispatch(removeInputsFulfilledAction([])) },
+      () => dispatch(removeInputsFulfilledAction([])),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -719,17 +781,17 @@ export const removeInputsFulfilledAction = (inputs) => (
 )
 
 /**
- * Remove all listeners added in the addPatient action from the array of
+ * Remove all listeners added in the addBuddy action from the array of
  * listeners in the Redux store.
  */
 export const removeListeners = () => (dispatch, getState) => {
   dispatch(removeListenersRequestedAction())
 
   return Promise.all(
-    [getState().patient.listeners.forEach(listener => clearTimeout(listener))]
+    [getState().listener.listeners.forEach(listener => clearTimeout(listener))]
   )
     .then(
-      () => { dispatch(removeListenersFulfilledAction()) },
+      () => dispatch(removeListenersFulfilledAction()),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -777,7 +839,7 @@ export const removeTimers = () => (dispatch, getState) => {
     [getState().timer.timers.forEach(timer => clearTimeout(timer))]
   )
     .then(
-      () => { dispatch(removeTimersFulfilledAction()) },
+      () => dispatch(removeTimersFulfilledAction()),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -816,51 +878,59 @@ export const removeTimersFulfilledAction = () => (
 )
 
 /**
- * Set the status of the currently-authorized user as patient or standby.
- * @param {Boolean} isPatient Whether user is a patient or standby.
+ * Remove all timers from the array of timers in the Redux store.
  */
-export const selectStatus = (isPatient) => (dispatch) => {
-  dispatch(selectStatusAction(isPatient))
+export const setInputParameters = (height) => dispatch => {
+  dispatch(setInputParametersRequestedAction())
+
+  try {
+    dispatch(setInputParametersFulfilledAction(height))
+  } catch (error) {
+    dispatch(setInputParametersRejectedAction(error))
+  }
 }
 
 /**
- * Initiate an action indicating that the user's status has been set.
- * @param {Boolean} isPatient Whether user is a patient or standby.
+ * Initiate an action to remove timers.
  */
-export const selectStatusAction = (isPatient) => (
+export const setInputParametersRequestedAction = () => (
   {
-    type: ActionTypes.SELECT_STATUS,
-    payload: isPatient
+    type: ActionTypes.SET_INPUT_PARAMETERS_REQUESTED
   }
 )
 
 /**
- * Set the status of the patient's alert-indicator to active.
+ * Initiate an error indicating that removing timers has failed.
+ * @param  {Error} errorMessage Message describing the registration failure.
  */
-export const setAlertActive = () => (dispatch) => {
-  dispatch(setAlertActiveAction())
-}
-
-/**
- * Initiate an action indicating that the patient has missed a check-in.
- */
-export const setAlertActiveAction = () => (
+export const setInputParametersRejectedAction = (message) => (
   {
-    type: ActionTypes.SET_ALERT_ACTIVE
+    type: ActionTypes.SET_INPUT_PARAMETERS_REJECTED,
+    payload: message
   }
 )
 
 /**
- * Set the last time the patient should have checked in.
- * @param {String} lastAlertTime  Time patient should have checked in.
+ * Initiate an action indicating that all timers have been removed.
  */
-export const setLastAlertTime = (lastAlertTime) => (dispatch) => {
+export const setInputParametersFulfilledAction = (height) => (
+  {
+    type: ActionTypes.SET_INPUT_PARAMETERS_FULFILLED,
+    payload: height
+  }
+)
+
+/**
+ * Set the last time the buddy should have checked in.
+ * @param {String} lastAlertTime  Time buddy should have checked in.
+ */
+export const setLastAlertTime = (lastAlertTime) => dispatch => {
   dispatch(setLastAlertTimeAction(lastAlertTime))
 }
 
 /**
- * Initiate an action setting the last time the patient should checked in.
- * @param {String} lastAlertTime  Time patient should have checked in.
+ * Initiate an action setting the last time the buddy should checked in.
+ * @param {String} lastAlertTime  Time buddy should have checked in.
  */
 export const setLastAlertTimeAction = (lastAlertTime) => (
   {
@@ -870,16 +940,17 @@ export const setLastAlertTimeAction = (lastAlertTime) => (
 )
 
 /**
- * Set a recurring listener that will check if the patient that the standby-user
- * is following has checked in within the alotted interval plus the snooze or
- * else alert standby that the user has not checked in.
- * @param  {Boolean} isTest     Whether called by unit test (optional).
- * @return {Promise}            Promise to create listener after interval.
+ * Set a recurring listener that will check if a buddy that the user is
+ * following has checked in within the alotted interval plus the snooze or else
+ * alert standby that the buddy has not checked in.
+ * @param  {String} email   E-mail of the buddy to be added.
+ * @param  {Boolean} isTest Whether called by unit test (optional).
+ * @return {Promise}        Promise to create listener after interval.
  */
-export const setListener = (isTest = false) => (dispatch, getState) => {
+export const setListener = (email, isTest = false) => (dispatch, getState) => {
   const noCheckinAlert = () => {
     Alert.alert(
-      'Cryonics-Patient Alert',
+      'Check-In Alert',
       'Your buddy has not checked in.\nMake contact immediately!',
       [
         {
@@ -887,7 +958,6 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
           onPress: () => {
             console.log('Dismiss Pressed')
             dispatch(removeListeners())
-            dispatch(setAlertActive())
           },
           style: 'cancel'
         }
@@ -898,99 +968,76 @@ export const setListener = (isTest = false) => (dispatch, getState) => {
 
   dispatch(setListenerRequestedAction())
 
-  if (getState().patient.isSignedIn) {
-    return Promise.resolve(
-      dispatch(
-        setListenerInterval(
-          getState().patient.alertTimes,
-          getState().patient.checkinTime
-        )
-      )
-    )
-      .then(
-        interval => {
-          dispatch(removeListeners())
-          return interval
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .then(
-        interval => {
-          if (isTest) {
-            return interval
-          } else {
-            if (interval !== null) {
-              if (interval > 0) {
-                const listener = Promise.resolve(
-                  setTimeout(
-                    () => {
-                      dispatch(setListener(isTest))
-                    },
-                    interval
-                  )
-                )
-                return listener
-              } else {
-                noCheckinAlert()
-                return null
-              }
-            } else {
-              return null
-            }
-          }
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .then(
-        listener => {
-          dispatch(setListenerFulfilledAction(listener))
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
-        }
-      )
-      .catch(error => dispatch(setListenerRejectedAction(error.message)))
-  } else {
-    return Promise.resolve(dispatch(removeListeners()))
-      .then(
-        () => {
-          const listener = Promise.resolve(
-            setTimeout(
-              () => {
-                dispatch(setListener(isTest))
-              },
-              60000
+  return Promise.resolve(
+    dispatch(getDocument(email))
+  )
+    .then(
+      () => {
+        if (getState().buddy.isAdded) {
+          return dispatch(
+            setListenerInterval(
+              getState().buddy.alertTimes,
+              getState().buddy.checkinTime
             )
           )
-          return listener
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
+        } else {
+          return 60000
         }
-      )
-      .then(
-        listener => {
-          dispatch(setListenerFulfilledAction(listener))
-        },
-        error => {
-          var errorMessage = new Error(error.message)
-          throw errorMessage
+      }
+    )
+    .then(
+      interval => {
+        // TODO: You will need to remove correct listener when more are added.
+        dispatch(removeListeners())
+        return interval
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      interval => {
+        if (isTest) {
+          return interval
+        } else {
+          if (interval !== null) {
+            if (interval > 0) {
+              const listener = Promise.resolve(
+                setTimeout(
+                  () => {
+                    dispatch(setListener(email, isTest))
+                  },
+                  interval
+                )
+              )
+              return listener
+            } else {
+              noCheckinAlert()
+              return null
+            }
+          } else {
+            return null
+          }
         }
-      )
-      .catch(error => dispatch(setTimerIntervalRejectedAction(error.message)))
-  }
+      },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      listener => dispatch(setListenerFulfilledAction(listener)),
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .catch(error => dispatch(setListenerRejectedAction(error.message)))
 }
 
 /**
- * Initiate an action to set a listener for patient check-ins.
+ * Initiate an action to set a listener for buddy check-ins.
  */
 export const setListenerRequestedAction = () => (
   {
@@ -1023,8 +1070,7 @@ export const setListenerFulfilledAction = (listener) => (
 /**
  * Set the interval for the setListener function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
- * @param   {Date} checkinTime  Last time patient checked in.
- * @param   {Array} now         Now as a JS Date object.
+ * @param   {Date} checkinTime  Last time buddy checked in.
  * @param   {Boolean} isTest    Whether called by unit test (optional).
  * @return  {Integer} The interval between alerts.
  */
@@ -1052,22 +1098,24 @@ export const setListenerInterval = (
     }
   ).sort((el1, el2) => el1.timeInMs - el2.timeInMs)
 
+  dispatch(setListenerIntervalRequestedAction())
+
   if (alertsInMs.length !== 0) {
     const checkinInMs = ((((((parseInt(checkinTime.slice(-13, -11), 10) * 60) +
         parseInt(checkinTime.slice(-10, -8), 10)) * 60) +
         parseInt(checkinTime.slice(-7, -5), 10)) * 1000) +
         parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
-    const snoozeInMs = getState().patient.snooze * 60000
-
-    dispatch(setListenerIntervalRequestedAction())
+    const snoozeInMs = getState().buddy.snooze * 60000
 
     const interval = moment(now) - moment(checkinTime) > 86400000 + snoozeInMs
       ? 0
-      : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
-        ? alertsInMs[0].timeInMs
-        : alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > 86400000
-          ? alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs - 86400000
-          : 0
+      : moment(now) - moment(checkinTime) > 86400000
+        ? (86400000 + snoozeInMs) - (moment(now) - moment(checkinTime))
+        : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
+          ? alertsInMs[0].timeInMs + snoozeInMs
+          : alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > 86400000
+            ? alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs - 86400000
+            : 0
 
     return Promise.resolve(interval)
       .then(
@@ -1099,6 +1147,16 @@ export const setListenerInterval = (
       )
   } else {
     return Promise.resolve(60000)
+      .then(
+        interval => {
+          dispatch(setListenerIntervalFulfilledAction(interval))
+          return interval
+        },
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
+      )
       .catch(
         error => dispatch(setListenerIntervalRejectedAction(error.message))
       )
@@ -1106,7 +1164,7 @@ export const setListenerInterval = (
 }
 
 /**
- * Initiate an action to set a timer-interval for patient check-in alerts.
+ * Initiate an action to set a timer-interval for buddy check-in alerts.
  */
 export const setListenerIntervalRequestedAction = () => (
   {
@@ -1147,15 +1205,13 @@ export const setShortestInterval = (interval) => (dispatch, getState) => {
     { shortestInterval: interval }
   )
     .then(
-      () => {
-        dispatch(setShortestIntervalFulfilledAction(interval))
-      },
+      () => dispatch(setShortestIntervalFulfilledAction(interval)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
-    .catch(error => dispatch(setSnoozeRejectedAction(error.message)))
+    .catch(error => dispatch(setShortestIntervalRejectedAction(error.message)))
 }
 
 /**
@@ -1191,10 +1247,10 @@ export const setShortestIntervalFulfilledAction = (interval) => (
 )
 
 /**
- * Set the patient's snooze interval, which indicates the delay between when the
- * patient is alerted to check in and when the standby is alerted that the
- * patient has failed to check in.
- * @param {Integer} interval  Delay between patient and standby alerts.
+ * Set the user's snooze interval, which indicates the delay between when the
+ * user is alerted to check in and when the standby is alerted that the user
+ * has failed to check in.
+ * @param {Integer} interval  Delay between user and standby alerts.
  */
 export const setSnooze = (snooze) => (dispatch, getState) => {
   dispatch(setSnoozeRequestedAction())
@@ -1203,9 +1259,7 @@ export const setSnooze = (snooze) => (dispatch, getState) => {
     { snooze: snooze }
   )
     .then(
-      () => {
-        dispatch(setSnoozeFulfilledAction(snooze))
-      },
+      () => dispatch(setSnoozeFulfilledAction(snooze)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1215,7 +1269,7 @@ export const setSnooze = (snooze) => (dispatch, getState) => {
 }
 
 /**
- * Initiate an action to set a snooze for patient check-in alerts.
+ * Initiate an action to set a snooze for user check-in alerts.
  */
 export const setSnoozeRequestedAction = () => (
   {
@@ -1246,7 +1300,7 @@ export const setSnoozeFulfilledAction = (snooze) => (
 )
 
 /**
- * Set a timer that will issue an alert for the currently authorized patient to
+ * Set a timer that will issue an alert for the currently authorized user to
  * check-in after an interval of time.
  * @param  {Boolean} isTest     Whether called by unit test (optional).
  * @return {Promise}            Promise to set a timer.
@@ -1275,8 +1329,8 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
   return Promise.resolve(
     dispatch(
       setTimerInterval(
-        getState().patient.alertTimes,
-        getState().patient.checkinTime
+        getState().user.alertTimes,
+        getState().user.checkinTime
       )
     )
   )
@@ -1321,9 +1375,7 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
       }
     )
     .then(
-      timer => {
-        dispatch(setTimerFulfilledAction(timer))
-      },
+      timer => dispatch(setTimerFulfilledAction(timer)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1333,7 +1385,7 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
 }
 
 /**
- * Initiate an action to set a timer for patient check-in alerts.
+ * Initiate an action to set a timer for user check-in alerts.
  */
 export const setTimerRequestedAction = () => (
   {
@@ -1366,7 +1418,7 @@ export const setTimerFulfilledAction = (timer) => (
 /**
  * Set the interval for the setTimer function.
  * @param   {Array} alertTimes  Array of scheduled alert times.
- * @param   {Date} checkinTime  Last time patient checked in.
+ * @param   {Date} checkinTime  Last time user checked in.
  * @param   {Array} now         Now as a JS Date object.
  * @param   {Boolean} isTest    Whether called by unit test (optional).
  * @return  {Integer}           Interval to wait before check-in alert.
@@ -1423,14 +1475,7 @@ export const setTimerInterval = (
       .then(
         result => {
           if (!isTest) {
-            db().collection('users').doc(getState().auth.user.email).update(
-              {
-                checkinInterval: result
-              }
-            )
-              .catch(
-                error => dispatch(setTimerIntervalRejectedAction(error.message))
-              )
+            updateCheckinInterval(result)
           }
 
           return result
@@ -1450,7 +1495,7 @@ export const setTimerInterval = (
 }
 
 /**
- * Initiate an action to set a timer-interval for patient check-in alerts.
+ * Initiate an action to set a timer-interval for user check-in alerts.
  */
 export const setTimerIntervalRequestedAction = () => (
   {
@@ -1481,66 +1526,44 @@ export const setTimerIntervalFulfilledAction = (interval) => (
 )
 
 /**
- * Sign in a patient on Firebase.  After that promise is returned, an action for
+ * Sign in a user on Firebase.  After that promise is returned, an action for
  * sign-in-fulfillment is initiated and a request to add a document for that
- * patient in initiated.
- * @param  {String}   creds Username and password for the patient.
- * @return {Promise}        A promise to sign-in a patient-user.
+ * user in initiated.
+ * @param  {String}   creds Username and password for the user.
+ * @return {Promise}        A promise to sign-in a user.
  */
-export const signinPatient = (creds, isAutomatic = false) => (dispatch) => {
+export const signIn = (creds, isAutomatic = false) => (dispatch, getState) => {
   dispatch(signinRequestedAction(creds))
 
   return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
-        dispatch(
-          signinFulfilledAction(
-            {
-              user: userCredential.user,
-              creds: creds
-            }
-          )
-        )
         dispatch(addDocument(userCredential.user.email))
+        return userCredential
       },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
-    .then(
-      () => { if (isAutomatic) { dispatch(checkin()) } },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .catch(error => dispatch(signinRejectedAction(error.message)))
-}
-
-/**
- * Sign in a standby-user on Firebase.  After that promise is returned, an
- * action for sign-in-fulfillment is initiated and a request to add a document
- * for that patient in initiated.
- * @param  {String}   creds Username and password for the standby-user.
- * @return {Promise}        A promise to sign-in a standby-user.
- */
-export const signinStandby = (creds) => (dispatch) => {
-  dispatch(signinRequestedAction(creds))
-
-  return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
       userCredential => {
-        dispatch(
-          signinFulfilledAction(
-            {
-              user: userCredential.user,
-              creds: creds
-            }
-          )
-        )
-        NavigationService.navigate('StandbyApp')
+        if (isAutomatic) {
+          dispatch(checkin())
+          return userCredential
+        } else {
+          return userCredential
+        }
       },
+      error => {
+        var errorMessage = new Error(error.message)
+        throw errorMessage
+      }
+    )
+    .then(
+      userCredential => dispatch(
+        signinFulfilledAction({ user: userCredential.user, creds: creds })
+      ),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -1584,93 +1607,37 @@ export const signinFulfilledAction = (data) => (
 
 // TODO: Change this to a "remove data" capability in a settings screen.
 /**
- * Sign out a patient on Firebase, which first removes that patient's document
- * on Firebase.  After those promises are returned, an action for sign-out-
- * fulfillment is initiated, a request to remove timers is initiated, and the
- * navigation service is told to navigate to the authorization stack.
- * @return {Promise}  A promise to sign-out a patient-user.
+ * Sign out user on Firebase, which first removes that user's document on
+ * Firebase.  After those promises are returned, an action for sign-out-
+ * fulfillment is initiated, a request to remove timers is initiated.
+ * @return {Promise}  A promise to sign-out a user.
  */
-export const signoutPatient = () => (dispatch, getState) => {
+export const signOut = () => (dispatch, getState) => {
   dispatch(signoutRequestedAction())
 
   return auth().signOut()
     .then(
-      () => {
-        dispatch(removeTimers())
-      },
+      () => dispatch(removeTimers()),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      () => {
-        dispatch(signoutFulfilledAction())
-      },
+      () => dispatch(removeListeners()),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      () => {
-        NavigationService.navigate('PatientAuth')
-      },
+      () => dispatch(signoutFulfilledAction()),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
-    .catch(
-      (error) => {
-        signoutRejectedAction(error.message)
-      }
-    )
-}
-
-/**
- * Sign out a standby-user on Firebase.  After those promises are returned, an
- * action for sign-out-fulfillment is initiated, a request to remove listeners
- * is initiated, and the navigation service is told to navigate to the
- * authorization stack.
- * @return {Promise}  A promise to sign-out a standby-user.
- */
-export const signoutStandby = () => (dispatch) => {
-  dispatch(signoutRequestedAction())
-
-  return auth().signOut()
-    .then(
-      () => {
-        dispatch(removeListeners())
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      () => {
-        dispatch(signoutFulfilledAction())
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .then(
-      () => {
-        NavigationService.navigate('StandbyAuth')
-      },
-      error => {
-        var errorMessage = new Error(error.message)
-        throw errorMessage
-      }
-    )
-    .catch(
-      (error) => {
-        signoutRejectedAction(error.message)
-      }
-    )
+    .catch(error => { dispatch(signoutRejectedAction(error.message)) })
 }
 
 /**
@@ -1701,3 +1668,20 @@ export const signoutFulfilledAction = () => (
     type: ActionTypes.SIGNOUT_FULFILLED
   }
 )
+
+/**
+ * Updates the check-in interval on the Firestore for the currently-authorized
+ * user.
+ * @param {Integer} interval  Milliseconds until next check-in.
+ * @return {Promise}  A promise to update the check-in interval.
+ */
+export const updateCheckinInterval = (interval) => (getState) => {
+  return db().collection('users').doc(getState().auth.user.email).update(
+    {
+      checkinInterval: interval
+    }
+  )
+    .catch(
+      error => console.log(error)
+    )
+}

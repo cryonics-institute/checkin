@@ -22,7 +22,7 @@
 // Implement UNUserNotificationCenterDelegate to receive display notification
 // via APNS for devices running iOS 10 and above.
 @interface AppDelegate () <UNUserNotificationCenterDelegate>
-//@property (nonatomic, strong) RCTRootView *rootView;
+@property (nonatomic, strong) RCTRootView *rootView;
 @end
 
 @implementation AppDelegate

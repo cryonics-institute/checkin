@@ -21,7 +21,7 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Dimensions, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 
 export const colors = {
   dark: 'steelblue',
@@ -43,10 +43,34 @@ export const styles = StyleSheet.create(
     buttonTitleColorLight: {
       color: colors.light
     },
+    buttonTopRight: {
+      alignSelf: 'flex-end',
+      paddingRight: 5,
+      paddingTop: 5,
+      position: 'absolute'
+    },
     containerCentered: {
       alignItems: 'center',
       backgroundColor: colors.light,
       flex: 1,
+      justifyContent: 'center'
+    },
+    containerRounded: {
+      alignSelf: 'center',
+      backgroundColor: colors.medium,
+      borderColor: colors.dark,
+      borderRadius: 10,
+      borderWidth: 2,
+      margin: '5%',
+      padding: '5%'
+    },
+    containerScrolling: {
+      backgroundColor: colors.light,
+      flex: 1
+    },
+    containerScrollingContent: {
+      alignItems: 'center',
+      flexGrow: 1,
       justifyContent: 'center'
     },
     containerSpaced: {
@@ -58,11 +82,6 @@ export const styles = StyleSheet.create(
     header: {
       backgroundColor: colors.dark,
       color: colors.light
-    },
-    image: {
-      height: Dimensions.get('window').width * 0.8,
-      margin: 5,
-      width: Dimensions.get('window').width * 0.8
     },
     paragraph: {
       margin: 5,
@@ -77,8 +96,14 @@ export const styles = StyleSheet.create(
       margin: 5,
       width: '75%'
     },
+    tab: {
+      backgroundColor: colors.medium
+    },
     text: {
       margin: 5
+    },
+    textBold: {
+      fontWeight: 'bold'
     },
     textError: {
       color: colors.error,
@@ -89,11 +114,14 @@ export const styles = StyleSheet.create(
       color: colors.medium,
       textDecorationLine: 'line-through'
     },
-    timeRow: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      margin: 5,
-      width: '80%'
+    textTip: {
+      color: colors.dark,
+      fontSize: 18
+    },
+    textTransparent: {
+      color: colors.transparent,
+      fontSize: 12,
+      margin: 5
     },
     title: {
       margin: 5
@@ -102,10 +130,6 @@ export const styles = StyleSheet.create(
       alignItems: 'center',
       flexDirection: 'row',
       margin: 5
-    },
-    transparent: {
-      color: colors.transparent,
-      fontSize: 12
     }
   }
 )

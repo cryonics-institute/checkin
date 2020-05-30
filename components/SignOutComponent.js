@@ -1,8 +1,13 @@
+// @flow
 import React from 'react'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signoutPatient } from '../redux/ActionCreators'
+import { signOut } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
+
+type Props = {
+  signOut: func
+}
 
 const mapStateToProps = state => {
   return {
@@ -10,17 +15,17 @@ const mapStateToProps = state => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => (
+const mapDispatchToProps = dispatch => (
   {
-    signoutPatient: () => dispatch(signoutPatient())
+    signOut: () => dispatch(signOut())
   }
 )
 
-class PatientSignOut extends React.Component {
+class SignOut extends React.Component<Props> {
   render () {
     return (
       <Button
-        onPress = { () => this.props.signoutPatient() }
+        onPress = { () => this.props.signOut() }
         title = 'Sign Out'
         titleStyle = { styles.buttonTitleColorLight }
         type = 'clear'
@@ -29,4 +34,4 @@ class PatientSignOut extends React.Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PatientSignOut)
+export default connect(mapStateToProps, mapDispatchToProps)(SignOut)

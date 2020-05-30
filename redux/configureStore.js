@@ -21,17 +21,20 @@
  * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import AsyncStorage from '@react-native-community/async-storage'
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
 import createSensitiveStorage from 'redux-persist-sensitive-storage'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
-import { composeWithDevTools } from 'remote-redux-devtools' // TODO: Remove before compiling to production.
+import AsyncStorage from '@react-native-community/async-storage'
 import { Auth } from './authReducer'
-import { Patient } from './patientReducer'
+import { Buddy } from './buddyReducer'
+import { Device } from './deviceReducer'
+import { Inputs } from './inputsReducer'
+import { Listener } from './listenerReducer'
 import { Timer } from './timerReducer'
 import { Token } from './tokenReducer'
+import { User } from './userReducer'
 
 const sensitiveStorage = createSensitiveStorage(
   {
@@ -45,8 +48,23 @@ const authPersistConfig = {
   storage: AsyncStorage
 }
 
-const patientPersistConfig = {
-  key: 'patient',
+const buddyPersistConfig = {
+  key: 'buddy',
+  storage: AsyncStorage
+}
+
+const devicePersistConfig = {
+  key: 'device',
+  storage: AsyncStorage
+}
+
+const inputsPersistConfig = {
+  key: 'inputs',
+  storage: AsyncStorage
+}
+
+const listenerPersistConfig = {
+  key: 'listener',
   storage: AsyncStorage
 }
 
@@ -60,19 +78,28 @@ const tokenPersistConfig = {
   storage: sensitiveStorage
 }
 
+const userPersistConfig = {
+  key: 'user',
+  storage: AsyncStorage
+}
+
 const rootReducer = combineReducers(
   {
     auth: persistReducer(authPersistConfig, Auth),
-    patient: persistReducer(patientPersistConfig, Patient),
+    buddy: persistReducer(buddyPersistConfig, Buddy),
+    device: persistReducer(devicePersistConfig, Device),
+    inputs: persistReducer(inputsPersistConfig, Inputs),
+    listener: persistReducer(listenerPersistConfig, Listener),
     timer: persistReducer(timerPersistConfig, Timer),
-    token: persistReducer(tokenPersistConfig, Token)
+    token: persistReducer(tokenPersistConfig, Token),
+    user: persistReducer(userPersistConfig, User)
   }
 )
 
 export const ConfigureStore = () => {
   const store = createStore(
     rootReducer,
-    composeWithDevTools(applyMiddleware(thunk, logger))
+    applyMiddleware(thunk, logger)
   )
   const persistor = persistStore(store)
 
