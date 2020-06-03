@@ -13,6 +13,8 @@ Rage, rage against the dying of the light.*<br>
 ## About the Project
 The project is building a suite of applications for web and mobile devices, both Android and iOS, that work together as a [dead man's switch](https://en.wikipedia.org/wiki/Dead_man's_switch) for your phone.  It will prompt the user to check in periodically.  By checking in, the user's buddies will know that the user is OK, or at least OK enough to check in with their phone.  If the user doesn't check in, the user's buddies will be alerted on their phone, by e-mail, by text message, and/or by phone call.  The buddy can then take appropriate action to check on their loved one.
 
+Check-In is brought to you by the Cryonics Institute, where we develop technology for life.
+
 ## References
 Allen, R. (2015, Sept. 22). The beginner's guide to contributing to a GitHub project [Web-log post]. Retrieved from https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/
 
