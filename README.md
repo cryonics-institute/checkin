@@ -1,5 +1,5 @@
 # Check-In
-### *A Mobile+Web Suite That Lets Those You Love Know Your OK; A [Dead Man's Switch](https://en.wikipedia.org/wiki/Dead_man's_switch) for Your Phone*
+### *A Mobile+Web Suite That Lets Those You Love Know You're OK; A [Dead Man's Switch](https://en.wikipedia.org/wiki/Dead_man's_switch) for Your Phone*
 
 ## Getting Started
 Welcome.  Our project has a working alpha version and we are neck deep in test development.  If you would like to pitch in, please review the [React Native testing overview](https://reactnative.dev/docs/testing-overview) and [our contributing guidelines](./docs/CONTRIBUTING.md).  We have chosen Flow for typing variables and Jest for unit/integration/component tests.  We have some time before choosing an E2E tool and are considering both suggestions in the overview.
