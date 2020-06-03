@@ -1,32 +1,19 @@
-# Cryonics Check-In
-### *A Multiplatform Mobile App That Reminds Cryonics Patients to Check-In with Their Stand-By Team*
+# Check-In
+### *A Mobile+Web Suite That Lets Those You Love Know You're OK; A [Dead Man's Switch](https://en.wikipedia.org/wiki/Dead_man's_switch) for Your Phone*
 
 ## Getting Started
-Welcome.  We are currently working on our project's road map.  Help us get our goals right from the start by reviewing and revising our [canvas](./docs/CANVAS.md).
+Welcome.  Our project has a working alpha version and we are neck deep in test development.  If you would like to pitch in, please review the [React Native testing overview](https://reactnative.dev/docs/testing-overview) and [our contributing guidelines](./docs/CONTRIBUTING.md).  We have chosen Flow for typing variables and Jest for unit/integration/component tests.  We have some time before choosing an E2E tool and are considering both suggestions in the overview.
 
-If you are interested in helping out, please see our [contributing guidelines](./docs/CONTRIBUTING.md).
+If testing is not the right fit for you, that's OK!  We are new developers ourselves motivated by the strong desire to live life and save life.  We are learning as we go and we are proud of what we are accomplishing.  Whatever level of experience you have, we welcome you.  This is a cooperative effort, so any contributions you can make are sincerely appreciated.  Just reach out to our project manager at [michaelgill1969@gmail.com](mailto:michaelgill1969@gmail.com).
+
+*Do not go gentle into that good night.<br>
+Rage, rage against the dying of the light.*<br>
+-- Dylan Thomas
 
 ## About the Project
-The project intends to build a check-in app for individuals who are near the end of life, have made arrangements with a cryonics organization, and have a stand-by team in effect and waiting to transport them to their chosen facility.  The stand-by team could consist of family, friends, a professional organization such as [Suspended Animation](http://www.suspendedanimationlabs.com), or some combination thereof.  The app should function as follows:
+The project is building a suite of applications for web and mobile devices, both Android and iOS, that work together as a [dead man's switch](https://en.wikipedia.org/wiki/Dead_man's_switch) for your phone.  It will prompt the user to check in periodically.  By checking in, the user's buddies will know that the user is OK, or at least OK enough to check in with their phone.  If the user doesn't check in, the user's buddies will be alerted on their phone, by e-mail, by text message, and/or by phone call.  The buddy can then take appropriate action to check on their loved one.
 
-1. When installed, it will ask the user to select one or more people from her contacts, for the interval between check-in prompts during the day, and again for at night.  The interval options should vary from not at all to every 12 hours.
-2. The app will signal the user at the chosen interval by beeping loudly and vibrating.
-The user should not need to unlock the phone to answer the prompt!
-3. Large text and buttons will allow the user to easily silence the phone by pressing "yes" or "no". If they click "yes", the alarm resets.  If they click "no" or cannot get to the phone in a specified amount of time, a message is sent to the stand-by team asking them to get in touch.
-
-This compliments existing emergency-button systems found in many peoples' homes that signal emergency services when pressed.  In cases where someone is too weak to get to the button, this free system provides an early warning, alerting the stand-by team to check on them, potentially avoiding a life threatening scenario.
-
-## Flow
-The app screens should flow as follows:
-
-1. Launch app from icon/launcher -> WelcomeActivity on first run, otherwise SetupActivity
-2. WelcomeActivity: Welcome message, "Let's get started..." button -> PickContactActivity
-3. SetupActivity: Buttons "Pick friends and family", "Set up alarm".
-4. PickContactActivity: Displays a list of contacts "Richard Mobile", "Richard Home" and so on.
-5. ContactPickedActivity: Let's user pick another contact (redirect to PickContactActivity), or say "That's enough for now" -> SetupAlarmActivity.
-6. SetupAlarmActivity: 2 screens, During the day from: "9am" to "6pm", set alarm off every: "1, 2, 3 hours, no alarm during day". Night (same). "Next" button
-7. SetupCompleteActivity: "Thank you message", "Done button"
-8. AlarmActivity: "Are you OK", "YES", "NO".
+*Check-In is brought to you by the Cryonics Institute.*
 
 ## References
 Allen, R. (2015, Sept. 22). The beginner's guide to contributing to a GitHub project [Web-log post]. Retrieved from https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/

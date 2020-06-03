@@ -2,13 +2,13 @@
 
 Welcome and thank you for contributing to our project.
 
-The following is a set of guidelines for contributing to Check-In, which are hosted by the [Cryonics Institute](https://github.com/cryonics-institute/check-in) on GitHub.  These are mostly guidelines, not rules.  Use your best judgment, and feel free to propose changes to this document in a pull request.
+The following is a set of guidelines for contributing to Check-In, which is hosted by the [Cryonics Institute](https://github.com/cryonics-institute/check-in) on GitHub.  These are mostly guidelines, not rules.  Use your best judgment, and feel free to propose changes to this document in a pull request.
 
 ## What should I know before I get started?
 
 #### Development Environment
 
-The app will be built using React Native, a multiplatform mobile development library that allows Android and iOS apps to be developed using the same code base.  Developers and programmers interested in contributing code should be able to work with React Native.
+The apps will be built using React and React Native, development libraries that allow Android, iOS, and web apps to be developed using the same code base.  Developers and programmers interested in contributing code should be able to work with React Javascript.
 
 #### Design Environment
 
