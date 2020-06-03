@@ -85,3 +85,8 @@ That's a pretty brief introduction!  For a much better introduction, please see 
 ## Code of Conduct
 
 The project maintainers reserve all rights and remedies under law regarding the conduct of contributors relevant to their participation in this project.  Please report unacceptable behavior to [michaelgill1969@gmail.com](mailto:michaelgill1969@gmail.com).
+
+## References
+Allen, R. (2015, Sept. 22). The beginner's guide to contributing to a GitHub project [Web-log post]. Retrieved from https://akrabat.com/the-beginners-guide-to-contributing-to-a-github-project/
+
+Chacon, S., & Straub, B. (2019). *Pro Git* (2nd ed.)[Ebook version]. Retrieved from https://www.git-scm.com/book/en/v2
