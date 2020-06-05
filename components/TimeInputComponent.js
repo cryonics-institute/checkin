@@ -1,6 +1,6 @@
 /**
- * Time-input component for the project, Check-In, that presents the
- * time-input with an add or remove icon in the right-hand side and validation
+ * Time-input component for the project, Check-In, that presents the time-input
+ * with an add or remove icon in the right-hand side and validation
  * of the time.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>

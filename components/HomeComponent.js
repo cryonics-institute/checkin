@@ -1,8 +1,8 @@
 // TODO: App should not reset snooze back to 9 minutes when relaunching.
-// @flow
+
 /**
- * Main component for the project, Dynamic Text-Input for React Native, that
- * presents the view inside of which the text-input components are presented.
+ * Home-tab component for the project, Check-In, that presents the view with
+ * which the user adds, edits, and deletes times to check in.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
@@ -23,6 +23,8 @@
  * You should have received a copy of the GNU General Public License along with
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+// @flow
 
 import React from 'react'
 import { ScrollView, View } from 'react-native'
