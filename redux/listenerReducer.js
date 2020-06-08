@@ -22,14 +22,20 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  errMess: string,
+  listeners: Array<number>
+}
+
 export const Listener = (
-  state = {
+  state: State = {
     errMess: null,
     listeners: []
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.REMOVE_LISTENERS_REQUESTED:

@@ -22,15 +22,22 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  errMess: string,
+  interval: number,
+  timers: Array<number>
+}
+
 export const Timer = (
-  state = {
+  state: State = {
     errMess: null,
     interval: null,
     timers: []
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.SET_TIMER_REQUESTED:

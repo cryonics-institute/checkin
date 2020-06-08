@@ -22,14 +22,20 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  errMess: string,
+  token: string
+}
+
 export const Device = (
-  state = {
+  state: State = {
     errMess: null,
     token: null
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.INITIALIZE_STORE_REQUESTED:

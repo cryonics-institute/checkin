@@ -22,15 +22,22 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  errMess: string,
+  username: string,
+  password: string
+}
+
 export const Token = (
-  state = {
+  state: State = {
     errMess: null,
     username: null,
     password: null
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.REGISTRATION_REQUESTED:

@@ -22,10 +22,21 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  alertTimes: Array<object>,
+  checkinTime: string,
+  email: string,
+  errMess: string,
+  isAdded: boolean,
+  lastAlertTime: string,
+  snooze: number
+}
+
 export const Buddy = (
-  state = {
+  state: State = {
     alertTimes: [],
     checkinTime: null,
     email: null,
@@ -34,7 +45,7 @@ export const Buddy = (
     lastAlertTime: null,
     snooze: null
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.ADD_BUDDY_REQUESTED:

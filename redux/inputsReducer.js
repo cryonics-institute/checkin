@@ -22,15 +22,22 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  errMess: string,
+  height: number,
+  showTip: boolean
+}
+
 export const Inputs = (
-  state = {
+  state: State = {
     errMess: null,
     height: null,
     showTip: true
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.HIDE_TIP_REQUESTED:

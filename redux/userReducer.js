@@ -22,10 +22,23 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  alertTimes: Array<object>,
+  checkinInterval: number,
+  checkinTime: string,
+  errMess: string,
+  isSignedIn: boolean,
+  lastAlertTime: string,
+  longestSnooze: number,
+  shortestInterval: number,
+  snooze: number
+}
+
 export const User = (
-  state = {
+  state: State = {
     alertTimes: [],
     checkinInterval: null,
     checkinTime: null,
@@ -36,7 +49,7 @@ export const User = (
     shortestInterval: 1800000,
     snooze: null
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.ADD_DOCUMENT_REQUESTED:
