@@ -26,9 +26,9 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  errMess: string,
-  interval: number,
-  timers: Array<number>
+  +errMess: string,
+  +interval: number,
+  +timers: Array<number>
 }
 
 export const Timer = (

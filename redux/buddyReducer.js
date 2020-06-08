@@ -26,13 +26,13 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  alertTimes: Array<object>,
-  checkinTime: string,
-  email: string,
-  errMess: string,
-  isAdded: boolean,
-  lastAlertTime: string,
-  snooze: number
+  +alertTimes: Array<object>,
+  +checkinTime: string,
+  +email: string,
+  +errMess: string,
+  +isAdded: boolean,
+  +lastAlertTime: string,
+  +snooze: number
 }
 
 export const Buddy = (

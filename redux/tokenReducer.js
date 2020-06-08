@@ -26,9 +26,9 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  errMess: string,
-  username: string,
-  password: string
+  +errMess: string,
+  +username: string,
+  +password: string
 }
 
 export const Token = (

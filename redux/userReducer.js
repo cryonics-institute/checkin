@@ -26,15 +26,15 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  alertTimes: Array<object>,
-  checkinInterval: number,
-  checkinTime: string,
-  errMess: string,
-  isSignedIn: boolean,
-  lastAlertTime: string,
-  longestSnooze: number,
-  shortestInterval: number,
-  snooze: number
+  +alertTimes: Array<object>,
+  +checkinInterval: number,
+  +checkinTime: string,
+  +errMess: string,
+  +isSignedIn: boolean,
+  +lastAlertTime: string,
+  +longestSnooze: number,
+  +shortestInterval: number,
+  +snooze: number
 }
 
 export const User = (

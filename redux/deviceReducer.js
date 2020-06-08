@@ -26,8 +26,8 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  errMess: string,
-  token: string
+  +errMess: string,
+  +token: string
 }
 
 export const Device = (

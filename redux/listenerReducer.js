@@ -26,8 +26,8 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  errMess: string,
-  listeners: Array<number>
+  +errMess: string,
+  +listeners: Array<number>
 }
 
 export const Listener = (

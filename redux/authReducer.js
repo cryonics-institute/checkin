@@ -26,8 +26,8 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  errMess: string,
-  user: Object
+  +errMess: string,
+  +user: Object
 }
 
 export const Auth = (

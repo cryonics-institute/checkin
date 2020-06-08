@@ -26,9 +26,9 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  errMess: string,
-  height: number,
-  showTip: boolean
+  +errMess: string,
+  +height: number,
+  +showTip: boolean
 }
 
 export const Inputs = (
