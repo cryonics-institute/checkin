@@ -59,6 +59,10 @@ type Action = {
   checkinTime: string,
   errMess: string
 } | {
+  type: 'SET_LAST_ALERT_TIME',
+  errMess: string,
+  lastAlertTime: string
+} | {
   type: 'SET_SHORTEST_INTERVAL_REQUESTED',
   errMess: string
 } | {
@@ -150,6 +154,7 @@ export const User = (
         errMess: null
       }
 
+    // TODO: Shouldn't this be fleshed out to requested/rejected/fulfilled?
     case ActionTypes.SET_LAST_ALERT_TIME:
       return {
         ...state,
