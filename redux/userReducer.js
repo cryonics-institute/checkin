@@ -26,7 +26,6 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +alertTimes: Array<object>,
   +checkinInterval: number,
   +checkinTime: string,
   +errMess: string,
@@ -39,7 +38,6 @@ type State = {
 
 export const User = (
   state: State = {
-    alertTimes: [],
     checkinInterval: null,
     checkinTime: null,
     errMess: null,
@@ -89,38 +87,6 @@ export const User = (
       return {
         ...state,
         checkinTime: action.payload,
-        errMess: null
-      }
-
-    case ActionTypes.MUTATE_INPUTS_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.MUTATE_INPUTS_FULFILLED:
-      return {
-        ...state,
-        alertTimes: action.payload,
-        errMess: null
-      }
-
-    case ActionTypes.REMOVE_INPUTS_REQUESTED:
-      return {
-        ...state,
-        errMess: null
-      }
-
-    case ActionTypes.REMOVE_INPUTS_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.REMOVE_INPUTS_FULFILLED:
-      return {
-        ...state,
-        alertTimes: action.payload,
         errMess: null
       }
 
@@ -180,7 +146,6 @@ export const User = (
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
-        alertTimes: [],
         checkinInterval: null,
         checkinTime: null,
         errMess: null,
