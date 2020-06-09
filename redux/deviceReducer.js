@@ -30,6 +30,18 @@ type State = {
   +token: string
 }
 
+type Action = {
+  type: 'INITIALIZE_STORE_REQUESTED',
+  errMess: string
+} | {
+  type: 'INITIALIZE_STORE_REJECTED',
+  errMess: string
+} | {
+  type: 'INITIALIZE_STORE_FULFILLED',
+  errMess: string,
+  token: string
+}
+
 export const Device = (
   state: State = {
     errMess: null,

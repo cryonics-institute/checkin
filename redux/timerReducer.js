@@ -31,6 +31,38 @@ type State = {
   +timers: Array<number>
 }
 
+type Action = {
+  type: 'SET_TIMER_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_TIMER_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_TIMER_FULFILLED',
+  errMess: string,
+  timers: Array<number>
+} | {
+  type: 'SET_TIMER_INTERVAL_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_TIMER_INTERVAL_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_TIMER_INTERVAL_FULFILLED',
+  errMess: string,
+  interval: number
+} | {
+  type: 'REMOVE_TIMERS_REQUESTED',
+  errMess: string
+} | {
+  type: 'REMOVE_TIMERS_REJECTED',
+  errMess: string
+} | {
+  type: 'REMOVE_TIMERS_FULFILLED',
+  errMess: string,
+  timers: Array<number>
+}
+
 export const Timer = (
   state: State = {
     errMess: null,
@@ -76,6 +108,7 @@ export const Timer = (
     case ActionTypes.SET_TIMER_INTERVAL_FULFILLED:
       return {
         ...state,
+        errMess: null,
         interval: action.payload
       }
 
@@ -94,6 +127,7 @@ export const Timer = (
     case ActionTypes.REMOVE_TIMERS_FULFILLED:
       return {
         ...state,
+        errMess: null,
         timers: []
       }
 
