@@ -33,53 +33,53 @@ type State = {
 }
 
 type Action = {
-  type: HIDE_TIP_REQUESTED,
+  type: 'HIDE_TIP_REQUESTED',
   errMess: string
 } | {
-  type: HIDE_TIP_REJECTED,
+  type: 'HIDE_TIP_REJECTED',
   errMess: string
 } | {
-  type: HIDE_TIP_FULFILLED,
+  type: 'HIDE_TIP_FULFILLED',
   errMess: string,
   showTip: boolean
 } | {
-  type: MUTATE_INPUTS_REQUESTED,
+  type: 'MUTATE_INPUTS_REQUESTED',
   errMess: string
 } | {
-  type: MUTATE_INPUTS_REJECTED,
+  type: 'MUTATE_INPUTS_REJECTED',
   errMess: string
 } | {
-  type: MUTATE_INPUTS_FULFILLED,
+  type: 'MUTATE_INPUTS_FULFILLED',
   errMess: string,
   alertTimes: Array<object>
 } | {
-  type: REMOVE_INPUTS_REQUESTED,
+  type: 'REMOVE_INPUTS_REQUESTED',
   errMess: string
 } | {
-  type: REMOVE_INPUTS_REJECTED,
+  type: 'REMOVE_INPUTS_REJECTED',
   errMess: string
 } | {
-  type: REMOVE_INPUTS_FULFILLED,
+  type: 'REMOVE_INPUTS_FULFILLED',
   errMess: string,
   alertTimes: Array<object>
 } | {
-  type: SET_INPUT_PARAMETERS_REQUESTED,
+  type: 'SET_INPUT_PARAMETERS_REQUESTED',
   errMess: string
 } | {
-  type: SET_INPUT_PARAMETERS_REJECTED,
+  type: 'SET_INPUT_PARAMETERS_REJECTED',
   errMess: string
 } | {
-  type: SET_INPUT_PARAMETERS_FULFILLED,
+  type: 'SET_INPUT_PARAMETERS_FULFILLED',
   errMess: string,
   height: number
 } | {
-  type: SIGNOUT_REQUESTED,
+  type: 'SIGNOUT_REQUESTED',
   errMess: string
 } | {
-  type: SIGNOUT_REJECTED,
+  type: 'SIGNOUT_REJECTED',
   errMess: string
 } | {
-  type: SIGNOUT_FULFILLED,
+  type: 'SIGNOUT_FULFILLED',
   alertTimes: Array<object>,
   errMess: string,
   height: number,
