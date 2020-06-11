@@ -24,7 +24,7 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import React from 'react'
+import * as React from 'react'
 import { ActivityIndicator, View, useWindowDimensions } from 'react-native'
 import { Image } from 'react-native-elements'
 import { BLUE_LOGO } from '../assets'

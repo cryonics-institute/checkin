@@ -25,7 +25,7 @@
  */
 
 // @flow
-import React from 'react'
+import * as React from 'react'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { signOut } from '../redux/ActionCreators'

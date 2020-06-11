@@ -23,7 +23,7 @@
  */
 
 // @flow
-import React from 'react'
+import * as React from 'react'
 import { ActivityIndicator, StatusBar, View } from 'react-native'
 import { Text } from 'react-native-elements'
 import { connect } from 'react-redux'
