@@ -26,7 +26,7 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +alertTimes: Array<object>,
+  // +alertTimes: Array<object>,
   +errMess: string,
   +height: number,
   +showTip: boolean
@@ -42,26 +42,26 @@ type Action = {
   type: 'HIDE_TIP_FULFILLED',
   errMess: string,
   showTip: boolean
-} | {
-  type: 'MUTATE_INPUTS_REQUESTED',
-  errMess: string
-} | {
-  type: 'MUTATE_INPUTS_REJECTED',
-  errMess: string
-} | {
-  type: 'MUTATE_INPUTS_FULFILLED',
-  errMess: string,
-  alertTimes: Array<object>
-} | {
-  type: 'REMOVE_INPUTS_REQUESTED',
-  errMess: string
-} | {
-  type: 'REMOVE_INPUTS_REJECTED',
-  errMess: string
-} | {
-  type: 'REMOVE_INPUTS_FULFILLED',
-  errMess: string,
-  alertTimes: Array<object>
+// } | {
+//   type: 'MUTATE_INPUTS_REQUESTED',
+//   errMess: string
+// } | {
+//   type: 'MUTATE_INPUTS_REJECTED',
+//   errMess: string
+// } | {
+//   type: 'MUTATE_INPUTS_FULFILLED',
+//   errMess: string,
+//   alertTimes: Array<object>
+// } | {
+//   type: 'REMOVE_INPUTS_REQUESTED',
+//   errMess: string
+// } | {
+//   type: 'REMOVE_INPUTS_REJECTED',
+//   errMess: string
+// } | {
+//   type: 'REMOVE_INPUTS_FULFILLED',
+//   errMess: string,
+//   alertTimes: Array<object>
 } | {
   type: 'SET_INPUT_PARAMETERS_REQUESTED',
   errMess: string
@@ -80,7 +80,7 @@ type Action = {
   errMess: string
 } | {
   type: 'SIGNOUT_FULFILLED',
-  alertTimes: Array<object>,
+  // alertTimes: Array<object>,
   errMess: string,
   height: number,
   showTip: boolean
@@ -88,7 +88,7 @@ type Action = {
 
 export const Inputs = (
   state: State = {
-    alertTimes: [],
+    // alertTimes: [],
     errMess: null,
     height: null,
     showTip: true
@@ -115,43 +115,43 @@ export const Inputs = (
         showTip: false
       }
 
-    case ActionTypes.MUTATE_INPUTS_REQUESTED:
-      return {
-        ...state,
-        errMess: null
-      }
-
-    case ActionTypes.MUTATE_INPUTS_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.MUTATE_INPUTS_FULFILLED:
-      return {
-        ...state,
-        alertTimes: action.payload,
-        errMess: null
-      }
-
-    case ActionTypes.REMOVE_INPUTS_REQUESTED:
-      return {
-        ...state,
-        errMess: null
-      }
-
-    case ActionTypes.REMOVE_INPUTS_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.REMOVE_INPUTS_FULFILLED:
-      return {
-        ...state,
-        alertTimes: action.payload,
-        errMess: null
-      }
+      // case ActionTypes.MUTATE_INPUTS_REQUESTED:
+      //   return {
+      //     ...state,
+      //     errMess: null
+      //   }
+      //
+      // case ActionTypes.MUTATE_INPUTS_REJECTED:
+      //   return {
+      //     ...state,
+      //     errMess: action.payload
+      //   }
+      //
+      // case ActionTypes.MUTATE_INPUTS_FULFILLED:
+      //   return {
+      //     ...state,
+      //     alertTimes: action.payload,
+      //     errMess: null
+      //   }
+      //
+      // case ActionTypes.REMOVE_INPUTS_REQUESTED:
+      //   return {
+      //     ...state,
+      //     errMess: null
+      //   }
+      //
+      // case ActionTypes.REMOVE_INPUTS_REJECTED:
+      //   return {
+      //     ...state,
+      //     errMess: action.payload
+      //   }
+      //
+      // case ActionTypes.REMOVE_INPUTS_FULFILLED:
+      //   return {
+      //     ...state,
+      //     alertTimes: action.payload,
+      //     errMess: null
+      //   }
 
     case ActionTypes.SET_INPUT_PARAMETERS_REQUESTED:
       return {
@@ -187,7 +187,7 @@ export const Inputs = (
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
-        alertTimes: [],
+        // alertTimes: [],
         errMess: null,
         height: null,
         showTip: true
