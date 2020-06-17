@@ -22,14 +22,53 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  +errMess: string,
+  +interval: number,
+  +listeners: Array<number>
+}
+
+type Action = {
+  type: 'REMOVE_LISTENERS_REQUESTED',
+  errMess: string
+} | {
+  type: 'REMOVE_LISTENERS_REJECTED',
+  errMess: string
+} | {
+  type: 'REMOVE_LISTENERS_FULFILLED',
+  errMess: string,
+  listeners: Array<number>
+} | {
+  type: 'SET_LISTENER_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_LISTENER_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_LISTENER_FULFILLED',
+  errMess: string,
+  listeners: Array<number>
+} | {
+  type: 'SET_LISTENER_INTERVAL_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_LISTENER_INTERVAL_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_LISTENER_INTERVAL_FULFILLED',
+  errMess: string,
+  interval: number
+}
+
 export const Listener = (
-  state = {
+  state: State = {
     errMess: null,
     listeners: []
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.REMOVE_LISTENERS_REQUESTED:
@@ -87,7 +126,8 @@ export const Listener = (
     case ActionTypes.SET_LISTENER_INTERVAL_FULFILLED:
       return {
         ...state,
-        errMess: null
+        errMess: null,
+        interval: action.payload
       }
 
     default:

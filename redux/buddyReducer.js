@@ -22,11 +22,53 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  +alertTimes: Array<object>,
+  +checkinInterval: number,
+  +checkinTime: string,
+  +email: string,
+  +errMess: string,
+  +isAdded: boolean,
+  +lastAlertTime: string,
+  +snooze: number
+}
+
+type Action = {
+  type: 'ADD_BUDDY_REQUESTED',
+  errMess: string
+} | {
+  type: 'ADD_BUDDY_REJECTED',
+  errMess: string
+} | {
+  type: 'ADD_BUDDY_FULFILLED',
+  errMess: string
+} | {
+  type: 'GET_DOCUMENT_REQUESTED',
+  errMess: string
+} | {
+  type: 'GET_DOCUMENT_REJECTED',
+  errMess: string,
+  isAdded: boolean
+} | {
+  type: 'GET_DOCUMENT_FULFILLED',
+  alertTimes: Array<object>,
+  checkinInterval: number,
+  checkinTime: string,
+  errMess: string,
+  isAdded: boolean,
+  snooze: number
+} | {
+  type: 'SET_LAST_ALERT_TIME',
+  lastAlertTime: string,
+}
+
 export const Buddy = (
-  state = {
+  state: State = {
     alertTimes: [],
+    checkinInterval: null,
     checkinTime: null,
     email: null,
     errMess: null,
@@ -34,7 +76,7 @@ export const Buddy = (
     lastAlertTime: null,
     snooze: null
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.ADD_BUDDY_REQUESTED:
@@ -52,7 +94,8 @@ export const Buddy = (
     case ActionTypes.ADD_BUDDY_FULFILLED:
       return {
         ...state,
-        email: action.payload
+        email: action.payload,
+        errMess: null
       }
 
     case ActionTypes.GET_DOCUMENT_REQUESTED:
@@ -79,6 +122,7 @@ export const Buddy = (
         snooze: action.payload[4]
       }
 
+    // TODO: Shouldn't this be fleshed out to requested/rejected/fulfilled?
     case ActionTypes.SET_LAST_ALERT_TIME:
       return {
         ...state,

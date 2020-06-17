@@ -22,10 +22,108 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  +alertTimes: Array<object>,
+  +checkinInterval: number,
+  +checkinTime: string,
+  +errMess: string,
+  +isSignedIn: boolean,
+  +lastAlertTime: string,
+  +longestSnooze: number,
+  +shortestInterval: number,
+  +snooze: number
+}
+
+type Action = {
+  type: 'ADD_DOCUMENT_REQUESTED',
+  errMess: string
+} | {
+  type: 'ADD_DOCUMENT_REJECTED',
+  errMess: string
+} | {
+  type: 'ADD_DOCUMENT_FULFILLED',
+  checkinTime: string,
+  errMess: string,
+  isSignedIn: boolean,
+  snooze: number
+} | {
+  type: 'CHECKIN_REQUESTED',
+  errMess: string
+} | {
+  type: 'CHECKIN_REJECTED',
+  errMess: string
+} | {
+  type: 'CHECKIN_FULFILLED',
+  checkinTime: string,
+  errMess: string
+} | {
+  type: 'MUTATE_INPUTS_REQUESTED',
+  errMess: string
+} | {
+  type: 'MUTATE_INPUTS_REJECTED',
+  errMess: string
+} | {
+  type: 'MUTATE_INPUTS_FULFILLED',
+  errMess: string,
+  alertTimes: Array<object>
+} | {
+  type: 'REMOVE_INPUTS_REQUESTED',
+  errMess: string
+} | {
+  type: 'REMOVE_INPUTS_REJECTED',
+  errMess: string
+} | {
+  type: 'REMOVE_INPUTS_FULFILLED',
+  errMess: string,
+  alertTimes: Array<object>
+} | {
+  type: 'SET_LAST_ALERT_TIME',
+  errMess: string,
+  lastAlertTime: string
+} | {
+  type: 'SET_SHORTEST_INTERVAL_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_SHORTEST_INTERVAL_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_SHORTEST_INTERVAL_FULFILLED',
+  errMess: string,
+  shortestInterval: number
+} | {
+  type: 'SET_SNOOZE_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_SNOOZE_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_SNOOZE_FULFILLED',
+  errMess: string,
+  snooze: number
+} | {
+  type: 'SIGNOUT_REQUESTED',
+  errMess: string
+} | {
+  type: 'SIGNOUT_REJECTED',
+  errMess: string
+} | {
+  type: 'SIGNOUT_FULFILLED',
+  alertTimes: Array<object>,
+  checkinInterval: number,
+  checkinTime: string,
+  errMess: string,
+  isSignedIn: boolean,
+  lastAlertTime: string,
+  longestSnooze: number,
+  shortestInterval: number,
+  snooze: number
+}
+
 export const User = (
-  state = {
+  state: State = {
     alertTimes: [],
     checkinInterval: null,
     checkinTime: null,
@@ -36,7 +134,7 @@ export const User = (
     shortestInterval: 1800000,
     snooze: null
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.ADD_DOCUMENT_REQUESTED:
@@ -79,6 +177,12 @@ export const User = (
         errMess: null
       }
 
+    case ActionTypes.MUTATE_INPUTS_REQUESTED:
+      return {
+        ...state,
+        errMess: null
+      }
+
     case ActionTypes.MUTATE_INPUTS_REJECTED:
       return {
         ...state,
@@ -111,9 +215,11 @@ export const User = (
         errMess: null
       }
 
+    // TODO: Shouldn't this be fleshed out to requested/rejected/fulfilled?
     case ActionTypes.SET_LAST_ALERT_TIME:
       return {
         ...state,
+        errMess: null,
         lastAlertTime: action.payload
       }
 
@@ -132,6 +238,7 @@ export const User = (
     case ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED:
       return {
         ...state,
+        errMess: null,
         shortestInterval: action.payload
       }
 
@@ -150,12 +257,14 @@ export const User = (
     case ActionTypes.SET_SNOOZE_FULFILLED:
       return {
         ...state,
+        errMess: null,
         snooze: action.payload
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
     case ActionTypes.SIGNOUT_REJECTED:

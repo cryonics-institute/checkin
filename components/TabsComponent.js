@@ -23,7 +23,7 @@
  */
 
 // @flow
-import React from 'react'
+import * as React from 'react'
 import { Icon } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'

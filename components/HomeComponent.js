@@ -26,7 +26,7 @@
 
 // @flow
 
-import React from 'react'
+import * as React from 'react'
 import { ScrollView, View } from 'react-native'
 import { Icon, Text } from 'react-native-elements'
 import { connect } from 'react-redux'

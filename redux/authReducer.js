@@ -22,19 +22,58 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  +errMess: string,
+  +user: Object
+}
+
+type Action = {
+  type: 'REGISTRATION_REQUESTED',
+  errMess: string
+} | {
+  type: 'REGISTRATION_REJECTED',
+  errMess: string
+} | {
+  type: 'REGISTRATION_FULFILLED',
+  errMess: string,
+  user: Object
+} | {
+  type: 'SIGNIN_REQUESTED',
+  errMess: string
+} | {
+  type: 'SIGNIN_REJECTED',
+  errMess: string
+} | {
+  type: 'SIGNIN_FULFILLED',
+  errMess: string,
+  user: Object
+} | {
+  type: 'SIGNOUT_REQUESTED',
+  errMess: string
+} | {
+  type: 'SIGNOUT_REJECTED',
+  errMess: string
+} | {
+  type: 'SIGNOUT_FULFILLED',
+  errMess: string,
+  user: Object
+}
+
 export const Auth = (
-  state = {
+  state: State = {
     errMess: null,
     user: null
   },
-  action
-) => {
+  action: Action
+): State => {
   switch (action.type) {
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
     case ActionTypes.REGISTRATION_REJECTED:
@@ -52,7 +91,8 @@ export const Auth = (
 
     case ActionTypes.SIGNIN_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
     case ActionTypes.SIGNIN_REJECTED:
@@ -70,7 +110,8 @@ export const Auth = (
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
-        ...state
+        ...state,
+        errMess: null
       }
 
     case ActionTypes.SIGNOUT_REJECTED:

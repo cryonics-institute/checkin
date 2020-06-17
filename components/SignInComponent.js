@@ -25,7 +25,7 @@
  */
 
 // @flow
-import React from 'react'
+import * as React from 'react'
 import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
   from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'

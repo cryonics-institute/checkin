@@ -22,15 +22,54 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
 
+type State = {
+  +errMess: string,
+  +interval: number,
+  +timers: Array<number>
+}
+
+type Action = {
+  type: 'SET_TIMER_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_TIMER_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_TIMER_FULFILLED',
+  errMess: string,
+  timers: Array<number>
+} | {
+  type: 'SET_TIMER_INTERVAL_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_TIMER_INTERVAL_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_TIMER_INTERVAL_FULFILLED',
+  errMess: string,
+  interval: number
+} | {
+  type: 'REMOVE_TIMERS_REQUESTED',
+  errMess: string
+} | {
+  type: 'REMOVE_TIMERS_REJECTED',
+  errMess: string
+} | {
+  type: 'REMOVE_TIMERS_FULFILLED',
+  errMess: string,
+  timers: Array<number>
+}
+
 export const Timer = (
-  state = {
+  state: State = {
     errMess: null,
     interval: null,
     timers: []
   },
-  action
+  action: Action
 ) => {
   switch (action.type) {
     case ActionTypes.SET_TIMER_REQUESTED:
@@ -69,6 +108,7 @@ export const Timer = (
     case ActionTypes.SET_TIMER_INTERVAL_FULFILLED:
       return {
         ...state,
+        errMess: null,
         interval: action.payload
       }
 
@@ -87,6 +127,7 @@ export const Timer = (
     case ActionTypes.REMOVE_TIMERS_FULFILLED:
       return {
         ...state,
+        errMess: null,
         timers: []
       }
 
