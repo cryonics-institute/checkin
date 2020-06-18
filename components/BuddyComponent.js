@@ -114,14 +114,14 @@ class Buddy extends React.Component<Props> {
     }
   }
 
-  getLastAlertTime () {
-    const lastAlertTime = moment(this.props.lastAlertTime).toISOString()
-    const lastAlertTimeInMs =
+  getLastAlertTime (): string {
+    const lastAlertTime: string = moment(this.props.lastAlertTime).toISOString()
+    const lastAlertTimeInMs: number =
       ((((((parseInt(lastAlertTime.slice(-13, -11), 10) * 60) +
         parseInt(lastAlertTime.slice(-10, -8), 10)) * 60) +
         parseInt(lastAlertTime.slice(-7, -5), 10)) * 1000) +
         parseInt(lastAlertTime.slice(-4, -1), 10))
-    const lastAlertTimeMoment = moment()
+    const lastAlertTimeMoment: string = moment()
       .startOf('date')
       .add(lastAlertTimeInMs, 'milliseconds')
       .add(moment().utcOffset(), 'minutes')

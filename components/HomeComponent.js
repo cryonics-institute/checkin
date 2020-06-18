@@ -63,6 +63,7 @@ const mapDispatchToProps = dispatch => (
 )
 
 function TimeInputs (props: Props) {
+  // TODO: Try to add flow type here.
   const [scrollViewRef, setScrollViewRef] = React.useState(null)
 
   return (
@@ -122,7 +123,7 @@ class Home extends React.Component<Props> {
     }
   }
 
-  closeTip () {
+  closeTip (): void {
     this.props.hideTip()
   }
 
