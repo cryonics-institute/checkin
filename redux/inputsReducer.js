@@ -26,7 +26,7 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +alertTimes: Array<object>,
+  +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   +errMess: string,
   +height: number,
   +showTip: boolean
@@ -51,7 +51,7 @@ type Action = {
 } | {
   type: 'MUTATE_INPUTS_FULFILLED',
   errMess: string,
-  alertTimes: Array<object>
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
   type: 'REMOVE_INPUTS_REQUESTED',
   errMess: string
@@ -61,7 +61,7 @@ type Action = {
 } | {
   type: 'REMOVE_INPUTS_FULFILLED',
   errMess: string,
-  alertTimes: Array<object>
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
   type: 'SET_INPUT_PARAMETERS_REQUESTED',
   errMess: string
@@ -80,7 +80,7 @@ type Action = {
   errMess: string
 } | {
   type: 'SIGNOUT_FULFILLED',
-  alertTimes: Array<object>,
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   errMess: string,
   height: number,
   showTip: boolean

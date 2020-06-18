@@ -36,7 +36,7 @@ import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
 
 type Props = {
-  alertTimes: Array<object>,
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   closeTip: func,
   hideTip: func,
   inputHeight: number,

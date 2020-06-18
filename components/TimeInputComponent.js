@@ -35,7 +35,7 @@ import { mutateInput, removeInput, setInputParameters }
 import { colors, styles } from '../styles/Styles'
 
 type Props = {
-  alertTimes: Array<object>,
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   mutateInput: func,
   removeInput: func,
   setInputParameters: func,

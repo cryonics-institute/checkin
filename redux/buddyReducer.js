@@ -26,7 +26,7 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +alertTimes: Array<object>,
+  +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   +checkinInterval: number,
   +checkinTime: string,
   +email: string,
@@ -54,7 +54,7 @@ type Action = {
   isAdded: boolean
 } | {
   type: 'GET_DOCUMENT_FULFILLED',
-  alertTimes: Array<object>,
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   checkinInterval: number,
   checkinTime: string,
   errMess: string,
