@@ -132,7 +132,7 @@ export const User = (
     lastAlertTime: '',
     longestSnooze: 60,
     shortestInterval: 1800000,
-    snooze: null
+    snooze: 9
   },
   action: Action
 ) => {
@@ -284,7 +284,7 @@ export const User = (
         lastAlertTime: '',
         longestSnooze: 60,
         shortestInterval: 3600000,
-        snooze: null
+        snooze: 9
       }
 
     default:

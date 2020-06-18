@@ -73,8 +73,8 @@ export const Buddy = (
     email: '',
     errMess: '',
     isAdded: null,
-    snooze: null
     lastAlertTime: '',
+    snooze: 9
   },
   action: Action
 ) => {
