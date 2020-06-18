@@ -276,7 +276,7 @@
 //         async () => {
 //           await store.dispatch(
 //             Actions.setListener(
-//               store.getState().user.alertTimes,
+//               store.getState().inputs.alertTimes,
 //               store.getState().user.checkinTime,
 //               store.getState().user.email,
 //               store.getState().user.isSignedIn,
@@ -298,7 +298,7 @@
 //         async () => {
 //           await store.dispatch(
 //             Actions.setListener(
-//               store.getState().user.alertTimes,
+//               store.getState().inputs.alertTimes,
 //               store.getState().user.checkinTime,
 //               store.getState().user.email,
 //               store.getState().user.isSignedIn,
@@ -321,7 +321,7 @@
 //         async () => {
 //           await store.dispatch(
 //             Actions.setListener(
-//               store.getState().user.alertTimes,
+//               store.getState().inputs.alertTimes,
 //               store.getState().user.checkinTime,
 //               store.getState().user.email,
 //               store.getState().user.isSignedIn,
@@ -344,7 +344,7 @@
 //         async () => {
 //           await store.dispatch(
 //             Actions.setListener(
-//               store.getState().user.alertTimes,
+//               store.getState().inputs.alertTimes,
 //               store.getState().user.checkinTime,
 //               store.getState().user.email,
 //               store.getState().user.isSignedIn,
@@ -367,7 +367,7 @@
 //         async () => {
 //           await store.dispatch(
 //             Actions.setListener(
-//               store.getState().user.alertTimes,
+//               store.getState().inputs.alertTimes,
 //               store.getState().user.checkinTime,
 //               store.getState().user.email,
 //               store.getState().user.isSignedIn,

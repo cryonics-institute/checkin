@@ -46,7 +46,7 @@ type Props = {
 
 const mapStateToProps = state => {
   return {
-    alertTimes: state.user.alertTimes,
+    alertTimes: state.inputs.alertTimes,
     inputHeight: state.inputs.height,
     showTip: state.inputs.showTip
   }

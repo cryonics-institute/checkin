@@ -140,7 +140,7 @@ export const addDocument = (email) => (dispatch, getState) => {
           if (typeof doc.data().subscribers !== 'undefined') {
             return db().collection('users').doc(email).set(
               {
-                alertTimes: getState().user.alertTimes,
+                alertTimes: getState().inputs.alertTimes,
                 checkinTime: user.checkinTime,
                 deviceTokens: deviceTokens,
                 snooze: user.snooze,
@@ -150,7 +150,7 @@ export const addDocument = (email) => (dispatch, getState) => {
           } else {
             return db().collection('users').doc(email).set(
               {
-                alertTimes: getState().user.alertTimes,
+                alertTimes: getState().inputs.alertTimes,
                 checkinTime: user.checkinTime,
                 deviceTokens: deviceTokens,
                 snooze: user.snooze
@@ -163,7 +163,7 @@ export const addDocument = (email) => (dispatch, getState) => {
 
           return db().collection('users').doc(email).set(
             {
-              alertTimes: getState().user.alertTimes,
+              alertTimes: getState().inputs.alertTimes,
               checkinTime: user.checkinTime,
               deviceTokens: [getState().device.token],
               snooze: user.snooze
@@ -533,7 +533,7 @@ export const initializeStoreFulfilledAction = (deviceToken) => (
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
   try {
-    if (getState().user.alertTimes !== null) {
+    if (getState().inputs.alertTimes !== null) {
       dispatch(mutateInputRequestedAction())
 
       const hours = time.length > 0
@@ -546,21 +546,21 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
         time: (new Date(1970, 0, 1, hours, minutes)).toISOString(),
         validity: validity
       }
-      const index = getState().user.alertTimes.findIndex(
+      const index = getState().inputs.alertTimes.findIndex(
         input => input.id === id
       )
       let inputsArray = null
 
       if (index === -1) {
         inputsArray = [
-          ...getState().user.alertTimes.filter(input => input.id !== id),
+          ...getState().inputs.alertTimes.filter(input => input.id !== id),
           input
         ]
       } else {
         inputsArray = [
-          ...getState().user.alertTimes.slice(0, index),
+          ...getState().inputs.alertTimes.slice(0, index),
           input,
-          ...getState().user.alertTimes.slice(index + 1)
+          ...getState().inputs.alertTimes.slice(index + 1)
         ]
       }
 
@@ -584,7 +584,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
             }
           }
         )
-    } else if (getState().user.alertTimes == null) {
+    } else if (getState().inputs.alertTimes == null) {
       throw new Error('Input array is null or undefined.')
     } else {
       throw new Error(
@@ -706,7 +706,7 @@ export const registrationFulfilledAction = (data) => (
 export const removeInput = (id) => (dispatch, getState) => {
   dispatch(removeInputsRequestedAction())
 
-  const inputsArray = getState().user.alertTimes.filter(
+  const inputsArray = getState().inputs.alertTimes.filter(
     input => input.id !== id
   )
 
@@ -1329,7 +1329,7 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
   return Promise.resolve(
     dispatch(
       setTimerInterval(
-        getState().user.alertTimes,
+        getState().inputs.alertTimes,
         getState().user.checkinTime
       )
     )
