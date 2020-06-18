@@ -51,6 +51,16 @@ type Props = {
   validatePassword: func
 }
 
+type State = {
+  isRegistered: boolean,
+  username: string,
+  password: string,
+  isUsernameValid: boolean,
+  isPasswordValid: boolean,
+  usernameError: string,
+  passwordError: string
+}
+
 const mapStateToProps = state => {
   return {
     // Nothing in state is relevant here.
@@ -65,7 +75,7 @@ const mapDispatchToProps = dispatch => (
 )
 
 function SignInView (props: Props) {
-  const windowHeight = useWindowDimensions().height
+  const windowHeight: number = useWindowDimensions().height
 
   return (
     <HeaderHeightContext.Consumer>
@@ -120,7 +130,7 @@ function SignInView (props: Props) {
 }
 
 function RegistrationView (props: Props) {
-  const windowHeight = useWindowDimensions().height
+  const windowHeight: number = useWindowDimensions().height
 
   return (
     <HeaderHeightContext.Consumer>
@@ -174,7 +184,7 @@ function RegistrationView (props: Props) {
   )
 }
 
-class SignIn extends React.Component<Props> {
+class SignIn extends React.Component<Props, State> {
   constructor (props) {
     super(props)
 
@@ -196,7 +206,7 @@ class SignIn extends React.Component<Props> {
     this.validatePassword = this.validatePassword.bind(this)
   }
 
-  handleSignin () {
+  handleSignin (): void {
     this.props.signIn(
       {
         username: this.state.username,
@@ -205,7 +215,7 @@ class SignIn extends React.Component<Props> {
     )
   }
 
-  handleRegistration () {
+  handleRegistration (): void {
     this.props.register(
       {
         username: this.state.username,
@@ -214,7 +224,7 @@ class SignIn extends React.Component<Props> {
     )
   }
 
-  toggleButtonDisabled () {
+  toggleButtonDisabled (): void {
     if (this.state.isUsernameValid && this.state.isPasswordValid) {
       return false
     } else {
@@ -222,41 +232,41 @@ class SignIn extends React.Component<Props> {
     }
   }
 
-  toggleRegistration () {
+  toggleRegistration (): void {
     this.setState({ isRegistered: !this.state.isRegistered })
   }
 
-  validateEmail (value) {
-    if (!value) {
+  validateEmail (email: string): void {
+    if (!email) {
       this.setState({ usernameError: 'Required' })
       this.setState({ isUsernameValid: false })
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
       this.setState({ usernameError: 'Invalid E-Mail Address' })
       this.setState({ isUsernameValid: false })
     } else {
       this.setState({ isUsernameValid: true })
     }
 
-    this.setState({ username: value })
+    this.setState({ username: email })
   }
 
-  validatePassword (value) {
-    if (!value) {
+  validatePassword (password: string): void {
+    if (!password) {
       this.setState({ passwordError: 'Required' })
       this.setState({ isPasswordValid: false })
-    } else if (!/^.*(?=.{8,}).*$/i.test(value)) {
+    } else if (!/^.*(?=.{8,}).*$/i.test(password)) {
       this.setState(
         { passwordError: 'Password must contain at least eight characters.' }
       )
       this.setState({ isPasswordValid: false })
-    } else if (!/^.*(?=.*[A-Z]).*$/i.test(value)) {
+    } else if (!/^.*(?=.*[A-Z]).*$/i.test(password)) {
       this.setState(
         {
           passwordError: 'Password must contain at least one uppercase letter.'
         }
       )
       this.setState({ isPasswordValid: false })
-    } else if (!/^.*(?=.*\d).*$/i.test(value)) {
+    } else if (!/^.*(?=.*\d).*$/i.test(password)) {
       this.setState(
         { passwordError: 'Password must contain at least one numeral.' }
       )
@@ -265,7 +275,7 @@ class SignIn extends React.Component<Props> {
       this.setState({ isPasswordValid: true })
     }
 
-    this.setState({ password: value })
+    this.setState({ password: password })
   }
 
   render () {

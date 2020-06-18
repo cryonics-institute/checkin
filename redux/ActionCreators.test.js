@@ -98,9 +98,9 @@
 //             checkinInterval: 5000,
 //             checkinTime: checkinTime,
 //             email: 'a@a.aa',
-//             errMess: null,
+//             errMess: '',
 //             isSignedIn: true,
-//             lastAlertTime: null,
+//             lastAlertTime: '',
 //             listeners: [],
 //             snooze: 9
 //           }
@@ -262,9 +262,9 @@
 //             checkinInterval: 5000,
 //             checkinTime: checkinTime,
 //             email: 'a@a.aa',
-//             errMess: null,
+//             errMess: '',
 //             isSignedIn: true,
-//             lastAlertTime: null,
+//             lastAlertTime: '',
 //             listeners: [],
 //             snooze: 9
 //           }

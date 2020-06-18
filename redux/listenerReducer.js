@@ -65,7 +65,7 @@ type Action = {
 
 export const Listener = (
   state: State = {
-    errMess: null,
+    errMess: '',
     listeners: []
   },
   action: Action
@@ -74,7 +74,7 @@ export const Listener = (
     case ActionTypes.REMOVE_LISTENERS_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.REMOVE_LISTENERS_REJECTED:
@@ -86,14 +86,14 @@ export const Listener = (
     case ActionTypes.REMOVE_LISTENERS_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         listeners: []
       }
 
     case ActionTypes.SET_LISTENER_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SET_LISTENER_REJECTED:
@@ -105,7 +105,7 @@ export const Listener = (
     case ActionTypes.SET_LISTENER_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         listeners: action.payload
           ? state.listeners.concat(action.payload)
           : state.listeners
@@ -114,7 +114,7 @@ export const Listener = (
     case ActionTypes.SET_LISTENER_INTERVAL_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SET_LISTENER_INTERVAL_REJECTED:
@@ -126,7 +126,7 @@ export const Listener = (
     case ActionTypes.SET_LISTENER_INTERVAL_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         interval: action.payload
       }
 

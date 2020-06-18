@@ -35,11 +35,17 @@ import { mutateInput, removeInput, setInputParameters }
 import { colors, styles } from '../styles/Styles'
 
 type Props = {
-  alertTimes: Array<object>,
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   mutateInput: func,
   removeInput: func,
   setInputParameters: func,
   value: string
+}
+
+type State = {
+  identifier: string,
+  invalid: string,
+  time: string
 }
 
 const mapStateToProps = state => {
@@ -58,14 +64,14 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-class TimeInput extends React.Component<Props> {
+class TimeInput extends React.Component<Props, State> {
   constructor (props) {
     super(props)
 
     this.state = {
       identifier: this.props.value,
       invalid: 'Please enter as HH:MM AM/PM',
-      time: null
+      time: ''
     }
   }
 
@@ -93,15 +99,15 @@ class TimeInput extends React.Component<Props> {
     }
   }
 
-  convertTo24Hour (time) {
-    const period = time.slice(-2).toUpperCase()
-    const hour = parseInt(time.slice(-8, -6))
+  convertTo24Hour (time: string): string {
+    const period: string = time.slice(-2).toUpperCase()
+    const hour: string = parseInt(time.slice(-8, -6))
 
     if (period === 'AM') {
       if (hour === 12) {
         return '00'
       } else if (hour < 10) {
-        return '0' + hour
+        return '0' + hour.toString()
       } else {
         return hour.toString()
       }
@@ -114,8 +120,8 @@ class TimeInput extends React.Component<Props> {
     }
   }
 
-  mutate (time) {
-    const isValid = this.validate(time)
+  mutate (time: string): void {
+    const isValid: boolean = this.validate(time)
 
     if (isValid) {
       this.props.mutateInput(this.state.identifier, time, isValid)
@@ -124,7 +130,7 @@ class TimeInput extends React.Component<Props> {
     }
   }
 
-  validate (time) {
+  validate (time: string): boolean {
     if (!time) {
       this.setState({ invalid: 'Please enter as HH:MM AM/PM' })
       return false
@@ -132,12 +138,16 @@ class TimeInput extends React.Component<Props> {
       this.setState({ invalid: 'Please enter as HH:MM AM/PM' })
       return false
     } else {
-      const hours = time.length > 0 ? this.convertTo24Hour(time) : 0
-      const minutes = time.length > 0 ? time.slice(-5, -3) : 0
-      const isoTime = (new Date(1970, 0, 1, hours, minutes)).toISOString()
+      const hours: number = time.length > 0 ? this.convertTo24Hour(time) : 0
+      const minutes: number = time.length > 0 ? time.slice(-5, -3) : 0
+      const isoTime: string =
+        (new Date(1970, 0, 1, hours, minutes)).toISOString()
 
-      let valid = true
-      for (const alert of this.props.alertTimes) {
+      let isValid: boolean = true
+      for (
+        const alert: {| id: string, time: string, validity: boolean |}
+        of this.props.alertTimes
+      ) {
         if (
           moment(isoTime).isBetween(
             moment(alert.time) - 3600000,
@@ -149,17 +159,17 @@ class TimeInput extends React.Component<Props> {
           this.setState(
             { invalid: 'Alerts must be at least 1 hour apart.' }
           )
-          valid = false
+          isValid = false
         }
       }
 
-      return valid
+      return isValid
     }
   }
 
   render () {
-    const length = this.props.alertTimes.length
-    const valid = 'VALID'
+    const length: number = this.props.alertTimes.length
+    const valid: string = 'VALID'
 
     if (
       length > 1 &&
@@ -170,7 +180,7 @@ class TimeInput extends React.Component<Props> {
           key = { this.state.identifier }
           style = { styles.row }
           onLayout = {
-            (event) => {
+            event => {
               this.props.setInputParameters(event.nativeEvent.layout.height)
             }
           }
@@ -219,7 +229,7 @@ class TimeInput extends React.Component<Props> {
           key = { this.state.identifier }
           style = { styles.row }
           onLayout = {
-            (event) => {
+            event => {
               this.props.setInputParameters(event.nativeEvent.layout.height)
             }
           }

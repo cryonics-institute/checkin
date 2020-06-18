@@ -26,7 +26,7 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +alertTimes: Array<object>,
+  +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   +checkinInterval: number,
   +checkinTime: string,
   +email: string,
@@ -54,7 +54,7 @@ type Action = {
   isAdded: boolean
 } | {
   type: 'GET_DOCUMENT_FULFILLED',
-  alertTimes: Array<object>,
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   checkinInterval: number,
   checkinTime: string,
   errMess: string,
@@ -69,12 +69,12 @@ export const Buddy = (
   state: State = {
     alertTimes: [],
     checkinInterval: null,
-    checkinTime: null,
-    email: null,
-    errMess: null,
+    checkinTime: '',
+    email: '',
+    errMess: '',
     isAdded: null,
-    lastAlertTime: null,
-    snooze: null
+    lastAlertTime: '',
+    snooze: 9
   },
   action: Action
 ) => {
@@ -82,7 +82,7 @@ export const Buddy = (
     case ActionTypes.ADD_BUDDY_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.ADD_BUDDY_REJECTED:
@@ -95,13 +95,13 @@ export const Buddy = (
       return {
         ...state,
         email: action.payload,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.GET_DOCUMENT_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.GET_DOCUMENT_REJECTED:
@@ -117,7 +117,7 @@ export const Buddy = (
         alertTimes: action.payload[1],
         checkinInterval: action.payload[2],
         checkinTime: action.payload[3],
-        errMess: null,
+        errMess: '',
         isAdded: action.payload[0],
         snooze: action.payload[4]
       }

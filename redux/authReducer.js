@@ -64,7 +64,7 @@ type Action = {
 
 export const Auth = (
   state: State = {
-    errMess: null,
+    errMess: '',
     user: null
   },
   action: Action
@@ -73,7 +73,7 @@ export const Auth = (
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.REGISTRATION_REJECTED:
@@ -85,14 +85,14 @@ export const Auth = (
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         user: action.payload.user
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SIGNIN_REJECTED:
@@ -104,14 +104,14 @@ export const Auth = (
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         user: action.payload.user
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
@@ -123,7 +123,7 @@ export const Auth = (
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         user: null
       }
 

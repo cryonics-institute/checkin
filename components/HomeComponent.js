@@ -36,7 +36,7 @@ import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
 
 type Props = {
-  alertTimes: Array<object>,
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   closeTip: func,
   hideTip: func,
   inputHeight: number,
@@ -63,6 +63,7 @@ const mapDispatchToProps = dispatch => (
 )
 
 function TimeInputs (props: Props) {
+  // TODO: Try to add flow type here.
   const [scrollViewRef, setScrollViewRef] = React.useState(null)
 
   return (
@@ -122,7 +123,7 @@ class Home extends React.Component<Props> {
     }
   }
 
-  closeTip () {
+  closeTip (): void {
     this.props.hideTip()
   }
 

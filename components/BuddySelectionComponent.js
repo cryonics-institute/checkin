@@ -45,6 +45,12 @@ type Props = {
   validateEmail: func
 }
 
+type State = {
+  email: string,
+  isEmailValid: boolean,
+  emailError: string
+}
+
 const mapStateToProps = state => {
   return {
     email: state.user.email
@@ -58,7 +64,7 @@ const mapDispatchToProps = dispatch => (
 )
 
 function BuddySelectionView (props: Props) {
-  const windowHeight = useWindowDimensions().height
+  const windowHeight: number = useWindowDimensions().height
 
   return (
     <HeaderHeightContext.Consumer>
@@ -98,7 +104,7 @@ function BuddySelectionView (props: Props) {
   )
 }
 
-class BuddySelection extends React.Component<Props> {
+class BuddySelection extends React.Component<Props, State> {
   constructor (props) {
     super(props)
 
@@ -123,7 +129,7 @@ class BuddySelection extends React.Component<Props> {
     }
   }
 
-  handlePress () {
+  handlePress (): void {
     this.props.addBuddy(this.state.email.toLowerCase())
       .then(
         () => this.props.navigation.navigate('Buddy')
@@ -131,18 +137,18 @@ class BuddySelection extends React.Component<Props> {
       .catch(error => console.log(error.message))
   }
 
-  validateEmail (value) {
-    if (!value) {
+  validateEmail (email: string): void {
+    if (!email) {
       this.setState({ emailError: 'Required' })
       this.setState({ isEmailValid: false })
-    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
+    } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
       this.setState({ emailError: 'Invalid E-Mail Address' })
       this.setState({ isEmailValid: false })
     } else {
       this.setState({ isEmailValid: true })
     }
 
-    this.setState({ email: value })
+    this.setState({ email: email })
   }
 
   render () {
