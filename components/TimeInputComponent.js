@@ -42,6 +42,12 @@ type Props = {
   value: string
 }
 
+type State = {
+  identifier: string,
+  invalid: string,
+  time: string
+}
+
 const mapStateToProps = state => {
   return {
     alertTimes: state.inputs.alertTimes
@@ -58,7 +64,7 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-class TimeInput extends React.Component<Props> {
+class TimeInput extends React.Component<Props, State> {
   constructor (props) {
     super(props)
 

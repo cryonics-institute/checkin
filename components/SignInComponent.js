@@ -51,6 +51,16 @@ type Props = {
   validatePassword: func
 }
 
+type State = {
+  isRegistered: boolean,
+  username: string,
+  password: string,
+  isUsernameValid: boolean,
+  isPasswordValid: boolean,
+  usernameError: string,
+  passwordError: string
+}
+
 const mapStateToProps = state => {
   return {
     // Nothing in state is relevant here.
@@ -174,7 +184,7 @@ function RegistrationView (props: Props) {
   )
 }
 
-class SignIn extends React.Component<Props> {
+class SignIn extends React.Component<Props, State> {
   constructor (props) {
     super(props)
 

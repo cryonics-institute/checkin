@@ -45,6 +45,12 @@ type Props = {
   validateEmail: func
 }
 
+type State = {
+  email: string,
+  isEmailValid: boolean,
+  emailError: string
+}
+
 const mapStateToProps = state => {
   return {
     email: state.user.email
@@ -98,7 +104,7 @@ function BuddySelectionView (props: Props) {
   )
 }
 
-class BuddySelection extends React.Component<Props> {
+class BuddySelection extends React.Component<Props, State> {
   constructor (props) {
     super(props)
 
