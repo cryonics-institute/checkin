@@ -386,7 +386,7 @@ export const getDocument = (email) => (dispatch, getState) => {
           // doc.data() will be undefined in this case
           console.log('No such document!')
 
-          return [false, null, null, null, null, null]
+          return [false, [], null, '', 9]
         }
       },
       error => {
