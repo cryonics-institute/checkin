@@ -68,9 +68,9 @@ type Action = {
 
 export const Token = (
   state: State = {
-    errMess: null,
-    username: null,
-    password: null
+    errMess: '',
+    username: '',
+    password: ''
   },
   action: Action
 ) => {
@@ -78,7 +78,7 @@ export const Token = (
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.REGISTRATION_REJECTED:
@@ -90,7 +90,7 @@ export const Token = (
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         username: action.payload.creds.username,
         password: action.payload.creds.password
       }
@@ -98,7 +98,7 @@ export const Token = (
     case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SIGNIN_REJECTED:
@@ -110,7 +110,7 @@ export const Token = (
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         username: action.payload.creds.username,
         password: action.payload.creds.password
       }
@@ -118,7 +118,7 @@ export const Token = (
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
@@ -130,9 +130,9 @@ export const Token = (
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
-        errMess: null,
-        username: null,
-        password: null
+        errMess: '',
+        username: '',
+        password: ''
       }
 
     default:

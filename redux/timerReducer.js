@@ -65,7 +65,7 @@ type Action = {
 
 export const Timer = (
   state: State = {
-    errMess: null,
+    errMess: '',
     interval: null,
     timers: []
   },
@@ -75,7 +75,7 @@ export const Timer = (
     case ActionTypes.SET_TIMER_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SET_TIMER_REJECTED:
@@ -87,7 +87,7 @@ export const Timer = (
     case ActionTypes.SET_TIMER_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         timers: action.payload
           ? state.timers.concat(action.payload)
           : state.timers
@@ -96,7 +96,7 @@ export const Timer = (
     case ActionTypes.SET_TIMER_INTERVAL_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SET_TIMER_INTERVAL_REJECTED:
@@ -108,14 +108,14 @@ export const Timer = (
     case ActionTypes.SET_TIMER_INTERVAL_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         interval: action.payload
       }
 
     case ActionTypes.REMOVE_TIMERS_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.REMOVE_TIMERS_REJECTED:
@@ -127,7 +127,7 @@ export const Timer = (
     case ActionTypes.REMOVE_TIMERS_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         timers: []
       }
 

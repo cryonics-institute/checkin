@@ -126,10 +126,10 @@ export const User = (
   state: State = {
     // alertTimes: [],
     checkinInterval: null,
-    checkinTime: null,
-    errMess: null,
+    checkinTime: '',
+    errMess: '',
     isSignedIn: null,
-    lastAlertTime: null,
+    lastAlertTime: '',
     longestSnooze: 60,
     shortestInterval: 1800000,
     snooze: null
@@ -140,7 +140,7 @@ export const User = (
     case ActionTypes.ADD_DOCUMENT_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.ADD_DOCUMENT_REJECTED:
@@ -153,7 +153,7 @@ export const User = (
       return {
         ...state,
         checkinTime: action.payload.checkinTime,
-        errMess: null,
+        errMess: '',
         isSignedIn: action.payload.isSignedIn,
         snooze: action.payload.snooze
       }
@@ -161,7 +161,7 @@ export const User = (
     case ActionTypes.CHECKIN_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.CHECKIN_REJECTED:
@@ -174,13 +174,13 @@ export const User = (
       return {
         ...state,
         checkinTime: action.payload,
-        errMess: null
+        errMess: ''
       }
 
       // case ActionTypes.MUTATE_INPUTS_REQUESTED:
       //   return {
       //     ...state,
-      //     errMess: null
+      //     errMess: ''
       //   }
       //
       // case ActionTypes.MUTATE_INPUTS_REJECTED:
@@ -193,13 +193,13 @@ export const User = (
       //   return {
       //     ...state,
       //     alertTimes: action.payload,
-      //     errMess: null
+      //     errMess: ''
       //   }
       //
       // case ActionTypes.REMOVE_INPUTS_REQUESTED:
       //   return {
       //     ...state,
-      //     errMess: null
+      //     errMess: ''
       //   }
       //
       // case ActionTypes.REMOVE_INPUTS_REJECTED:
@@ -212,21 +212,21 @@ export const User = (
       //   return {
       //     ...state,
       //     alertTimes: action.payload,
-      //     errMess: null
+      //     errMess: ''
       //   }
 
     // TODO: Shouldn't this be fleshed out to requested/rejected/fulfilled?
     case ActionTypes.SET_LAST_ALERT_TIME:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         lastAlertTime: action.payload
       }
 
     case ActionTypes.SET_SHORTEST_INTERVAL_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SET_SHORTEST_INTERVAL_REJECTED:
@@ -238,14 +238,14 @@ export const User = (
     case ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         shortestInterval: action.payload
       }
 
     case ActionTypes.SET_SNOOZE_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SET_SNOOZE_REJECTED:
@@ -257,14 +257,14 @@ export const User = (
     case ActionTypes.SET_SNOOZE_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         snooze: action.payload
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
@@ -278,10 +278,10 @@ export const User = (
         ...state,
         // alertTimes: [],
         checkinInterval: null,
-        checkinTime: null,
-        errMess: null,
+        checkinTime: '',
+        errMess: '',
         isSignedIn: null,
-        lastAlertTime: null,
+        lastAlertTime: '',
         longestSnooze: 60,
         shortestInterval: 3600000,
         snooze: null

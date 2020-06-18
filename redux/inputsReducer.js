@@ -89,7 +89,7 @@ type Action = {
 export const Inputs = (
   state: State = {
     alertTimes: [],
-    errMess: null,
+    errMess: '',
     height: null,
     showTip: true
   },
@@ -99,7 +99,7 @@ export const Inputs = (
     case ActionTypes.HIDE_TIP_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.HIDE_TIP_REJECTED:
@@ -111,14 +111,14 @@ export const Inputs = (
     case ActionTypes.HIDE_TIP_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         showTip: false
       }
 
     case ActionTypes.MUTATE_INPUTS_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.MUTATE_INPUTS_REJECTED:
@@ -131,13 +131,13 @@ export const Inputs = (
       return {
         ...state,
         alertTimes: action.payload,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.REMOVE_INPUTS_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.REMOVE_INPUTS_REJECTED:
@@ -150,13 +150,13 @@ export const Inputs = (
       return {
         ...state,
         alertTimes: action.payload,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SET_INPUT_PARAMETERS_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SET_INPUT_PARAMETERS_REJECTED:
@@ -168,14 +168,14 @@ export const Inputs = (
     case ActionTypes.SET_INPUT_PARAMETERS_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         height: action.payload
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
@@ -188,7 +188,7 @@ export const Inputs = (
       return {
         ...state,
         alertTimes: [],
-        errMess: null,
+        errMess: '',
         height: null,
         showTip: true
       }

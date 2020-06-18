@@ -44,8 +44,8 @@ type Action = {
 
 export const Device = (
   state: State = {
-    errMess: null,
-    token: null
+    errMess: '',
+    token: ''
   },
   action: Action
 ) => {
@@ -53,7 +53,7 @@ export const Device = (
     case ActionTypes.INITIALIZE_STORE_REQUESTED:
       return {
         ...state,
-        errMess: null
+        errMess: ''
       }
 
     case ActionTypes.INITIALIZE_STORE_REJECTED:
@@ -65,7 +65,7 @@ export const Device = (
     case ActionTypes.INITIALIZE_STORE_FULFILLED:
       return {
         ...state,
-        errMess: null,
+        errMess: '',
         token: action.payload
       }
 

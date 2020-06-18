@@ -71,7 +71,7 @@ class TimeInput extends React.Component<Props, State> {
     this.state = {
       identifier: this.props.value,
       invalid: 'Please enter as HH:MM AM/PM',
-      time: null
+      time: ''
     }
   }
 
