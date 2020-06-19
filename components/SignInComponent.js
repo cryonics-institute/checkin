@@ -206,6 +206,7 @@ class SignIn extends React.Component<Props, State> {
     this.validatePassword = this.validatePassword.bind(this)
   }
 
+  // TODO: Could this use an event type?
   handleSignin (): void {
     this.props.signIn(
       {
@@ -215,6 +216,7 @@ class SignIn extends React.Component<Props, State> {
     )
   }
 
+  // TODO: Could this use an event type?
   handleRegistration (): void {
     this.props.register(
       {
@@ -224,6 +226,7 @@ class SignIn extends React.Component<Props, State> {
     )
   }
 
+  // TODO: Could this use an event type?
   toggleButtonDisabled (): void {
     if (this.state.isUsernameValid && this.state.isPasswordValid) {
       return false
@@ -232,11 +235,15 @@ class SignIn extends React.Component<Props, State> {
     }
   }
 
+  // TODO: Could this use an event type?
   toggleRegistration (): void {
     this.setState({ isRegistered: !this.state.isRegistered })
   }
 
-  validateEmail (email: string): void {
+  validateEmail (
+    event: SyntheticInputEvent<HTMLInputElement>,
+    email: string
+  ): void {
     if (!email) {
       this.setState({ usernameError: 'Required' })
       this.setState({ isUsernameValid: false })
@@ -250,7 +257,10 @@ class SignIn extends React.Component<Props, State> {
     this.setState({ username: email })
   }
 
-  validatePassword (password: string): void {
+  validatePassword (
+    event: SyntheticInputEvent<HTMLInputElement>,
+    password: string
+  ): void {
     if (!password) {
       this.setState({ passwordError: 'Required' })
       this.setState({ isPasswordValid: false })

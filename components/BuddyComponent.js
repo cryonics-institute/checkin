@@ -36,6 +36,7 @@ type Props = {
   buddyEmail: string,
   buddyIsAdded: boolean,
   checkinTime: string,
+  getLastAlertTime: func,
   lastAlertTime: string,
   setListener: func
 }
@@ -59,7 +60,7 @@ const RenderActiveAlertView = (props: Props) => {
       <Text h1 style = { styles.title }>ALERT</Text>
       <Text style = { styles.paragraph }>
         The member should have {'\n'}
-        checked in at { moment(props.lastAlertTime).format('h:mm A') }.
+        checked in at { moment(props.getLastAlertTime()).format('h:mm A') }.
       </Text>
       <Text h4 style = { styles.title }>Check-In Time</Text>
       <Text style = { styles.text }>
@@ -114,6 +115,7 @@ class Buddy extends React.Component<Props> {
     }
   }
 
+  // TODO: Could this use an event type?
   getLastAlertTime (): string {
     const lastAlertTime: string = moment(this.props.lastAlertTime).toISOString()
     const lastAlertTimeInMs: number =
@@ -144,7 +146,7 @@ class Buddy extends React.Component<Props> {
       return (
         <RenderActiveAlertView
           checkinTime = { this.props.checkinTime }
-          lastAlertTime = { this.getLastAlertTime() }
+          getLastAlertTime = { () => this.getLastAlertTime() }
         />
       )
     } else {

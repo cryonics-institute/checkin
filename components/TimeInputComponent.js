@@ -1,3 +1,4 @@
+// TODO: Are time-inputs children?  Do they need flow typing for children?
 /**
  * Time-input component for the project, Check-In, that presents the time-input
  * with an add or remove icon in the right-hand side and validation
@@ -99,6 +100,7 @@ class TimeInput extends React.Component<Props, State> {
     }
   }
 
+  // TODO: Could this use an event type?
   convertTo24Hour (time: string): string {
     const period: string = time.slice(-2).toUpperCase()
     const hour: string = parseInt(time.slice(-8, -6))
@@ -120,7 +122,10 @@ class TimeInput extends React.Component<Props, State> {
     }
   }
 
-  mutate (time: string): void {
+  mutate (
+    event: SyntheticInputEvent<HTMLInputElement>,
+    time: string
+  ): void {
     const isValid: boolean = this.validate(time)
 
     if (isValid) {
@@ -130,6 +135,7 @@ class TimeInput extends React.Component<Props, State> {
     }
   }
 
+  // TODO: Could this use an event type?
   validate (time: string): boolean {
     if (!time) {
       this.setState({ invalid: 'Please enter as HH:MM AM/PM' })

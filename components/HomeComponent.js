@@ -120,7 +120,7 @@ class Home extends React.Component<Props> {
     }
   }
 
-  closeTip (): void {
+  closeTip (event: SyntheticEvent<HTMLButtonElement>): void {
     this.props.hideTip()
   }
 

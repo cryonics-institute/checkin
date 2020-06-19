@@ -129,7 +129,7 @@ class BuddySelection extends React.Component<Props, State> {
     }
   }
 
-  handlePress (): void {
+  handlePress (event: SyntheticEvent<HTMLButtonElement>): void {
     this.props.addBuddy(this.state.email.toLowerCase())
       .then(
         () => this.props.navigation.navigate('Buddy')
@@ -137,7 +137,10 @@ class BuddySelection extends React.Component<Props, State> {
       .catch(error => console.log(error.message))
   }
 
-  validateEmail (email: string): void {
+  validateEmail (
+    event: SyntheticInputEvent<HTMLInputElement>,
+    email: string
+  ): void {
     if (!email) {
       this.setState({ emailError: 'Required' })
       this.setState({ isEmailValid: false })
