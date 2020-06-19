@@ -63,7 +63,6 @@ const mapDispatchToProps = dispatch => (
 )
 
 function TimeInputs (props: Props) {
-  // TODO: Try to add flow type here.
   const [scrollViewRef, setScrollViewRef] = React.useState(null)
 
   return (
@@ -72,9 +71,7 @@ function TimeInputs (props: Props) {
       contentContainerStyle = { styles.containerScrollingContent }
       style = { styles.containerScrolling }
       onContentSizeChange = {
-        (event) => {
-          scrollViewRef.scrollToEnd({ animated: true })
-        }
+        event => { scrollViewRef.scrollToEnd({ animated: true }) }
       }
     >
       {
