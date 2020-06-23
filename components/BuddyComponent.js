@@ -26,51 +26,71 @@
 import * as React from 'react'
 import { ActivityIndicator, StatusBar, View } from 'react-native'
 import { Text } from 'react-native-elements'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import moment from 'moment'
 import { setListener } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
-type Props = {
+type BuddyProps = {
   buddyAlertActive: boolean,
   buddyEmail: string,
   buddyIsAdded: boolean,
-  checkinTime: string,
-  getLastAlertTime: func,
-  lastAlertTime: string,
-  setListener: func
+  setListener: (email: string) => number
 }
 
 const mapStateToProps = state => {
   return {
-    checkinTime: state.buddy.checkinTime,
-    lastAlertTime: state.buddy.lastAlertTime,
     buddyEmail: state.buddy.email,
     buddyIsAdded: state.buddy.isAdded
   }
 }
 
 const mapDispatchToProps = dispatch => (
-  { setListener: (email) => dispatch(setListener(email)) }
+  { setListener: email => dispatch(setListener(email)) }
 )
 
-const RenderActiveAlertView = (props: Props) => {
+function RenderActiveAlertView () {
+  const checkinTime: string = useSelector(state => state.buddy.checkinTime)
+  const lastAlertTime: string = useSelector(state => state.buddy.lastAlertTime)
+
+  const [lastAlertTimeMoment: string, setLastAlertTimeMoment] =
+    React.useState('')
+
+  React.useEffect(
+    () => {
+      const currentLastAlertTime: string = moment(lastAlertTime).toISOString()
+      setLastAlertTimeMoment(
+        moment()
+          .startOf('date')
+          .add(
+            (((((parseInt(currentLastAlertTime.slice(-13, -11), 10) * 60) +
+              parseInt(currentLastAlertTime.slice(-10, -8), 10)) * 60) +
+              parseInt(currentLastAlertTime.slice(-7, -5), 10)) * 1000) +
+              parseInt(currentLastAlertTime.slice(-4, -1), 10),
+            'milliseconds'
+          )
+          .add(moment().utcOffset(), 'minutes')
+      )
+    },
+    [lastAlertTime]
+  )
+
   return (
     <View style = { styles.containerCentered }>
       <Text h1 style = { styles.title }>ALERT</Text>
       <Text style = { styles.paragraph }>
         The member should have {'\n'}
-        checked in at { moment(props.getLastAlertTime()).format('h:mm A') }.
+        checked in at { moment(lastAlertTimeMoment).format('h:mm A') }.
       </Text>
       <Text h4 style = { styles.title }>Check-In Time</Text>
       <Text style = { styles.text }>
-        { moment(props.checkinTime).format('dddd, MMMM D, YYYY, h:mm A') }
+        { moment(checkinTime).format('dddd, MMMM D, YYYY, h:mm A') }
       </Text>
     </View>
   )
 }
 
-const RenderNullBuddyStatusView = () => {
+function RenderNullBuddyStatusView () {
   return (
     <View style = { styles.containerCentered }>
       <Text h4 style = { styles.title }>
@@ -82,24 +102,28 @@ const RenderNullBuddyStatusView = () => {
   )
 }
 
-const RenderSignedInBuddyView = (props: Props) => {
+function RenderSignedInBuddyView () {
+  const checkinTime: string = useSelector(state => state.buddy.checkinTime)
+
   return (
     <View style = { styles.containerCentered }>
       <Text h4 style = { styles.title }>Check-In Time</Text>
       <Text style = { styles.text }>
-        { moment(props.checkinTime).format('dddd, MMMM D, YYYY, h:mm A') }
+        { moment(checkinTime).format('dddd, MMMM D, YYYY, h:mm A') }
       </Text>
     </View>
   )
 }
 
-const RenderSignedOutBuddyView = (props: Props) => {
+function RenderSignedOutBuddyView () {
+  const buddyEmail: string = useSelector(state => state.buddy.buddyEmail)
+
   return (
     <View style = { styles.containerCentered }>
       <Text h4 style = { styles.paragraph }>
         The buddy with e-mail
         {'\n'}
-        { props.buddyEmail }
+        { buddyEmail }
         {'\n'}
         is not signed in.
       </Text>
@@ -108,27 +132,11 @@ const RenderSignedOutBuddyView = (props: Props) => {
 }
 
 // TODO: What happens if the network is down?
-class Buddy extends React.Component<Props> {
+class Buddy extends React.Component<BuddyProps> {
   componentDidMount () {
     if (this.props.buddyEmail !== null) {
       this.props.setListener(this.props.buddyEmail)
     }
-  }
-
-  // TODO: Could this use an event type?
-  getLastAlertTime (): string {
-    const lastAlertTime: string = moment(this.props.lastAlertTime).toISOString()
-    const lastAlertTimeInMs: number =
-      ((((((parseInt(lastAlertTime.slice(-13, -11), 10) * 60) +
-        parseInt(lastAlertTime.slice(-10, -8), 10)) * 60) +
-        parseInt(lastAlertTime.slice(-7, -5), 10)) * 1000) +
-        parseInt(lastAlertTime.slice(-4, -1), 10))
-    const lastAlertTimeMoment: string = moment()
-      .startOf('date')
-      .add(lastAlertTimeInMs, 'milliseconds')
-      .add(moment().utcOffset(), 'minutes')
-
-    return lastAlertTimeMoment
   }
 
   render () {
@@ -138,22 +146,15 @@ class Buddy extends React.Component<Props> {
       )
     } else if (this.props.buddyIsAdded && !this.props.buddyAlertActive) {
       return (
-        <RenderSignedInBuddyView
-          checkinTime = { this.props.checkinTime }
-        />
+        <RenderSignedInBuddyView/>
       )
     } else if (this.props.buddyIsAdded && this.props.buddyAlertActive) {
       return (
-        <RenderActiveAlertView
-          checkinTime = { this.props.checkinTime }
-          getLastAlertTime = { () => this.getLastAlertTime() }
-        />
+        <RenderActiveAlertView/>
       )
     } else {
       return (
-        <RenderSignedOutBuddyView
-          buddyEmail = { this.props.buddyEmail }
-        />
+        <RenderSignedOutBuddyView/>
       )
     }
   }
