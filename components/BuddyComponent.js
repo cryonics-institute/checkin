@@ -49,6 +49,8 @@ const mapDispatchToProps = dispatch => (
   { setListener: email => dispatch(setListener(email)) }
 )
 
+// TODO: The prop, buddyAlertActive, is currently undefined in Redux or anywhere
+// else.  This view will never be shown.
 function RenderActiveAlertView () {
   const checkinTime: string = useSelector(state => state.buddy.checkinTime)
   const lastAlertTime: string = useSelector(state => state.buddy.lastAlertTime)
