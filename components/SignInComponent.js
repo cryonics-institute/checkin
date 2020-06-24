@@ -150,7 +150,7 @@ function RegistrationView (props: Props) {
             >
               <Input
                 placeholder = 'E-Mail Address'
-                onChangeText = { (username) => props.validateEmail(username) }
+                onChangeText = { username => props.validateEmail(username) }
                 value = { props.username }
               />
               <Text style={ styles.textError }>
@@ -158,7 +158,7 @@ function RegistrationView (props: Props) {
               </Text>
               <Input
                 placeholder = 'Password'
-                onChangeText = { (password) => props.validatePassword(password) }
+                onChangeText = { password => props.validatePassword(password) }
                 value = { props.password }
               />
               <Text style={ styles.textError }>
@@ -227,7 +227,7 @@ class SignIn extends React.Component<Props, State> {
   }
 
   // TODO: Could this use an event type?
-  toggleButtonDisabled (): void {
+  toggleButtonDisabled (): boolean {
     if (this.state.isUsernameValid && this.state.isPasswordValid) {
       return false
     } else {
@@ -240,10 +240,7 @@ class SignIn extends React.Component<Props, State> {
     this.setState({ isRegistered: !this.state.isRegistered })
   }
 
-  validateEmail (
-    event: SyntheticInputEvent<HTMLInputElement>,
-    email: string
-  ): void {
+  validateEmail (email: SyntheticInputEvent<HTMLInputElement>): void {
     if (!email) {
       this.setState({ usernameError: 'Required' })
       this.setState({ isUsernameValid: false })
@@ -257,10 +254,7 @@ class SignIn extends React.Component<Props, State> {
     this.setState({ username: email })
   }
 
-  validatePassword (
-    event: SyntheticInputEvent<HTMLInputElement>,
-    password: string
-  ): void {
+  validatePassword (password: SyntheticInputEvent<HTMLInputElement>): void {
     if (!password) {
       this.setState({ passwordError: 'Required' })
       this.setState({ isPasswordValid: false })
