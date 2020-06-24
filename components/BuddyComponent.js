@@ -31,7 +31,7 @@ import moment from 'moment'
 import { setListener } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
-type Props = {
+type ComponentProps = {
   buddyAlertIsActive: boolean,
   buddyEmail: string,
   buddyIsAdded: boolean,
@@ -135,7 +135,7 @@ function RenderSignedOutBuddyView () {
 }
 
 // TODO: What happens if the network is down?
-class Buddy extends React.Component<Props> {
+class Buddy extends React.Component<ComponentProps> {
   componentDidMount () {
     if (this.props.buddyEmail !== null) {
       this.props.setListener(this.props.buddyEmail)
