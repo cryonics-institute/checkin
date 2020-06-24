@@ -31,8 +31,8 @@ import moment from 'moment'
 import { setListener } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
-type BuddyProps = {
-  buddyAlertActive: boolean,
+type Props = {
+  buddyAlertIsActive: boolean,
   buddyEmail: string,
   buddyIsAdded: boolean,
   setListener: (email: string) => number
@@ -40,6 +40,7 @@ type BuddyProps = {
 
 const mapStateToProps = state => {
   return {
+    buddyAlertIsActive: state.buddy.alertIsActive,
     buddyEmail: state.buddy.email,
     buddyIsAdded: state.buddy.isAdded
   }
@@ -49,7 +50,7 @@ const mapDispatchToProps = dispatch => (
   { setListener: email => dispatch(setListener(email)) }
 )
 
-// TODO: The prop, buddyAlertActive, is currently undefined in Redux or anywhere
+// TODO: The prop, buddyAlertIsActive, is currently undefined in Redux or anywhere
 // else.  This view will never be shown.
 function RenderActiveAlertView () {
   const checkinTime: string = useSelector(state => state.buddy.checkinTime)
@@ -118,7 +119,7 @@ function RenderSignedInBuddyView () {
 }
 
 function RenderSignedOutBuddyView () {
-  const buddyEmail: string = useSelector(state => state.buddy.buddyEmail)
+  const buddyEmail: string = useSelector(state => state.buddy.email)
 
   return (
     <View style = { styles.containerCentered }>
@@ -134,7 +135,7 @@ function RenderSignedOutBuddyView () {
 }
 
 // TODO: What happens if the network is down?
-class Buddy extends React.Component<BuddyProps> {
+class Buddy extends React.Component<Props> {
   componentDidMount () {
     if (this.props.buddyEmail !== null) {
       this.props.setListener(this.props.buddyEmail)
@@ -146,11 +147,11 @@ class Buddy extends React.Component<BuddyProps> {
       return (
         <RenderNullBuddyStatusView/>
       )
-    } else if (this.props.buddyIsAdded && !this.props.buddyAlertActive) {
+    } else if (this.props.buddyIsAdded && !this.props.buddyAlertIsActive) {
       return (
         <RenderSignedInBuddyView/>
       )
-    } else if (this.props.buddyIsAdded && this.props.buddyAlertActive) {
+    } else if (this.props.buddyIsAdded && this.props.buddyAlertIsActive) {
       return (
         <RenderActiveAlertView/>
       )
