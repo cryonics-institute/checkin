@@ -1,24 +1,23 @@
 /**
- * Firebase Cloud Functions for the project, Cryonics Check-In.
+ * Firebase Cloud Functions for the project, Check-In.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
  * Copyright 2019 Cryonics Institute
  *
- * This file is part of Cryonics Check-In.
+ * This file is part of Check-In.
  *
- * Cryonics Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Cryonics Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
- * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
+ * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 const admin = require('firebase-admin')
@@ -30,7 +29,12 @@ admin.initializeApp(functions.config().firebase)
 
 /**
  * Checks user documents in the Firestore for whether and/or which devices
- * should receive push notifications alerting the user to check in.
+ * should receive push notifications alerting the user to check in and which
+ * devices should receive push notifications alerting the user's buddies that
+ * the user has not checked in.  Firebase is then ordered to send the
+ * appropriate push notifications to those devices and, finally, logs
+ * confirmation of those orders to the Firestore.  SendGrid and Twilio will also
+ * be applied here to send e-mail, SMS, and voice alerts to users and buddies.
  */
 exports.checkCheckins = functions.pubsub.schedule(
   'every 1 minutes'
@@ -256,8 +260,10 @@ exports.checkCheckins = functions.pubsub.schedule(
 )
 
 /**
- * Set a timer that will issue an alert for the currently authorized patient to
- * check-in after an interval of time.
+ * Requests determination of which devices should receive alerts for a single
+ * user's document in the Firestore.  Then, those device tokens are packaged
+ * into an object with an array for the user's devices and an array for the
+ * buddies' devices.
  * @param  {Object} data  Data from patient document.
  * @return {Promise}      Object containing arrays of device tokens.
  */
@@ -306,7 +312,12 @@ const getDeviceTokensIfNotCheckedIn = data => {
 }
 
 /**
- * Get the interval for the getDeviceTokensIfNotCheckedIn function.
+ * Determines which devices should receive alerts for a single user's document
+ * in the Firestore.  First, valid alert-times are filtered out, parsed to
+ * milliseconds, and standardized to an arithmetic modulo of 86400000 (24 hours
+ * in milliseconds) with now as midnight.  Each valid alert is then compared to
+ * the last check-in time and the snooze to determine whether the user's devices
+ * and/or the buddies' devices should receive alerts.
  * @param   {Array} alertTimes  Array of scheduled alert times.
  * @param   {Date} checkinTime  Last time patient checked in.
  * @param   {Integer} snooze    Interval to wait before firing standby alert.
