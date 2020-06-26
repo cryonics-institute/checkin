@@ -1,24 +1,23 @@
 /**
- * Firebase Cloud Functions for the project, Cryonics Check-In.
+ * Firebase Cloud Functions for the project, Check-In.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
  * Copyright 2019 Cryonics Institute
  *
- * This file is part of Cryonics Check-In.
+ * This file is part of Check-In.
  *
- * Cryonics Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Cryonics Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
- * Cryonics Check-In.  If not, see <https://www.gnu.org/licenses/>.
+ * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 const admin = require('firebase-admin')
