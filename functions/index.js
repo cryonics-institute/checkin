@@ -29,7 +29,12 @@ admin.initializeApp(functions.config().firebase)
 
 /**
  * Checks user documents in the Firestore for whether and/or which devices
- * should receive push notifications alerting the user to check in.
+ * should receive push notifications alerting the user to check in and which
+ * devices should receive push notifications alerting the user's buddies that
+ * the user has not checked in.  Firebase is then ordered to send the
+ * appropriate push notifications to those devices and, finally, logs
+ * confirmation of those orders to the Firestore.  SendGrid and Twilio will also
+ * be applied here to send e-mail, SMS, and voice alerts to users and buddies.
  */
 exports.checkCheckins = functions.pubsub.schedule(
   'every 1 minutes'
@@ -255,8 +260,10 @@ exports.checkCheckins = functions.pubsub.schedule(
 )
 
 /**
- * Set a timer that will issue an alert for the currently authorized patient to
- * check-in after an interval of time.
+ * Requests determination of which devices should receive alerts for a single
+ * user's document in the Firestore.  Then, those device tokens are packaged
+ * into an object with an array for the user's devices and an array for the
+ * buddies' devices.
  * @param  {Object} data  Data from patient document.
  * @return {Promise}      Object containing arrays of device tokens.
  */
@@ -305,7 +312,12 @@ const getDeviceTokensIfNotCheckedIn = data => {
 }
 
 /**
- * Get the interval for the getDeviceTokensIfNotCheckedIn function.
+ * Determines which devices should receive alerts for a single user's document
+ * in the Firestore.  First, valid alert-times are filtered out, parsed to
+ * milliseconds, and standardized to an arithmetic modulo of 86400000 (24 hours
+ * in milliseconds) with now as midnight.  Each valid alert is then compared to
+ * the last check-in time and the snooze to determine whether the user's devices
+ * and/or the buddies' devices should receive alerts.
  * @param   {Array} alertTimes  Array of scheduled alert times.
  * @param   {Date} checkinTime  Last time patient checked in.
  * @param   {Integer} snooze    Interval to wait before firing standby alert.
