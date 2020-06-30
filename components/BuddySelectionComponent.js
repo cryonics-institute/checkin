@@ -34,17 +34,21 @@ import { HeaderHeightContext } from '@react-navigation/stack'
 import { addBuddy } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
-type Props = {
-  addBuddy: func,
+type ViewProps = {
   email: string,
   emailError: string,
-  handlePress: func,
+  handlePress: () => void,
   isEmailValid: boolean,
-  navigation: { navigate: func },
-  validateEmail: func
+  validateEmail: (email: string) => void
 }
 
-type State = {
+type ComponentProps = {
+  addBuddy: (email: string) => void,
+  email: string,
+  navigation: { navigate: (string) => void }
+}
+
+type ComponentState = {
   email: string,
   isEmailValid: boolean,
   emailError: string
@@ -52,7 +56,7 @@ type State = {
 
 const mapStateToProps = state => {
   return {
-    email: state.user.email
+    email: state.buddy.email
   }
 }
 
@@ -62,7 +66,7 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-function BuddySelectionView (props: Props) {
+function BuddySelectionView (props: ViewProps) {
   const windowHeight: number = useWindowDimensions().height
 
   return (
@@ -103,7 +107,7 @@ function BuddySelectionView (props: Props) {
   )
 }
 
-class BuddySelection extends React.Component<Props, State> {
+class BuddySelection extends React.Component<ComponentProps, ComponentState> {
   constructor (props) {
     super(props)
 
@@ -128,18 +132,19 @@ class BuddySelection extends React.Component<Props, State> {
     }
   }
 
-  handlePress (event: SyntheticEvent<HTMLButtonElement>): void {
-    this.props.addBuddy(this.state.email.toLowerCase())
+  handlePress (): void {
+    Promise.resolve(this.props.addBuddy(this.state.email.toLowerCase()))
       .then(
-        () => this.props.navigation.navigate('Buddy')
+        () => this.props.navigation.navigate('Buddy'),
+        error => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
       )
       .catch(error => console.log(error.message))
   }
 
-  validateEmail (
-    event: SyntheticInputEvent<HTMLInputElement>,
-    email: string
-  ): void {
+  validateEmail (email: string): void {
     if (!email) {
       this.setState({ emailError: 'Required' })
       this.setState({ isEmailValid: false })
@@ -159,8 +164,8 @@ class BuddySelection extends React.Component<Props, State> {
         email = { this.state.email }
         isEmailValid = { this.state.isEmailValid }
         emailError = { this.state.emailError }
-        handlePress = { () => this.handlePress() }
-        validateEmail = { username => this.validateEmail(username) }
+        handlePress = { this.handlePress.bind(this) }
+        validateEmail = { this.validateEmail.bind(this) }
       />
     )
   }
