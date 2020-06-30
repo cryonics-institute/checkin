@@ -24,24 +24,36 @@
 // @flow
 import * as React from 'react'
 import { Icon } from 'react-native-elements'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createStackNavigator } from '@react-navigation/stack'
 import { colors, styles } from '../styles/Styles'
 import HomeScreen from './HomeComponent'
 import BuddyScreen from './BuddyComponent'
 import BuddySelectionScreen from './BuddySelectionComponent'
 
-type Props = {
-  buddyIsAdded: boolean
+const BuddyStack = createStackNavigator()
+
+function BuddyStackScreen () {
+  const buddyIsAdded: boolean = useSelector(state => state.buddy.isAdded)
+
+  return (
+    <BuddyStack.Navigator
+      initialRouteName = { buddyIsAdded ? 'Buddy' : 'BuddySelection' }
+    >
+      <BuddyStack.Screen
+        name = 'Buddy'
+        component = { BuddyScreen }
+      />
+      <BuddyStack.Screen
+        name = 'BuddySelection'
+        component = { BuddySelectionScreen }
+      />
+    </BuddyStack.Navigator>
+  )
 }
 
-const mapStateToProps = state => {
-  return {
-    buddyIsAdded: state.buddy.isAdded
-  }
-}
-
-class Tabs extends React.Component<Props> {
+class Tabs extends React.Component {
   render () {
     const Tab = createBottomTabNavigator()
 
@@ -73,43 +85,25 @@ class Tabs extends React.Component<Props> {
             }
           }
         />
-        { this.props.buddyIsAdded
-          ? <Tab.Screen
-            name = 'Buddy'
-            component = { BuddyScreen }
-            options = {
-              {
-                tabBarLabel: 'Buddies',
-                // eslint-disable-next-line react/display-name
-                tabBarIcon: ({ color, size }) => <Icon
-                  name = 'people'
-                  type = 'material'
-                  color = { color }
-                  size = { size }
-                />
-              }
+        <Tab.Screen
+          name = 'BuddyStack'
+          component = { BuddyStackScreen }
+          options = {
+            {
+              tabBarLabel: 'Buddies',
+              // eslint-disable-next-line react/display-name
+              tabBarIcon: ({ color, size }) => <Icon
+                name = 'people'
+                type = 'material'
+                color = { color }
+                size = { size }
+              />
             }
-          />
-          : <Tab.Screen
-            name = 'BuddySelection'
-            component = { BuddySelectionScreen }
-            options = {
-              {
-                tabBarLabel: 'Buddies',
-                // eslint-disable-next-line react/display-name
-                tabBarIcon: ({ color, size }) => <Icon
-                  name = 'people'
-                  type = 'material'
-                  color = { color }
-                  size = { size }
-                />
-              }
-            }
-          />
-        }
+          }
+        />
       </Tab.Navigator>
     )
   }
 }
 
-export default connect(mapStateToProps)(Tabs)
+export default Tabs
