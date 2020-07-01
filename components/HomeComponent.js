@@ -34,13 +34,20 @@ import { hideTip, mutateInput, setSnooze } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
 
-type Props = {
+type ComponentProps = {
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  closeTip: func,
-  hideTip: func,
   inputHeight: number,
-  mutateInput: func,
-  showTip: boolean
+  showTip: boolean,
+  closeTip: () => void,
+  hideTip: () => void,
+  mutateInput: (identifier: string, text: string, validity: boolean) => void,
+  setSnooze: (snooze: number) => void
+}
+
+type ViewProps = {
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
+  showTip: boolean,
+  closeTip: () => void
 }
 
 const mapStateToProps = state => {
@@ -61,8 +68,11 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-function TimeInputs (props: Props) {
-  const [scrollViewRef, setScrollViewRef] = React.useState(null)
+function TimeInputs (props: ViewProps) {
+  const [
+    scrollViewRef: (typeof ScrollView | null),
+    setScrollViewRef: (scrollView: (typeof ScrollView)) => void
+  ] = React.useState(null)
 
   return (
     <ScrollView
@@ -70,12 +80,18 @@ function TimeInputs (props: Props) {
       contentContainerStyle = { styles.containerScrollingContent }
       style = { styles.containerScrolling }
       onContentSizeChange = {
-        event => { scrollViewRef.scrollToEnd({ animated: true }) }
+        () => {
+          typeof scrollViewRef === 'undefined' || scrollViewRef === null
+            ? console.log('Scroll-view component is loading.')
+            : scrollViewRef.scrollToEnd({ animated: true })
+        }
       }
     >
       {
         props.alertTimes.map(
-          alert => <TimeInput
+          (
+            alert: {| id: string, time: string, validity: boolean |}
+          ) => <TimeInput
             key = { alert.id.toString() }
             value = { alert.id }
           />
@@ -106,20 +122,14 @@ function TimeInputs (props: Props) {
   )
 }
 
-class Home extends React.Component<Props> {
-  constructor (props) {
-    super(props)
-
-    this.closeTip = this.closeTip.bind(this)
-  }
-
+class Home extends React.Component<ComponentProps> {
   componentDidMount () {
     if (this.props.alertTimes.length === 0) {
       this.props.mutateInput(Shortid.generate(), '', false)
     }
   }
 
-  closeTip (event: SyntheticEvent<HTMLButtonElement>): void {
+  closeTip (): void {
     this.props.hideTip()
   }
 
@@ -129,7 +139,7 @@ class Home extends React.Component<Props> {
         alertTimes = { this.props.alertTimes }
         inputHeight = { this.props.inputHeight }
         showTip = { this.props.showTip }
-        closeTip = { this.closeTip }
+        closeTip = { this.closeTip.bind(this) }
       />
     )
   }

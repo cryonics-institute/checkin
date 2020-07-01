@@ -46,7 +46,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => (
-  { setListener: email => dispatch(setListener(email)) }
+  { setListener: (email: string) => dispatch(setListener(email)) }
 )
 
 // TODO: The prop, buddyAlertIsActive, is currently undefined in Redux or anywhere

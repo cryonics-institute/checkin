@@ -34,24 +34,24 @@ import { HeaderHeightContext } from '@react-navigation/stack'
 import { addBuddy } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
-type ViewProps = {
-  email: string,
-  emailError: string,
-  handlePress: () => void,
-  isEmailValid: boolean,
-  validateEmail: (email: string) => void
-}
-
 type ComponentProps = {
-  addBuddy: (email: string) => void,
   email: string,
-  navigation: { navigate: (string) => void }
+  navigation: { navigate: (string: string) => void },
+  addBuddy: (email: string) => void
 }
 
 type ComponentState = {
   email: string,
   isEmailValid: boolean,
   emailError: string
+}
+
+type ViewProps = {
+  email: string,
+  emailError: string,
+  isEmailValid: boolean,
+  handlePress: () => void,
+  validateEmail: (email: string) => void
 }
 
 const mapStateToProps = state => {
@@ -62,7 +62,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => (
   {
-    addBuddy: (email) => dispatch(addBuddy(email))
+    addBuddy: (email: string) => dispatch(addBuddy(email))
   }
 )
 
@@ -72,7 +72,7 @@ function BuddySelectionView (props: ViewProps) {
   return (
     <HeaderHeightContext.Consumer>
       {
-        headerHeight => (
+        (headerHeight: number) => (
           <View
             style = {
               {
@@ -87,7 +87,7 @@ function BuddySelectionView (props: ViewProps) {
             >
               <Input
                 placeholder = 'Buddy&#39;s E-Mail Address'
-                onChangeText = { email => props.validateEmail(email) }
+                onChangeText = { (email: string) => props.validateEmail(email) }
                 value = { props.email }
               />
               <Text style = { styles.textError }>
@@ -123,12 +123,12 @@ class BuddySelection extends React.Component<ComponentProps, ComponentState> {
       Promise.resolve(this.setState({ email: this.props.email }))
         .then(
           () => this.props.addBuddy(this.state.email.toLowerCase()),
-          error => {
+          (error: Error) => {
             var errorMessage = new Error(error.message)
             throw errorMessage
           }
         )
-        .catch(error => console.log(error.message))
+        .catch((error: Error) => console.log(error.message))
     }
   }
 
@@ -136,12 +136,12 @@ class BuddySelection extends React.Component<ComponentProps, ComponentState> {
     Promise.resolve(this.props.addBuddy(this.state.email.toLowerCase()))
       .then(
         () => this.props.navigation.navigate('Buddy'),
-        error => {
+        (error: Error) => {
           var errorMessage = new Error(error.message)
           throw errorMessage
         }
       )
-      .catch(error => console.log(error.message))
+      .catch((error: Error) => console.log(error.message))
   }
 
   validateEmail (email: string): void {
