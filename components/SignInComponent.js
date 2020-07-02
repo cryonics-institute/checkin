@@ -33,24 +33,24 @@ import { HeaderHeightContext } from '@react-navigation/stack'
 import { signIn, register } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
-type Props = {
-  handleRegistration: func,
-  handleSignin: func,
+type ComponentProps = {
   isPasswordValid: boolean,
   isUsernameValid: boolean,
   password: string,
   passwordError: string,
-  register: func,
-  signIn: func,
-  toggleButtonDisabled: func,
-  toggleRegistration: func,
   username: string,
   usernameError: string,
-  validateEmail: func,
-  validatePassword: func
+  register: ({ username: string, password: string }) => void,
+  signIn: ({ username: string, password: string }) => void,
+  toggleButtonDisabled: () => boolean,
+  toggleRegistration: () => void,
+  handleRegistration: () => void,
+  handleSignin: () => void,
+  validateEmail: (email: string) => void,
+  validatePassword: (password: string) => void
 }
 
-type State = {
+type ComponentState = {
   isRegistered: boolean,
   username: string,
   password: string,
@@ -58,6 +58,34 @@ type State = {
   isPasswordValid: boolean,
   usernameError: string,
   passwordError: string
+}
+
+type SignInViewProps = {
+  isPasswordValid: boolean,
+  isUsernameValid: boolean,
+  password: string,
+  passwordError: string,
+  username: string,
+  usernameError: string,
+  toggleButtonDisabled: () => boolean,
+  toggleRegistration: () => void,
+  handleSignin: () => void,
+  validateEmail: (email: string) => void,
+  validatePassword: (password: string) => void
+}
+
+type RegistrationViewProps = {
+  isPasswordValid: boolean,
+  isUsernameValid: boolean,
+  password: string,
+  passwordError: string,
+  username: string,
+  usernameError: string,
+  toggleButtonDisabled: () => boolean,
+  toggleRegistration: () => void,
+  handleRegistration: () => void,
+  validateEmail: (email: string) => void,
+  validatePassword: (password: string) => void
 }
 
 const mapStateToProps = state => {
@@ -73,7 +101,7 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-function SignInView (props: Props) {
+function SignInView (props: SignInViewProps) {
   const windowHeight: number = useWindowDimensions().height
 
   return (
@@ -128,7 +156,7 @@ function SignInView (props: Props) {
   )
 }
 
-function RegistrationView (props: Props) {
+function RegistrationView (props: RegistrationViewProps) {
   const windowHeight: number = useWindowDimensions().height
 
   return (
@@ -183,29 +211,21 @@ function RegistrationView (props: Props) {
   )
 }
 
-class SignIn extends React.Component<Props, State> {
+class SignIn extends React.Component<ComponentProps, ComponentState> {
   constructor (props) {
     super(props)
 
     this.state = {
       isRegistered: true,
-      username: '',
-      password: '',
       isUsernameValid: false,
       isPasswordValid: false,
+      username: '',
       usernameError: '',
+      password: '',
       passwordError: ''
     }
-
-    this.handleSignin = this.handleSignin.bind(this)
-    this.handleRegistration = this.handleRegistration.bind(this)
-    this.toggleButtonDisabled = this.toggleButtonDisabled.bind(this)
-    this.toggleRegistration = this.toggleRegistration.bind(this)
-    this.validateEmail = this.validateEmail.bind(this)
-    this.validatePassword = this.validatePassword.bind(this)
   }
 
-  // TODO: Could this use an event type?
   handleSignin (): void {
     this.props.signIn(
       {
@@ -215,7 +235,6 @@ class SignIn extends React.Component<Props, State> {
     )
   }
 
-  // TODO: Could this use an event type?
   handleRegistration (): void {
     this.props.register(
       {
@@ -225,7 +244,6 @@ class SignIn extends React.Component<Props, State> {
     )
   }
 
-  // TODO: Could this use an event type?
   toggleButtonDisabled (): boolean {
     if (this.state.isUsernameValid && this.state.isPasswordValid) {
       return false
@@ -234,12 +252,11 @@ class SignIn extends React.Component<Props, State> {
     }
   }
 
-  // TODO: Could this use an event type?
   toggleRegistration (): void {
     this.setState({ isRegistered: !this.state.isRegistered })
   }
 
-  validateEmail (email: SyntheticInputEvent<HTMLInputElement>): void {
+  validateEmail (email: string): void {
     if (!email) {
       this.setState({ usernameError: 'Required' })
       this.setState({ isUsernameValid: false })
@@ -253,7 +270,7 @@ class SignIn extends React.Component<Props, State> {
     this.setState({ username: email })
   }
 
-  validatePassword (password: SyntheticInputEvent<HTMLInputElement>): void {
+  validatePassword (password: string): void {
     if (!password) {
       this.setState({ passwordError: 'Required' })
       this.setState({ isPasswordValid: false })
@@ -291,11 +308,11 @@ class SignIn extends React.Component<Props, State> {
           usernameError = { this.state.usernameError }
           isPasswordValid = { this.state.isPasswordValid }
           passwordError = { this.state.passwordError }
-          handleSignin = { () => this.handleSignin() }
-          toggleButtonDisabled = { () => this.toggleButtonDisabled() }
-          toggleRegistration = { () => this.toggleRegistration() }
-          validateEmail = { username => this.validateEmail(username) }
-          validatePassword = { password => this.validatePassword(password) }
+          handleSignin = { this.handleSignin.bind(this) }
+          toggleButtonDisabled = { this.toggleButtonDisabled.bind(this) }
+          toggleRegistration = { this.toggleRegistration.bind(this) }
+          validateEmail = { this.validateEmail.bind(this) }
+          validatePassword = { this.validatePassword.bind(this) }
         />
         : <RegistrationView
           username = { this.state.username }
@@ -304,11 +321,11 @@ class SignIn extends React.Component<Props, State> {
           usernameError = { this.state.usernameError }
           isPasswordValid = { this.state.isPasswordValid }
           passwordError = { this.state.passwordError }
-          handleRegistration = { () => this.handleRegistration() }
-          toggleButtonDisabled = { () => this.toggleButtonDisabled() }
-          toggleRegistration = { () => this.toggleRegistration() }
-          validateEmail = { username => this.validateEmail(username) }
-          validatePassword = { password => this.validatePassword(password) }
+          handleRegistration = { this.handleRegistration.bind(this) }
+          toggleButtonDisabled = { this.toggleButtonDisabled.bind(this) }
+          toggleRegistration = { this.toggleRegistration.bind(this) }
+          validateEmail = { this.validateEmail.bind(this) }
+          validatePassword = { this.validatePassword.bind(this) }
         />
     )
   }
