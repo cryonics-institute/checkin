@@ -32,6 +32,11 @@ import HomeScreen from './HomeComponent'
 import BuddyScreen from './BuddyComponent'
 import BuddySelectionScreen from './BuddySelectionComponent'
 
+type ComponentProps = {
+  color: string,
+  size: number
+}
+
 const BuddyStack = createStackNavigator()
 
 function BuddyStackScreen () {
@@ -53,7 +58,7 @@ function BuddyStackScreen () {
   )
 }
 
-class Tabs extends React.Component {
+class Tabs extends React.Component<ComponentProps> {
   render () {
     const Tab = createBottomTabNavigator()
 
