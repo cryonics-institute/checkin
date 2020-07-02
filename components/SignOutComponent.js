@@ -30,14 +30,8 @@ import { connect } from 'react-redux'
 import { signOut } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
-type Props = {
-  signOut: func
-}
-
-const mapStateToProps = state => {
-  return {
-    // Nothing in state is relevant here.
-  }
+type ComponentProps = {
+  signOut: () => void
 }
 
 const mapDispatchToProps = dispatch => (
@@ -46,11 +40,15 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-class SignOut extends React.Component<Props> {
+class SignOut extends React.Component<ComponentProps> {
+  handleSignOut (): void {
+    this.props.signOut()
+  }
+
   render () {
     return (
       <Button
-        onPress = { () => this.props.signOut() }
+        onPress = { this.handleSignOut.bind(this) }
         title = 'Sign Out'
         titleStyle = { styles.buttonTitleColorLight }
         type = 'clear'
@@ -59,4 +57,4 @@ class SignOut extends React.Component<Props> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignOut)
+export default connect(mapDispatchToProps)(SignOut)

@@ -122,7 +122,9 @@ function SignInView (props: SignInViewProps) {
             >
               <Input
                 placeholder = 'E-Mail Address'
-                onChangeText = { username => props.validateEmail(username) }
+                onChangeText = {
+                  (username: string) => props.validateEmail(username)
+                }
                 value = { props.username }
               />
               <Text style = { styles.textError }>
@@ -130,7 +132,9 @@ function SignInView (props: SignInViewProps) {
               </Text>
               <Input
                 placeholder = 'Password'
-                onChangeText = { password => props.validatePassword(password) }
+                onChangeText = {
+                  (password: string) => props.validatePassword(password)
+                }
                 value = { props.password }
               />
               <Text style={ styles.textError }>
@@ -177,7 +181,9 @@ function RegistrationView (props: RegistrationViewProps) {
             >
               <Input
                 placeholder = 'E-Mail Address'
-                onChangeText = { username => props.validateEmail(username) }
+                onChangeText = {
+                  (username: string) => props.validateEmail(username)
+                }
                 value = { props.username }
               />
               <Text style={ styles.textError }>
@@ -185,7 +191,9 @@ function RegistrationView (props: RegistrationViewProps) {
               </Text>
               <Input
                 placeholder = 'Password'
-                onChangeText = { password => props.validatePassword(password) }
+                onChangeText = {
+                  (password: string) => props.validatePassword(password)
+                }
                 value = { props.password }
               />
               <Text style={ styles.textError }>
