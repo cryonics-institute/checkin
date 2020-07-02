@@ -37,12 +37,12 @@ import Tabs from './TabsComponent'
 
 type ComponentProps = {
   password: string,
+  username: string,
+  userIsSignedIn: boolean,
   signIn: (
     creds: { username: string, password: string },
     isAutomatic: boolean
-  ) => void,
-  userIsSignedIn: boolean,
-  username: string
+  ) => void
 }
 
 const mapStateToProps = state => {

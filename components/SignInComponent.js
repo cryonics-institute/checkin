@@ -41,13 +41,7 @@ type ComponentProps = {
   username: string,
   usernameError: string,
   register: ({ username: string, password: string }) => void,
-  signIn: ({ username: string, password: string }) => void,
-  toggleButtonDisabled: () => boolean,
-  toggleRegistration: () => void,
-  handleRegistration: () => void,
-  handleSignin: () => void,
-  validateEmail: (email: string) => void,
-  validatePassword: (password: string) => void
+  signIn: ({ username: string, password: string }) => void
 }
 
 type ComponentState = {

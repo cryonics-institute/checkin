@@ -38,7 +38,6 @@ type ComponentProps = {
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   inputHeight: number,
   showTip: boolean,
-  closeTip: () => void,
   hideTip: () => void,
   mutateInput: (identifier: string, text: string, validity: boolean) => void,
   setSnooze: (snooze: number) => void
