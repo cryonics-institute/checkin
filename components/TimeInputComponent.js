@@ -34,15 +34,15 @@ import { mutateInput, removeInput, setInputParameters }
   from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
-type Props = {
+type ComponentProps = {
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  mutateInput: func,
-  removeInput: func,
-  setInputParameters: func,
-  value: string
+  value: string,
+  mutateInput: (identifier: string, text: string, validity: boolean) => void,
+  removeInput: (identifier: string) => void,
+  setInputParameters: (height: number) => void
 }
 
-type State = {
+type ComponentState = {
   identifier: string,
   invalid: string,
   time: string
@@ -64,7 +64,7 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-class TimeInput extends React.Component<Props, State> {
+class TimeInput extends React.Component<ComponentProps, ComponentState> {
   constructor (props) {
     super(props)
 
@@ -99,32 +99,26 @@ class TimeInput extends React.Component<Props, State> {
     }
   }
 
-  // TODO: Could this use an event type?
-  convertTo24Hour (time: string): string {
+  convertTo24Hour (time: string): number {
     const period: string = time.slice(-2).toUpperCase()
-    const hour: string = parseInt(time.slice(-8, -6))
+    const hour: number = parseInt(time.slice(-8, -6))
 
     if (period === 'AM') {
       if (hour === 12) {
-        return '00'
-      } else if (hour < 10) {
-        return '0' + hour.toString()
+        return 0
       } else {
-        return hour.toString()
+        return hour
       }
     } else {
       if (hour === 12) {
-        return hour.toString()
+        return hour
       } else {
-        return (hour + 12).toString()
+        return hour + 12
       }
     }
   }
 
-  mutate (
-    event: SyntheticInputEvent<HTMLInputElement>,
-    time: string
-  ): void {
+  mutate (time: string): void {
     const isValid: boolean = this.validate(time)
 
     if (isValid) {
@@ -134,7 +128,6 @@ class TimeInput extends React.Component<Props, State> {
     }
   }
 
-  // TODO: Could this use an event type?
   validate (time: string): boolean {
     if (!time) {
       this.setState({ invalid: 'Please enter as HH:MM AM/PM' })
@@ -144,7 +137,7 @@ class TimeInput extends React.Component<Props, State> {
       return false
     } else {
       const hours: number = time.length > 0 ? this.convertTo24Hour(time) : 0
-      const minutes: number = time.length > 0 ? time.slice(-5, -3) : 0
+      const minutes: number = time.length > 0 ? Number(time.slice(-5, -3)) : 0
       const isoTime: string =
         (new Date(1970, 0, 1, hours, minutes)).toISOString()
 
@@ -207,7 +200,7 @@ class TimeInput extends React.Component<Props, State> {
                 : styles.textError
             }
             onChangeText = {
-              time => {
+              (time: string) => {
                 this.mutate(time)
                 this.setState({ time: time })
               }
@@ -256,7 +249,7 @@ class TimeInput extends React.Component<Props, State> {
                 : styles.textError
             }
             onChangeText = {
-              time => {
+              (time: string) => {
                 this.mutate(time)
                 this.setState({ time: time })
               }
