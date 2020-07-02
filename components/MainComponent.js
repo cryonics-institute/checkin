@@ -35,9 +35,12 @@ import SignInScreen from './SignInComponent'
 // import SignOutScreen from './SignOutComponent'
 import Tabs from './TabsComponent'
 
-type Props = {
+type ComponentProps = {
   password: string,
-  signIn: func,
+  signIn: (
+    creds: { username: string, password: string },
+    isAutomatic: boolean
+  ) => void,
   userIsSignedIn: boolean,
   username: string
 }
@@ -55,14 +58,17 @@ const mapDispatchToProps = dispatch => (
 )
 
 // Setup Main Component
-class Main extends React.Component<Props> {
+class Main extends React.Component<ComponentProps> {
   componentDidMount () {
     if (this.props.username !== '' && this.props.password !== '') {
-      this.props.signIn(
-        { username: this.props.username, password: this.props.password },
-        true
-      )
-        .catch(error => console.log(error.message))
+      try {
+        this.props.signIn(
+          { username: this.props.username, password: this.props.password },
+          true
+        )
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
