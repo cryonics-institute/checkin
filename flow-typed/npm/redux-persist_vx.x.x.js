@@ -475,3 +475,8 @@ declare module 'redux-persist/src/storage/session.js' {
 declare module 'redux-persist/src/types.js' {
   declare module.exports: $Exports<'redux-persist/src/types'>;
 }
+
+// Our Customizations
+declare module 'redux-persist/integration/react' {
+  declare module.exports: any;
+}
