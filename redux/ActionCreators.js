@@ -27,33 +27,6 @@ import db from '@react-native-firebase/firestore'
 import * as ActionTypes from './ActionTypes'
 
 /**
- * Take a string representing a time in AM/PM format from a Time-Input component
- * and return the hour in 24-hour format.
- * @param  {String} time  String from Time-Input Component.
- * @return {String}       Hour in 24-Hour Format.
- */
-const convertTo24Hour = (time) => {
-  const period = time.slice(-2).toUpperCase()
-  const hour = parseInt(time.slice(-8, -6))
-
-  if (period === 'AM') {
-    if (hour === 12) {
-      return '00'
-    } else if (hour < 10) {
-      return '0' + hour
-    } else {
-      return hour.toString()
-    }
-  } else {
-    if (hour === 12) {
-      return hour.toString()
-    } else {
-      return (hour + 12).toString()
-    }
-  }
-}
-
-/**
  * Add a buddy to be be tracked by the current user.  First, a setListener
  * action creator is called with the buddy's e-mail.  After that promise is
  * returned, an action for add-buddy-fulfillment is initiated.
@@ -531,6 +504,27 @@ export const initializeStoreFulfilledAction = (deviceToken) => (
  * @param  {Boolean}  validity  Is the time valid?
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
+  const convertTo24Hour = (time) => {
+    const period = time.slice(-2).toUpperCase()
+    const hour = parseInt(time.slice(-8, -6))
+
+    if (period === 'AM') {
+      if (hour === 12) {
+        return '00'
+      } else if (hour < 10) {
+        return '0' + hour
+      } else {
+        return hour.toString()
+      }
+    } else {
+      if (hour === 12) {
+        return hour.toString()
+      } else {
+        return (hour + 12).toString()
+      }
+    }
+  }
+
   try {
     if (getState().inputs.alertTimes !== null) {
       dispatch(mutateInputRequestedAction())
