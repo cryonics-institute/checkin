@@ -103,8 +103,8 @@ function BuddySelectionView (props: ViewProps) {
 }
 
 class BuddySelection extends React.Component<ComponentProps, ComponentState> {
-  constructor (ComponentState) {
-    super(ComponentState)
+  constructor (props: ComponentProps) {
+    super(props)
 
     this.state = {
       email: '',
