@@ -32,12 +32,13 @@ import HomeScreen from './HomeComponent'
 import BuddyScreen from './BuddyComponent'
 import BuddySelectionScreen from './BuddySelectionComponent'
 
-type ComponentProps = {
-  color: string,
-  size: number
+type ViewProps = {
+  color?: string,
+  size?: number
 }
 
 const BuddyStack = createStackNavigator()
+const Tab = createBottomTabNavigator()
 
 function BuddyStackScreen () {
   const buddyIsAdded: boolean = useSelector(state => state.buddy.isAdded)
@@ -58,57 +59,53 @@ function BuddyStackScreen () {
   )
 }
 
-class Tabs extends React.Component<ComponentProps> {
-  render () {
-    const Tab = createBottomTabNavigator()
-
-    return (
-      <Tab.Navigator
-        backBehavior = 'history'
-        tabBarOptions = {
+function Tabs (props: ViewProps) {
+  return (
+    <Tab.Navigator
+      backBehavior = 'history'
+      tabBarOptions = {
+        {
+          activeBackgroundColor: colors.dark,
+          activeTintColor: colors.light,
+          keyboardHidesTabBar: true,
+          style: styles.tab
+        }
+      }
+    >
+      <Tab.Screen
+        name = 'Home'
+        component = { HomeScreen }
+        options = {
           {
-            activeBackgroundColor: colors.dark,
-            activeTintColor: colors.light,
-            keyboardHidesTabBar: true,
-            style: styles.tab
+            tabBarLabel: 'Check In',
+            // eslint-disable-next-line react/display-name
+            tabBarIcon: ({ color, size }) => <Icon
+              name = 'check'
+              type = 'material'
+              color = { color }
+              size = { size }
+            />
           }
         }
-      >
-        <Tab.Screen
-          name = 'Home'
-          component = { HomeScreen }
-          options = {
-            {
-              tabBarLabel: 'Check In',
-              // eslint-disable-next-line react/display-name
-              tabBarIcon: ({ color, size }) => <Icon
-                name = 'check'
-                type = 'material'
-                color = { color }
-                size = { size }
-              />
-            }
+      />
+      <Tab.Screen
+        name = 'BuddyStack'
+        component = { BuddyStackScreen }
+        options = {
+          {
+            tabBarLabel: 'Buddies',
+            // eslint-disable-next-line react/display-name
+            tabBarIcon: ({ color, size }) => <Icon
+              name = 'people'
+              type = 'material'
+              color = { color }
+              size = { size }
+            />
           }
-        />
-        <Tab.Screen
-          name = 'BuddyStack'
-          component = { BuddyStackScreen }
-          options = {
-            {
-              tabBarLabel: 'Buddies',
-              // eslint-disable-next-line react/display-name
-              tabBarIcon: ({ color, size }) => <Icon
-                name = 'people'
-                type = 'material'
-                color = { color }
-                size = { size }
-              />
-            }
-          }
-        />
-      </Tab.Navigator>
-    )
-  }
+        }
+      />
+    </Tab.Navigator>
+  )
 }
 
 export default Tabs
