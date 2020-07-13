@@ -30,7 +30,7 @@ import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
   from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { HeaderHeightContext } from '@react-navigation/stack'
+import { useHeaderHeight } from '@react-navigation/stack'
 import { addBuddy } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
@@ -68,48 +68,43 @@ const mapDispatchToProps = dispatch => (
 
 function BuddySelectionView (props: ViewProps) {
   const windowHeight: number = useWindowDimensions().height
+  const headerHeight: number = useHeaderHeight()
 
   return (
-    <HeaderHeightContext.Consumer>
-      {
-        (headerHeight: number) => (
-          <View
-            style = {
-              {
-                backgroundColor: colors.light,
-                height: windowHeight - (headerHeight * 2)
-              }
-            }
-          >
-            <KeyboardAvoidingView
-              behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-              style = { styles.containerCentered }
-            >
-              <Input
-                placeholder = 'Buddy&#39;s E-Mail Address'
-                onChangeText = { (email: string) => props.validateEmail(email) }
-                value = { props.email }
-              />
-              <Text style = { styles.textError }>
-                { props.isEmailValid ? '' : props.emailError }
-              </Text>
-              <Button
-                buttonStyle = { styles.button }
-                disabled = { !props.isEmailValid }
-                onPress = { () => props.handlePress() }
-                title = 'Submit'
-              />
-            </KeyboardAvoidingView>
-          </View>
-        )
+    <View
+      style = {
+        {
+          backgroundColor: colors.light,
+          height: windowHeight - (headerHeight * 2)
+        }
       }
-    </HeaderHeightContext.Consumer>
+    >
+      <KeyboardAvoidingView
+        behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+        style = { styles.containerCentered }
+      >
+        <Input
+          placeholder = 'Buddy&#39;s E-Mail Address'
+          onChangeText = { (email: string) => props.validateEmail(email) }
+          value = { props.email }
+        />
+        <Text style = { styles.textError }>
+          { props.isEmailValid ? '' : props.emailError }
+        </Text>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { !props.isEmailValid }
+          onPress = { () => props.handlePress() }
+          title = 'Submit'
+        />
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 
 class BuddySelection extends React.Component<ComponentProps, ComponentState> {
-  constructor (props) {
-    super(props)
+  constructor (ComponentState) {
+    super(ComponentState)
 
     this.state = {
       email: '',
