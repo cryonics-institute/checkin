@@ -99,22 +99,32 @@ class TimeInput extends React.Component<ComponentProps, ComponentState> {
     }
   }
 
-  convertTo24Hour (time: string): number {
-    const period: string = time.slice(-2).toUpperCase()
-    const hour: number = parseInt(time.slice(-8, -6))
+  convertTo24Hour = (time) => {
+    const getHourString = (time) => {
+      const period = time.slice(-2).toUpperCase()
+      const hour = parseInt(time.slice(-8, -6))
 
-    if (period === 'AM') {
-      if (hour === 12) {
-        return 0
+      if (period === 'AM') {
+        if (hour === 12) {
+          return '00'
+        } else if (hour < 10) {
+          return '0' + hour
+        } else {
+          return hour.toString()
+        }
       } else {
-        return hour
+        if (hour === 12) {
+          return hour.toString()
+        } else {
+          return (hour + 12).toString()
+        }
       }
+    }
+
+    if (moment().isDST()) {
+      return Number(getHourString(time)) - 1
     } else {
-      if (hour === 12) {
-        return hour
-      } else {
-        return hour + 12
-      }
+      return Number(getHourString(time))
     }
   }
 
@@ -142,24 +152,23 @@ class TimeInput extends React.Component<ComponentProps, ComponentState> {
         (new Date(1970, 0, 1, hours, minutes)).toISOString()
 
       let isValid: boolean = true
-      for (
-        const alert: {| id: string, time: string, validity: boolean |}
-        of this.props.alertTimes
-      ) {
-        if (
-          moment(isoTime).isBetween(
-            moment(alert.time).subtract(1, 'hours'),
-            moment(alert.time).add(1, 'hours'),
-            undefined,
-            '()'
-          )
-        ) {
-          this.setState(
-            { invalid: 'Alerts must be at least 1 hour apart.' }
-          )
-          isValid = false
+      this.props.alertTimes.filter(alert => alert.validity).forEach(
+        (alert: {| id: string, time: string, validity: boolean |}, i) => {
+          if (
+            moment(isoTime).isBetween(
+              moment(alert.time).subtract(1, 'hours'),
+              moment(alert.time).add(1, 'hours'),
+              undefined,
+              '()'
+            )
+          ) {
+            this.setState(
+              { invalid: 'Alerts must be at least 1 hour apart.' }
+            )
+            isValid = false
+          }
         }
-      }
+      )
 
       return isValid
     }

@@ -505,23 +505,31 @@ export const initializeStoreFulfilledAction = (deviceToken) => (
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
   const convertTo24Hour = (time) => {
-    const period = time.slice(-2).toUpperCase()
-    const hour = parseInt(time.slice(-8, -6))
+    const getHourString = (time) => {
+      const period = time.slice(-2).toUpperCase()
+      const hour = parseInt(time.slice(-8, -6))
 
-    if (period === 'AM') {
-      if (hour === 12) {
-        return '00'
-      } else if (hour < 10) {
-        return '0' + hour
+      if (period === 'AM') {
+        if (hour === 12) {
+          return '00'
+        } else if (hour < 10) {
+          return '0' + hour
+        } else {
+          return hour.toString()
+        }
       } else {
-        return hour.toString()
+        if (hour === 12) {
+          return hour.toString()
+        } else {
+          return (hour + 12).toString()
+        }
       }
+    }
+
+    if (moment().isDST()) {
+      return Number(getHourString(time)) - 1
     } else {
-      if (hour === 12) {
-        return hour.toString()
-      } else {
-        return (hour + 12).toString()
-      }
+      return Number(getHourString(time))
     }
   }
 
@@ -530,7 +538,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
       dispatch(mutateInputRequestedAction())
 
       const hours = time.length > 0
-        ? moment().isDST() ? convertTo24Hour(time) - 1 : convertTo24Hour(time)
+        ? convertTo24Hour(time)
         : 0
       const minutes = time.length > 0 ? time.slice(-5, -3) : 0
 
