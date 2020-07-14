@@ -65,7 +65,7 @@ const mapDispatchToProps = dispatch => (
 )
 
 class TimeInput extends React.Component<ComponentProps, ComponentState> {
-  constructor (props) {
+  constructor (props: ComponentProps) {
     super(props)
 
     this.state = {
