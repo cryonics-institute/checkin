@@ -148,9 +148,9 @@ class TimeInput extends React.Component<ComponentProps, ComponentState> {
       ) {
         if (
           moment(isoTime).isBetween(
-            moment(alert.time) - 3600000,
-            moment(alert.time) + 3600000,
-            null,
+            moment(alert.time).subtract(1, 'hours'),
+            moment(alert.time).add(1, 'hours'),
+            undefined,
             '()'
           )
         ) {
