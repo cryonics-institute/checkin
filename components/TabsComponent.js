@@ -8,15 +8,14 @@
  *
  * This file is part of Check-In.
  *
- * Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
@@ -25,92 +24,88 @@
 // @flow
 import * as React from 'react'
 import { Icon } from 'react-native-elements'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createStackNavigator } from '@react-navigation/stack'
 import { colors, styles } from '../styles/Styles'
 import HomeScreen from './HomeComponent'
 import BuddyScreen from './BuddyComponent'
 import BuddySelectionScreen from './BuddySelectionComponent'
 
-type Props = {
-  buddyIsAdded: boolean
+type ViewProps = {
+  color?: string,
+  size?: number
 }
 
-const mapStateToProps = state => {
-  return {
-    buddyIsAdded: state.buddy.isAdded
-  }
+const BuddyStack = createStackNavigator()
+const Tab = createBottomTabNavigator()
+
+function BuddyStackScreen () {
+  const buddyIsAdded: boolean = useSelector(state => state.buddy.isAdded)
+
+  return (
+    <BuddyStack.Navigator
+      initialRouteName = { buddyIsAdded ? 'Buddy' : 'BuddySelection' }
+    >
+      <BuddyStack.Screen
+        name = 'Buddy'
+        component = { BuddyScreen }
+      />
+      <BuddyStack.Screen
+        name = 'BuddySelection'
+        component = { BuddySelectionScreen }
+      />
+    </BuddyStack.Navigator>
+  )
 }
 
-class Tabs extends React.Component<Props> {
-  render () {
-    const Tab = createBottomTabNavigator()
-
-    return (
-      <Tab.Navigator
-        backBehavior = 'history'
-        tabBarOptions = {
+function Tabs (props: ViewProps) {
+  return (
+    <Tab.Navigator
+      backBehavior = 'history'
+      tabBarOptions = {
+        {
+          activeBackgroundColor: colors.dark,
+          activeTintColor: colors.light,
+          keyboardHidesTabBar: true,
+          style: styles.tab
+        }
+      }
+    >
+      <Tab.Screen
+        name = 'Home'
+        component = { HomeScreen }
+        options = {
           {
-            activeBackgroundColor: colors.dark,
-            activeTintColor: colors.light,
-            keyboardHidesTabBar: true,
-            style: styles.tab
+            tabBarLabel: 'Check In',
+            // eslint-disable-next-line react/display-name
+            tabBarIcon: ({ color, size }) => <Icon
+              name = 'check'
+              type = 'material'
+              color = { color }
+              size = { size }
+            />
           }
         }
-      >
-        <Tab.Screen
-          name = 'Home'
-          component = { HomeScreen }
-          options = {
-            {
-              tabBarLabel: 'Check In',
-              // eslint-disable-next-line react/display-name
-              tabBarIcon: ({ color, size }) => <Icon
-                name = 'check'
-                type = 'material'
-                color = { color }
-                size = { size }
-              />
-            }
+      />
+      <Tab.Screen
+        name = 'BuddyStack'
+        component = { BuddyStackScreen }
+        options = {
+          {
+            tabBarLabel: 'Buddies',
+            // eslint-disable-next-line react/display-name
+            tabBarIcon: ({ color, size }) => <Icon
+              name = 'people'
+              type = 'material'
+              color = { color }
+              size = { size }
+            />
           }
-        />
-        { this.props.buddyIsAdded
-          ? <Tab.Screen
-            name = 'Buddy'
-            component = { BuddyScreen }
-            options = {
-              {
-                tabBarLabel: 'Buddies',
-                // eslint-disable-next-line react/display-name
-                tabBarIcon: ({ color, size }) => <Icon
-                  name = 'people'
-                  type = 'material'
-                  color = { color }
-                  size = { size }
-                />
-              }
-            }
-          />
-          : <Tab.Screen
-            name = 'BuddySelection'
-            component = { BuddySelectionScreen }
-            options = {
-              {
-                tabBarLabel: 'Buddies',
-                // eslint-disable-next-line react/display-name
-                tabBarIcon: ({ color, size }) => <Icon
-                  name = 'people'
-                  type = 'material'
-                  color = { color }
-                  size = { size }
-                />
-              }
-            }
-          />
         }
-      </Tab.Navigator>
-    )
-  }
+      />
+    </Tab.Navigator>
+  )
 }
 
-export default connect(mapStateToProps)(Tabs)
+export default Tabs

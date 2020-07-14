@@ -7,15 +7,14 @@
  *
  * This file is part of Check-In.
  *
- * Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
@@ -26,33 +25,6 @@ import moment from 'moment'
 import auth from '@react-native-firebase/auth'
 import db from '@react-native-firebase/firestore'
 import * as ActionTypes from './ActionTypes'
-
-/**
- * Take a string representing a time in AM/PM format from a Time-Input component
- * and return the hour in 24-hour format.
- * @param  {String} time  String from Time-Input Component.
- * @return {String}       Hour in 24-Hour Format.
- */
-const convertTo24Hour = (time) => {
-  const period = time.slice(-2).toUpperCase()
-  const hour = parseInt(time.slice(-8, -6))
-
-  if (period === 'AM') {
-    if (hour === 12) {
-      return '00'
-    } else if (hour < 10) {
-      return '0' + hour
-    } else {
-      return hour.toString()
-    }
-  } else {
-    if (hour === 12) {
-      return hour.toString()
-    } else {
-      return (hour + 12).toString()
-    }
-  }
-}
 
 /**
  * Add a buddy to be be tracked by the current user.  First, a setListener
@@ -532,12 +504,41 @@ export const initializeStoreFulfilledAction = (deviceToken) => (
  * @param  {Boolean}  validity  Is the time valid?
  */
 export const mutateInput = (id, time, validity) => (dispatch, getState) => {
+  const convertTo24Hour = (time) => {
+    const getHourString = (time) => {
+      const period = time.slice(-2).toUpperCase()
+      const hour = parseInt(time.slice(-8, -6))
+
+      if (period === 'AM') {
+        if (hour === 12) {
+          return '00'
+        } else if (hour < 10) {
+          return '0' + hour
+        } else {
+          return hour.toString()
+        }
+      } else {
+        if (hour === 12) {
+          return hour.toString()
+        } else {
+          return (hour + 12).toString()
+        }
+      }
+    }
+
+    if (moment().isDST()) {
+      return Number(getHourString(time)) - 1
+    } else {
+      return Number(getHourString(time))
+    }
+  }
+
   try {
     if (getState().inputs.alertTimes !== null) {
       dispatch(mutateInputRequestedAction())
 
       const hours = time.length > 0
-        ? moment().isDST() ? convertTo24Hour(time) - 1 : convertTo24Hour(time)
+        ? convertTo24Hour(time)
         : 0
       const minutes = time.length > 0 ? time.slice(-5, -3) : 0
 

@@ -11,15 +11,14 @@
  *
  * This file is part of Check-In.
  *
- * Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
@@ -31,81 +30,80 @@ import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
   from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { HeaderHeightContext } from '@react-navigation/stack'
+import { useHeaderHeight } from '@react-navigation/stack'
 import { addBuddy } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
-type Props = {
-  addBuddy: func,
+type ComponentProps = {
   email: string,
-  emailError: string,
-  handlePress: func,
-  isEmailValid: boolean,
-  navigation: { navigate: func },
-  validateEmail: func
+  navigation: { navigate: (string: string) => void },
+  addBuddy: (email: string) => void
 }
 
-type State = {
+type ComponentState = {
   email: string,
   isEmailValid: boolean,
   emailError: string
 }
 
+type ViewProps = {
+  email: string,
+  emailError: string,
+  isEmailValid: boolean,
+  handlePress: () => void,
+  validateEmail: (email: string) => void
+}
+
 const mapStateToProps = state => {
   return {
-    email: state.user.email
+    email: state.buddy.email
   }
 }
 
 const mapDispatchToProps = dispatch => (
   {
-    addBuddy: (email) => dispatch(addBuddy(email))
+    addBuddy: (email: string) => dispatch(addBuddy(email))
   }
 )
 
-function BuddySelectionView (props: Props) {
+function BuddySelectionView (props: ViewProps) {
   const windowHeight: number = useWindowDimensions().height
+  const headerHeight: number = useHeaderHeight()
 
   return (
-    <HeaderHeightContext.Consumer>
-      {
-        headerHeight => (
-          <View
-            style = {
-              {
-                backgroundColor: colors.light,
-                height: windowHeight - (headerHeight * 2)
-              }
-            }
-          >
-            <KeyboardAvoidingView
-              behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-              style = { styles.containerCentered }
-            >
-              <Input
-                placeholder = 'Buddy&#39;s E-Mail Address'
-                onChangeText = { email => props.validateEmail(email) }
-                value = { props.email }
-              />
-              <Text style = { styles.textError }>
-                { props.isEmailValid ? '' : props.emailError }
-              </Text>
-              <Button
-                buttonStyle = { styles.button }
-                disabled = { !props.isEmailValid }
-                onPress = { () => props.handlePress() }
-                title = 'Submit'
-              />
-            </KeyboardAvoidingView>
-          </View>
-        )
+    <View
+      style = {
+        {
+          backgroundColor: colors.light,
+          height: windowHeight - (headerHeight * 2)
+        }
       }
-    </HeaderHeightContext.Consumer>
+    >
+      <KeyboardAvoidingView
+        behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+        style = { styles.containerCentered }
+      >
+        <Input
+          placeholder = 'Buddy&#39;s E-Mail Address'
+          onChangeText = { (email: string) => props.validateEmail(email) }
+          value = { props.email }
+        />
+        <Text style = { styles.textError }>
+          { props.isEmailValid ? '' : props.emailError }
+        </Text>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { !props.isEmailValid }
+          onPress = { () => props.handlePress() }
+          title = 'Submit'
+        />
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 
-class BuddySelection extends React.Component<Props, State> {
-  constructor (props) {
+class BuddySelection extends React.Component<ComponentProps, ComponentState> {
+  constructor (props: ComponentProps) {
     super(props)
 
     this.state = {
@@ -120,21 +118,25 @@ class BuddySelection extends React.Component<Props, State> {
       Promise.resolve(this.setState({ email: this.props.email }))
         .then(
           () => this.props.addBuddy(this.state.email.toLowerCase()),
-          error => {
+          (error: Error) => {
             var errorMessage = new Error(error.message)
             throw errorMessage
           }
         )
-        .catch(error => console.log(error.message))
+        .catch((error: Error) => console.log(error.message))
     }
   }
 
   handlePress (): void {
-    this.props.addBuddy(this.state.email.toLowerCase())
+    Promise.resolve(this.props.addBuddy(this.state.email.toLowerCase()))
       .then(
-        () => this.props.navigation.navigate('Buddy')
+        () => this.props.navigation.navigate('Buddy'),
+        (error: Error) => {
+          var errorMessage = new Error(error.message)
+          throw errorMessage
+        }
       )
-      .catch(error => console.log(error.message))
+      .catch((error: Error) => console.log(error.message))
   }
 
   validateEmail (email: string): void {
@@ -157,8 +159,8 @@ class BuddySelection extends React.Component<Props, State> {
         email = { this.state.email }
         isEmailValid = { this.state.isEmailValid }
         emailError = { this.state.emailError }
-        handlePress = { () => this.handlePress() }
-        validateEmail = { username => this.validateEmail(username) }
+        handlePress = { this.handlePress.bind(this) }
+        validateEmail = { this.validateEmail.bind(this) }
       />
     )
   }

@@ -11,15 +11,14 @@
  *
  * This file is part of Check-In.
  *
- * Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
@@ -36,11 +35,14 @@ import SignInScreen from './SignInComponent'
 // import SignOutScreen from './SignOutComponent'
 import Tabs from './TabsComponent'
 
-type Props = {
+type ComponentProps = {
   password: string,
-  signIn: func,
+  username: string,
   userIsSignedIn: boolean,
-  username: string
+  signIn: (
+    creds: { username: string, password: string },
+    isAutomatic: boolean
+  ) => void
 }
 
 const mapStateToProps = state => {
@@ -56,14 +58,17 @@ const mapDispatchToProps = dispatch => (
 )
 
 // Setup Main Component
-class Main extends React.Component<Props> {
+class Main extends React.Component<ComponentProps> {
   componentDidMount () {
     if (this.props.username !== '' && this.props.password !== '') {
-      this.props.signIn(
-        { username: this.props.username, password: this.props.password },
-        true
-      )
-        .catch(error => console.log(error.message))
+      try {
+        this.props.signIn(
+          { username: this.props.username, password: this.props.password },
+          true
+        )
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 

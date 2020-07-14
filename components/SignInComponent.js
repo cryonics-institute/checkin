@@ -10,15 +10,14 @@
  *
  * This file is part of Check-In.
  *
- * Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
@@ -30,28 +29,22 @@ import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
   from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { HeaderHeightContext } from '@react-navigation/stack'
+import { useHeaderHeight } from '@react-navigation/stack'
 import { signIn, register } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
-type Props = {
-  handleRegistration: func,
-  handleSignin: func,
+type ComponentProps = {
   isPasswordValid: boolean,
   isUsernameValid: boolean,
   password: string,
   passwordError: string,
-  register: func,
-  signIn: func,
-  toggleButtonDisabled: func,
-  toggleRegistration: func,
   username: string,
   usernameError: string,
-  validateEmail: func,
-  validatePassword: func
+  register: ({ username: string, password: string }) => void,
+  signIn: ({ username: string, password: string }) => void
 }
 
-type State = {
+type ComponentState = {
   isRegistered: boolean,
   username: string,
   password: string,
@@ -59,6 +52,34 @@ type State = {
   isPasswordValid: boolean,
   usernameError: string,
   passwordError: string
+}
+
+type SignInViewProps = {
+  isPasswordValid: boolean,
+  isUsernameValid: boolean,
+  password: string,
+  passwordError: string,
+  username: string,
+  usernameError: string,
+  toggleButtonDisabled: () => boolean,
+  toggleRegistration: () => void,
+  handleSignin: () => void,
+  validateEmail: (email: string) => void,
+  validatePassword: (password: string) => void
+}
+
+type RegistrationViewProps = {
+  isPasswordValid: boolean,
+  isUsernameValid: boolean,
+  password: string,
+  passwordError: string,
+  username: string,
+  usernameError: string,
+  toggleButtonDisabled: () => boolean,
+  toggleRegistration: () => void,
+  handleRegistration: () => void,
+  validateEmail: (email: string) => void,
+  validatePassword: (password: string) => void
 }
 
 const mapStateToProps = state => {
@@ -74,136 +95,127 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-function SignInView (props: Props) {
+function SignInView (props: SignInViewProps) {
   const windowHeight: number = useWindowDimensions().height
+  const headerHeight: number = useHeaderHeight()
 
   return (
-    <HeaderHeightContext.Consumer>
-      {
-        headerHeight => (
-          <View
-            style = {
-              {
-                backgroundColor: colors.light,
-                height: windowHeight - headerHeight
-              }
-            }
-          >
-            <KeyboardAvoidingView
-              behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-              style = { styles.containerCentered }
-            >
-              <Input
-                placeholder = 'E-Mail Address'
-                onChangeText = { username => props.validateEmail(username) }
-                value = { props.username }
-              />
-              <Text style = { styles.textError }>
-                { props.isUsernameValid ? '' : props.usernameError }
-              </Text>
-              <Input
-                placeholder = 'Password'
-                onChangeText = { password => props.validatePassword(password) }
-                value = { props.password }
-              />
-              <Text style={ styles.textError }>
-                { props.isPasswordValid ? '' : props.passwordError }
-              </Text>
-              <Button
-                buttonStyle = { styles.button }
-                disabled = { props.toggleButtonDisabled() }
-                onPress = { () => props.handleSignin() }
-                title = 'Sign In'
-              />
-              <Button
-                onPress = { () => props.toggleRegistration() }
-                title = 'Create Account'
-                titleStyle = { styles.buttonTitleColorDark }
-                type = 'clear'
-              />
-            </KeyboardAvoidingView>
-          </View>
-        )
+    <View
+      style = {
+        {
+          backgroundColor: colors.light,
+          height: windowHeight - headerHeight
+        }
       }
-    </HeaderHeightContext.Consumer>
+    >
+      <KeyboardAvoidingView
+        behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+        style = { styles.containerCentered }
+      >
+        <Input
+          placeholder = 'E-Mail Address'
+          onChangeText = {
+            (username: string) => props.validateEmail(username)
+          }
+          value = { props.username }
+        />
+        <Text style = { styles.textError }>
+          { props.isUsernameValid ? '' : props.usernameError }
+        </Text>
+        <Input
+          placeholder = 'Password'
+          onChangeText = {
+            (password: string) => props.validatePassword(password)
+          }
+          value = { props.password }
+        />
+        <Text style={ styles.textError }>
+          { props.isPasswordValid ? '' : props.passwordError }
+        </Text>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { props.toggleButtonDisabled() }
+          onPress = { () => props.handleSignin() }
+          title = 'Sign In'
+        />
+        <Button
+          onPress = { () => props.toggleRegistration() }
+          title = 'Create Account'
+          titleStyle = { styles.buttonTitleColorDark }
+          type = 'clear'
+        />
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 
-function RegistrationView (props: Props) {
+function RegistrationView (props: RegistrationViewProps) {
   const windowHeight: number = useWindowDimensions().height
+  const headerHeight: number = useHeaderHeight()
 
   return (
-    <HeaderHeightContext.Consumer>
-      {
-        headerHeight => (
-          <View
-            style = {
-              {
-                backgroundColor: colors.light,
-                height: windowHeight - headerHeight
-              }
-            }
-          >
-            <KeyboardAvoidingView
-              behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-              style = { styles.containerCentered }
-            >
-              <Input
-                placeholder = 'E-Mail Address'
-                onChangeText = { (username) => props.validateEmail(username) }
-                value = { props.username }
-              />
-              <Text style={ styles.textError }>
-                { props.isUsernameValid ? '' : props.usernameError }
-              </Text>
-              <Input
-                placeholder = 'Password'
-                onChangeText = { (password) => props.validatePassword(password) }
-                value = { props.password }
-              />
-              <Text style={ styles.textError }>
-                { props.isPasswordValid ? '' : props.passwordError }
-              </Text>
-              <Button
-                buttonStyle = { styles.button }
-                disabled = { props.toggleButtonDisabled() }
-                onPress = { () => props.handleRegistration() }
-                title = 'Create Account'
-              />
-              <Button
-                onPress = { () => props.toggleRegistration() }
-                title = 'Sign In'
-                titleStyle = { styles.buttonTitleColorDark }
-                type = 'clear'
-              />
-            </KeyboardAvoidingView>
-          </View>
-        )
+    <View
+      style = {
+        {
+          backgroundColor: colors.light,
+          height: windowHeight - headerHeight
+        }
       }
-    </HeaderHeightContext.Consumer>
+    >
+      <KeyboardAvoidingView
+        behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+        style = { styles.containerCentered }
+      >
+        <Input
+          placeholder = 'E-Mail Address'
+          onChangeText = {
+            (username: string) => props.validateEmail(username)
+          }
+          value = { props.username }
+        />
+        <Text style={ styles.textError }>
+          { props.isUsernameValid ? '' : props.usernameError }
+        </Text>
+        <Input
+          placeholder = 'Password'
+          onChangeText = {
+            (password: string) => props.validatePassword(password)
+          }
+          value = { props.password }
+        />
+        <Text style={ styles.textError }>
+          { props.isPasswordValid ? '' : props.passwordError }
+        </Text>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { props.toggleButtonDisabled() }
+          onPress = { () => props.handleRegistration() }
+          title = 'Create Account'
+        />
+        <Button
+          onPress = { () => props.toggleRegistration() }
+          title = 'Sign In'
+          titleStyle = { styles.buttonTitleColorDark }
+          type = 'clear'
+        />
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 
-class SignIn extends React.Component<Props, State> {
-  constructor (props) {
+class SignIn extends React.Component<ComponentProps, ComponentState> {
+  constructor (props: ComponentProps) {
     super(props)
 
     this.state = {
       isRegistered: true,
-      username: '',
-      password: '',
       isUsernameValid: false,
       isPasswordValid: false,
+      username: '',
       usernameError: '',
+      password: '',
       passwordError: ''
     }
-
-    this.handleSignin = this.handleSignin.bind(this)
-    this.handleRegistration = this.handleRegistration.bind(this)
-    this.toggleButtonDisabled = this.toggleButtonDisabled.bind(this)
-    this.toggleRegistration = this.toggleRegistration.bind(this)
-    this.validateEmail = this.validateEmail.bind(this)
-    this.validatePassword = this.validatePassword.bind(this)
   }
 
   handleSignin (): void {
@@ -224,7 +236,7 @@ class SignIn extends React.Component<Props, State> {
     )
   }
 
-  toggleButtonDisabled (): void {
+  toggleButtonDisabled (): boolean {
     if (this.state.isUsernameValid && this.state.isPasswordValid) {
       return false
     } else {
@@ -288,11 +300,11 @@ class SignIn extends React.Component<Props, State> {
           usernameError = { this.state.usernameError }
           isPasswordValid = { this.state.isPasswordValid }
           passwordError = { this.state.passwordError }
-          handleSignin = { () => this.handleSignin() }
-          toggleButtonDisabled = { () => this.toggleButtonDisabled() }
-          toggleRegistration = { () => this.toggleRegistration() }
-          validateEmail = { username => this.validateEmail(username) }
-          validatePassword = { password => this.validatePassword(password) }
+          handleSignin = { this.handleSignin.bind(this) }
+          toggleButtonDisabled = { this.toggleButtonDisabled.bind(this) }
+          toggleRegistration = { this.toggleRegistration.bind(this) }
+          validateEmail = { this.validateEmail.bind(this) }
+          validatePassword = { this.validatePassword.bind(this) }
         />
         : <RegistrationView
           username = { this.state.username }
@@ -301,11 +313,11 @@ class SignIn extends React.Component<Props, State> {
           usernameError = { this.state.usernameError }
           isPasswordValid = { this.state.isPasswordValid }
           passwordError = { this.state.passwordError }
-          handleRegistration = { () => this.handleRegistration() }
-          toggleButtonDisabled = { () => this.toggleButtonDisabled() }
-          toggleRegistration = { () => this.toggleRegistration() }
-          validateEmail = { username => this.validateEmail(username) }
-          validatePassword = { password => this.validatePassword(password) }
+          handleRegistration = { this.handleRegistration.bind(this) }
+          toggleButtonDisabled = { this.toggleButtonDisabled.bind(this) }
+          toggleRegistration = { this.toggleRegistration.bind(this) }
+          validateEmail = { this.validateEmail.bind(this) }
+          validatePassword = { this.validatePassword.bind(this) }
         />
     )
   }

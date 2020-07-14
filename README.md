@@ -1,3 +1,4 @@
+[// TODO: Edit docs to explain how to set up a firebase backend so people can use their own keys and so other orgs will know how to install.]: <>
 # Check-In
 ### *A Mobile+Web Suite That Lets Those You Love Know You're OK; A [Dead Man's Switch](https://en.wikipedia.org/wiki/Dead_man's_switch) for Your Phone*
 

@@ -1,3 +1,4 @@
+// TODO: Are time-inputs children?  Do they need flow typing for children?
 /**
  * Time-input component for the project, Check-In, that presents the time-input
  * with an add or remove icon in the right-hand side and validation
@@ -9,15 +10,14 @@
  *
  * This file is part of Check-In.
  *
- * Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
@@ -34,15 +34,15 @@ import { mutateInput, removeInput, setInputParameters }
   from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
-type Props = {
+type ComponentProps = {
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  mutateInput: func,
-  removeInput: func,
-  setInputParameters: func,
-  value: string
+  value: string,
+  mutateInput: (identifier: string, text: string, validity: boolean) => void,
+  removeInput: (identifier: string) => void,
+  setInputParameters: (height: number) => void
 }
 
-type State = {
+type ComponentState = {
   identifier: string,
   invalid: string,
   time: string
@@ -64,8 +64,8 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-class TimeInput extends React.Component<Props, State> {
-  constructor (props) {
+class TimeInput extends React.Component<ComponentProps, ComponentState> {
+  constructor (props: ComponentProps) {
     super(props)
 
     this.state = {
@@ -99,24 +99,32 @@ class TimeInput extends React.Component<Props, State> {
     }
   }
 
-  convertTo24Hour (time: string): string {
-    const period: string = time.slice(-2).toUpperCase()
-    const hour: string = parseInt(time.slice(-8, -6))
+  convertTo24Hour (time: string): number {
+    const getHourString = time => {
+      const period = time.slice(-2).toUpperCase()
+      const hour = parseInt(time.slice(-8, -6))
 
-    if (period === 'AM') {
-      if (hour === 12) {
-        return '00'
-      } else if (hour < 10) {
-        return '0' + hour.toString()
+      if (period === 'AM') {
+        if (hour === 12) {
+          return '00'
+        } else if (hour < 10) {
+          return '0' + hour
+        } else {
+          return hour.toString()
+        }
       } else {
-        return hour.toString()
+        if (hour === 12) {
+          return hour.toString()
+        } else {
+          return (hour + 12).toString()
+        }
       }
+    }
+
+    if (moment().isDST()) {
+      return Number(getHourString(time)) - 1
     } else {
-      if (hour === 12) {
-        return hour.toString()
-      } else {
-        return (hour + 12).toString()
-      }
+      return Number(getHourString(time))
     }
   }
 
@@ -139,29 +147,28 @@ class TimeInput extends React.Component<Props, State> {
       return false
     } else {
       const hours: number = time.length > 0 ? this.convertTo24Hour(time) : 0
-      const minutes: number = time.length > 0 ? time.slice(-5, -3) : 0
+      const minutes: number = time.length > 0 ? Number(time.slice(-5, -3)) : 0
       const isoTime: string =
         (new Date(1970, 0, 1, hours, minutes)).toISOString()
 
       let isValid: boolean = true
-      for (
-        const alert: {| id: string, time: string, validity: boolean |}
-        of this.props.alertTimes
-      ) {
-        if (
-          moment(isoTime).isBetween(
-            moment(alert.time) - 3600000,
-            moment(alert.time) + 3600000,
-            null,
-            '()'
-          )
-        ) {
-          this.setState(
-            { invalid: 'Alerts must be at least 1 hour apart.' }
-          )
-          isValid = false
+      this.props.alertTimes.filter(alert => alert.validity).forEach(
+        (alert: {| id: string, time: string, validity: boolean |}, i) => {
+          if (
+            moment(isoTime).isBetween(
+              moment(alert.time).subtract(1, 'hours'),
+              moment(alert.time).add(1, 'hours'),
+              undefined,
+              '()'
+            )
+          ) {
+            this.setState(
+              { invalid: 'Alerts must be at least 1 hour apart.' }
+            )
+            isValid = false
+          }
         }
-      }
+      )
 
       return isValid
     }
@@ -202,7 +209,7 @@ class TimeInput extends React.Component<Props, State> {
                 : styles.textError
             }
             onChangeText = {
-              time => {
+              (time: string) => {
                 this.mutate(time)
                 this.setState({ time: time })
               }
@@ -251,7 +258,7 @@ class TimeInput extends React.Component<Props, State> {
                 : styles.textError
             }
             onChangeText = {
-              time => {
+              (time: string) => {
                 this.mutate(time)
                 this.setState({ time: time })
               }

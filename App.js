@@ -3,7 +3,6 @@ import 'react-native-gesture-handler'
 import * as React from 'react'
 import { NativeModules, Platform, YellowBox } from 'react-native'
 import { Provider } from 'react-redux'
-import _ from 'lodash'
 import { initializeStore } from './redux/ActionCreators'
 import { ConfigureStore } from './redux/configureStore'
 import { PersistGate } from 'redux-persist/integration/react'
@@ -11,12 +10,6 @@ import Main from './components/MainComponent'
 import Welcome from './components/WelcomeComponent'
 
 YellowBox.ignoreWarnings(['Setting a timer', 'color was given a value of '])
-const _console = _.clone(console)
-console.warn = message => {
-  if (message.indexOf('Setting a timer') <= -1) {
-    _console.warn(message)
-  }
-}
 
 type Props = {
   FCMToken: string

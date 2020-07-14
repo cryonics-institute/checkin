@@ -10,15 +10,14 @@
  *
  * This file is part of Check-In.
  *
- * Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
@@ -31,14 +30,8 @@ import { connect } from 'react-redux'
 import { signOut } from '../redux/ActionCreators'
 import { styles } from '../styles/Styles'
 
-type Props = {
-  signOut: func
-}
-
-const mapStateToProps = state => {
-  return {
-    // Nothing in state is relevant here.
-  }
+type ComponentProps = {
+  signOut: () => void
 }
 
 const mapDispatchToProps = dispatch => (
@@ -47,11 +40,15 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-class SignOut extends React.Component<Props> {
+class SignOut extends React.Component<ComponentProps> {
+  handleSignOut (): void {
+    this.props.signOut()
+  }
+
   render () {
     return (
       <Button
-        onPress = { () => this.props.signOut() }
+        onPress = { this.handleSignOut.bind(this) }
         title = 'Sign Out'
         titleStyle = { styles.buttonTitleColorLight }
         type = 'clear'
@@ -60,4 +57,4 @@ class SignOut extends React.Component<Props> {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignOut)
+export default connect(null, mapDispatchToProps)(SignOut)

@@ -10,15 +10,14 @@
  *
  * This file is part of Check-In.
  *
- * Check-In is free software: you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation, either version 3 of the License, or (at your option) any
- * later version.
+ * Check-In is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Check-In is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * Check-In is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License along with
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
@@ -35,13 +34,19 @@ import { hideTip, mutateInput, setSnooze } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
 
-type Props = {
+type ComponentProps = {
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  closeTip: func,
-  hideTip: func,
   inputHeight: number,
-  mutateInput: func,
-  showTip: boolean
+  showTip: boolean,
+  hideTip: () => void,
+  mutateInput: (identifier: string, text: string, validity: boolean) => void,
+  setSnooze: (snooze: number) => void
+}
+
+type ViewProps = {
+  alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
+  showTip: boolean,
+  closeTip: () => void
 }
 
 const mapStateToProps = state => {
@@ -62,9 +67,11 @@ const mapDispatchToProps = dispatch => (
   }
 )
 
-function TimeInputs (props: Props) {
-  // TODO: Try to add flow type here.
-  const [scrollViewRef, setScrollViewRef] = React.useState(null)
+function TimeInputs (props: ViewProps) {
+  const [
+    scrollViewRef: (typeof ScrollView | null),
+    setScrollViewRef: (scrollView: (typeof ScrollView)) => void
+  ] = React.useState(null)
 
   return (
     <ScrollView
@@ -72,14 +79,18 @@ function TimeInputs (props: Props) {
       contentContainerStyle = { styles.containerScrollingContent }
       style = { styles.containerScrolling }
       onContentSizeChange = {
-        (event) => {
-          scrollViewRef.scrollToEnd({ animated: true })
+        () => {
+          typeof scrollViewRef === 'undefined' || scrollViewRef === null
+            ? console.log('Scroll-view component is loading.')
+            : scrollViewRef.scrollToEnd({ animated: true })
         }
       }
     >
       {
         props.alertTimes.map(
-          alert => <TimeInput
+          (
+            alert: {| id: string, time: string, validity: boolean |}
+          ) => <TimeInput
             key = { alert.id.toString() }
             value = { alert.id }
           />
@@ -110,13 +121,7 @@ function TimeInputs (props: Props) {
   )
 }
 
-class Home extends React.Component<Props> {
-  constructor (props) {
-    super(props)
-
-    this.closeTip = this.closeTip.bind(this)
-  }
-
+class Home extends React.Component<ComponentProps> {
   componentDidMount () {
     if (this.props.alertTimes.length === 0) {
       this.props.mutateInput(Shortid.generate(), '', false)
@@ -133,7 +138,7 @@ class Home extends React.Component<Props> {
         alertTimes = { this.props.alertTimes }
         inputHeight = { this.props.inputHeight }
         showTip = { this.props.showTip }
-        closeTip = { this.closeTip }
+        closeTip = { this.closeTip.bind(this) }
       />
     )
   }
