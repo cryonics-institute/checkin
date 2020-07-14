@@ -99,8 +99,8 @@ class TimeInput extends React.Component<ComponentProps, ComponentState> {
     }
   }
 
-  convertTo24Hour = (time) => {
-    const getHourString = (time) => {
+  convertTo24Hour (time: string): number {
+    const getHourString = time => {
       const period = time.slice(-2).toUpperCase()
       const hour = parseInt(time.slice(-8, -6))
 
