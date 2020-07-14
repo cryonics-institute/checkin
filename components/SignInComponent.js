@@ -29,7 +29,7 @@ import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
   from 'react-native'
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { HeaderHeightContext } from '@react-navigation/stack'
+import { useHeaderHeight } from '@react-navigation/stack'
 import { signIn, register } from '../redux/ActionCreators'
 import { colors, styles } from '../styles/Styles'
 
@@ -97,119 +97,109 @@ const mapDispatchToProps = dispatch => (
 
 function SignInView (props: SignInViewProps) {
   const windowHeight: number = useWindowDimensions().height
+  const headerHeight: number = useHeaderHeight()
 
   return (
-    <HeaderHeightContext.Consumer>
-      {
-        headerHeight => (
-          <View
-            style = {
-              {
-                backgroundColor: colors.light,
-                height: windowHeight - headerHeight
-              }
-            }
-          >
-            <KeyboardAvoidingView
-              behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-              style = { styles.containerCentered }
-            >
-              <Input
-                placeholder = 'E-Mail Address'
-                onChangeText = {
-                  (username: string) => props.validateEmail(username)
-                }
-                value = { props.username }
-              />
-              <Text style = { styles.textError }>
-                { props.isUsernameValid ? '' : props.usernameError }
-              </Text>
-              <Input
-                placeholder = 'Password'
-                onChangeText = {
-                  (password: string) => props.validatePassword(password)
-                }
-                value = { props.password }
-              />
-              <Text style={ styles.textError }>
-                { props.isPasswordValid ? '' : props.passwordError }
-              </Text>
-              <Button
-                buttonStyle = { styles.button }
-                disabled = { props.toggleButtonDisabled() }
-                onPress = { () => props.handleSignin() }
-                title = 'Sign In'
-              />
-              <Button
-                onPress = { () => props.toggleRegistration() }
-                title = 'Create Account'
-                titleStyle = { styles.buttonTitleColorDark }
-                type = 'clear'
-              />
-            </KeyboardAvoidingView>
-          </View>
-        )
+    <View
+      style = {
+        {
+          backgroundColor: colors.light,
+          height: windowHeight - headerHeight
+        }
       }
-    </HeaderHeightContext.Consumer>
+    >
+      <KeyboardAvoidingView
+        behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+        style = { styles.containerCentered }
+      >
+        <Input
+          placeholder = 'E-Mail Address'
+          onChangeText = {
+            (username: string) => props.validateEmail(username)
+          }
+          value = { props.username }
+        />
+        <Text style = { styles.textError }>
+          { props.isUsernameValid ? '' : props.usernameError }
+        </Text>
+        <Input
+          placeholder = 'Password'
+          onChangeText = {
+            (password: string) => props.validatePassword(password)
+          }
+          value = { props.password }
+        />
+        <Text style={ styles.textError }>
+          { props.isPasswordValid ? '' : props.passwordError }
+        </Text>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { props.toggleButtonDisabled() }
+          onPress = { () => props.handleSignin() }
+          title = 'Sign In'
+        />
+        <Button
+          onPress = { () => props.toggleRegistration() }
+          title = 'Create Account'
+          titleStyle = { styles.buttonTitleColorDark }
+          type = 'clear'
+        />
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 
 function RegistrationView (props: RegistrationViewProps) {
   const windowHeight: number = useWindowDimensions().height
+  const headerHeight: number = useHeaderHeight()
 
   return (
-    <HeaderHeightContext.Consumer>
-      {
-        headerHeight => (
-          <View
-            style = {
-              {
-                backgroundColor: colors.light,
-                height: windowHeight - headerHeight
-              }
-            }
-          >
-            <KeyboardAvoidingView
-              behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
-              style = { styles.containerCentered }
-            >
-              <Input
-                placeholder = 'E-Mail Address'
-                onChangeText = {
-                  (username: string) => props.validateEmail(username)
-                }
-                value = { props.username }
-              />
-              <Text style={ styles.textError }>
-                { props.isUsernameValid ? '' : props.usernameError }
-              </Text>
-              <Input
-                placeholder = 'Password'
-                onChangeText = {
-                  (password: string) => props.validatePassword(password)
-                }
-                value = { props.password }
-              />
-              <Text style={ styles.textError }>
-                { props.isPasswordValid ? '' : props.passwordError }
-              </Text>
-              <Button
-                buttonStyle = { styles.button }
-                disabled = { props.toggleButtonDisabled() }
-                onPress = { () => props.handleRegistration() }
-                title = 'Create Account'
-              />
-              <Button
-                onPress = { () => props.toggleRegistration() }
-                title = 'Sign In'
-                titleStyle = { styles.buttonTitleColorDark }
-                type = 'clear'
-              />
-            </KeyboardAvoidingView>
-          </View>
-        )
+    <View
+      style = {
+        {
+          backgroundColor: colors.light,
+          height: windowHeight - headerHeight
+        }
       }
-    </HeaderHeightContext.Consumer>
+    >
+      <KeyboardAvoidingView
+        behavior = { Platform.OS === 'ios' ? 'padding' : 'height' }
+        style = { styles.containerCentered }
+      >
+        <Input
+          placeholder = 'E-Mail Address'
+          onChangeText = {
+            (username: string) => props.validateEmail(username)
+          }
+          value = { props.username }
+        />
+        <Text style={ styles.textError }>
+          { props.isUsernameValid ? '' : props.usernameError }
+        </Text>
+        <Input
+          placeholder = 'Password'
+          onChangeText = {
+            (password: string) => props.validatePassword(password)
+          }
+          value = { props.password }
+        />
+        <Text style={ styles.textError }>
+          { props.isPasswordValid ? '' : props.passwordError }
+        </Text>
+        <Button
+          buttonStyle = { styles.button }
+          disabled = { props.toggleButtonDisabled() }
+          onPress = { () => props.handleRegistration() }
+          title = 'Create Account'
+        />
+        <Button
+          onPress = { () => props.toggleRegistration() }
+          title = 'Sign In'
+          titleStyle = { styles.buttonTitleColorDark }
+          type = 'clear'
+        />
+      </KeyboardAvoidingView>
+    </View>
   )
 }
 
