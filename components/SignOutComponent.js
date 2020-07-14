@@ -57,4 +57,4 @@ class SignOut extends React.Component<ComponentProps> {
   }
 }
 
-export default connect(mapDispatchToProps)(SignOut)
+export default connect(null, mapDispatchToProps)(SignOut)
