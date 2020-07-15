@@ -1,5 +1,5 @@
 /**
- * Redux thunk-actions for the project, Check-In.
+ * Redux thunk actions for the project, Check-In.
  *
  * @author Michael David Gill <michaelgill1969@gmail.com>
  * @license
