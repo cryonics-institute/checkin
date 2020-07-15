@@ -79,7 +79,13 @@ type Action = {
   errMess: string//,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'SET_LAST_ALERT_TIME',
+  type: 'SET_LAST_ALERT_TIME_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_LAST_ALERT_TIME_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_LAST_ALERT_TIME_FULFILLED',
   errMess: string,
   lastAlertTime: string
 } | {
