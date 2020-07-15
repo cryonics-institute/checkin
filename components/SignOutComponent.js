@@ -35,9 +35,7 @@ type ComponentProps = {
 }
 
 const mapDispatchToProps = dispatch => (
-  {
-    signOut: () => dispatch(signOut())
-  }
+  { signOut: () => dispatch(signOut()) }
 )
 
 class SignOut extends React.Component<ComponentProps> {

@@ -61,9 +61,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = dispatch => (
-  {
-    addBuddy: (email: string) => dispatch(addBuddy(email))
-  }
+  { addBuddy: (email: string) => dispatch(addBuddy(email)) }
 )
 
 function BuddySelectionView (props: ViewProps) {
