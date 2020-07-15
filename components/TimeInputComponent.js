@@ -31,7 +31,7 @@ import { Icon, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import * as Shortid from 'shortid'
 import { mutateInput, removeInput, setInputParameters }
-  from '../redux/ActionCreators'
+  from '../redux/ActionThunks'
 import { colors, styles } from '../styles/Styles'
 
 type ComponentProps = {

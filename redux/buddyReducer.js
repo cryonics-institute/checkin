@@ -121,10 +121,22 @@ export const Buddy = (
         snooze: action.payload[4]
       }
 
-    // TODO: Shouldn't this be fleshed out to requested/rejected/fulfilled?
-    case ActionTypes.SET_LAST_ALERT_TIME:
+    case ActionTypes.SET_LAST_ALERT_TIME_REQUESTED:
       return {
         ...state,
+        errMess: ''
+      }
+
+    case ActionTypes.SET_LAST_ALERT_TIME_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SET_LAST_ALERT_TIME_FULFILLED:
+      return {
+        ...state,
+        errMess: '',
         lastAlertTime: action.payload
       }
 

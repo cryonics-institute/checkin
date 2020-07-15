@@ -27,7 +27,7 @@ import { ActivityIndicator, StatusBar, View } from 'react-native'
 import { Text } from 'react-native-elements'
 import { connect, useSelector } from 'react-redux'
 import moment from 'moment'
-import { setListener } from '../redux/ActionCreators'
+import { setListener } from '../redux/ActionThunks'
 import { styles } from '../styles/Styles'
 
 type ComponentProps = {
