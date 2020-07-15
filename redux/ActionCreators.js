@@ -391,7 +391,7 @@ export const setInputParametersFulfilled = (height) => (
 )
 
 /**
- * Initiate an action to set a listener for buddy check-ins.
+ * Initiate an action to set the last alert time.
  */
 export const setLastAlertTimeRequested = () => (
   {
@@ -400,7 +400,7 @@ export const setLastAlertTimeRequested = () => (
 )
 
 /**
- * Initiate an error indicating that the listener was not set.
+ * Initiate an error indicating that the last alert time was not set.
  * @param  {Error} errorMessage Message describing the listening failure.
  */
 export const setLastAlertTimeRejected = (message) => (
