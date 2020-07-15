@@ -30,28 +30,28 @@ type State = {
 }
 
 type Action = {
-  type: 'REGISTRATION_REQUESTED'
+  type: typeof ActionTypes.REGISTRATION_REQUESTED
 } | {
-  type: 'REGISTRATION_REJECTED',
+  type: typeof ActionTypes.REGISTRATION_REJECTED,
   payload: string
 } | {
-  type: 'REGISTRATION_FULFILLED',
+  type: typeof ActionTypes.REGISTRATION_FULFILLED,
   payload: { user: Object }
 } | {
-  type: 'SIGNIN_REQUESTED'
+  type: typeof ActionTypes.SIGNIN_REQUESTED
 } | {
-  type: 'SIGNIN_REJECTED',
+  type: typeof ActionTypes.SIGNIN_REJECTED,
   payload: string
 } | {
-  type: 'SIGNIN_FULFILLED',
+  type: typeof ActionTypes.SIGNIN_FULFILLED,
   payload: { user: Object }
 } | {
-  type: 'SIGNOUT_REQUESTED'
+  type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
-  type: 'SIGNOUT_REJECTED',
+  type: typeof ActionTypes.SIGNOUT_REJECTED,
   payload: string
 } | {
-  type: 'SIGNOUT_FULFILLED'
+  type: typeof ActionTypes.SIGNOUT_FULFILLED
 }
 
 export const Auth = (
