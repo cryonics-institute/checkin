@@ -60,8 +60,15 @@ type Action = {
   isAdded: boolean,
   snooze: number
 } | {
-  type: 'SET_LAST_ALERT_TIME',
-  lastAlertTime: string,
+  type: 'SET_LAST_ALERT_TIME_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_LAST_ALERT_TIME_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_LAST_ALERT_TIME_FULFILLED',
+  errMess: string,
+  lastAlertTime: string
 }
 
 export const Buddy = (
