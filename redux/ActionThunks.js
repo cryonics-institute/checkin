@@ -27,6 +27,19 @@ import db from '@react-native-firebase/firestore'
 import * as ActionCreators from './ActionCreators'
 
 /**
+ * Helper function that checks whether an object exists or not.
+ * @param  {Object} object  Any object that can be undefined or null.
+ * @return {boolean}        True or false.
+ */
+const exists = (object) => {
+  if (typeof object !== 'undefined' && object !== null) {
+    return true
+  } else {
+    return false
+  }
+}
+
+/**
  * Add a buddy to be be tracked by the current user.  First, a setListener
  * action creator is called with the buddy's e-mail.  After that promise is
  * returned, an action for add-buddy-fulfillment is initiated.
@@ -72,13 +85,15 @@ export const addDocument = (email) => (dispatch, getState) => {
 
           const deviceToken = getState().device.token
           let deviceTokens = doc.data().deviceTokens
-          if (typeof deviceTokens === 'undefined' || deviceTokens === null) {
+          if (exists(deviceTokens)) {
+            if (!deviceTokens.includes(deviceToken)) {
+              deviceTokens.push(deviceToken)
+            }
+          } else {
             deviceTokens = [deviceToken]
-          } else if (!deviceTokens.includes(deviceToken)) {
-            deviceTokens.push(deviceToken)
           }
 
-          if (typeof doc.data().subscribers !== 'undefined') {
+          if (exists(doc.data().subscribers)) {
             return db().collection('users').doc(email).set(
               {
                 alertTimes: getState().inputs.alertTimes,
@@ -193,7 +208,7 @@ export const getDocument = (email) => (dispatch, getState) => {
         if (doc.exists) {
           console.log('Document exists!')
 
-          if (typeof doc.data().subscribers !== 'undefined') {
+          if (exists(doc.data().subscribers)) {
             console.log('Subscriber defined!')
           } else {
             console.log('Subscriber undefined!')
@@ -217,8 +232,8 @@ export const getDocument = (email) => (dispatch, getState) => {
 
           const uid = getState().auth.user.uid
           if (
-            typeof doc.data().subscribers !== 'undefined' &&
-            typeof doc.data().subscribers[uid] !== 'undefined'
+            exists(doc.data().subscribers) &&
+            exists(doc.data().subscribers[uid])
           ) {
             console.log('Subscriber defined!')
             const token = getState().device.token
@@ -257,7 +272,9 @@ export const getDocument = (email) => (dispatch, getState) => {
           return [
             true,
             doc.data().alertTimes,
-            doc.data().checkinInterval,
+            exists(doc.data().checkinInterval)
+              ? doc.data().checkinInterval
+              : 0,
             doc.data().checkinTime,
             doc.data().snooze
           ]
