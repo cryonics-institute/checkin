@@ -26,7 +26,7 @@ import * as ActionTypes from './ActionTypes'
 
 type State = {
   // +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  +checkinInterval: number,
+  checkinInterval: ?number,
   +checkinTime: string,
   +errMess: string,
   +isSignedIn: boolean,
@@ -117,7 +117,7 @@ type Action = {
 } | {
   type: 'SIGNOUT_FULFILLED',
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  checkinInterval: number,
+  checkinInterval: ?number,
   checkinTime: string,
   errMess: string,
   isSignedIn: boolean,

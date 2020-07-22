@@ -26,11 +26,11 @@ import * as ActionTypes from './ActionTypes'
 
 type State = {
   +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  +checkinInterval: number,
+  checkinInterval: ?number,
   +checkinTime: string,
   +email: string,
   +errMess: string,
-  +isAdded: boolean,
+  isAdded: ?boolean,
   +lastAlertTime: string,
   +snooze: number
 }
@@ -50,14 +50,14 @@ type Action = {
 } | {
   type: 'GET_DOCUMENT_REJECTED',
   errMess: string,
-  isAdded: boolean
+  isAdded: ?boolean
 } | {
   type: 'GET_DOCUMENT_FULFILLED',
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  checkinInterval: number,
+  checkinInterval: ?number,
   checkinTime: string,
   errMess: string,
-  isAdded: boolean,
+  isAdded: ?boolean,
   snooze: number
 } | {
   type: 'SET_LAST_ALERT_TIME_REQUESTED',
