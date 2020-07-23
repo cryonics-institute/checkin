@@ -1,2 +1,3 @@
-node_modules/
-package-lock.json
+# Standard Exclusions from `firebase init`
+
+node_modules/%
