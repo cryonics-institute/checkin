@@ -684,7 +684,13 @@ export const setListener = (email, isTest = false) => (dispatch, getState) => {
       }
     )
     .then(
-      listener => dispatch(ActionCreators.setListenerFulfilled(listener)),
+      listener => exists(listener)
+        ? dispatch(
+          ActionCreators.setListenerFulfilled(
+            getState().listeners.concat(listener)
+          )
+        )
+        : dispatch(ActionCreators.setListenerFulfilled(getState().listeners)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage

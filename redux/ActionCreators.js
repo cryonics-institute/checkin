@@ -452,10 +452,10 @@ export const setListenerRejected = (errorMessage) => (
  * Initiate an action indicating that the new-user registration has completed.
  * @param {Promise} listener  A promise to set another listener after a timeout.
  */
-export const setListenerFulfilled = (listener) => (
+export const setListenerFulfilled = (listeners) => (
   {
     type: ActionTypes.SET_LISTENER_FULFILLED,
-    listener: listener
+    listeners: listeners
   }
 )
 

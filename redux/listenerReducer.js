@@ -49,7 +49,7 @@ type Action = {
 } | {
   type: 'SET_LISTENER_FULFILLED',
   errorMessage: string,
-  interval: Array<number>
+  listeners: Array<number>
 } | {
   type: 'SET_LISTENER_INTERVAL_REQUESTED',
   errorMessage: string
@@ -106,9 +106,7 @@ export const Listener = (
       return {
         ...state,
         errorMessage: '',
-        listeners: action.interval
-          ? state.listeners.concat(action.interval)
-          : state.listeners
+        listeners: action.listeners
       }
 
     case ActionTypes.SET_LISTENER_INTERVAL_REQUESTED:
