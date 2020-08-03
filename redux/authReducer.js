@@ -25,7 +25,7 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +errMess: string,
+  +errorMessage: string,
   +user: Object
 }
 
@@ -56,7 +56,7 @@ type Action = {
 
 export const Auth = (
   state: State = {
-    errMess: '',
+    errorMessage: '',
     user: null
   },
   action: Action
@@ -65,57 +65,57 @@ export const Auth = (
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.REGISTRATION_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         user: action.payload.user
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         user: action.payload.user
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         user: null
       }
 

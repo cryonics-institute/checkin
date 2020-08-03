@@ -26,61 +26,61 @@ import * as ActionTypes from './ActionTypes'
 
 type State = {
   +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  +errMess: string,
+  +errorMessage: string,
   +height: number,
   +showTip: boolean
 }
 
 type Action = {
   type: 'HIDE_TIP_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'HIDE_TIP_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'HIDE_TIP_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   showTip: boolean
 } | {
   type: 'MUTATE_INPUTS_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'MUTATE_INPUTS_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'MUTATE_INPUTS_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
   type: 'REMOVE_INPUTS_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'REMOVE_INPUTS_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'REMOVE_INPUTS_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
   type: 'SET_INPUT_PARAMETERS_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SET_INPUT_PARAMETERS_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SET_INPUT_PARAMETERS_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   height: number
 } | {
   type: 'SIGNOUT_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SIGNOUT_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SIGNOUT_FULFILLED',
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  errMess: string,
+  errorMessage: string,
   height: number,
   showTip: boolean
 }
@@ -88,7 +88,7 @@ type Action = {
 export const Inputs = (
   state: State = {
     alertTimes: [],
-    errMess: '',
+    errorMessage: '',
     height: null,
     showTip: true
   },
@@ -98,96 +98,96 @@ export const Inputs = (
     case ActionTypes.HIDE_TIP_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.HIDE_TIP_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.HIDE_TIP_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         showTip: false
       }
 
     case ActionTypes.MUTATE_INPUTS_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.MUTATE_INPUTS_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.MUTATE_INPUTS_FULFILLED:
       return {
         ...state,
         alertTimes: action.payload,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.REMOVE_INPUTS_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.REMOVE_INPUTS_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.REMOVE_INPUTS_FULFILLED:
       return {
         ...state,
         alertTimes: action.payload,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SET_INPUT_PARAMETERS_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SET_INPUT_PARAMETERS_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.SET_INPUT_PARAMETERS_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         height: action.payload
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
         alertTimes: [],
-        errMess: '',
+        errorMessage: '',
         height: null,
         showTip: true
       }

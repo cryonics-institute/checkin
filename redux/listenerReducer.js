@@ -25,46 +25,46 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +errMess: string,
+  +errorMessage: string,
   +interval: number,
   +listeners: Array<number>
 }
 
 type Action = {
   type: 'REMOVE_LISTENERS_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'REMOVE_LISTENERS_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'REMOVE_LISTENERS_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   listeners: Array<number>
 } | {
   type: 'SET_LISTENER_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SET_LISTENER_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SET_LISTENER_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   listeners: Array<number>
 } | {
   type: 'SET_LISTENER_INTERVAL_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SET_LISTENER_INTERVAL_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SET_LISTENER_INTERVAL_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   interval: number
 }
 
 export const Listener = (
   state: State = {
-    errMess: '',
+    errorMessage: '',
     listeners: []
   },
   action: Action
@@ -73,38 +73,38 @@ export const Listener = (
     case ActionTypes.REMOVE_LISTENERS_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.REMOVE_LISTENERS_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.REMOVE_LISTENERS_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         listeners: []
       }
 
     case ActionTypes.SET_LISTENER_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SET_LISTENER_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.SET_LISTENER_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         listeners: action.payload
           ? state.listeners.concat(action.payload)
           : state.listeners
@@ -113,19 +113,19 @@ export const Listener = (
     case ActionTypes.SET_LISTENER_INTERVAL_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SET_LISTENER_INTERVAL_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.SET_LISTENER_INTERVAL_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         interval: action.payload
       }
 

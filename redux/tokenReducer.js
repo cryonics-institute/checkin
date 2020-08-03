@@ -25,49 +25,49 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +errMess: string,
+  +errorMessage: string,
   +username: string,
   +password: string
 }
 
 type Action = {
   type: 'REGISTRATION_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'REGISTRATION_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'REGISTRATION_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   username: string,
   password: string
 } | {
   type: 'SIGNIN_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SIGNIN_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SIGNIN_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   username: string,
   password: string
 } | {
   type: 'SIGNOUT_REQUESTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SIGNOUT_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'SIGNOUT_FULFILLED',
-  errMess: string,
+  errorMessage: string,
   username: string,
   password: string
 }
 
 export const Token = (
   state: State = {
-    errMess: '',
+    errorMessage: '',
     username: '',
     password: ''
   },
@@ -77,19 +77,19 @@ export const Token = (
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.REGISTRATION_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         username: action.payload.creds.username,
         password: action.payload.creds.password
       }
@@ -97,19 +97,19 @@ export const Token = (
     case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         username: action.payload.creds.username,
         password: action.payload.creds.password
       }
@@ -117,19 +117,19 @@ export const Token = (
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.payload
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         username: '',
         password: ''
       }
