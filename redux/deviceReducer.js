@@ -38,7 +38,7 @@ type Action = {
 } | {
   type: 'INITIALIZE_STORE_FULFILLED',
   errorMessage: string,
-  token: string
+  deviceToken: string
 }
 
 export const Device = (
@@ -65,7 +65,7 @@ export const Device = (
       return {
         ...state,
         errorMessage: '',
-        token: action.payload
+        token: action.deviceToken
       }
 
     default:
