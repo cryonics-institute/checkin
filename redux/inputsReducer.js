@@ -50,7 +50,7 @@ type Action = {
 } | {
   type: 'MUTATE_INPUTS_FULFILLED',
   errorMessage: string,
-  alertTimes: Array<{| id: string, time: string, validity: boolean |}>
+  inputs: Array<{| id: string, time: string, validity: boolean |}>
 } | {
   type: 'REMOVE_INPUTS_REQUESTED',
   errorMessage: string
@@ -60,7 +60,7 @@ type Action = {
 } | {
   type: 'REMOVE_INPUTS_FULFILLED',
   errorMessage: string,
-  alertTimes: Array<{| id: string, time: string, validity: boolean |}>
+  inputs: Array<{| id: string, time: string, validity: boolean |}>
 } | {
   type: 'SET_INPUT_PARAMETERS_REQUESTED',
   errorMessage: string
