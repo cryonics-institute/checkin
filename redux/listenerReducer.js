@@ -65,6 +65,7 @@ type Action = {
 export const Listener = (
   state: State = {
     errorMessage: '',
+    interval: 0,
     listeners: []
   },
   action: Action
@@ -126,7 +127,7 @@ export const Listener = (
       return {
         ...state,
         errorMessage: '',
-        interval: action.payload
+        interval: action.interval
       }
 
     default:
