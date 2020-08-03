@@ -104,7 +104,7 @@ export const Inputs = (
     case ActionTypes.HIDE_TIP_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.HIDE_TIP_FULFILLED:
@@ -123,13 +123,13 @@ export const Inputs = (
     case ActionTypes.MUTATE_INPUTS_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.MUTATE_INPUTS_FULFILLED:
       return {
         ...state,
-        alertTimes: action.payload,
+        alertTimes: action.inputs,
         errorMessage: ''
       }
 
@@ -142,13 +142,13 @@ export const Inputs = (
     case ActionTypes.REMOVE_INPUTS_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.REMOVE_INPUTS_FULFILLED:
       return {
         ...state,
-        alertTimes: action.payload,
+        alertTimes: action.inputs,
         errorMessage: ''
       }
 
@@ -161,14 +161,14 @@ export const Inputs = (
     case ActionTypes.SET_INPUT_PARAMETERS_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_INPUT_PARAMETERS_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        height: action.payload
+        height: action.height
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
@@ -180,7 +180,7 @@ export const Inputs = (
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
