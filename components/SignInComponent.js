@@ -30,7 +30,7 @@ import { KeyboardAvoidingView, Platform, View, useWindowDimensions }
 import { Button, Input, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { useHeaderHeight } from '@react-navigation/stack'
-import { signIn, register } from '../redux/ActionCreators'
+import { signIn, register } from '../redux/ActionThunks'
 import { colors, styles } from '../styles/Styles'
 
 type ComponentProps = {

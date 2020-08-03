@@ -26,42 +26,43 @@ import * as ActionTypes from './ActionTypes'
 
 type State = {
   +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  +checkinInterval: number,
+  checkinInterval: ?number,
   +checkinTime: string,
   +email: string,
-  +errMess: string,
-  +isAdded: boolean,
+  +errorMessage: string,
+  isAdded: ?boolean,
   +lastAlertTime: string,
   +snooze: number
 }
 
 type Action = {
-  type: 'ADD_BUDDY_REQUESTED',
-  errMess: string
+  type: 'ADD_BUDDY_REQUESTED'
 } | {
   type: 'ADD_BUDDY_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'ADD_BUDDY_FULFILLED',
-  errMess: string
+  email: string
 } | {
-  type: 'GET_DOCUMENT_REQUESTED',
-  errMess: string
+  type: 'GET_DOCUMENT_REQUESTED'
 } | {
   type: 'GET_DOCUMENT_REJECTED',
-  errMess: string,
-  isAdded: boolean
+  errorMessage: string
 } | {
   type: 'GET_DOCUMENT_FULFILLED',
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  checkinInterval: number,
+  checkinInterval: ?number,
   checkinTime: string,
-  errMess: string,
-  isAdded: boolean,
+  isAdded: ?boolean,
   snooze: number
 } | {
-  type: 'SET_LAST_ALERT_TIME',
-  lastAlertTime: string,
+  type: 'SET_LAST_ALERT_TIME_REQUESTED'
+} | {
+  type: 'SET_LAST_ALERT_TIME_REJECTED',
+  errorMessage: string
+} | {
+  type: 'SET_LAST_ALERT_TIME_FULFILLED',
+  lastAlertTime: string
 }
 
 export const Buddy = (
@@ -70,62 +71,74 @@ export const Buddy = (
     checkinInterval: null,
     checkinTime: '',
     email: '',
-    errMess: '',
+    errorMessage: '',
     isAdded: null,
     lastAlertTime: '',
     snooze: 9
   },
   action: Action
-) => {
+): State => {
   switch (action.type) {
     case ActionTypes.ADD_BUDDY_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        email: ''
       }
 
     case ActionTypes.ADD_BUDDY_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.ADD_BUDDY_FULFILLED:
       return {
         ...state,
-        email: action.payload,
-        errMess: ''
+        email: action.email,
+        errorMessage: ''
       }
 
     case ActionTypes.GET_DOCUMENT_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.GET_DOCUMENT_REJECTED:
       return {
         ...state,
-        errMess: action.payload,
+        errorMessage: action.errorMessage,
         isAdded: false
       }
 
     case ActionTypes.GET_DOCUMENT_FULFILLED:
       return {
         ...state,
-        alertTimes: action.payload[1],
-        checkinInterval: action.payload[2],
-        checkinTime: action.payload[3],
-        errMess: '',
-        isAdded: action.payload[0],
-        snooze: action.payload[4]
+        alertTimes: action.alertTimes,
+        checkinInterval: action.checkinInterval,
+        checkinTime: action.checkinTime,
+        errorMessage: '',
+        isAdded: action.isAdded,
+        snooze: action.snooze
       }
 
-    // TODO: Shouldn't this be fleshed out to requested/rejected/fulfilled?
-    case ActionTypes.SET_LAST_ALERT_TIME:
+    case ActionTypes.SET_LAST_ALERT_TIME_REQUESTED:
       return {
         ...state,
-        lastAlertTime: action.payload
+        errorMessage: ''
+      }
+
+    case ActionTypes.SET_LAST_ALERT_TIME_REJECTED:
+      return {
+        ...state,
+        errorMessage: action.errorMessage
+      }
+
+    case ActionTypes.SET_LAST_ALERT_TIME_FULFILLED:
+      return {
+        ...state,
+        errorMessage: '',
+        lastAlertTime: action.lastAlertTime
       }
 
     default:

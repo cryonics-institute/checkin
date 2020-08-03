@@ -26,7 +26,7 @@ import * as ActionTypes from './ActionTypes'
 
 type State = {
   // +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  +checkinInterval: number,
+  checkinInterval: ?number,
   +checkinTime: string,
   +errMess: string,
   +isSignedIn: boolean,
@@ -79,7 +79,13 @@ type Action = {
   errMess: string//,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'SET_LAST_ALERT_TIME',
+  type: 'SET_LAST_ALERT_TIME_REQUESTED',
+  errMess: string
+} | {
+  type: 'SET_LAST_ALERT_TIME_REJECTED',
+  errMess: string
+} | {
+  type: 'SET_LAST_ALERT_TIME_FULFILLED',
   errMess: string,
   lastAlertTime: string
 } | {
@@ -111,7 +117,7 @@ type Action = {
 } | {
   type: 'SIGNOUT_FULFILLED',
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  checkinInterval: number,
+  checkinInterval: ?number,
   checkinTime: string,
   errMess: string,
   isSignedIn: boolean,
@@ -214,8 +220,19 @@ export const User = (
       //     errMess: ''
       //   }
 
-    // TODO: Shouldn't this be fleshed out to requested/rejected/fulfilled?
-    case ActionTypes.SET_LAST_ALERT_TIME:
+    case ActionTypes.SET_LAST_ALERT_TIME_REQUESTED:
+      return {
+        ...state,
+        errMess: ''
+      }
+
+    case ActionTypes.SET_LAST_ALERT_TIME_REJECTED:
+      return {
+        ...state,
+        errMess: action.payload
+      }
+
+    case ActionTypes.SET_LAST_ALERT_TIME_FULFILLED:
       return {
         ...state,
         errMess: '',

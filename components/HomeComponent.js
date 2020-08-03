@@ -30,7 +30,7 @@ import { ScrollView, View } from 'react-native'
 import { Icon, Text } from 'react-native-elements'
 import { connect } from 'react-redux'
 import * as Shortid from 'shortid'
-import { hideTip, mutateInput, setSnooze } from '../redux/ActionCreators'
+import { hideTip, mutateInput, setSnooze } from '../redux/ActionThunks'
 import { colors, styles } from '../styles/Styles'
 import TimeInput from './TimeInputComponent'
 

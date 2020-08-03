@@ -27,7 +27,7 @@
 import * as React from 'react'
 import { Button } from 'react-native-elements'
 import { connect } from 'react-redux'
-import { signOut } from '../redux/ActionCreators'
+import { signOut } from '../redux/ActionThunks'
 import { styles } from '../styles/Styles'
 
 type ComponentProps = {
@@ -35,9 +35,7 @@ type ComponentProps = {
 }
 
 const mapDispatchToProps = dispatch => (
-  {
-    signOut: () => dispatch(signOut())
-  }
+  { signOut: () => dispatch(signOut()) }
 )
 
 class SignOut extends React.Component<ComponentProps> {
