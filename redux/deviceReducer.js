@@ -34,7 +34,7 @@ type Action = {
   errMess: string
 } | {
   type: 'INITIALIZE_STORE_REJECTED',
-  errMess: string
+  errorMessage: string
 } | {
   type: 'INITIALIZE_STORE_FULFILLED',
   errMess: string,
@@ -58,7 +58,7 @@ export const Device = (
     case ActionTypes.INITIALIZE_STORE_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errMess: action.errorMessage
       }
 
     case ActionTypes.INITIALIZE_STORE_FULFILLED:
