@@ -80,7 +80,7 @@ export const Listener = (
     case ActionTypes.REMOVE_LISTENERS_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.REMOVE_LISTENERS_FULFILLED:
@@ -99,7 +99,7 @@ export const Listener = (
     case ActionTypes.SET_LISTENER_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_LISTENER_FULFILLED:
@@ -120,7 +120,7 @@ export const Listener = (
     case ActionTypes.SET_LISTENER_INTERVAL_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_LISTENER_INTERVAL_FULFILLED:
