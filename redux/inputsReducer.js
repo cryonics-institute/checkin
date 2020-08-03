@@ -89,7 +89,7 @@ export const Inputs = (
   state: State = {
     alertTimes: [],
     errorMessage: '',
-    height: null,
+    height: 0,
     showTip: true
   },
   action: Action
