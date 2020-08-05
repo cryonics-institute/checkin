@@ -443,25 +443,27 @@ export const register = (creds) => (dispatch, getState) => {
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
-      userCredential => dispatch(addDocument(userCredential.user.email)),
+      userCredential => {
+        dispatch(addDocument(userCredential.user.email))
+        return userCredential
+      },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      () => dispatch(checkin()),
+      userCredential => {
+        dispatch(checkin())
+        return userCredential
+      },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      userCredential => dispatch(
-        ActionCreators.registrationFulfilled(
-          { user: userCredential.user, creds: creds }
-        )
-      ),
+      userCredential => dispatch(ActionCreators.registrationFulfilled(creds)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage

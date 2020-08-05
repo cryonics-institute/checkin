@@ -39,8 +39,7 @@ type Action = {
 } | {
   type: 'REGISTRATION_FULFILLED',
   errorMessage: string,
-  username: string,
-  password: string
+  userCredential: {| username: string, password: string |}
 } | {
   type: 'SIGNIN_REQUESTED',
   errorMessage: string
@@ -50,8 +49,7 @@ type Action = {
 } | {
   type: 'SIGNIN_FULFILLED',
   errorMessage: string,
-  username: string,
-  password: string
+  userCredential: {| username: string, password: string |}
 } | {
   type: 'SIGNOUT_REQUESTED',
   errorMessage: string
@@ -60,9 +58,7 @@ type Action = {
   errorMessage: string
 } | {
   type: 'SIGNOUT_FULFILLED',
-  errorMessage: string,
-  username: string,
-  password: string
+  errorMessage: string
 }
 
 export const Token = (
@@ -83,15 +79,15 @@ export const Token = (
     case ActionTypes.REGISTRATION_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        username: action.payload.creds.username,
-        password: action.payload.creds.password
+        username: action.userCredential.username,
+        password: action.userCredential.password
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
@@ -103,15 +99,15 @@ export const Token = (
     case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        username: action.payload.creds.username,
-        password: action.payload.creds.password
+        username: action.userCredential.username,
+        password: action.userCredential.password
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
@@ -123,7 +119,7 @@ export const Token = (
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
