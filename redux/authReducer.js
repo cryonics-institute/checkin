@@ -25,7 +25,7 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +errMess: string,
+  +errorMessage: string,
   +user: Object
 }
 
@@ -33,30 +33,30 @@ type Action = {
   type: typeof ActionTypes.REGISTRATION_REQUESTED
 } | {
   type: typeof ActionTypes.REGISTRATION_REJECTED,
-  payload: string
+  errorMessage: string
 } | {
   type: typeof ActionTypes.REGISTRATION_FULFILLED,
-  payload: { user: Object }
+  user: { user: Object }
 } | {
   type: typeof ActionTypes.SIGNIN_REQUESTED
 } | {
   type: typeof ActionTypes.SIGNIN_REJECTED,
-  payload: string
+  errorMessage: string
 } | {
   type: typeof ActionTypes.SIGNIN_FULFILLED,
-  payload: { user: Object }
+  user: { user: Object }
 } | {
   type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
   type: typeof ActionTypes.SIGNOUT_REJECTED,
-  payload: string
+  errorMessage: string
 } | {
   type: typeof ActionTypes.SIGNOUT_FULFILLED
 }
 
 export const Auth = (
   state: State = {
-    errMess: '',
+    errorMessage: '',
     user: null
   },
   action: Action
@@ -65,57 +65,57 @@ export const Auth = (
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.REGISTRATION_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
-        errMess: '',
-        user: action.payload.user
+        errorMessage: '',
+        user: action.user
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
-        errMess: '',
-        user: action.payload.user
+        errorMessage: '',
+        user: action.user
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         user: null
       }
 

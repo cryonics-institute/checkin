@@ -443,25 +443,27 @@ export const register = (creds) => (dispatch, getState) => {
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
     .then(
-      userCredential => dispatch(addDocument(userCredential.user.email)),
+      userCredential => {
+        dispatch(addDocument(userCredential.user.email))
+        return userCredential
+      },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      () => dispatch(checkin()),
+      userCredential => {
+        dispatch(checkin())
+        return userCredential
+      },
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
       }
     )
     .then(
-      userCredential => dispatch(
-        ActionCreators.registrationFulfilled(
-          { user: userCredential.user, creds: creds }
-        )
-      ),
+      userCredential => dispatch(ActionCreators.registrationFulfilled(creds)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -684,7 +686,13 @@ export const setListener = (email, isTest = false) => (dispatch, getState) => {
       }
     )
     .then(
-      listener => dispatch(ActionCreators.setListenerFulfilled(listener)),
+      listener => exists(listener)
+        ? dispatch(
+          ActionCreators.setListenerFulfilled(
+            getState().listeners.concat(listener)
+          )
+        )
+        : dispatch(ActionCreators.setListenerFulfilled(getState().listeners)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -915,7 +923,13 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
       }
     )
     .then(
-      timer => dispatch(ActionCreators.setTimerFulfilled(timer)),
+      timer => exists(timer)
+        ? dispatch(
+          ActionCreators.setTimerFulfilled(
+            getState().timers.concat(timer)
+          )
+        )
+        : dispatch(ActionCreators.setTimerFulfilled(getState().timers)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage

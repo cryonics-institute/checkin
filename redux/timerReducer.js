@@ -25,109 +25,101 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +errMess: string,
+  +errorMessage: string,
   +interval: number,
   +timers: Array<number>
 }
 
 type Action = {
-  type: 'SET_TIMER_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.REMOVE_TIMERS_REQUESTED
 } | {
-  type: 'SET_TIMER_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.REMOVE_TIMERS_REJECTED,
+  errorMessage: string
 } | {
-  type: 'SET_TIMER_FULFILLED',
-  errMess: string,
+  type: typeof ActionTypes.REMOVE_TIMERS_FULFILLED,
   timers: Array<number>
 } | {
-  type: 'SET_TIMER_INTERVAL_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.SET_TIMER_REQUESTED
 } | {
-  type: 'SET_TIMER_INTERVAL_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.SET_TIMER_REJECTED,
+  errorMessage: string
 } | {
-  type: 'SET_TIMER_INTERVAL_FULFILLED',
-  errMess: string,
+  type: typeof ActionTypes.SET_TIMER_FULFILLED,
+  timers: Array<number>
+} | {
+  type: typeof ActionTypes.SET_TIMER_INTERVAL_REQUESTED
+} | {
+  type: typeof ActionTypes.SET_TIMER_INTERVAL_REJECTED,
+  errorMessage: string
+} | {
+  type: typeof ActionTypes.SET_TIMER_INTERVAL_FULFILLED,
   interval: number
-} | {
-  type: 'REMOVE_TIMERS_REQUESTED',
-  errMess: string
-} | {
-  type: 'REMOVE_TIMERS_REJECTED',
-  errMess: string
-} | {
-  type: 'REMOVE_TIMERS_FULFILLED',
-  errMess: string,
-  timers: Array<number>
 }
 
 export const Timer = (
   state: State = {
-    errMess: '',
-    interval: null,
+    errorMessage: '',
+    interval: 0,
     timers: []
   },
   action: Action
 ) => {
   switch (action.type) {
-    case ActionTypes.SET_TIMER_REQUESTED:
-      return {
-        ...state,
-        errMess: ''
-      }
-
-    case ActionTypes.SET_TIMER_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.SET_TIMER_FULFILLED:
-      return {
-        ...state,
-        errMess: '',
-        timers: action.payload
-          ? state.timers.concat(action.payload)
-          : state.timers
-      }
-
-    case ActionTypes.SET_TIMER_INTERVAL_REQUESTED:
-      return {
-        ...state,
-        errMess: ''
-      }
-
-    case ActionTypes.SET_TIMER_INTERVAL_REJECTED:
-      return {
-        ...state,
-        errMess: action.payload
-      }
-
-    case ActionTypes.SET_TIMER_INTERVAL_FULFILLED:
-      return {
-        ...state,
-        errMess: '',
-        interval: action.payload
-      }
-
     case ActionTypes.REMOVE_TIMERS_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.REMOVE_TIMERS_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.REMOVE_TIMERS_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         timers: []
+      }
+
+    case ActionTypes.SET_TIMER_REQUESTED:
+      return {
+        ...state,
+        errorMessage: ''
+      }
+
+    case ActionTypes.SET_TIMER_REJECTED:
+      return {
+        ...state,
+        errorMessage: action.errorMessage
+      }
+
+    case ActionTypes.SET_TIMER_FULFILLED:
+      return {
+        ...state,
+        errorMessage: '',
+        timers: action.timers
+      }
+
+    case ActionTypes.SET_TIMER_INTERVAL_REQUESTED:
+      return {
+        ...state,
+        errorMessage: ''
+      }
+
+    case ActionTypes.SET_TIMER_INTERVAL_REJECTED:
+      return {
+        ...state,
+        errorMessage: action.errorMessage
+      }
+
+    case ActionTypes.SET_TIMER_INTERVAL_FULFILLED:
+      return {
+        ...state,
+        errorMessage: '',
+        interval: action.interval
       }
 
     default:

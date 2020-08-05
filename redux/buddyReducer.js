@@ -36,32 +36,32 @@ type State = {
 }
 
 type Action = {
-  type: 'ADD_BUDDY_REQUESTED'
+  type: typeof ActionTypes.ADD_BUDDY_REQUESTED
 } | {
-  type: 'ADD_BUDDY_REJECTED',
+  type: typeof ActionTypes.ADD_BUDDY_REJECTED,
   errorMessage: string
 } | {
-  type: 'ADD_BUDDY_FULFILLED',
+  type: typeof ActionTypes.ADD_BUDDY_FULFILLED,
   email: string
 } | {
-  type: 'GET_DOCUMENT_REQUESTED'
+  type: typeof ActionTypes.GET_DOCUMENT_REQUESTED
 } | {
-  type: 'GET_DOCUMENT_REJECTED',
+  type: typeof ActionTypes.GET_DOCUMENT_REJECTED,
   errorMessage: string
 } | {
-  type: 'GET_DOCUMENT_FULFILLED',
+  type: typeof ActionTypes.GET_DOCUMENT_FULFILLED,
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   checkinInterval: ?number,
   checkinTime: string,
   isAdded: ?boolean,
   snooze: number
 } | {
-  type: 'SET_LAST_ALERT_TIME_REQUESTED'
+  type: typeof ActionTypes.SET_LAST_ALERT_TIME_REQUESTED
 } | {
-  type: 'SET_LAST_ALERT_TIME_REJECTED',
+  type: typeof ActionTypes.SET_LAST_ALERT_TIME_REJECTED,
   errorMessage: string
 } | {
-  type: 'SET_LAST_ALERT_TIME_FULFILLED',
+  type: typeof ActionTypes.SET_LAST_ALERT_TIME_FULFILLED,
   lastAlertTime: string
 }
 

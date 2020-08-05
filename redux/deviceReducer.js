@@ -25,25 +25,23 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +errMess: string,
+  +errorMessage: string,
   +token: string
 }
 
 type Action = {
-  type: 'INITIALIZE_STORE_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.INITIALIZE_STORE_REQUESTED
 } | {
-  type: 'INITIALIZE_STORE_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.INITIALIZE_STORE_REJECTED,
+  errorMessage: string
 } | {
-  type: 'INITIALIZE_STORE_FULFILLED',
-  errMess: string,
-  token: string
+  type: typeof ActionTypes.INITIALIZE_STORE_FULFILLED,
+  deviceToken: string
 }
 
 export const Device = (
   state: State = {
-    errMess: '',
+    errorMessage: '',
     token: ''
   },
   action: Action
@@ -52,20 +50,20 @@ export const Device = (
     case ActionTypes.INITIALIZE_STORE_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.INITIALIZE_STORE_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.INITIALIZE_STORE_FULFILLED:
       return {
         ...state,
-        errMess: '',
-        token: action.payload
+        errorMessage: '',
+        token: action.deviceToken
       }
 
     default:

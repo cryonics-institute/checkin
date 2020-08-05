@@ -25,49 +25,39 @@
 import * as ActionTypes from './ActionTypes'
 
 type State = {
-  +errMess: string,
+  +errorMessage: string,
   +username: string,
   +password: string
 }
 
 type Action = {
-  type: 'REGISTRATION_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.REGISTRATION_REQUESTED
 } | {
-  type: 'REGISTRATION_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.REGISTRATION_REJECTED,
+  errorMessage: string
 } | {
-  type: 'REGISTRATION_FULFILLED',
-  errMess: string,
-  username: string,
-  password: string
+  type: typeof ActionTypes.REGISTRATION_FULFILLED,
+  userCredential: {| username: string, password: string |}
 } | {
-  type: 'SIGNIN_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.SIGNIN_REQUESTED
 } | {
-  type: 'SIGNIN_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.SIGNIN_REJECTED,
+  errorMessage: string
 } | {
-  type: 'SIGNIN_FULFILLED',
-  errMess: string,
-  username: string,
-  password: string
+  type: typeof ActionTypes.SIGNIN_FULFILLED,
+  userCredential: {| username: string, password: string |}
 } | {
-  type: 'SIGNOUT_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
-  type: 'SIGNOUT_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.SIGNOUT_REJECTED,
+  errorMessage: string
 } | {
-  type: 'SIGNOUT_FULFILLED',
-  errMess: string,
-  username: string,
-  password: string
+  type: typeof ActionTypes.SIGNOUT_FULFILLED
 }
 
 export const Token = (
   state: State = {
-    errMess: '',
+    errorMessage: '',
     username: '',
     password: ''
   },
@@ -77,59 +67,59 @@ export const Token = (
     case ActionTypes.REGISTRATION_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.REGISTRATION_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
-        errMess: '',
-        username: action.payload.creds.username,
-        password: action.payload.creds.password
+        errorMessage: '',
+        username: action.userCredential.username,
+        password: action.userCredential.password
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
-        errMess: '',
-        username: action.payload.creds.username,
-        password: action.payload.creds.password
+        errorMessage: '',
+        username: action.userCredential.username,
+        password: action.userCredential.password
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
       return {
         ...state,
-        errMess: '',
+        errorMessage: '',
         username: '',
         password: ''
       }

@@ -28,8 +28,8 @@ type State = {
   // +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   checkinInterval: ?number,
   +checkinTime: string,
-  +errMess: string,
-  +isSignedIn: boolean,
+  +errorMessage: string,
+  isSignedIn: ?boolean,
   +lastAlertTime: string,
   +longestSnooze: number,
   +shortestInterval: number,
@@ -37,89 +37,71 @@ type State = {
 }
 
 type Action = {
-  type: 'ADD_DOCUMENT_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.ADD_DOCUMENT_REQUESTED
 } | {
-  type: 'ADD_DOCUMENT_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.ADD_DOCUMENT_REJECTED,
+  errorMessage: string
 } | {
-  type: 'ADD_DOCUMENT_FULFILLED',
+  type: typeof ActionTypes.ADD_DOCUMENT_FULFILLED,
+  user: {| checkinTime: string, isSignedIn: boolean, snooze: number |}
+} | {
+  type: typeof ActionTypes.CHECKIN_REQUESTED
+} | {
+  type: typeof ActionTypes.CHECKIN_REJECTED,
+  errorMessage: string
+} | {
+  type: typeof ActionTypes.CHECKIN_FULFILLED,
   checkinTime: string,
-  errMess: string,
-  isSignedIn: boolean,
-  snooze: number
 } | {
-  type: 'CHECKIN_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.MUTATE_INPUTS_REQUESTED
 } | {
-  type: 'CHECKIN_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.MUTATE_INPUTS_REJECTED,
+  errorMessage: string
 } | {
-  type: 'CHECKIN_FULFILLED',
-  checkinTime: string,
-  errMess: string
-} | {
-  type: 'MUTATE_INPUTS_REQUESTED',
-  errMess: string
-} | {
-  type: 'MUTATE_INPUTS_REJECTED',
-  errMess: string
-} | {
-  type: 'MUTATE_INPUTS_FULFILLED',
-  errMess: string//,
+  type: typeof ActionTypes.MUTATE_INPUTS_FULFILLED,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'REMOVE_INPUTS_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.REMOVE_INPUTS_REQUESTED
 } | {
-  type: 'REMOVE_INPUTS_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.REMOVE_INPUTS_REJECTED,
+  errorMessage: string
 } | {
-  type: 'REMOVE_INPUTS_FULFILLED',
-  errMess: string//,
+  type: typeof ActionTypes.REMOVE_INPUTS_FULFILLED,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'SET_LAST_ALERT_TIME_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.SET_LAST_ALERT_TIME_REQUESTED
 } | {
-  type: 'SET_LAST_ALERT_TIME_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.SET_LAST_ALERT_TIME_REJECTED,
+  errorMessage: string
 } | {
-  type: 'SET_LAST_ALERT_TIME_FULFILLED',
-  errMess: string,
+  type: typeof ActionTypes.SET_LAST_ALERT_TIME_FULFILLED,
   lastAlertTime: string
 } | {
-  type: 'SET_SHORTEST_INTERVAL_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.SET_SHORTEST_INTERVAL_REQUESTED
 } | {
-  type: 'SET_SHORTEST_INTERVAL_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.SET_SHORTEST_INTERVAL_REJECTED,
+  errorMessage: string
 } | {
-  type: 'SET_SHORTEST_INTERVAL_FULFILLED',
-  errMess: string,
-  shortestInterval: number
+  type: typeof ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED,
+  interval: number
 } | {
-  type: 'SET_SNOOZE_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.SET_SNOOZE_REQUESTED
 } | {
-  type: 'SET_SNOOZE_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.SET_SNOOZE_REJECTED,
+  errorMessage: string
 } | {
-  type: 'SET_SNOOZE_FULFILLED',
-  errMess: string,
+  type: typeof ActionTypes.SET_SNOOZE_FULFILLED,
   snooze: number
 } | {
-  type: 'SIGNOUT_REQUESTED',
-  errMess: string
+  type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
-  type: 'SIGNOUT_REJECTED',
-  errMess: string
+  type: typeof ActionTypes.SIGNOUT_REJECTED,
+  errorMessage: string
 } | {
-  type: 'SIGNOUT_FULFILLED',
+  type: typeof ActionTypes.SIGNOUT_FULFILLED,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   checkinInterval: ?number,
   checkinTime: string,
-  errMess: string,
   isSignedIn: boolean,
   lastAlertTime: string,
   longestSnooze: number,
@@ -132,7 +114,7 @@ export const User = (
     // alertTimes: [],
     checkinInterval: null,
     checkinTime: '',
-    errMess: '',
+    errorMessage: '',
     isSignedIn: null,
     lastAlertTime: '',
     longestSnooze: 60,
@@ -145,148 +127,148 @@ export const User = (
     case ActionTypes.ADD_DOCUMENT_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.ADD_DOCUMENT_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.ADD_DOCUMENT_FULFILLED:
       return {
         ...state,
-        checkinTime: action.payload.checkinTime,
-        errMess: '',
-        isSignedIn: action.payload.isSignedIn,
-        snooze: action.payload.snooze
+        checkinTime: action.user.checkinTime,
+        errorMessage: '',
+        isSignedIn: action.user.isSignedIn,
+        snooze: action.user.snooze
       }
 
     case ActionTypes.CHECKIN_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.CHECKIN_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.CHECKIN_FULFILLED:
       return {
         ...state,
-        checkinTime: action.payload,
-        errMess: ''
+        checkinTime: action.checkinTime,
+        errorMessage: ''
       }
 
       // case ActionTypes.MUTATE_INPUTS_REQUESTED:
       //   return {
       //     ...state,
-      //     errMess: ''
+      //     errorMessage: ''
       //   }
       //
       // case ActionTypes.MUTATE_INPUTS_REJECTED:
       //   return {
       //     ...state,
-      //     errMess: action.payload
+      //     errorMessage: action.errorMessage
       //   }
       //
       // case ActionTypes.MUTATE_INPUTS_FULFILLED:
       //   return {
       //     ...state,
       //     alertTimes: action.payload,
-      //     errMess: ''
+      //     errorMessage: ''
       //   }
       //
       // case ActionTypes.REMOVE_INPUTS_REQUESTED:
       //   return {
       //     ...state,
-      //     errMess: ''
+      //     errorMessage: ''
       //   }
       //
       // case ActionTypes.REMOVE_INPUTS_REJECTED:
       //   return {
       //     ...state,
-      //     errMess: action.payload
+      //     errorMessage: action.errorMessage
       //   }
       //
       // case ActionTypes.REMOVE_INPUTS_FULFILLED:
       //   return {
       //     ...state,
       //     alertTimes: action.payload,
-      //     errMess: ''
+      //     errorMessage: ''
       //   }
 
     case ActionTypes.SET_LAST_ALERT_TIME_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SET_LAST_ALERT_TIME_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_LAST_ALERT_TIME_FULFILLED:
       return {
         ...state,
-        errMess: '',
-        lastAlertTime: action.payload
+        errorMessage: '',
+        lastAlertTime: action.lastAlertTime
       }
 
     case ActionTypes.SET_SHORTEST_INTERVAL_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SET_SHORTEST_INTERVAL_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED:
       return {
         ...state,
-        errMess: '',
-        shortestInterval: action.payload
+        errorMessage: '',
+        shortestInterval: action.interval
       }
 
     case ActionTypes.SET_SNOOZE_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SET_SNOOZE_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_SNOOZE_FULFILLED:
       return {
         ...state,
-        errMess: '',
-        snooze: action.payload
+        errorMessage: '',
+        snooze: action.snooze
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
       return {
         ...state,
-        errMess: ''
+        errorMessage: ''
       }
 
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errMess: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
@@ -295,7 +277,7 @@ export const User = (
         // alertTimes: [],
         checkinInterval: null,
         checkinTime: '',
-        errMess: '',
+        errorMessage: '',
         isSignedIn: null,
         lastAlertTime: '',
         longestSnooze: 60,
