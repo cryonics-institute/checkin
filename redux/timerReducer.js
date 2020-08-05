@@ -31,6 +31,16 @@ type State = {
 }
 
 type Action = {
+  type: 'REMOVE_TIMERS_REQUESTED',
+  errorMessage: string
+} | {
+  type: 'REMOVE_TIMERS_REJECTED',
+  errorMessage: string
+} | {
+  type: 'REMOVE_TIMERS_FULFILLED',
+  errorMessage: string,
+  timers: Array<number>
+} | {
   type: 'SET_TIMER_REQUESTED',
   errorMessage: string
 } | {
@@ -50,27 +60,36 @@ type Action = {
   type: 'SET_TIMER_INTERVAL_FULFILLED',
   errorMessage: string,
   interval: number
-} | {
-  type: 'REMOVE_TIMERS_REQUESTED',
-  errorMessage: string
-} | {
-  type: 'REMOVE_TIMERS_REJECTED',
-  errorMessage: string
-} | {
-  type: 'REMOVE_TIMERS_FULFILLED',
-  errorMessage: string,
-  timers: Array<number>
 }
 
 export const Timer = (
   state: State = {
     errorMessage: '',
-    interval: null,
+    interval: 0,
     timers: []
   },
   action: Action
 ) => {
   switch (action.type) {
+    case ActionTypes.REMOVE_TIMERS_REQUESTED:
+      return {
+        ...state,
+        errorMessage: ''
+      }
+
+    case ActionTypes.REMOVE_TIMERS_REJECTED:
+      return {
+        ...state,
+        errorMessage: action.errorMessage
+      }
+
+    case ActionTypes.REMOVE_TIMERS_FULFILLED:
+      return {
+        ...state,
+        errorMessage: '',
+        timers: []
+      }
+
     case ActionTypes.SET_TIMER_REQUESTED:
       return {
         ...state,
@@ -80,16 +99,14 @@ export const Timer = (
     case ActionTypes.SET_TIMER_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_TIMER_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        timers: action.payload
-          ? state.timers.concat(action.payload)
-          : state.timers
+        timers: action.timers
       }
 
     case ActionTypes.SET_TIMER_INTERVAL_REQUESTED:
@@ -101,33 +118,14 @@ export const Timer = (
     case ActionTypes.SET_TIMER_INTERVAL_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_TIMER_INTERVAL_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        interval: action.payload
-      }
-
-    case ActionTypes.REMOVE_TIMERS_REQUESTED:
-      return {
-        ...state,
-        errorMessage: ''
-      }
-
-    case ActionTypes.REMOVE_TIMERS_REJECTED:
-      return {
-        ...state,
-        errorMessage: action.payload
-      }
-
-    case ActionTypes.REMOVE_TIMERS_FULFILLED:
-      return {
-        ...state,
-        errorMessage: '',
-        timers: []
+        interval: action.interval
       }
 
     default:

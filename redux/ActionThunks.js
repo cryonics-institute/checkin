@@ -921,7 +921,13 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
       }
     )
     .then(
-      timer => dispatch(ActionCreators.setTimerFulfilled(timer)),
+      timer => exists(timer)
+        ? dispatch(
+          ActionCreators.setTimerFulfilled(
+            getState().timers.concat(timer)
+          )
+        )
+        : dispatch(ActionCreators.setTimerFulfilled(getState().timers)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage

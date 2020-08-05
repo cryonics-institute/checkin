@@ -577,10 +577,10 @@ export const setTimerRejected = (errorMessage) => (
  * Initiate an action indicating that the timer has been set.
  * @param {Integer} timer ID of a time-out object.
  */
-export const setTimerFulfilled = (timer) => (
+export const setTimerFulfilled = (timers) => (
   {
     type: ActionTypes.SET_TIMER_FULFILLED,
-    timer: timer
+    timers: timers
   }
 )
 
