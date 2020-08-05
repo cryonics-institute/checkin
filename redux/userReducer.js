@@ -135,16 +135,16 @@ export const User = (
     case ActionTypes.ADD_DOCUMENT_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.ADD_DOCUMENT_FULFILLED:
       return {
         ...state,
-        checkinTime: action.payload.checkinTime,
+        checkinTime: action.user.checkinTime,
         errorMessage: '',
-        isSignedIn: action.payload.isSignedIn,
-        snooze: action.payload.snooze
+        isSignedIn: action.user.isSignedIn,
+        snooze: action.user.snooze
       }
 
     case ActionTypes.CHECKIN_REQUESTED:
@@ -156,13 +156,13 @@ export const User = (
     case ActionTypes.CHECKIN_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.CHECKIN_FULFILLED:
       return {
         ...state,
-        checkinTime: action.payload,
+        checkinTime: action.checkinTime,
         errorMessage: ''
       }
 
@@ -175,7 +175,7 @@ export const User = (
       // case ActionTypes.MUTATE_INPUTS_REJECTED:
       //   return {
       //     ...state,
-      //     errorMessage: action.payload
+      //     errorMessage: action.errorMessage
       //   }
       //
       // case ActionTypes.MUTATE_INPUTS_FULFILLED:
@@ -194,7 +194,7 @@ export const User = (
       // case ActionTypes.REMOVE_INPUTS_REJECTED:
       //   return {
       //     ...state,
-      //     errorMessage: action.payload
+      //     errorMessage: action.errorMessage
       //   }
       //
       // case ActionTypes.REMOVE_INPUTS_FULFILLED:
@@ -213,14 +213,14 @@ export const User = (
     case ActionTypes.SET_LAST_ALERT_TIME_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_LAST_ALERT_TIME_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        lastAlertTime: action.payload
+        lastAlertTime: action.lastAlertTime
       }
 
     case ActionTypes.SET_SHORTEST_INTERVAL_REQUESTED:
@@ -232,14 +232,14 @@ export const User = (
     case ActionTypes.SET_SHORTEST_INTERVAL_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        shortestInterval: action.payload
+        shortestInterval: action.interval
       }
 
     case ActionTypes.SET_SNOOZE_REQUESTED:
@@ -251,14 +251,14 @@ export const User = (
     case ActionTypes.SET_SNOOZE_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SET_SNOOZE_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        snooze: action.payload
+        snooze: action.snooze
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
@@ -270,7 +270,7 @@ export const User = (
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
