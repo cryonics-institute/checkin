@@ -85,7 +85,7 @@ type Action = {
   errorMessage: string
 } | {
   type: typeof ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED,
-  shortestInterval: number
+  interval: number
 } | {
   type: typeof ActionTypes.SET_SNOOZE_REQUESTED
 } | {
