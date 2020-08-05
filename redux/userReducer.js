@@ -29,7 +29,7 @@ type State = {
   checkinInterval: ?number,
   +checkinTime: string,
   +errorMessage: string,
-  +isSignedIn: boolean,
+  isSignedIn: ?boolean,
   +lastAlertTime: string,
   +longestSnooze: number,
   +shortestInterval: number,
