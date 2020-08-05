@@ -43,9 +43,7 @@ type Action = {
   errorMessage: string
 } | {
   type: typeof ActionTypes.ADD_DOCUMENT_FULFILLED,
-  checkinTime: string,
-  isSignedIn: boolean,
-  snooze: number
+  user: {| checkinTime: string, isSignedIn: boolean, snooze: number |}
 } | {
   type: typeof ActionTypes.CHECKIN_REQUESTED
 } | {
