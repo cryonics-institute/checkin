@@ -37,80 +37,65 @@ type State = {
 }
 
 type Action = {
-  type: 'ADD_DOCUMENT_REQUESTED',
-  errorMessage: string
+  type: 'ADD_DOCUMENT_REQUESTED'
 } | {
   type: 'ADD_DOCUMENT_REJECTED',
   errorMessage: string
 } | {
   type: 'ADD_DOCUMENT_FULFILLED',
   checkinTime: string,
-  errorMessage: string,
   isSignedIn: boolean,
   snooze: number
 } | {
-  type: 'CHECKIN_REQUESTED',
-  errorMessage: string
+  type: 'CHECKIN_REQUESTED'
 } | {
   type: 'CHECKIN_REJECTED',
   errorMessage: string
 } | {
   type: 'CHECKIN_FULFILLED',
   checkinTime: string,
-  errorMessage: string
 } | {
-  type: 'MUTATE_INPUTS_REQUESTED',
-  errorMessage: string
+  type: 'MUTATE_INPUTS_REQUESTED'
 } | {
   type: 'MUTATE_INPUTS_REJECTED',
   errorMessage: string
 } | {
   type: 'MUTATE_INPUTS_FULFILLED',
-  errorMessage: string//,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'REMOVE_INPUTS_REQUESTED',
-  errorMessage: string
+  type: 'REMOVE_INPUTS_REQUESTED'
 } | {
   type: 'REMOVE_INPUTS_REJECTED',
   errorMessage: string
 } | {
   type: 'REMOVE_INPUTS_FULFILLED',
-  errorMessage: string//,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'SET_LAST_ALERT_TIME_REQUESTED',
-  errorMessage: string
+  type: 'SET_LAST_ALERT_TIME_REQUESTED'
 } | {
   type: 'SET_LAST_ALERT_TIME_REJECTED',
   errorMessage: string
 } | {
   type: 'SET_LAST_ALERT_TIME_FULFILLED',
-  errorMessage: string,
   lastAlertTime: string
 } | {
-  type: 'SET_SHORTEST_INTERVAL_REQUESTED',
-  errorMessage: string
+  type: 'SET_SHORTEST_INTERVAL_REQUESTED'
 } | {
   type: 'SET_SHORTEST_INTERVAL_REJECTED',
   errorMessage: string
 } | {
   type: 'SET_SHORTEST_INTERVAL_FULFILLED',
-  errorMessage: string,
   shortestInterval: number
 } | {
-  type: 'SET_SNOOZE_REQUESTED',
-  errorMessage: string
+  type: 'SET_SNOOZE_REQUESTED'
 } | {
   type: 'SET_SNOOZE_REJECTED',
   errorMessage: string
 } | {
   type: 'SET_SNOOZE_FULFILLED',
-  errorMessage: string,
   snooze: number
 } | {
-  type: 'SIGNOUT_REQUESTED',
-  errorMessage: string
+  type: 'SIGNOUT_REQUESTED'
 } | {
   type: 'SIGNOUT_REJECTED',
   errorMessage: string
@@ -119,7 +104,6 @@ type Action = {
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   checkinInterval: ?number,
   checkinTime: string,
-  errorMessage: string,
   isSignedIn: boolean,
   lastAlertTime: string,
   longestSnooze: number,

@@ -32,55 +32,45 @@ type State = {
 }
 
 type Action = {
-  type: 'HIDE_TIP_REQUESTED',
-  errorMessage: string
+  type: 'HIDE_TIP_REQUESTED'
 } | {
   type: 'HIDE_TIP_REJECTED',
   errorMessage: string
 } | {
   type: 'HIDE_TIP_FULFILLED',
-  errorMessage: string,
   showTip: boolean
 } | {
-  type: 'MUTATE_INPUTS_REQUESTED',
-  errorMessage: string
+  type: 'MUTATE_INPUTS_REQUESTED'
 } | {
   type: 'MUTATE_INPUTS_REJECTED',
   errorMessage: string
 } | {
   type: 'MUTATE_INPUTS_FULFILLED',
-  errorMessage: string,
   inputs: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'REMOVE_INPUTS_REQUESTED',
-  errorMessage: string
+  type: 'REMOVE_INPUTS_REQUESTED'
 } | {
   type: 'REMOVE_INPUTS_REJECTED',
   errorMessage: string
 } | {
   type: 'REMOVE_INPUTS_FULFILLED',
-  errorMessage: string,
   inputs: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'SET_INPUT_PARAMETERS_REQUESTED',
-  errorMessage: string
+  type: 'SET_INPUT_PARAMETERS_REQUESTED'
 } | {
   type: 'SET_INPUT_PARAMETERS_REJECTED',
   errorMessage: string
 } | {
   type: 'SET_INPUT_PARAMETERS_FULFILLED',
-  errorMessage: string,
   height: number
 } | {
-  type: 'SIGNOUT_REQUESTED',
-  errorMessage: string
+  type: 'SIGNOUT_REQUESTED'
 } | {
   type: 'SIGNOUT_REJECTED',
   errorMessage: string
 } | {
   type: 'SIGNOUT_FULFILLED',
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  errorMessage: string,
   height: number,
   showTip: boolean
 }

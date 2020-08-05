@@ -31,34 +31,28 @@ type State = {
 }
 
 type Action = {
-  type: 'REMOVE_LISTENERS_REQUESTED',
-  errorMessage: string
+  type: 'REMOVE_LISTENERS_REQUESTED'
 } | {
   type: 'REMOVE_LISTENERS_REJECTED',
   errorMessage: string
 } | {
   type: 'REMOVE_LISTENERS_FULFILLED',
-  errorMessage: string,
   listeners: Array<number>
 } | {
-  type: 'SET_LISTENER_REQUESTED',
-  errorMessage: string
+  type: 'SET_LISTENER_REQUESTED'
 } | {
   type: 'SET_LISTENER_REJECTED',
   errorMessage: string
 } | {
   type: 'SET_LISTENER_FULFILLED',
-  errorMessage: string,
   listeners: Array<number>
 } | {
-  type: 'SET_LISTENER_INTERVAL_REQUESTED',
-  errorMessage: string
+  type: 'SET_LISTENER_INTERVAL_REQUESTED'
 } | {
   type: 'SET_LISTENER_INTERVAL_REJECTED',
   errorMessage: string
 } | {
   type: 'SET_LISTENER_INTERVAL_FULFILLED',
-  errorMessage: string,
   interval: number
 }
 

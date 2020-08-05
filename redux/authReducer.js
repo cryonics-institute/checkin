@@ -33,23 +33,23 @@ type Action = {
   type: typeof ActionTypes.REGISTRATION_REQUESTED
 } | {
   type: typeof ActionTypes.REGISTRATION_REJECTED,
-  payload: string
+  errorMessage: string
 } | {
   type: typeof ActionTypes.REGISTRATION_FULFILLED,
-  payload: { user: Object }
+  user: { user: Object }
 } | {
   type: typeof ActionTypes.SIGNIN_REQUESTED
 } | {
   type: typeof ActionTypes.SIGNIN_REJECTED,
-  payload: string
+  errorMessage: string
 } | {
   type: typeof ActionTypes.SIGNIN_FULFILLED,
-  payload: { user: Object }
+  user: { user: Object }
 } | {
   type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
   type: typeof ActionTypes.SIGNOUT_REJECTED,
-  payload: string
+  errorMessage: string
 } | {
   type: typeof ActionTypes.SIGNOUT_FULFILLED
 }
@@ -71,14 +71,14 @@ export const Auth = (
     case ActionTypes.REGISTRATION_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.REGISTRATION_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        user: action.payload.user
+        user: action.user
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
@@ -90,14 +90,14 @@ export const Auth = (
     case ActionTypes.SIGNIN_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNIN_FULFILLED:
       return {
         ...state,
         errorMessage: '',
-        user: action.payload.user
+        user: action.user
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:
@@ -109,7 +109,7 @@ export const Auth = (
     case ActionTypes.SIGNOUT_REJECTED:
       return {
         ...state,
-        errorMessage: action.payload
+        errorMessage: action.errorMessage
       }
 
     case ActionTypes.SIGNOUT_FULFILLED:
