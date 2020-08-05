@@ -31,28 +31,28 @@ type State = {
 }
 
 type Action = {
-  type: 'REMOVE_TIMERS_REQUESTED'
+  type: typeof ActionTypes.REMOVE_TIMERS_REQUESTED
 } | {
-  type: 'REMOVE_TIMERS_REJECTED',
+  type: typeof ActionTypes.REMOVE_TIMERS_REJECTED,
   errorMessage: string
 } | {
-  type: 'REMOVE_TIMERS_FULFILLED',
+  type: typeof ActionTypes.REMOVE_TIMERS_FULFILLED,
   timers: Array<number>
 } | {
-  type: 'SET_TIMER_REQUESTED'
+  type: typeof ActionTypes.SET_TIMER_REQUESTED
 } | {
-  type: 'SET_TIMER_REJECTED',
+  type: typeof ActionTypes.SET_TIMER_REJECTED,
   errorMessage: string
 } | {
-  type: 'SET_TIMER_FULFILLED',
+  type: typeof ActionTypes.SET_TIMER_FULFILLED,
   timers: Array<number>
 } | {
-  type: 'SET_TIMER_INTERVAL_REQUESTED'
+  type: typeof ActionTypes.SET_TIMER_INTERVAL_REQUESTED
 } | {
-  type: 'SET_TIMER_INTERVAL_REJECTED',
+  type: typeof ActionTypes.SET_TIMER_INTERVAL_REJECTED,
   errorMessage: string
 } | {
-  type: 'SET_TIMER_INTERVAL_FULFILLED',
+  type: typeof ActionTypes.SET_TIMER_INTERVAL_FULFILLED,
   interval: number
 }
 

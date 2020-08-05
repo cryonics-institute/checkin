@@ -31,28 +31,28 @@ type State = {
 }
 
 type Action = {
-  type: 'REGISTRATION_REQUESTED'
+  type: typeof ActionTypes.REGISTRATION_REQUESTED
 } | {
-  type: 'REGISTRATION_REJECTED',
+  type: typeof ActionTypes.REGISTRATION_REJECTED,
   errorMessage: string
 } | {
-  type: 'REGISTRATION_FULFILLED',
+  type: typeof ActionTypes.REGISTRATION_FULFILLED,
   userCredential: {| username: string, password: string |}
 } | {
-  type: 'SIGNIN_REQUESTED'
+  type: typeof ActionTypes.SIGNIN_REQUESTED
 } | {
-  type: 'SIGNIN_REJECTED',
+  type: typeof ActionTypes.SIGNIN_REJECTED,
   errorMessage: string
 } | {
-  type: 'SIGNIN_FULFILLED',
+  type: typeof ActionTypes.SIGNIN_FULFILLED,
   userCredential: {| username: string, password: string |}
 } | {
-  type: 'SIGNOUT_REQUESTED'
+  type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
-  type: 'SIGNOUT_REJECTED',
+  type: typeof ActionTypes.SIGNOUT_REJECTED,
   errorMessage: string
 } | {
-  type: 'SIGNOUT_FULFILLED'
+  type: typeof ActionTypes.SIGNOUT_FULFILLED
 }
 
 export const Token = (

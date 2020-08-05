@@ -30,12 +30,12 @@ type State = {
 }
 
 type Action = {
-  type: 'INITIALIZE_STORE_REQUESTED'
+  type: typeof ActionTypes.INITIALIZE_STORE_REQUESTED
 } | {
-  type: 'INITIALIZE_STORE_REJECTED',
+  type: typeof ActionTypes.INITIALIZE_STORE_REJECTED,
   errorMessage: string
 } | {
-  type: 'INITIALIZE_STORE_FULFILLED',
+  type: typeof ActionTypes.INITIALIZE_STORE_FULFILLED,
   deviceToken: string
 }
 

@@ -32,44 +32,44 @@ type State = {
 }
 
 type Action = {
-  type: 'HIDE_TIP_REQUESTED'
+  type: typeof ActionTypes.HIDE_TIP_REQUESTED
 } | {
-  type: 'HIDE_TIP_REJECTED',
+  type: typeof ActionTypes.HIDE_TIP_REJECTED,
   errorMessage: string
 } | {
-  type: 'HIDE_TIP_FULFILLED',
+  type: typeof ActionTypes.HIDE_TIP_FULFILLED,
   showTip: boolean
 } | {
-  type: 'MUTATE_INPUTS_REQUESTED'
+  type: typeof ActionTypes.MUTATE_INPUTS_REQUESTED
 } | {
-  type: 'MUTATE_INPUTS_REJECTED',
+  type: typeof ActionTypes.MUTATE_INPUTS_REJECTED,
   errorMessage: string
 } | {
-  type: 'MUTATE_INPUTS_FULFILLED',
+  type: typeof ActionTypes.MUTATE_INPUTS_FULFILLED,
   inputs: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'REMOVE_INPUTS_REQUESTED'
+  type: typeof ActionTypes.REMOVE_INPUTS_REQUESTED
 } | {
-  type: 'REMOVE_INPUTS_REJECTED',
+  type: typeof ActionTypes.REMOVE_INPUTS_REJECTED,
   errorMessage: string
 } | {
-  type: 'REMOVE_INPUTS_FULFILLED',
+  type: typeof ActionTypes.REMOVE_INPUTS_FULFILLED,
   inputs: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'SET_INPUT_PARAMETERS_REQUESTED'
+  type: typeof ActionTypes.SET_INPUT_PARAMETERS_REQUESTED
 } | {
-  type: 'SET_INPUT_PARAMETERS_REJECTED',
+  type: typeof ActionTypes.SET_INPUT_PARAMETERS_REJECTED,
   errorMessage: string
 } | {
-  type: 'SET_INPUT_PARAMETERS_FULFILLED',
+  type: typeof ActionTypes.SET_INPUT_PARAMETERS_FULFILLED,
   height: number
 } | {
-  type: 'SIGNOUT_REQUESTED'
+  type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
-  type: 'SIGNOUT_REJECTED',
+  type: typeof ActionTypes.SIGNOUT_REJECTED,
   errorMessage: string
 } | {
-  type: 'SIGNOUT_FULFILLED',
+  type: typeof ActionTypes.SIGNOUT_FULFILLED,
   alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   height: number,
   showTip: boolean

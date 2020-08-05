@@ -37,70 +37,70 @@ type State = {
 }
 
 type Action = {
-  type: 'ADD_DOCUMENT_REQUESTED'
+  type: typeof ActionTypes.ADD_DOCUMENT_REQUESTED
 } | {
-  type: 'ADD_DOCUMENT_REJECTED',
+  type: typeof ActionTypes.ADD_DOCUMENT_REJECTED,
   errorMessage: string
 } | {
-  type: 'ADD_DOCUMENT_FULFILLED',
+  type: typeof ActionTypes.ADD_DOCUMENT_FULFILLED,
   checkinTime: string,
   isSignedIn: boolean,
   snooze: number
 } | {
-  type: 'CHECKIN_REQUESTED'
+  type: typeof ActionTypes.CHECKIN_REQUESTED
 } | {
-  type: 'CHECKIN_REJECTED',
+  type: typeof ActionTypes.CHECKIN_REJECTED,
   errorMessage: string
 } | {
-  type: 'CHECKIN_FULFILLED',
+  type: typeof ActionTypes.CHECKIN_FULFILLED,
   checkinTime: string,
 } | {
-  type: 'MUTATE_INPUTS_REQUESTED'
+  type: typeof ActionTypes.MUTATE_INPUTS_REQUESTED
 } | {
-  type: 'MUTATE_INPUTS_REJECTED',
+  type: typeof ActionTypes.MUTATE_INPUTS_REJECTED,
   errorMessage: string
 } | {
-  type: 'MUTATE_INPUTS_FULFILLED',
+  type: typeof ActionTypes.MUTATE_INPUTS_FULFILLED,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'REMOVE_INPUTS_REQUESTED'
+  type: typeof ActionTypes.REMOVE_INPUTS_REQUESTED
 } | {
-  type: 'REMOVE_INPUTS_REJECTED',
+  type: typeof ActionTypes.REMOVE_INPUTS_REJECTED,
   errorMessage: string
 } | {
-  type: 'REMOVE_INPUTS_FULFILLED',
+  type: typeof ActionTypes.REMOVE_INPUTS_FULFILLED,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>
 } | {
-  type: 'SET_LAST_ALERT_TIME_REQUESTED'
+  type: typeof ActionTypes.SET_LAST_ALERT_TIME_REQUESTED
 } | {
-  type: 'SET_LAST_ALERT_TIME_REJECTED',
+  type: typeof ActionTypes.SET_LAST_ALERT_TIME_REJECTED,
   errorMessage: string
 } | {
-  type: 'SET_LAST_ALERT_TIME_FULFILLED',
+  type: typeof ActionTypes.SET_LAST_ALERT_TIME_FULFILLED,
   lastAlertTime: string
 } | {
-  type: 'SET_SHORTEST_INTERVAL_REQUESTED'
+  type: typeof ActionTypes.SET_SHORTEST_INTERVAL_REQUESTED
 } | {
-  type: 'SET_SHORTEST_INTERVAL_REJECTED',
+  type: typeof ActionTypes.SET_SHORTEST_INTERVAL_REJECTED,
   errorMessage: string
 } | {
-  type: 'SET_SHORTEST_INTERVAL_FULFILLED',
+  type: typeof ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED,
   shortestInterval: number
 } | {
-  type: 'SET_SNOOZE_REQUESTED'
+  type: typeof ActionTypes.SET_SNOOZE_REQUESTED
 } | {
-  type: 'SET_SNOOZE_REJECTED',
+  type: typeof ActionTypes.SET_SNOOZE_REJECTED,
   errorMessage: string
 } | {
-  type: 'SET_SNOOZE_FULFILLED',
+  type: typeof ActionTypes.SET_SNOOZE_FULFILLED,
   snooze: number
 } | {
-  type: 'SIGNOUT_REQUESTED'
+  type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
-  type: 'SIGNOUT_REJECTED',
+  type: typeof ActionTypes.SIGNOUT_REJECTED,
   errorMessage: string
 } | {
-  type: 'SIGNOUT_FULFILLED',
+  type: typeof ActionTypes.SIGNOUT_FULFILLED,
   // alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
   checkinInterval: ?number,
   checkinTime: string,
