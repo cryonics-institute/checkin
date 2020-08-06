@@ -37,7 +37,7 @@ type Action = {
   errorMessage: string
 } | {
   type: typeof ActionTypes.REGISTRATION_FULFILLED,
-  userCredential: {| username: string, password: string |}
+  user: {| user: Object, creds: {| username: string, password: string |} |}
 } | {
   type: typeof ActionTypes.SIGNIN_REQUESTED
 } | {
@@ -45,7 +45,7 @@ type Action = {
   errorMessage: string
 } | {
   type: typeof ActionTypes.SIGNIN_FULFILLED,
-  userCredential: {| username: string, password: string |}
+  user: {| user: Object, creds: {| username: string, password: string |} |}
 } | {
   type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
@@ -80,8 +80,8 @@ export const Token = (
       return {
         ...state,
         errorMessage: '',
-        username: action.userCredential.username,
-        password: action.userCredential.password
+        username: action.user.creds.username,
+        password: action.user.creds.password
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
@@ -100,8 +100,8 @@ export const Token = (
       return {
         ...state,
         errorMessage: '',
-        username: action.userCredential.username,
-        password: action.userCredential.password
+        username: action.user.creds.username,
+        password: action.user.creds.password
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:

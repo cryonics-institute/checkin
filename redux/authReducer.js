@@ -36,7 +36,7 @@ type Action = {
   errorMessage: string
 } | {
   type: typeof ActionTypes.REGISTRATION_FULFILLED,
-  user: { user: Object }
+  user: {| user: Object, creds: {| username: string, password: string |} |}
 } | {
   type: typeof ActionTypes.SIGNIN_REQUESTED
 } | {
@@ -44,7 +44,7 @@ type Action = {
   errorMessage: string
 } | {
   type: typeof ActionTypes.SIGNIN_FULFILLED,
-  user: { user: Object }
+  user: {| user: Object, creds: {| username: string, password: string |} |}
 } | {
   type: typeof ActionTypes.SIGNOUT_REQUESTED
 } | {
@@ -78,7 +78,7 @@ export const Auth = (
       return {
         ...state,
         errorMessage: '',
-        user: action.user
+        user: action.user.user
       }
 
     case ActionTypes.SIGNIN_REQUESTED:
@@ -97,7 +97,7 @@ export const Auth = (
       return {
         ...state,
         errorMessage: '',
-        user: action.user
+        user: action.user.user
       }
 
     case ActionTypes.SIGNOUT_REQUESTED:

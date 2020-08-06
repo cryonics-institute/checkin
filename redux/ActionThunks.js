@@ -463,7 +463,11 @@ export const register = (creds) => (dispatch, getState) => {
       }
     )
     .then(
-      userCredential => dispatch(ActionCreators.registrationFulfilled(creds)),
+      userCredential => dispatch(
+        ActionCreators.registrationFulfilled(
+          { user: userCredential.user, creds: creds }
+        )
+      ),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -689,10 +693,12 @@ export const setListener = (email, isTest = false) => (dispatch, getState) => {
       listener => exists(listener)
         ? dispatch(
           ActionCreators.setListenerFulfilled(
-            getState().listeners.concat(listener)
+            getState().listener.listeners.concat(listener)
           )
         )
-        : dispatch(ActionCreators.setListenerFulfilled(getState().listeners)),
+        : dispatch(
+          ActionCreators.setListenerFulfilled(getState()().listener.listeners)
+        ),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
@@ -926,10 +932,10 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
       timer => exists(timer)
         ? dispatch(
           ActionCreators.setTimerFulfilled(
-            getState().timers.concat(timer)
+            getState().timer.timers.concat(timer)
           )
         )
-        : dispatch(ActionCreators.setTimerFulfilled(getState().timers)),
+        : dispatch(ActionCreators.setTimerFulfilled(getState().timer.timers)),
       error => {
         var errorMessage = new Error(error.message)
         throw errorMessage
