@@ -36,6 +36,76 @@ import { Timer } from './timerReducer'
 import { Token } from './tokenReducer'
 import { User } from './userReducer'
 
+type StateGetter = () => {
+  auth: {
+    +errorMessage: string,
+    +user: Object
+  },
+  buddy: {
+    +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
+    checkinInterval: ?number,
+    +checkinTime: string,
+    +email: string,
+    +errorMessage: string,
+    isAdded: ?boolean,
+    +lastAlertTime: string,
+    +snooze: number
+  },
+  device: {
+    +errorMessage: string,
+    +token: string
+  },
+  inputs: {
+    +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
+    +errorMessage: string,
+    +height: number,
+    +showTip: boolean
+  },
+  listener: {
+    +errorMessage: string,
+    +interval: number,
+    +listeners: Array<number>
+  },
+  timer: {
+    +errorMessage: string,
+    +interval: number,
+    +timers: Array<number>
+  },
+  token: {
+    +errorMessage: string,
+    +username: string,
+    +password: string
+  },
+  user: {
+    checkinInterval: ?number,
+    +checkinTime: string,
+    +errorMessage: string,
+    isSignedIn: ?boolean,
+    +lastAlertTime: string,
+    +longestSnooze: number,
+    +shortestInterval: number,
+    +snooze: number
+  }
+}
+
+type Persistor = {
+  +dispatch: (() => void) => void,
+  +flush: (any) => void,
+  +getState: StateGetter,
+  +pause: (any) => void,
+  +persist: (any) => void,
+  +purge: (any) => void,
+  +replaceReducer: (any) => void,
+  +subscribe: (() => void) => () => void
+}
+
+type Store = {
+  +dispatch: (() => void) => void,
+  +getState: StateGetter,
+  +replaceReducer: (any) => void,
+  +subscribe: (() => void) => () => void
+}
+
 const sensitiveStorage = createSensitiveStorage(
   {
     keychainService: 'keychain',
@@ -97,11 +167,11 @@ const rootReducer = combineReducers(
 )
 
 export const ConfigureStore = () => {
-  const store = createStore(
+  const store: Store = createStore(
     rootReducer,
     applyMiddleware(thunk, logger)
   )
-  const persistor = persistStore(store)
+  const persistor: Persistor = persistStore(store)
 
   return { store, persistor }
 }
