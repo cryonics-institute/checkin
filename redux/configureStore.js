@@ -20,6 +20,7 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import { createStore, combineReducers, applyMiddleware } from 'redux'
 import { persistStore, persistReducer } from 'redux-persist'
 import createSensitiveStorage from 'redux-persist-sensitive-storage'
