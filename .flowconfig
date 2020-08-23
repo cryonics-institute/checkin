@@ -2,7 +2,6 @@
 <PROJECT_ROOT>/node_modules/.*
 
 [include]
-<PROJECT_ROOT>/flow-typed/.*
 
 [libs]
 
