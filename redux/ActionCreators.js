@@ -20,7 +20,31 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// @flow
 import * as ActionTypes from './ActionTypes'
+
+type DocumentData = Array<
+    {|
+      exists: boolean,
+      alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
+      checkinInterval: ?number,
+      checkinTime: string,
+      snooze: number
+    |}
+  >
+
+type Inputs = {
+  +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
+  +errorMessage: string,
+  +height: number,
+  +showTip: boolean
+}
+
+type User = {
+  checkinTime: string,
+  isSignedIn: boolean,
+  snooze: number
+}
 
 /**
  * Initiate an action to add a buddy to be be tracked by the current user.
@@ -35,7 +59,7 @@ export const addBuddyRequested = () => (
  * Initiate an error indicating that adding a buddy to be be tracked failed.
  * @param  {Error} errorMessage Message describing the add-buddy failure.
  */
-export const addBuddyRejected = (errorMessage) => (
+export const addBuddyRejected = (errorMessage: string) => (
   {
     type: ActionTypes.ADD_BUDDY_REJECTED,
     errorMessage: errorMessage
@@ -46,7 +70,7 @@ export const addBuddyRejected = (errorMessage) => (
  * Initiate an action indicating that a buddy to be be tracked has been added.
  * @param  {String}   email E-mail of the buddy to be added.
  */
-export const addBuddyFulfilled = (email) => (
+export const addBuddyFulfilled = (email: string) => (
   {
     type: ActionTypes.ADD_BUDDY_FULFILLED,
     email: email
@@ -66,7 +90,7 @@ export const addDocumentRequested = () => (
  * Initiate an error indicating that creation of a new Firebase document failed.
  * @param  {Error} errorMessage Message describing the add-document failure.
  */
-export const addDocumentRejected = (errorMessage) => (
+export const addDocumentRejected = (errorMessage: string) => (
   {
     type: ActionTypes.ADD_DOCUMENT_REJECTED,
     errorMessage: errorMessage
@@ -77,7 +101,7 @@ export const addDocumentRejected = (errorMessage) => (
  * Initiate an action indicating that a new Firebase document has been added.
  * @param {User}  user  A Firebase User object
  */
-export const addDocumentFulfilled = (user) => (
+export const addDocumentFulfilled = (user: User) => (
   {
     type: ActionTypes.ADD_DOCUMENT_FULFILLED,
     user: user
@@ -98,7 +122,7 @@ export const checkinRequested = () => (
  * interval failed.
  * @param  {Error} errorMessage Message describing the check-in failure.
  */
-export const checkinRejected = (errorMessage) => (
+export const checkinRejected = (errorMessage: string) => (
   {
     type: ActionTypes.CHECKIN_REJECTED,
     errorMessage: errorMessage
@@ -110,7 +134,7 @@ export const checkinRejected = (errorMessage) => (
  * been added.
  * @param {String} checkinTime  Time the user last checked in.
  */
-export const checkinFulfilled = (checkinTime) => (
+export const checkinFulfilled = (checkinTime: String) => (
   {
     type: ActionTypes.CHECKIN_FULFILLED,
     checkinTime: checkinTime
@@ -130,7 +154,7 @@ export const getDocumentRequested = () => (
  * Initiate an error indicating that getting the buddy's data has failed.
  * @param  {Error} errorMessage Message describing the check-in failure.
  */
-export const getDocumentRejected = (errorMessage) => (
+export const getDocumentRejected = (errorMessage: string) => (
   {
     type: ActionTypes.GET_DOCUMENT_REJECTED,
     errorMessage: errorMessage
@@ -145,7 +169,7 @@ export const getDocumentRejected = (errorMessage) => (
  * @param {Boolean} isAdded         Whether buddy is added.
  * @param {Integer} snooze          The interval between alerts.
  */
-export const getDocumentFulfilled = (data) => (
+export const getDocumentFulfilled = (data: DocumentData) => (
   {
     type: ActionTypes.GET_DOCUMENT_FULFILLED,
     alertTimes: data[1],
@@ -169,7 +193,7 @@ export const hideTipRequested = () => (
  * Initiate an error indicating that hiding the tip has failed.
  * @param  {Error} errorMessage Message describing the check-in failure.
  */
-export const hideTipRejected = (errorMessage) => (
+export const hideTipRejected = (errorMessage: string) => (
   {
     type: ActionTypes.HIDE_TIP_REJECTED,
     errorMessage: errorMessage
@@ -198,7 +222,7 @@ export const initializeStoreRequested = () => (
  * Initiate an error indicating that saving the device token has failed.
  * @param  {Error} errorMessage Message describing the check-in failure.
  */
-export const initializeStoreRejected = (errorMessage) => (
+export const initializeStoreRejected = (errorMessage: string) => (
   {
     type: ActionTypes.INITIALIZE_STORE_REJECTED,
     errorMessage: errorMessage
@@ -209,7 +233,7 @@ export const initializeStoreRejected = (errorMessage) => (
  * Initiate an action indicating that saving the device token has completed.
  * @param {Array} data  A user's device token.
  */
-export const initializeStoreFulfilled = (deviceToken) => (
+export const initializeStoreFulfilled = (deviceToken: string) => (
   {
     type: ActionTypes.INITIALIZE_STORE_FULFILLED,
     deviceToken: deviceToken
@@ -229,7 +253,7 @@ export const mutateInputRequested = () => (
  * Initiate an error indicating that mutation of the inputs array failed.
  * @param  {Error} errorMessage Message describing the input-mutation failure.
  */
-export const mutateInputRejected = (errorMessage) => (
+export const mutateInputRejected = (errorMessage: string) => (
   {
     type: ActionTypes.MUTATE_INPUTS_REJECTED,
     errorMessage: errorMessage
@@ -240,7 +264,7 @@ export const mutateInputRejected = (errorMessage) => (
  * Initiate an action indicating that setting the inputs array has completed.
  * @param  {Array} inputs Array of input objects.
  */
-export const mutateInputFulfilled = (inputs) => (
+export const mutateInputFulfilled = (inputs: Inputs) => (
   {
     type: ActionTypes.MUTATE_INPUTS_FULFILLED,
     inputs: inputs
@@ -260,7 +284,7 @@ export const registrationRequested = () => (
  * Initiate an error indicating that the new-user registration has failed.
  * @param  {Error} errorMessage Message describing the registration failure.
  */
-export const registrationRejected = (errorMessage) => (
+export const registrationRejected = (errorMessage: string) => (
   {
     type: ActionTypes.REGISTRATION_REJECTED,
     errorMessage: errorMessage
@@ -271,7 +295,7 @@ export const registrationRejected = (errorMessage) => (
  * Initiate an action indicating that the new-user registration has completed.
  * @param {User}  user  A Firebase User object
  */
-export const registrationFulfilled = (user) => (
+export const registrationFulfilled = (user: Object) => (
   {
     type: ActionTypes.REGISTRATION_FULFILLED,
     user: user
@@ -291,7 +315,7 @@ export const removeInputsRequested = () => (
  * Initiate an error indicating that removing inputs has failed.
  * @param  {Error} errorMessage Message describing the registration failure.
  */
-export const removeInputsRejected = (errorMessage) => (
+export const removeInputsRejected = (errorMessage: string) => (
   {
     type: ActionTypes.REMOVE_INPUTS_REJECTED,
     errorMessage: errorMessage
@@ -302,7 +326,7 @@ export const removeInputsRejected = (errorMessage) => (
  * Initiate an action indicating that removing inputs has completed.
  * @param {Array} inputs  Array of input objects.
  */
-export const removeInputsFulfilled = (inputs) => (
+export const removeInputsFulfilled = (inputs: Inputs) => (
   {
     type: ActionTypes.REMOVE_INPUTS_FULFILLED,
     inputs: inputs
@@ -322,7 +346,7 @@ export const removeListenersRequested = () => (
  * Initiate an error indicating that removing listeners has failed.
  * @param  {Error} errorMessage Message describing the registration failure.
  */
-export const removeListenersRejected = (errorMessage) => (
+export const removeListenersRejected = (errorMessage: string) => (
   {
     type: ActionTypes.REMOVE_LISTENERS_REJECTED,
     errorMessage: errorMessage
@@ -351,7 +375,7 @@ export const removeTimersRequested = () => (
  * Initiate an error indicating that removing timers has failed.
  * @param  {Error} errorMessage Message describing the registration failure.
  */
-export const removeTimersRejected = (errorMessage) => (
+export const removeTimersRejected = (errorMessage: string) => (
   {
     type: ActionTypes.REMOVE_TIMERS_REJECTED,
     errorMessage: errorMessage
@@ -380,7 +404,7 @@ export const setInputParametersRequested = () => (
  * Initiate an error indicating that removing timers has failed.
  * @param  {Error} errorMessage Message describing the registration failure.
  */
-export const setInputParametersRejected = (errorMessage) => (
+export const setInputParametersRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SET_INPUT_PARAMETERS_REJECTED,
     errorMessage: errorMessage
@@ -390,7 +414,7 @@ export const setInputParametersRejected = (errorMessage) => (
 /**
  * Initiate an action indicating that all timers have been removed.
  */
-export const setInputParametersFulfilled = (height) => (
+export const setInputParametersFulfilled = (height: number) => (
   {
     type: ActionTypes.SET_INPUT_PARAMETERS_FULFILLED,
     height: height
@@ -410,7 +434,7 @@ export const setLastAlertTimeRequested = () => (
  * Initiate an error indicating that the last alert time was not set.
  * @param  {Error} errorMessage Message describing the listening failure.
  */
-export const setLastAlertTimeRejected = (errorMessage) => (
+export const setLastAlertTimeRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SET_LAST_ALERT_TIME_REJECTED,
     errorMessage: errorMessage
@@ -421,7 +445,7 @@ export const setLastAlertTimeRejected = (errorMessage) => (
  * Initiate an action setting the last time the buddy should have checked in.
  * @param {String} lastAlertTime  Time buddy should have checked in.
  */
-export const setLastAlertTimeFulfilled = (lastAlertTime) => (
+export const setLastAlertTimeFulfilled = (lastAlertTime: string) => (
   {
     type: ActionTypes.SET_LAST_ALERT_TIME_FULFILLED,
     lastAlertTime: lastAlertTime
@@ -441,7 +465,7 @@ export const setListenerRequested = () => (
  * Initiate an error indicating that the listener was not set.
  * @param  {Error} errorMessage Message describing the listening failure.
  */
-export const setListenerRejected = (errorMessage) => (
+export const setListenerRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SET_LISTENER_REJECTED,
     errorMessage: errorMessage
@@ -452,7 +476,7 @@ export const setListenerRejected = (errorMessage) => (
  * Initiate an action indicating that the new-user registration has completed.
  * @param {Promise} listener  A promise to set another listener after a timeout.
  */
-export const setListenerFulfilled = (listeners) => (
+export const setListenerFulfilled = (listeners: Array<number>) => (
   {
     type: ActionTypes.SET_LISTENER_FULFILLED,
     listeners: listeners
@@ -472,7 +496,7 @@ export const setListenerIntervalRequested = () => (
  * Initiate an error indicating that the timer-interval was not set.
  * @param  {Error} errorMessage Message describing the timer-interval failure.
  */
-export const setListenerIntervalRejected = (errorMessage) => (
+export const setListenerIntervalRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SET_LISTENER_INTERVAL_REJECTED,
     errorMessage: errorMessage
@@ -483,7 +507,7 @@ export const setListenerIntervalRejected = (errorMessage) => (
  * Initiate an action indicating that the timer-interval has been set.
  * @param  {Integer} interval   The interval between alerts.
  */
-export const setListenerIntervalFulfilled = (interval) => (
+export const setListenerIntervalFulfilled = (interval: number) => (
   {
     type: ActionTypes.SET_LISTENER_INTERVAL_FULFILLED,
     interval: interval
@@ -504,7 +528,7 @@ export const setShortestIntervalRequested = () => (
  * Initiate an error indicating that the shortest interval was not set.
  * @param  {Error} errorMessage Message describing the interval-setting failure.
  */
-export const setShortestIntervalRejected = (errorMessage) => (
+export const setShortestIntervalRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SET_SHORTEST_INTERVAL_REJECTED,
     errorMessage: errorMessage
@@ -515,7 +539,7 @@ export const setShortestIntervalRejected = (errorMessage) => (
  * Initiate an action indicating that the shortest interval has been set.
  * @param  {Integer} interval   Shortest interval between alerts.
  */
-export const setShortestIntervalFulfilled = (interval) => (
+export const setShortestIntervalFulfilled = (interval: number) => (
   {
     type: ActionTypes.SET_SHORTEST_INTERVAL_FULFILLED,
     interval: interval
@@ -535,7 +559,7 @@ export const setSnoozeRequested = () => (
  * Initiate an error indicating that the snooze was not set.
  * @param  {Error} errorMessage Message describing the timer-interval failure.
  */
-export const setSnoozeRejected = (errorMessage) => (
+export const setSnoozeRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SET_SNOOZE_REJECTED,
     errorMessage: errorMessage
@@ -546,7 +570,7 @@ export const setSnoozeRejected = (errorMessage) => (
  * Initiate an action indicating that the snooze has been set.
  * @param  {Integer} snooze   The interval between alerts.
  */
-export const setSnoozeFulfilled = (snooze) => (
+export const setSnoozeFulfilled = (snooze: number) => (
   {
     type: ActionTypes.SET_SNOOZE_FULFILLED,
     snooze: snooze
@@ -566,7 +590,7 @@ export const setTimerRequested = () => (
  * Initiate an error indicating that the timer was not set.
  * @param  {Error} errorMessage Message describing the timer failure.
  */
-export const setTimerRejected = (errorMessage) => (
+export const setTimerRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SET_TIMER_REJECTED,
     errorMessage: errorMessage
@@ -577,7 +601,7 @@ export const setTimerRejected = (errorMessage) => (
  * Initiate an action indicating that the timer has been set.
  * @param {Integer} timer ID of a time-out object.
  */
-export const setTimerFulfilled = (timers) => (
+export const setTimerFulfilled = (timers: Array<number>) => (
   {
     type: ActionTypes.SET_TIMER_FULFILLED,
     timers: timers
@@ -597,7 +621,7 @@ export const setTimerIntervalRequested = () => (
  * Initiate an error indicating that the timer-interval was not set.
  * @param  {Error} errorMessage Message describing the timer-interval failure.
  */
-export const setTimerIntervalRejected = (errorMessage) => (
+export const setTimerIntervalRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SET_TIMER_INTERVAL_REJECTED,
     errorMessage: errorMessage
@@ -608,7 +632,7 @@ export const setTimerIntervalRejected = (errorMessage) => (
  * Initiate an action indicating that the timer-interval has been set.
  * @param  {Integer}  interval  The interval between alerts.
  */
-export const setTimerIntervalFulfilled = (interval) => (
+export const setTimerIntervalFulfilled = (interval: number) => (
   {
     type: ActionTypes.SET_TIMER_INTERVAL_FULFILLED,
     interval: interval
@@ -628,7 +652,7 @@ export const signinRequested = () => (
  * Initiate an error indicating that the sign-in has failed.
  * @param  {Error} errorMessage Message describing the sign-in failure.
  */
-export const signinRejected = (errorMessage) => (
+export const signinRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SIGNIN_REJECTED,
     errorMessage: errorMessage
@@ -639,7 +663,7 @@ export const signinRejected = (errorMessage) => (
  * Initiate an action indicating that the sign-in has completed.
  * @param {User}  user  A Firebase User object
  */
-export const signinFulfilled = (user) => (
+export const signinFulfilled = (user: Object) => (
   {
     type: ActionTypes.SIGNIN_FULFILLED,
     user: user
@@ -659,7 +683,7 @@ export const signoutRequested = () => (
  * Initiate an error indicating that the sign-out has failed.
  * @param  {Error} errorMessage Message describing the sign-in failure.
  */
-export const signoutRejected = (errorMessage) => (
+export const signoutRejected = (errorMessage: string) => (
   {
     type: ActionTypes.SIGNOUT_REJECTED,
     errorMessage: errorMessage
