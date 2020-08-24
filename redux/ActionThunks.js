@@ -20,6 +20,7 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// TODO: Add Flow Types
 import { Alert } from 'react-native'
 import moment from 'moment'
 import auth from '@react-native-firebase/auth'
