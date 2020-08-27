@@ -108,12 +108,13 @@ function TimeInputs (props: ViewProps) {
             onPress = { props.closeTip() }
             type = 'material'
           />
-          <Text style = { styles.textTip }>
-            <Text style = { styles.textBold }>TIP:</Text> To
-            check in, enter a time using the form above.  If you
-            want to add another time, just press the plus-sign for a
-            new row. You can delete any check-in by pressing a
-            minus-sign.
+          <Text>
+            <Text style = { styles.textTipBold }>TIP: </Text>
+            <Text style = { styles.textTip }>
+              To check in, enter a time using the form above.  If you want to
+              add another time, just press the plus-sign for a new row. You can
+              delete any check-in by pressing a minus-sign.
+            </Text>
           </Text>
         </View>
       }
