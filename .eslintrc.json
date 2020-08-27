@@ -6,7 +6,6 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:flowtype/recommended",
         "plugin:promise/recommended",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
@@ -26,7 +25,6 @@
         "sourceType": "module"
     },
     "plugins": [
-        "flowtype",
         "promise",
         "react",
         "react-native"
@@ -39,8 +37,7 @@
         "react": {
             "createClass": "createReactClass",
             "pragma": "React",
-            "version": "detect",
-            "flowVersion": "0.53"
+            "version": "detect"
         },
         "propWrapperFunctions": [
             "forbidExtraProps",

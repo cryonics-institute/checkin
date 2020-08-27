@@ -101,9 +101,6 @@ export const styles = StyleSheet.create(
     text: {
       margin: 5
     },
-    textBold: {
-      fontWeight: 'bold'
-    },
     textError: {
       color: colors.error,
       fontSize: 12,
@@ -116,6 +113,11 @@ export const styles = StyleSheet.create(
     textTip: {
       color: colors.dark,
       fontSize: 18
+    },
+    textTipBold: {
+      color: colors.dark,
+      fontSize: 18,
+      fontWeight: 'bold'
     },
     textTransparent: {
       color: colors.transparent,
