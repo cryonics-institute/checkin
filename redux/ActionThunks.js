@@ -20,12 +20,15 @@
  * Check-In.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// TODO: Add Flow Types
+// @flow
 import { Alert } from 'react-native'
 import moment from 'moment'
 import auth from '@react-native-firebase/auth'
 import db from '@react-native-firebase/firestore'
 import * as ActionCreators from './ActionCreators'
+
+type AlertTimes = Array<{| id: string, time: string, validity: boolean |}>
+type Credential = {| username: string, password: string |}
 
 /**
  * Helper function that checks whether an object exists or not.
@@ -47,7 +50,7 @@ const exists = (object) => {
  * @param  {String}   email E-mail of the buddy to be added.
  * @return {Promise}        A promise to add a buddy to be tracked by standby.
  */
-export const addBuddy = (email) => (dispatch, getState) => {
+export const addBuddy = (email: string) => (dispatch, getState) => {
   dispatch(ActionCreators.addBuddyRequested())
 
   return Promise.resolve(dispatch(setListener(email)))
@@ -68,7 +71,7 @@ export const addBuddy = (email) => (dispatch, getState) => {
  * document has been created, an action for document-fulfillment is initiated.
  * @return {Promise}  A promise to create a new Firebase document.
  */
-export const addDocument = (email) => (dispatch, getState) => {
+export const addDocument = (email: string) => (dispatch, getState) => {
   const now = (new Date()).toISOString()
   const user = {
     checkinTime: now,
@@ -200,7 +203,7 @@ export const checkin = () => (dispatch, getState) => {
  */
 // TODO: Can do better with the database rules for Firestore?
 // https://firebase.google.com/docs/firestore/security/overview
-export const getDocument = (email) => (dispatch, getState) => {
+export const getDocument = (email: string) => (dispatch, getState) => {
   dispatch(ActionCreators.getDocumentRequested())
 
   return db().collection('users').doc(email).get()
@@ -319,7 +322,7 @@ export const hideTip = () => dispatch => {
  * @param {String} deviceToken  A user's device token.
  */
 
-export const initializeStore = (deviceToken) => dispatch => {
+export const initializeStore = (deviceToken: string) => dispatch => {
   dispatch(ActionCreators.initializeStoreRequested())
 
   try {
@@ -336,7 +339,9 @@ export const initializeStore = (deviceToken) => dispatch => {
  * @param  {String}   time      Time entered into input.
  * @param  {Boolean}  validity  Is the time valid?
  */
-export const mutateInput = (id, time, validity) => (dispatch, getState) => {
+export const mutateInput = (
+  id: string, time: string, validity: boolean
+) => (dispatch, getState) => {
   const convertTo24Hour = (time) => {
     const getHourString = (time) => {
       const period = time.slice(-2).toUpperCase()
@@ -373,7 +378,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
       const hours = time.length > 0
         ? convertTo24Hour(time)
         : 0
-      const minutes = time.length > 0 ? time.slice(-5, -3) : 0
+      const minutes = time.length > 0 ? parseInt(time.slice(-5, -3)) : 0
 
       const input = {
         id: id,
@@ -383,8 +388,8 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
       const index = getState().inputs.alertTimes.findIndex(
         input => input.id === id
       )
-      let inputsArray = null
 
+      let inputsArray
       if (index === -1) {
         inputsArray = [
           ...getState().inputs.alertTimes.filter(input => input.id !== id),
@@ -439,7 +444,7 @@ export const mutateInput = (id, time, validity) => (dispatch, getState) => {
  * @param  {String}   creds Username and password for the user.
  * @return {Promise}        A promise to create a new user.
  */
-export const register = (creds) => (dispatch, getState) => {
+export const register = (creds: Credential) => (dispatch, getState) => {
   dispatch(ActionCreators.registrationRequested())
 
   return auth().createUserWithEmailAndPassword(creds.username, creds.password)
@@ -483,7 +488,7 @@ export const register = (creds) => (dispatch, getState) => {
  * Remove an input in the inputs array.
  * @param  {String} id  Unique identifier for input.
  */
-export const removeInput = (id) => (dispatch, getState) => {
+export const removeInput = (id: string) => (dispatch, getState) => {
   dispatch(ActionCreators.removeInputsRequested())
 
   const inputsArray = getState().inputs.alertTimes.filter(
@@ -579,7 +584,7 @@ export const removeTimers = () => (dispatch, getState) => {
 /**
  * Remove all timers from the array of timers in the Redux store.
  */
-export const setInputParameters = (height) => dispatch => {
+export const setInputParameters = (height: number) => dispatch => {
   dispatch(ActionCreators.setInputParametersRequested())
 
   try {
@@ -593,7 +598,7 @@ export const setInputParameters = (height) => dispatch => {
  * Set the last time the buddy should have checked in.
  * @param {String} lastAlertTime  Time buddy should have checked in.
  */
-export const setLastAlertTime = (lastAlertTime) => dispatch => {
+export const setLastAlertTime = (lastAlertTime: string) => dispatch => {
   dispatch(ActionCreators.setLastAlertTimeRequested())
 
   try {
@@ -611,7 +616,10 @@ export const setLastAlertTime = (lastAlertTime) => dispatch => {
  * @param  {Boolean} isTest Whether called by unit test (optional).
  * @return {Promise}        Promise to create listener after interval.
  */
-export const setListener = (email, isTest = false) => (dispatch, getState) => {
+export const setListener = (
+  email: string,
+  isTest: boolean = false
+) => (dispatch, getState) => {
   const noCheckinAlert = () => {
     Alert.alert(
       'Check-In Alert',
@@ -716,9 +724,9 @@ export const setListener = (email, isTest = false) => (dispatch, getState) => {
  * @return  {Integer} The interval between alerts.
  */
 export const setListenerInterval = (
-  alertTimes,
-  checkinTime,
-  isTest = false
+  alertTimes: AlertTimes,
+  checkinTime: string,
+  isTest: boolean = false
 ) => (dispatch, getState) => {
   const now = (new Date()).toISOString()
   const nowInMs = (((((parseInt(now.slice(-13, -11), 10) * 60) +
@@ -748,10 +756,12 @@ export const setListenerInterval = (
         parseInt(checkinTime.slice(-4, -1), 10) + nowToMidnight) % 86400000
     const snoozeInMs = getState().buddy.snooze * 60000
 
-    const interval = moment(now) - moment(checkinTime) > 86400000 + snoozeInMs
+    const currentMoment = moment(now).millisecond()
+    const checkinMoment = moment(checkinTime).millisecond()
+    const interval = currentMoment - checkinMoment > 86400000 + snoozeInMs
       ? 0
-      : moment(now) - moment(checkinTime) > 86400000
-        ? (86400000 + snoozeInMs) - (moment(now) - moment(checkinTime))
+      : currentMoment - checkinMoment > 86400000
+        ? (86400000 + snoozeInMs) - (currentMoment - checkinMoment)
         : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
           ? alertsInMs[0].timeInMs + snoozeInMs
           : alertsInMs[alertsInMs.length - 1].timeInMs + snoozeInMs > 86400000
@@ -773,7 +783,7 @@ export const setListenerInterval = (
         result => {
           const lastAlertTime = moment(
             alertsInMs[alertsInMs.length - 1].timeInIso
-          )
+          ).toISOString()
 
           dispatch(setLastAlertTime(lastAlertTime))
           return result
@@ -812,7 +822,9 @@ export const setListenerInterval = (
  * Sets the shortest interval between alerts used to limit snooze.
  * @param {Integer} interval   Shortest interval between alerts.
  */
-export const setShortestInterval = (interval) => (dispatch, getState) => {
+export const setShortestInterval = (
+  interval: number
+) => (dispatch, getState) => {
   dispatch(ActionCreators.setShortestIntervalRequested())
 
   return db().collection('users').doc(getState().auth.user.email).update(
@@ -838,7 +850,7 @@ export const setShortestInterval = (interval) => (dispatch, getState) => {
  * has failed to check in.
  * @param {Integer} interval  Delay between user and standby alerts.
  */
-export const setSnooze = (snooze) => (dispatch, getState) => {
+export const setSnooze = (snooze: number) => (dispatch, getState) => {
   dispatch(ActionCreators.setSnoozeRequested())
 
   return db().collection('users').doc(getState().auth.user.email).update(
@@ -860,7 +872,7 @@ export const setSnooze = (snooze) => (dispatch, getState) => {
  * @param  {Boolean} isTest     Whether called by unit test (optional).
  * @return {Promise}            Promise to set a timer.
  */
-export const setTimer = (isTest = false) => (dispatch, getState) => {
+export const setTimer = (isTest:boolean = false) => (dispatch, getState) => {
   const checkinAlert = () => {
     Alert.alert(
       'Check In?',
@@ -954,9 +966,9 @@ export const setTimer = (isTest = false) => (dispatch, getState) => {
  * @return  {Integer}           Interval to wait before check-in alert.
  */
 export const setTimerInterval = (
-  alertTimes,
-  checkinTime,
-  isTest = false
+  alertTimes: AlertTimes,
+  checkinTime: string,
+  isTest: boolean = false
 ) => (dispatch, getState) => {
   const now = (new Date()).toISOString()
   const nowInMs = (((((parseInt(now.slice(-13, -11), 10) * 60) +
@@ -985,7 +997,9 @@ export const setTimerInterval = (
 
     dispatch(ActionCreators.setTimerIntervalRequested())
 
-    const interval = moment(now) - moment(checkinTime) > 86400000
+    const currentMoment = moment(now).millisecond()
+    const checkinMoment = moment(checkinTime).millisecond()
+    const interval = currentMoment - checkinMoment > 86400000
       ? 0
       : alertsInMs[alertsInMs.length - 1].timeInMs < checkinInMs
         ? alertsInMs[0].timeInMs
@@ -1037,8 +1051,11 @@ export const setTimerInterval = (
  * @param  {String}   creds Username and password for the user.
  * @return {Promise}        A promise to sign-in a user.
  */
-export const signIn = (creds, isAutomatic = false) => (dispatch, getState) => {
-  dispatch(ActionCreators.signinRequested(creds))
+export const signIn = (
+  creds: Credential,
+  isAutomatic: boolean = false
+) => (dispatch, getState) => {
+  dispatch(ActionCreators.signinRequested())
 
   return auth().signInWithEmailAndPassword(creds.username, creds.password)
     .then(
@@ -1120,7 +1137,7 @@ export const signOut = () => (dispatch, getState) => {
  * @param {Integer} interval  Milliseconds until next check-in.
  * @return {Promise}  A promise to update the check-in interval.
  */
-export const updateCheckinInterval = (interval) => (getState) => {
+export const updateCheckinInterval = (interval: number) => (getState) => {
   return db().collection('users').doc(getState().auth.user.email).update(
     {
       checkinInterval: interval

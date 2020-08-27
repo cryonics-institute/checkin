@@ -33,12 +33,7 @@ type DocumentData = Array<
     |}
   >
 
-type Inputs = {
-  +alertTimes: Array<{| id: string, time: string, validity: boolean |}>,
-  +errorMessage: string,
-  +height: number,
-  +showTip: boolean
-}
+type Inputs = Array<{| id: string, time: string, validity: boolean |}>
 
 type User = {
   checkinTime: string,
@@ -134,7 +129,7 @@ export const checkinRejected = (errorMessage: string) => (
  * been added.
  * @param {String} checkinTime  Time the user last checked in.
  */
-export const checkinFulfilled = (checkinTime: String) => (
+export const checkinFulfilled = (checkinTime: string) => (
   {
     type: ActionTypes.CHECKIN_FULFILLED,
     checkinTime: checkinTime
