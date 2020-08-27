@@ -218,8 +218,8 @@ class SignIn extends React.Component<ComponentProps, ComponentState> {
     }
   }
 
-  handleSignin (): void {
-    this.props.signIn(
+  handleRegistration (): void {
+    this.props.register(
       {
         username: this.state.username,
         password: this.state.password
@@ -227,8 +227,8 @@ class SignIn extends React.Component<ComponentProps, ComponentState> {
     )
   }
 
-  handleRegistration (): void {
-    this.props.register(
+  handleSignin (): void {
+    this.props.signIn(
       {
         username: this.state.username,
         password: this.state.password
